@@ -1,8 +1,34 @@
-# Project
+# TypeChat.NET
 
 TypeChat.NET makes it easy to build natural language interfaces using types.
 
 It applies the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET and integrates them with the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel). 
+
+TypeChat.NET consists of two assemblies:
+- typechat
+- typechat.sk
+
+## Typechat ##
+This library brings ideas of Typechat to .NET.
+- Json Translators
+- Json Validators
+
+Typechat is a relatively faithful port of the original Typescript library with .NET idiom introduced as necessary. But it does not implement bindings to a specific AI model or API. For that you use the Typechat.sk library below, or roll your own.
+
+## Typechat.sk ##
+Typechat.SK makes it easy to get ***strong typed*** .NET objects from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel).
+
+        Schema schema = Schema.Load("./SentimentSchema.ts");
+        var service = KernelFactory.JsonTranslator<SentimentResponse>(
+            schema,
+            Config.ModelNames.Gpt35Turbo,
+            _config.OpenAI
+        );
+        SentimentResponse response = await service.TranslateAsync("Tonights gonna be a good night! A good good night!");
+
+The library provides:
+- LLM bings for TypeChat using the Semantic Kernel.
+- An experimental .NET Types to Typescript schema exporter. 
 
 ## Contributing
 
