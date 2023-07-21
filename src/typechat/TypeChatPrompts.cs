@@ -2,8 +2,20 @@
 
 namespace Microsoft.TypeChat;
 
-public static class Prompts
+public class TypeChatPrompts : ITypeChatPrompts
 {
+    public static readonly TypeChatPrompts Default = new TypeChatPrompts();
+
+    public string CreateRequestPrompt(TypeSchema schema, string request)
+    {
+        return RequestPrompt(schema, request);
+    }
+
+    public string CreateRepairPrompt(TypeSchema schema, string json, string validationError)
+    {
+        return RepairPrompt(validationError);
+    }
+
     public static string RequestPrompt(TypeSchema schema, string request)
     {
         ArgumentNullException.ThrowIfNull(schema, nameof(schema));
