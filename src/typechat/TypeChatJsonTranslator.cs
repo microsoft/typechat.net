@@ -2,18 +2,26 @@
 
 namespace Microsoft.TypeChat;
 
-public class TypeChatJsonTranslator<T>
+public class TypeChatJsonTranslator<T> : ITypeChatPrompts
 {
     ICompletionModel _model;
+    ITypeChatPrompts _prompts;
     IJsonTypeValidator<T> _validator;
     RequestSettings _requestSettings;
 
-    public TypeChatJsonTranslator(ICompletionModel model, IJsonTypeValidator<T> validator)
+    public TypeChatJsonTranslator(
+        ICompletionModel model,
+        IJsonTypeValidator<T> validator,
+        ITypeChatPrompts? prompts = null
+        )
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
         ArgumentNullException.ThrowIfNull(validator, nameof(validator));
+
         _model = model;
         _validator = validator;
+        prompts ??= this;
+        _prompts = prompts;
         _requestSettings = new RequestSettings(); // Default settings
     }
 
@@ -41,7 +49,7 @@ public class TypeChatJsonTranslator<T>
         )
     {
         requestSettings ??= _requestSettings;
-        string prompt = CreateRequestPrompt(request);
+        string prompt = _prompts.CreateRequestPrompt(request);
         bool attemptRepair = AttemptRepair;
         while(true)
         {
@@ -56,7 +64,7 @@ public class TypeChatJsonTranslator<T>
             {
                 throw new TypeChatException(TypeChatException.ErrorCode.JsonValidation, validation.Message);
             }
-            prompt += $"{completion}\n{CreateRepairPrompt(validation.Message)}";
+            prompt += $"{completion}\n{_prompts.CreateRepairPrompt(validation.Message)}";
             attemptRepair = false;
         }
     }
@@ -82,12 +90,12 @@ public class TypeChatJsonTranslator<T>
         return completion;
     }
 
-    protected virtual string CreateRequestPrompt(string request)
+    public virtual string CreateRequestPrompt(string request)
     {
         return Prompts.RequestPrompt(Validator.Schema.TypeName, Validator.Schema.Schema, request);
     }
 
-    protected virtual string CreateRepairPrompt(string validationError)
+    public virtual string CreateRepairPrompt(string validationError)
     {
         return Prompts.RepairPrompt(validationError);
     }
