@@ -1,0 +1,37 @@
+# General
+*.log
+
+# Optional local config overrides
+appSettings.local.json
+appSettings.Development.json
+config.Development.json
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+[Bb]in/
+[Oo]bj/
+**/build/
+**/tmp/
+**/temp/
+**/bin/
+**/obj/
+**/dist/
+**/venv
+**/.venv*
+**/testData/
+
+# Visual Studio files and directories
+.vs/
+#.vcxproj.filters
+*.user
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
