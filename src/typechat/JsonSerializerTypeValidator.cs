@@ -93,8 +93,8 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
     TypeSchema _schema;
     JsonSerializerTypeValidator _validator;
 
-    public JsonSerializerTypeValidator(string schemaText, JsonSerializerOptions? options = null)
-        : this(new TypeSchema(typeof(T), schemaText), options)
+    public JsonSerializerTypeValidator(Schema schema, JsonSerializerOptions? options = null)
+        : this(new TypeSchema(typeof(T), schema), options)
     {
     }
 

@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.SemanticKernel;
 
-public class CompletionService : ICompletionModel
+public class CompletionService : ITypeChatLanguageModel
 {
     ITextCompletion _service;
     ModelInfo _model;
@@ -14,10 +14,12 @@ public class CompletionService : ICompletionModel
         _model = model;
     }
 
+    public ModelInfo Model => _model;
+
     public Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken)
     {
         CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
-        return _service.CompleteAsync(prompt, requestSettings, cancelToken);    
+        return _service.CompleteAsync(prompt, requestSettings, cancelToken);
     }
 
     CompleteRequestSettings? ToRequestSettings(RequestSettings? settings)

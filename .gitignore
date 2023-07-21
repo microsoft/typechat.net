@@ -1,6 +1,13 @@
 # General
 *.log
 
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
 # Optional local config overrides
 appSettings.local.json
 appSettings.Development.json

@@ -2,15 +2,15 @@
 
 namespace Microsoft.TypeChat;
 
-public class TypeChatJsonTranslator<T> : ITypeChatPrompts
+public class TypeChatJsonTranslator<T>
 {
-    ICompletionModel _model;
+    ITypeChatLanguageModel _model;
     ITypeChatPrompts _prompts;
     IJsonTypeValidator<T> _validator;
     RequestSettings _requestSettings;
 
     public TypeChatJsonTranslator(
-        ICompletionModel model,
+        ITypeChatLanguageModel model,
         IJsonTypeValidator<T> validator,
         ITypeChatPrompts? prompts = null
         )
@@ -20,12 +20,12 @@ public class TypeChatJsonTranslator<T> : ITypeChatPrompts
 
         _model = model;
         _validator = validator;
-        prompts ??= this;
+        prompts ??= TypeChatPrompts.Default;
         _prompts = prompts;
         _requestSettings = new RequestSettings(); // Default settings
     }
 
-    public ICompletionModel Model => _model;
+    public ITypeChatLanguageModel Model => _model;
     public IJsonTypeValidator<T> Validator => _validator;
     public RequestSettings RequestSettings => _requestSettings;
 
@@ -49,13 +49,13 @@ public class TypeChatJsonTranslator<T> : ITypeChatPrompts
         )
     {
         requestSettings ??= _requestSettings;
-        string prompt = _prompts.CreateRequestPrompt(request);
+        string prompt = _prompts.CreateRequestPrompt(_validator.Schema, request);
         bool attemptRepair = AttemptRepair;
         while(true)
         {
-            string completion = await CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
-
-            ValidationResult<T> validation = Validator.Validate(completion);
+            string responseText = await CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+            string jsonText = GetJson(responseText);
+            ValidationResult<T> validation = Validator.Validate(responseText);
             if (validation.Success)
             {
                 return validation.Value;
@@ -64,7 +64,7 @@ public class TypeChatJsonTranslator<T> : ITypeChatPrompts
             {
                 throw new TypeChatException(TypeChatException.ErrorCode.JsonValidation, validation.Message);
             }
-            prompt += $"{completion}\n{_prompts.CreateRepairPrompt(validation.Message)}";
+            prompt += $"{responseText}\n{_prompts.CreateRepairPrompt(_validator.Schema, responseText, validation.Message)}";
             attemptRepair = false;
         }
     }
@@ -78,7 +78,7 @@ public class TypeChatJsonTranslator<T> : ITypeChatPrompts
     {
         ArgumentException.ThrowIfNullOrEmpty(json, nameof(json));
 
-        string prompt = Prompts.RepairPrompt(json, _validator.Schema, validationError);
+        string prompt = TypeChatPrompts.RepairPrompt(json, _validator.Schema, validationError);
         return await CompleteAsync(prompt, settings, cancelToken).ConfigureAwait(false);
     }
 
@@ -92,12 +92,12 @@ public class TypeChatJsonTranslator<T> : ITypeChatPrompts
 
     public virtual string CreateRequestPrompt(string request)
     {
-        return Prompts.RequestPrompt(Validator.Schema.TypeName, Validator.Schema.Schema, request);
+        return TypeChatPrompts.RequestPrompt(Validator.Schema.TypeName, Validator.Schema.Schema, request);
     }
 
     public virtual string CreateRepairPrompt(string validationError)
     {
-        return Prompts.RepairPrompt(validationError);
+        return TypeChatPrompts.RepairPrompt(validationError);
     }
 
     protected void NotifyEvent(Action<string> evt, string value)
@@ -110,5 +110,16 @@ public class TypeChatJsonTranslator<T> : ITypeChatPrompts
             }
             catch { }
         }
+    }
+
+    string GetJson(string json)
+    {
+        int iStartAt = json.IndexOf('{');
+        int iEndAt = json.LastIndexOf('}');
+        if (iStartAt < 0 || iEndAt < 0 || iStartAt >= iEndAt)
+        {
+            throw new JsonException("JSON parse error");
+        }
+        return json.Substring(iStartAt, iEndAt - iStartAt + 1);
     }
 }
