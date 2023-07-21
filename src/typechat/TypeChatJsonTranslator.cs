@@ -2,13 +2,13 @@
 
 namespace Microsoft.TypeChat;
 
-public class TypeChat<T>
+public class TypeChatJsonTranslator<T>
 {
     ICompletionModel _model;
     IJsonTypeValidator<T> _validator;
     RequestSettings _requestSettings;
 
-    public TypeChat(ICompletionModel model, IJsonTypeValidator<T> validator)
+    public TypeChatJsonTranslator(ICompletionModel model, IJsonTypeValidator<T> validator)
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
         ArgumentNullException.ThrowIfNull(validator, nameof(validator));
