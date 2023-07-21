@@ -35,9 +35,3 @@ public class TestTypeTranslate : TypeChatTest, IClassFixture<Config>
         Assert.NotNull(response.Sentiment);
     }
 }
-
-public class SentimentResponse
-{
-    [JsonPropertyName("sentiment")]
-    public string Sentiment { get; set; }
-}
