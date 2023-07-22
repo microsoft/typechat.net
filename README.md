@@ -8,15 +8,17 @@ TypeChat.NET consists of two assemblies:
 - typechat
 - typechat.sk
 
-## Typechat ##
-This library brings ideas of Typechat to .NET.
+## TypeChat ##
+Brings ideas of TypeChat to .NET.
 - Json Translators
 - Json Validators
 
-Typechat is a relatively faithful port of the original Typescript library with .NET idiom introduced as necessary. But it does not implement bindings to a specific AI model or API. For that you use the Typechat.sk library below, or roll your own.
+The library is a faithful port of the original Typescript library with .NET idiom introduced suitably. But it does not implement bindings to a specific AI model or API. For that you use the Typechat.sk library below, or roll your own.
 
-## Typechat.sk ##
-Typechat.SK makes it easy to get ***strong typed*** .NET objects from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel).
+## TypeChat.sk ##
+TypeChat.SK makes it easy to get ***strong typed*** .NET objects from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel).
+
+        using Microsoft.TypeChat.SemanticKernel;
 
         Schema schema = Schema.Load("./SentimentSchema.ts");
         var service = KernelFactory.JsonTranslator<SentimentResponse>(
