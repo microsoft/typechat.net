@@ -32,7 +32,7 @@ OR
 
         using Microsoft.TypeChat.SemanticKernel;
 
-        // This will auto-generate a Typescript for the .NET type
+        // This will auto-generate a Typescript schema for the .NET type
         var service = KernelFactory.JsonTranslator<SentimentResponse>(
             "gpt-35-turbo",
             _config.OpenAI
