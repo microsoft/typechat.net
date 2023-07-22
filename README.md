@@ -23,14 +23,33 @@ TypeChat.SK makes it easy to get ***strong typed*** .NET objects from the [Micro
         Schema schema = Schema.Load("./SentimentSchema.ts");
         var service = KernelFactory.JsonTranslator<SentimentResponse>(
             schema,
-            Config.ModelNames.Gpt35Turbo,
+            "gpt-35-turbo",
             _config.OpenAI
         );
         SentimentResponse response = await service.TranslateAsync("Tonights gonna be a good night! A good good night!");
 
+OR
+
+        using Microsoft.TypeChat.SemanticKernel;
+
+        // This will auto-generate a Typescript for the .NET type
+        var service = KernelFactory.JsonTranslator<SentimentResponse>(
+            "gpt-35-turbo",
+            _config.OpenAI
+        );
+        SentimentResponse response = await service.TranslateAsync("Tonights gonna be a good night! A good good night!");
+
+
 The library provides:
 - LLM bings for TypeChat using the Semantic Kernel.
 - An experimental .NET Types to Typescript schema exporter. 
+
+## Building ##
+You will need Visual Studio (VS Code is not tested). 
+- Load ./typechat.sln into Visual Studio 2022
+- Restore packages
+- Build
+- 
 
 ## Contributing
 
