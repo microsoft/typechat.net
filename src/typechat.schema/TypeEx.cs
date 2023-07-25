@@ -121,6 +121,14 @@ internal static class TypeEx
                 member.Name;
     }
 
+    public static string? VocabName(this MemberInfo member)
+    {
+        VocabAttribute? attr = member.GetCustomAttribute(typeof(VocabAttribute)) as VocabAttribute;
+        return attr != null ?
+               attr.Name :
+               null;
+    }
+
     public static IEnumerable<T> Empty<T>()
     {
         yield break;

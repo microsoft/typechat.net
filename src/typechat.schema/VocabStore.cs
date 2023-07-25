@@ -1,26 +1,62 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Collections;
+
 namespace Microsoft.TypeChat.Schema;
 
-public interface IVocabStore
+public interface IVocabStore : IEnumerable<VocabType>
 {
-    IVocab? Get(string name);
+    VocabType? Get(string name);
 }
 
-public class VocabStore : Dictionary<string, IVocab>, IVocabStore
+public class VocabStore : IVocabStore
 {
+    Dictionary<string, VocabType> _vocabs;
+
     public VocabStore()
     {
+        _vocabs = new Dictionary<string, VocabType>();
     }
 
-    public void Add(IVocab vocab)
+    public void Add(VocabType vocab)
     {
         ArgumentNullException.ThrowIfNull(vocab, nameof(vocab));
-        base.Add(vocab.Name, vocab);
+        _vocabs.Add(vocab.Name, vocab);
     }
 
-    public IVocab? Get(string name)
+    public void Add(string name, IVocab vocab)
     {
-        return this.GetValueOrDefault(name, null);
+        Add(new VocabType(name, vocab));
+    }
+
+    public VocabType? Get(string name)
+    {
+        return _vocabs.GetValueOrDefault(name, null);
+    }
+
+    public IEnumerator<VocabType> GetEnumerator()
+    {
+        return _vocabs.Values.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+}
+
+public static class VocabStoreEx
+{
+    public static VocabType? VocabFor(this IVocabStore store, MemberInfo member)
+    {
+        ArgumentNullException.ThrowIfNull(member, nameof(member));
+
+        string? vocabName = member.VocabName();
+        if (string.IsNullOrEmpty(vocabName))
+        {
+            return null;
+        }
+
+        return store.Get(vocabName);
     }
 }

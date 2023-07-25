@@ -23,12 +23,12 @@ public struct VocabEntry : IComparable<VocabEntry>
 
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
-        return base.Equals(obj);
+        return _text.Equals(obj);
     }
 
     public override int GetHashCode()
     {
-        return base.GetHashCode();
+        return _text.GetHashCode();
     }
 
     public override string? ToString()

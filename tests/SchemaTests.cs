@@ -16,23 +16,23 @@ public class SchemaTests : TypeChatTest
     [Fact]
     public void ExportVocab()
     {
-        Vocab vocab = new Vocab("Foo")
-        {
-            "One",
-            "Two",
-            "Three"
-        };
-
+        string vocabName = "Foo";
         using StringWriter sw = new StringWriter();
-        VocabStore store = new VocabStore();
-        store.Add(vocab);
+        VocabStore store = new VocabStore
+        {
+            {vocabName, new Vocab("One", "Two", "Three") }
+        };
+        VocabType? type = store.Get(vocabName);
+        Assert.NotNull(type);
+
         var exporter = new TypescriptVocabExporter(new TypescriptWriter(sw), store);
-        exporter.Export(vocab);
+        exporter.Export(type);
         string text = sw.ToString();
-        // This test is just checking to ensure no errors...
+        Assert.NotEmpty(text);
+
         // TODO: better checks for correctness
         Assert.EndsWith(";", text.Trim());
-        foreach(var entry in vocab)
+        foreach(var entry in type.Vocab)
         {
             Assert.True(text.Contains($"'{entry}'"));
         }
