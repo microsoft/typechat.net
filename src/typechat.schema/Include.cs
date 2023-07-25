@@ -6,6 +6,3 @@ global using System.Threading.Tasks;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;
 global using Microsoft.TypeChat;
-global using Microsoft.TypeChat.Schema;
-global using Microsoft.SemanticKernel;
-global using Microsoft.SemanticKernel.AI.TextCompletion;

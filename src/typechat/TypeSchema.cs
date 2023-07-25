@@ -5,16 +5,16 @@ namespace Microsoft.TypeChat;
 public class TypeSchema
 {
     Type _type;
-    Schema _schema;
+    SchemaText _schema;
 
     public TypeSchema(Type type, string schemaText)
     {
         ArgumentNullException.ThrowIfNull(type, nameof(type));
-        _schema = new Schema(schemaText);
+        _schema = new SchemaText(schemaText);
         _type = type;
     }
 
-    public TypeSchema(string name, Schema schema)
+    public TypeSchema(string name, SchemaText schema)
     {
         _type = Type.GetType(name);
         _schema = schema;
@@ -27,5 +27,5 @@ public class TypeSchema
     public string TypeFullName => _type.FullName;
 
     [JsonPropertyName("schema")]
-    public Schema Schema => _schema;
+    public SchemaText Schema => _schema;
 }

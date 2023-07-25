@@ -2,21 +2,19 @@
 
 using System.Reflection;
 
-namespace Microsoft.TypeChat.SemanticKernel.Typescript;
+namespace Microsoft.TypeChat.Schema;
 
 [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
 public class CommentAttribute : Attribute
 {
-    public CommentAttribute()
-    {
-    }
+    public CommentAttribute() { }
 
     public CommentAttribute(string text)
     {
         Text = text;
     }
 
-    public string Text { get; set; }
+    public string? Text { get; set; }
 
     public bool HasText => !string.IsNullOrEmpty(Text);
 }

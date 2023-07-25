@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public struct Schema
+public struct SchemaText
 {
     public static class Languages
     {
@@ -12,13 +12,13 @@ public struct Schema
     string _lang;
     string _text;
 
-    public Schema(string text)
+    public SchemaText(string text)
         : this(text, Languages.Typescript)
     {
     }
 
     [JsonConstructor]
-    public Schema(string text, string lang)
+    public SchemaText(string text, string lang)
     {
         ArgumentException.ThrowIfNullOrEmpty(text, nameof(text));
         ArgumentException.ThrowIfNullOrEmpty(lang, nameof(lang));
@@ -32,12 +32,12 @@ public struct Schema
     [JsonPropertyName("text")]
     public string Text => _text;
 
-    public static implicit operator string(Schema schema)
+    public static implicit operator string(SchemaText schema)
     {
         return schema._text;
     }
 
-    public static Schema Load(string filePath)
+    public static SchemaText Load(string filePath)
     {
         string schemaText = File.ReadAllText(filePath);
         string ext = Path.GetExtension(filePath);
@@ -50,6 +50,6 @@ public struct Schema
         {
             throw new NotSupportedException($"{lang} is not supported");
         }
-        return new Schema(schemaText, lang);
+        return new SchemaText(schemaText, lang);
     }
 }

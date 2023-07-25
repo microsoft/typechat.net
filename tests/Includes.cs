@@ -10,5 +10,5 @@ global using Xunit.Sdk;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Configuration.Json;
 global using Microsoft.TypeChat;
+global using Microsoft.TypeChat.Schema;
 global using Microsoft.TypeChat.SemanticKernel;
-global using Microsoft.TypeChat.SemanticKernel.Typescript;
