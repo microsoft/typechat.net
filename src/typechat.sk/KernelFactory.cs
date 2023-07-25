@@ -8,6 +8,8 @@ public static class KernelFactory
 {
     public static TypeChatJsonTranslator<T> JsonTranslator<T>(Schema schema, ModelInfo model, OpenAIConfig config)
     {
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+
         // Create kernel
         KernelBuilder kb = new KernelBuilder();
         kb.WithChatModel(model.Name, config);
@@ -18,12 +20,21 @@ public static class KernelFactory
 
     public static TypeChatJsonTranslator<T> JsonTranslator<T>(ModelInfo model, OpenAIConfig config)
     {
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+
         // Create kernel
         KernelBuilder kb = new KernelBuilder();
         kb.WithChatModel(model.Name, config);
         IKernel kernel = kb.Build();
         // And Json translator
         return kernel.JsonTranslator<T>(model);
+    }
+
+    public static TypeChatJsonTranslator<T> JsonTranslator<T>(OpenAIConfig config)
+    {
+        ArgumentNullException.ThrowIfNull(config, nameof(config));
+
+        return JsonTranslator<T>(config.Model, config);
     }
 
     public static TypeChatJsonTranslator<T> JsonTranslator<T>(this IKernel kernel, Schema schema, ModelInfo model)

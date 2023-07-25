@@ -9,6 +9,7 @@ public class OpenAIConfig
         public const string OPENAI_API_KEY = "OPENAI_API_KEY";
         public const string OPENAI_ENDPOINT = "OPENAI_ENDPOINT";
         public const string OPENAI_ORGANIZATION = "OPENAI_ORGANIZATION";
+        public const string OPENAI_MODEL = "OPENAI_MODEL";
         public const string AZURE_OPENAI_API_KEY = "AZURE_OPENAI_API_KEY";
         public const string AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT";
     }
@@ -19,6 +20,7 @@ public class OpenAIConfig
     public string Endpoint { get; set; }
     public string ApiKey { get; set; }
     public string? Organization { get; set; }
+    public string? Model { get; set; }
 
     public void Validate()
     {
@@ -41,6 +43,8 @@ public class OpenAIConfig
         {
             config.Endpoint = Environment.GetEnvironmentVariable(VariableNames.AZURE_OPENAI_ENDPOINT);
         }
+        config.Model = Environment.GetEnvironmentVariable(VariableNames.OPENAI_MODEL);
+        config.Validate();
         return config;
     }
 }

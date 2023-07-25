@@ -12,6 +12,7 @@
 appSettings.local.json
 appSettings.Development.json
 config.Development.json
+.env
 
 # Build results
 [Dd]ebug/
