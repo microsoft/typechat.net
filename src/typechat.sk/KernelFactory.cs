@@ -1,12 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat.SemanticKernel.Typescript;
-
 namespace Microsoft.TypeChat.SemanticKernel;
 
 public static class KernelFactory
 {
-    public static TypeChatJsonTranslator<T> JsonTranslator<T>(Schema schema, ModelInfo model, OpenAIConfig config)
+    public static TypeChatJsonTranslator<T> JsonTranslator<T>(SchemaText schema, ModelInfo model, OpenAIConfig config)
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
 
@@ -37,7 +35,7 @@ public static class KernelFactory
         return JsonTranslator<T>(config.Model, config);
     }
 
-    public static TypeChatJsonTranslator<T> JsonTranslator<T>(this IKernel kernel, Schema schema, ModelInfo model)
+    public static TypeChatJsonTranslator<T> JsonTranslator<T>(this IKernel kernel, TypeChat.SchemaText schema, ModelInfo model)
     {
         TypeChatJsonTranslator<T> typechat = new TypeChatJsonTranslator<T>(
             kernel.CompletionService(model),

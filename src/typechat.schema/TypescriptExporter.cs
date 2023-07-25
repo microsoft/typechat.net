@@ -2,7 +2,7 @@
 
 using System.Reflection;
 
-namespace Microsoft.TypeChat.SemanticKernel.Typescript;
+namespace Microsoft.TypeChat.Schema;
 
 public class TypescriptExporter
 {
@@ -17,7 +17,7 @@ public class TypescriptExporter
     }
 
     TypescriptWriter _writer;
-    HashSet<Type>? _exportedTypes;
+    HashSet<Type> _exportedTypes;
     HashSet<Type> _nonExportTypes;
     Queue<Type>? _pendingTypes;
 
@@ -30,6 +30,7 @@ public class TypescriptExporter
     {
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         _writer = writer;
+        _exportedTypes = new HashSet<Type>();
         _nonExportTypes = new HashSet<Type>()
         {
             typeof(string),
@@ -171,53 +172,11 @@ public class TypescriptExporter
         return this;
     }
 
-    TypescriptExporter ExportMembers(Type type)
-    {
-        return ExportProperties(type).
-               ExportFields(type);
-    }
-
-    TypescriptExporter ExportProperties(Type type)
-    {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
-
-        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        return ExportProperties(properties);
-    }
-
-    TypescriptExporter ExportProperties(IEnumerable<PropertyInfo> properties)
-    {
-        ArgumentNullException.ThrowIfNull(properties, nameof(properties));
-
-        foreach (var property in properties)
-        {
-            ExportProperty(property);
-        }
-        return this;
-    }
-
-    TypescriptExporter ExportFields(Type type)
-    {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
-
-        var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
-        return ExportFields(fields);
-    }
-
-    TypescriptExporter ExportFields(IEnumerable<FieldInfo> fields)
-    {
-        foreach (var field in fields)
-        {
-            ExportField(field);
-        }
-        return this;
-    }
-
     TypescriptExporter ExportEnumLiterals(Type type)
     {
         if (!IncludeComments)
         {
-            _writer.Literals(Enum.GetNames(type));
+            _writer.Literals(Enum.GetNames(type)).Semicolon();
             return this;
         }
         string[] names = Enum.GetNames(type);
@@ -258,6 +217,48 @@ public class TypescriptExporter
                 }
             }
             _writer.EOL();
+        }
+        return this;
+    }
+
+    TypescriptExporter ExportMembers(Type type)
+    {
+        return ExportProperties(type).
+               ExportFields(type);
+    }
+
+    TypescriptExporter ExportProperties(Type type)
+    {
+        ArgumentNullException.ThrowIfNull(type, nameof(type));
+
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        return ExportProperties(properties);
+    }
+
+    TypescriptExporter ExportProperties(IEnumerable<PropertyInfo> properties)
+    {
+        ArgumentNullException.ThrowIfNull(properties, nameof(properties));
+
+        foreach (var property in properties)
+        {
+            ExportProperty(property);
+        }
+        return this;
+    }
+
+    TypescriptExporter ExportFields(Type type)
+    {
+        ArgumentNullException.ThrowIfNull(type, nameof(type));
+
+        var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+        return ExportFields(fields);
+    }
+
+    TypescriptExporter ExportFields(IEnumerable<FieldInfo> fields)
+    {
+        foreach (var field in fields)
+        {
+            ExportField(field);
         }
         return this;
     }
@@ -346,10 +347,7 @@ public class TypescriptExporter
         return null;
     }
 
-    bool IsExported(Type type)
-    {
-        return (_exportedTypes != null) ? _exportedTypes.Contains(type) : false;
-    }
+    bool IsExported(Type type) => _exportedTypes.Contains(type);
 
     bool ShouldExport(Type type)
     {
@@ -367,7 +365,6 @@ public class TypescriptExporter
 
     void AddExported(Type type)
     {
-        _exportedTypes ??= new HashSet<Type>();
         _exportedTypes.Add(type);
     }
 }

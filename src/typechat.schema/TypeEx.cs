@@ -1,33 +1,33 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using System.Reflection;
 
-namespace Microsoft.TypeChat.SemanticKernel.Typescript;
+namespace Microsoft.TypeChat.Schema;
 
 internal static class TypeEx
 {
     public static bool IsObject(this Type type)
     {
-        return (type == typeof(object));
+        return type == typeof(object);
     }
 
     public static bool IsValueType(this Type type)
     {
-        return (type == typeof(ValueType));
+        return type == typeof(ValueType);
     }
 
     public static bool IsEnum(this Type type)
     {
-        return (type == typeof(Enum));
+        return type == typeof(Enum);
     }
 
     public static bool IsRoot(this Type type)
     {
-        return (type.IsObject() || type.IsValueType() || type.IsEnum());
+        return type.IsObject() || type.IsValueType() || type.IsEnum();
     }
 
     public static bool IsString(this Type type)
     {
-        return (type == typeof(string));
+        return type == typeof(string);
     }
 
     public static bool IsNumber(this Type type)
@@ -54,7 +54,7 @@ internal static class TypeEx
 
     public static bool IsNullable(this Type type)
     {
-        return (type.IsGenericType && Nullable.GetUnderlyingType(type) != null);
+        return type.IsGenericType && Nullable.GetUnderlyingType(type) != null;
     }
 
     public static Type? GetNullableType(this Type type)
@@ -70,7 +70,7 @@ internal static class TypeEx
     public static Type? BaseClass(this Type type)
     {
         Type baseType = type.BaseType;
-        return (baseType.IsRoot()) ? null : baseType;
+        return baseType.IsRoot() ? null : baseType;
     }
 
     public static IEnumerable<Type> Subclasses(this Type type)
@@ -116,7 +116,7 @@ internal static class TypeEx
     public static string PropertyName(this MemberInfo member)
     {
         JsonPropertyNameAttribute? attr = (JsonPropertyNameAttribute)member.GetCustomAttribute(typeof(JsonPropertyNameAttribute), true);
-        return (attr != null) ?
+        return attr != null ?
                 attr.Name :
                 member.Name;
     }

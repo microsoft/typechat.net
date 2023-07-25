@@ -20,7 +20,7 @@ public class TestTypeTranslate : TypeChatTest, IClassFixture<Config>
             return;
         }
 
-        Schema schema = Schema.Load("./SentimentSchema.ts");
+        SchemaText schema = SchemaText.Load("./SentimentSchema.ts");
         var service = KernelFactory.JsonTranslator<SentimentResponse>(
             schema,
             Config.ModelNames.Gpt35Turbo,
