@@ -40,7 +40,7 @@ public class TypeChatJsonTranslator<T>
     /// <param name="request"></param>
     /// <param name="requestSettings"></param>
     /// <param name="cancelToken"></param>
-    /// <returns></returns>
+    /// <returns>object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
         string request,

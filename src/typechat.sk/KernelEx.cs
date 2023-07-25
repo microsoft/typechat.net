@@ -7,6 +7,8 @@ public static class KernelEx
 {
     public static KernelBuilder WithChatModels(this KernelBuilder builder, OpenAIConfig config, params string[] modelNames)
     {
+        ArgumentNullException.ThrowIfNull(config, nameof(config));
+
         foreach(string modelName in modelNames)
         {
             builder.WithChatModel(modelName, config);
@@ -16,6 +18,8 @@ public static class KernelEx
 
     public static KernelBuilder WithChatModel(this KernelBuilder builder, string modelName, OpenAIConfig config)
     {
+        ArgumentNullException.ThrowIfNull(config, nameof(config));
+
         if (config.Azure)
         {
             builder = builder.WithAzureChatCompletionService(modelName, config.Endpoint, config.ApiKey, true, modelName);
@@ -29,6 +33,8 @@ public static class KernelEx
 
     public static CompletionService CompletionService(this IKernel kernel, ModelInfo model)
     {
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+
         return new CompletionService(kernel.GetService<ITextCompletion>(model.Name), model);
     }
 }
