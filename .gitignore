@@ -13,6 +13,7 @@ appSettings.local.json
 appSettings.Development.json
 config.Development.json
 .env
+launchSettings.json
 
 # Build results
 [Dd]ebug/
@@ -42,4 +43,3 @@ build/
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
-
