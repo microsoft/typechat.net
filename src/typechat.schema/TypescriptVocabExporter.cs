@@ -5,9 +5,9 @@ namespace Microsoft.TypeChat.Schema;
 public class TypescriptVocabExporter : TypeExporter<VocabType>
 {
     TypescriptWriter _writer;
-    IVocabStore _store;
+    IVocabCollection _store;
 
-    public TypescriptVocabExporter(TypescriptWriter writer, IVocabStore store)
+    public TypescriptVocabExporter(TypescriptWriter writer, IVocabCollection store)
         : base()
     {
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
@@ -17,20 +17,12 @@ public class TypescriptVocabExporter : TypeExporter<VocabType>
         _store = store;
     }
 
-    public IVocabStore Vocabs
-    {
-        get => _store;
-        set
-        {
-            ArgumentNullException.ThrowIfNull(value, nameof(Vocabs));
-            _store = value;
-        }
-    }
+    public IVocabCollection Vocabs => _store;
 
     public bool AddPending(PropertyInfo property) => AddPending(property);
     public bool AddPending(FieldInfo field) => AddPending(field);
 
-    public override void Export(VocabType type)
+    public override void ExportType(VocabType type)
     {
         ArgumentNullException.ThrowIfNull(type, nameof(type));
 

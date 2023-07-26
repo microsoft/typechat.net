@@ -7,9 +7,10 @@ public interface IVocab : IEnumerable<VocabEntry>
     bool Contains(VocabEntry entry);
 }
 
-public class Vocab : SortedSet<VocabEntry>, IVocab
+public class Vocab : List<VocabEntry>, IVocab
 {
     public Vocab() { }
+
     public Vocab(params string[] entries)
     {
         for (int i = 0; i < entries.Length; ++i)

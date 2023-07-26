@@ -32,10 +32,32 @@ public class CoffeeOrder
     public CoffeeSize Size { get; set; }
 }
 
+public class DessertOrder
+{
+    [Vocab("Desserts")]
+    [JsonPropertyName("dessert")]
+    public string Name { get; set; }
+    [JsonPropertyName("quantity")]
+    public int Quantity { get; set; }
+}
+
+public class FruitOrder
+{
+    [Vocab("Fruits")]
+    [JsonPropertyName("fruit")]
+    public string Name { get; set; }
+    [JsonPropertyName("quantity")]
+    public int Quantity { get; set; }
+}
+
 public class Order
 {
     [JsonPropertyName("coffee")]
     public CoffeeOrder[] Coffees { get; set; }
+    [JsonPropertyName("desserts")]
+    public DessertOrder[] Desserts { get; set; }
+    [JsonPropertyName("fruits")]
+    public FruitOrder[] Fruits { get; set; }
 }
 
 public class SentimentResponse
@@ -44,3 +66,35 @@ public class SentimentResponse
     public string Sentiment { get; set; }
 }
 
+public static class TestVocabs
+{
+    public static VocabType Desserts()
+    {
+        Vocab vocab = new Vocab
+        {
+            "Tiramisu",
+            "Strawberry Cake",
+            "Banana Cake",
+            "Coffee Cake",
+            "Strawberry Shortcake",
+            "Chocolate Cake"
+        };
+        return new VocabType("Desserts", vocab);
+    }
+
+    public static VocabType Fruits()
+    {
+        Vocab vocab = new Vocab
+        {
+            "Regular Apple",
+            "Honeycrisp Apple",
+            "Banana",
+            "Rainier Cherry",
+            "Blackberry",
+            "Pear",
+            "Nectarine"
+        };
+
+        return new VocabType("Fruits", vocab);
+    }
+}

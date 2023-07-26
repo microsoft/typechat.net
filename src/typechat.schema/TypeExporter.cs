@@ -50,20 +50,27 @@ public abstract class TypeExporter<T>
 
     public bool IsExported(T type) => _exportedTypes.Contains(type);
 
+    public void Export(T type)
+    {
+        AddPending(type);
+        ExportQueued();
+    }
+
     protected void AddExported(T type)
     {
         _exportedTypes.Add(type);
     }
 
-    public void ExportQueued()
+    public virtual void ExportQueued()
     {
         T? type;
         while ((type = GetPending()) != null)
         {
-            Export(type);
+            ExportType(type);
         }
     }
 
+    public abstract void ExportType(T t);
+
     protected virtual bool ShouldExport(T t) => true;
-    public abstract void Export(T t);
 }

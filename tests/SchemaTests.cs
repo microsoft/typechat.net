@@ -5,20 +5,39 @@ namespace Microsoft.TypeChat.Tests;
 public class SchemaTests : TypeChatTest
 {
     [Fact]
-    public void ExportText()
+    public void ExportBasic()
     {
-        TypeSchema schema = TypescriptExporter.GenerateSchema(typeof(Order));
-        Assert.NotNull(schema);
-        Assert.Equal(typeof(Order), schema.Type);
-        Assert.False(string.IsNullOrEmpty(schema.Schema));
+        TypeSchema schema = TypescriptExporter.GenerateSchema(typeof(SentimentResponse));
+        ValidateBasic(typeof(SentimentResponse), schema);
+        Assert.True(schema.Schema.Text.Contains("sentiment"));
+
+        schema = TypescriptExporter.GenerateSchema(typeof(Order));
+        ValidateBasic(typeof(Order), schema);
     }
 
     [Fact]
     public void ExportVocab()
     {
+        var dessertVocab = TestVocabs.Desserts();
+        var fruitsVocab = TestVocabs.Fruits();
+
+        VocabCollection vocabs = new VocabCollection { dessertVocab, fruitsVocab };
+        var schema = TypescriptExporter.GenerateSchema(typeof(DessertOrder), vocabs);
+        ValidateBasic(typeof(DessertOrder), schema);
+        ValidateVocab(schema, dessertVocab);
+
+        schema = TypescriptExporter.GenerateSchema(typeof(Order), vocabs);
+        ValidateBasic(typeof(Order), schema);
+        ValidateVocab(schema, dessertVocab);
+        ValidateVocab(schema, fruitsVocab);
+    }
+
+    [Fact]
+    public void ExportVocabDirect()
+    {
         string vocabName = "Foo";
         using StringWriter sw = new StringWriter();
-        VocabStore store = new VocabStore
+        VocabCollection store = new VocabCollection
         {
             {vocabName, new Vocab("One", "Two", "Three") }
         };
@@ -32,7 +51,28 @@ public class SchemaTests : TypeChatTest
 
         // TODO: better checks for correctness
         Assert.EndsWith(";", text.Trim());
-        foreach(var entry in type.Vocab)
+        ValidateVocab(text, type.Vocab);
+    }
+
+    // *Very* basic checks.
+    // Need actual robust validation, e.g. by loading in Typescript
+    //   
+    void ValidateBasic(Type type, TypeSchema schema)
+    {
+        Assert.NotNull(schema);
+        Assert.Equal(type, schema.Type);
+        Assert.False(string.IsNullOrEmpty(schema.Schema));
+    }
+
+    void ValidateVocab(TypeSchema schema, VocabType vocab)
+    {
+        ValidateVocab(schema.Schema.Text, vocab.Vocab);
+    }
+
+    void ValidateVocab(string text, IVocab vocab)
+    {
+        // Kludgy for now
+        foreach (var entry in vocab)
         {
             Assert.True(text.Contains($"'{entry}'"));
         }
