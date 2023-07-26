@@ -1,13 +1,15 @@
 # TypeChat.NET
 
-TypeChat.NET makes it easy to build natural language interfaces using Types.
+TypeChat.NET is an experimental project that makes it easy to build natural language interfaces using Types.
 
 It applies the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET and integrates them with the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel). 
 
 TypeChat.NET consists of the following assemblies:
 - TypeChat
-- TypeChat.Schema: Experimental classes for exporting .NET types as Typescript schema.
+- TypeChat.Schema: Experimental classes for exporting .NET types as Typescript schema. 
 - TypeChat.SK: Integration with Semantic Kernel. 
+
+TypeChat.NET is still in **active development** with very frequent changes. 
 
 ## TypeChat ##
 Brings TypeChat to .NET.
@@ -17,7 +19,9 @@ Brings TypeChat to .NET.
 The library is an ***in-progress*** port of the TypeChat library with .NET idiom introduced suitably. But it does not implement bindings to a specific AI model or API. For that you use the Typechat.sk library below, or roll your own.
 
 ## TypeChat.Schema ##
-The library provides experimental exporters for .NET Types to Typescript schema. 
+The library provides exporters for .NET Types to Typescript schema. 
+
+Includes support for dynamic export at runtime, including with ***each request*** to the AI. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team. TypeChat itself does not current support this. 
 
 ## TypeChat.SK ##
 TypeChat.SK makes it easy to get ***strongly typed*** .NET objects from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel).
@@ -64,8 +68,9 @@ To see TypeChat in action, we recommend exploring the [TypeChat example projects
 - Create appSettings.Development.json
 - Add your Api Key
 
-
-Each example includes an **input.txt** with sample input. 
+### Inputs
+- Each example includes an **input.txt** with sample input. 
+- Pass the input file as an argument to run the example in **batch mode**. 
 
 # Contributing
 

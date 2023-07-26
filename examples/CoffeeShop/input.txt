@@ -9,6 +9,9 @@ i would like a large coffee, extra hot
 2 tall coffees. Also a machiato, doppio
 coffee with milk
 1 coffee with whole milk, 1 grande coffee black, 1 espresso with cream
+A coffee with sugar and almond milk please
+A coffee with sugar and almond milk AND an espresso with foam
+A coffee with sugar and almond milk AND a doppio espresso with foam
 
 # These should give an unknown
 i want a banana, a bran muffin and 2 tall coffees

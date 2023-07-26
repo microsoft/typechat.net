@@ -2,11 +2,18 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// A Vocabulary is a dynamic string table whose values ARE NOT HARDCODED IN CODE - e.g. lists of product names
+/// This means that each time a schema is generated, it can be different.
+/// </summary>
 public interface IVocab : IEnumerable<VocabEntry>
 {
     bool Contains(VocabEntry entry);
 }
 
+/// <summary>
+/// An in-memory vocabulary. 
+/// </summary>
 public class Vocab : List<VocabEntry>, IVocab
 {
     public Vocab() { }

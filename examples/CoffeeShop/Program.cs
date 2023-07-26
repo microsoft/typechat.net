@@ -17,6 +17,7 @@ public class CoffeeShop : ConsoleApp
     {
         _typeSchema = GenerateSchema();
         _service = KernelFactory.JsonTranslator<Cart>(_typeSchema.Schema, Config.LoadOpenAI());
+        // Uncomment to see the raw reponse from the AI
        // _service.CompletionReceived += this.OnCompletionReceived;
     }
 
@@ -58,7 +59,9 @@ public class CoffeeShop : ConsoleApp
 
     private void OnCompletionReceived(string value)
     {
+        Console.WriteLine("=== RAW RESPONSE ===");
         Console.WriteLine(value);
+        Console.WriteLine("====================");
     }
 
     static TypeSchema GenerateSchema()
@@ -69,7 +72,11 @@ public class CoffeeShop : ConsoleApp
     public static async Task<int> Main(string[] args)
     {
         CoffeeShop app = new CoffeeShop();
-        await app.RunAsync("☕> ", args.GetOrNull(2));
+
+        // Un-comment to print auto-generated schema at start:
+        //Console.WriteLine(app.Schema.Schema.Text);
+
+        await app.RunAsync("☕> ", args.GetOrNull(0));
         return 0;
     }
 }
