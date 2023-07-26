@@ -1,5 +1,4 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
-using System.Reflection;
 
 namespace Microsoft.TypeChat.Schema;
 
@@ -52,12 +51,12 @@ internal static class TypeEx
         }
     }
 
-    public static bool IsNullable(this Type type)
+    public static bool IsNullableValueType(this Type type)
     {
         return type.IsGenericType && Nullable.GetUnderlyingType(type) != null;
     }
 
-    public static Type? GetNullableType(this Type type)
+    public static Type? GetNullableValueType(this Type type)
     {
         Type baseType = null;
         if (type.IsGenericType)
@@ -121,9 +120,14 @@ internal static class TypeEx
                 member.Name;
     }
 
+    public static VocabAttribute? Vocab(this MemberInfo member)
+    {
+        return member.GetCustomAttribute(typeof(VocabAttribute)) as VocabAttribute;
+    }
+
     public static string? VocabName(this MemberInfo member)
     {
-        VocabAttribute? attr = member.GetCustomAttribute(typeof(VocabAttribute)) as VocabAttribute;
+        VocabAttribute? attr = member.Vocab();
         return attr != null ?
                attr.Name :
                null;

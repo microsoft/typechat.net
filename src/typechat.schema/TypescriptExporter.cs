@@ -21,6 +21,7 @@ public class TypescriptExporter : TypeExporter<Type>
     TypescriptWriter _writer;
     HashSet<Type> _nonExportTypes;
     TypescriptVocabExporter? _vocabExporter;
+    NullabilityInfoContext _nullableInfo;
 
     public TypescriptExporter(TextWriter writer)
         : this(new TypescriptWriter(writer))
@@ -38,6 +39,7 @@ public class TypescriptExporter : TypeExporter<Type>
             typeof(Array),
             typeof(Nullable<>)
         };
+        _nullableInfo = new NullabilityInfoContext();
     }
 
     public TypescriptWriter Writer => _writer;
@@ -70,6 +72,7 @@ public class TypescriptExporter : TypeExporter<Type>
         base.Clear();
         _writer.Clear();
         _vocabExporter?.Clear();
+        _nullableInfo = null;
     }
 
     public override void ExportQueued()
@@ -131,7 +134,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
             if (this.IncludeDiscriminator && baseClass != null)
             {
-                Discriminator(typeName);
+                ExportDiscriminator(type);
             }
             ExportMembers(type);
 
@@ -312,54 +315,87 @@ public class TypescriptExporter : TypeExporter<Type>
 
     TypescriptExporter ExportVariable(MemberInfo member, Type type)
     {
-        Type? nullableType = type.GetNullableType();
-        bool isNullable = (nullableType != null);
-        Type actualType = isNullable ? nullableType : type;
+        Type actualType;
+        bool isNullable;
+        if (type.IsValueType)
+        {
+            Type? nullableType = type.GetNullableValueType();
+            isNullable = (nullableType != null);
+            actualType = isNullable ? nullableType : type;
+        }
+        else
+        {
+            actualType = type;
+            isNullable = IsNullableRef(member);
+        }
+
         if (actualType.IsString() &&
             ExportVocab(member, actualType, isNullable))
         {
             return this;
         }
 
-        _writer.
-        SOL().
-            Variable(
+        _writer.SOL();
+        {
+            _writer.Variable(
                 member.PropertyName(),
                 DataType(actualType),
                 type.IsArray,
                 isNullable
-            ).
-        EOL();
+            );
+        }
+        _writer.EOL();
         return this;
     }
 
     bool ExportVocab(MemberInfo member, Type type, bool isNullable)
     {
-        VocabType? vocabType = _vocabExporter?.Vocabs.VocabFor(member);
-        if (vocabType == null)
+        VocabAttribute? vocabAttr = member.Vocab();
+        if (vocabAttr == null ||
+            !vocabAttr.HasName)
         {
+            // No vocab
             return false;
         }
-        _writer.
-        SOL().
-            Variable(
-                member.PropertyName(),
-                vocabType.Name,
-                type.IsArray,
-                isNullable
-            ).
-        EOL();
 
-        _vocabExporter.AddPending(vocabType);
+        VocabType? vocabType = _vocabExporter?.Vocabs.Get(vocabAttr.Name);
+        if (vocabType == null)
+        {
+            // No vocab
+            throw new TypescriptExportException(TypescriptExportException.ErrorCode.VocabNotFound, vocabAttr.Name);
+        }
 
+        if (vocabAttr.Inline)
+        {
+            _writer.SOL();
+            {
+                _writer.Variable(member.PropertyName(), vocabType.Vocab.Strings());
+            }
+            _writer.EOL();
+        }
+        else
+        {
+            _writer.SOL();
+            {
+                _writer.Variable(
+                    member.PropertyName(),
+                    vocabType.Name,
+                    type.IsArray,
+                    isNullable
+                );
+            }
+            _writer.EOL();
+
+            _vocabExporter.AddPending(vocabType);
+        }
         return true;
     }
 
-    TypescriptExporter Discriminator(string name)
+    protected virtual TypescriptExporter ExportDiscriminator(Type type)
     {
         _writer.
         SOL().
-            Variable("$type", $"'{name}'").
+            Variable("$type", $"'{type.Name}'").
         EOL();
         return this;
     }
@@ -380,10 +416,35 @@ public class TypescriptExporter : TypeExporter<Type>
         return typeName;
     }
 
+    bool IsNullableRef(MemberInfo member)
+    {
+        if (member is PropertyInfo p)
+        {
+            return IsNullableRef(p);
+        }
+        else if (member is FieldInfo f)
+        {
+            return IsNullableRef(f);
+        }
+        return false;
+    }
+
+    bool IsNullableRef(PropertyInfo prop)
+    {
+        var info = _nullableInfo.Create(prop);
+        return (info.WriteState == NullabilityState.Nullable);
+    }
+
+    bool IsNullableRef(FieldInfo field)
+    {
+        var info = _nullableInfo.Create(field);
+        return (info.WriteState == NullabilityState.Nullable);
+    }
+
     protected override bool ShouldExport(Type type)
     {
         if (type.IsPrimitive ||
-            type.IsNullable())
+            type.IsNullableValueType())
         {
             return false;
         }

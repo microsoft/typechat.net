@@ -24,3 +24,12 @@ public class Vocab : List<VocabEntry>, IVocab
         return new Vocab(values);
     }
 }
+
+public static class VocabEx
+{
+    public static IEnumerable<string> Strings(this IVocab vocab)
+    {
+        return from entry in vocab
+               select entry.Text;
+    }
+}
