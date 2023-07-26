@@ -50,7 +50,7 @@ public class EspressoDrink : LineItem
     public EspressoSize? Size { get; set; }
 
     [JsonPropertyName("option")]
-    public DrinkOption? Option { get; set; }
+    public DrinkOption[]? Option { get; set; }
 }
 
 public class CoffeeDrink : LineItem
@@ -67,7 +67,7 @@ public class CoffeeDrink : LineItem
     public CoffeeSize? Size { get; set; }
 
     [JsonPropertyName("option")]
-    public DrinkOption? Options { get; set; }
+    public DrinkOption[]? Options { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -100,6 +100,10 @@ public enum EspressoSize
 [JsonPolymorphic]
 [JsonDerivedType(typeof(Creamer), typeDiscriminator: nameof(Creamer))]
 [JsonDerivedType(typeof(Milk), typeDiscriminator: nameof(Milk))]
+[JsonDerivedType(typeof(Caffeine), typeDiscriminator: nameof(Caffeine))]
+[JsonDerivedType(typeof(Sweetner), typeDiscriminator: nameof(Sweetner))]
+[JsonDerivedType(typeof(Syrup), typeDiscriminator: nameof(Syrup))]
+[JsonDerivedType(typeof(Topping), typeDiscriminator: nameof(Topping))]
 public abstract class DrinkOption
 {
 }
@@ -118,14 +122,46 @@ public class Milk : DrinkOption
     public string Name { get; set; }
 }
 
+public class Caffeine : DrinkOption
+{
+    [Vocab(CoffeeShopVocabs.Names.Caffeines, Inline = true)]
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+}
+
+public class Sweetner : DrinkOption
+{
+    [Vocab(CoffeeShopVocabs.Names.Sweetners, Inline = true)]
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+}
+
+public class Syrup : DrinkOption
+{
+    [Vocab(CoffeeShopVocabs.Names.Syrups, Inline = true)]
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+}
+
+public class Topping : DrinkOption
+{
+    [Vocab(CoffeeShopVocabs.Names.Toppings, Inline = true)]
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+}
+
 public static class CoffeeShopVocabs
 {
     public static class Names
     {
         public const string CoffeeDrinks = "CoffeeDrinks";
         public const string EspressoDrinks = "EspressoDrinks";
-        public const string Milks = "Milks";
         public const string Creamers = "Creamers";
+        public const string Milks = "Milks";
+        public const string Caffeines = "Caffeines";
+        public const string Toppings = "Toppings";
+        public const string Sweetners = "Sweetners";
+        public const string Syrups = "Syrups";
     }
 
     public static VocabCollection All()
@@ -135,7 +171,11 @@ public static class CoffeeShopVocabs
             CoffeeDrinks(),
             EspressoDrinks(),
             Milks(),
-            Creamers()
+            Creamers(),
+            Caffeines(),
+            Sweetners(),
+            Syrups(),
+            Toppings()
         };
     }
 
@@ -143,10 +183,12 @@ public static class CoffeeShopVocabs
     {
         return new VocabType(Names.CoffeeDrinks, new Vocab { "americano", "coffee" });
     }
+
     public static VocabType EspressoDrinks()
     {
         return new VocabType(Names.EspressoDrinks, new Vocab { "espresso", "lungo", "ristretto", "macchiato" });
     }
+
     public static VocabType Milks()
     {
         return new VocabType(Names.Milks, new Vocab
@@ -177,6 +219,61 @@ public static class CoffeeShopVocabs
             "heavy cream"
         });
     }
+
+    public static VocabType Caffeines()
+    {
+        return new VocabType(Names.Caffeines, new Vocab
+        {
+            "regular",
+            "two thirds caf",
+            "half caf",
+            "one third caf",
+            "decaf"
+        });
+    }
+
+    public static VocabType Toppings()
+    {
+        return new VocabType(Names.Toppings, new Vocab
+        {
+            "cinnamon",
+            "foam",
+            "ice",
+            "nutmeg",
+            "whipped cream",
+            "water"
+        });
+    }
+
+    public static VocabType Sweetners()
+    {
+        return new VocabType(Names.Sweetners, new Vocab
+        {
+            "equal",
+            "honey",
+            "splenda",
+            "sugar",
+            "sugar in the raw",
+            "sweet n low"
+        });
+    }
+
+    public static VocabType Syrups()
+    {
+        return new VocabType(Names.Syrups, new Vocab
+        {
+            "almond syrup",
+            "buttered rum syrup",
+            "caramel syrup",
+            "cinnamon syrup",
+            "hazelnut syrup",
+            "orange syrup",
+            "peppermint syrup",
+            "raspberry syrup",
+            "toffee syrup",
+            "vanilla syrup"
+        });
+    }
 }
 
 internal static class Test
@@ -193,5 +290,4 @@ internal static class Test
         };
         return cart;
     }
-
 }
