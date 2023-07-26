@@ -24,7 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sentiment", "examples\Senti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.app", "src\typechat.app\typechat.app.csproj", "{4F6278AB-D48C-43B8-BEF5-F28B1150B3C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "typechat.schema", "src\typechat.schema\typechat.schema.csproj", "{6A28E737-6B93-4E01-A11B-0EAF1392B4E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.schema", "src\typechat.schema\typechat.schema.csproj", "{6A28E737-6B93-4E01-A11B-0EAF1392B4E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeShop", "examples\CoffeeShop\CoffeeShop.csproj", "{AB618076-FA46-4014-871A-B78179E248FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,12 +58,17 @@ Global
 		{6A28E737-6B93-4E01-A11B-0EAF1392B4E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A28E737-6B93-4E01-A11B-0EAF1392B4E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A28E737-6B93-4E01-A11B-0EAF1392B4E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB618076-FA46-4014-871A-B78179E248FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB618076-FA46-4014-871A-B78179E248FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB618076-FA46-4014-871A-B78179E248FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB618076-FA46-4014-871A-B78179E248FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{68E9AF34-7982-4BA4-864D-D24DF937A6A2} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
+		{AB618076-FA46-4014-871A-B78179E248FF} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A9AF678-E669-4AF2-9644-7EBB970DAC41}

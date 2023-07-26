@@ -44,6 +44,7 @@ public class TypescriptExporter : TypeExporter<Type>
     public bool IncludeSubclasses { get; set; } = true;
     public bool IncludeComments { get; set; } = true;
     public bool EnumsAsLiterals { get; set; } = false;
+    public bool IncludeDiscriminator { get; set; } = true;
 
     public IVocabCollection Vocabs
     {
@@ -103,8 +104,10 @@ public class TypescriptExporter : TypeExporter<Type>
 
     public TypescriptExporter ExportClass(Type type)
     {
-        Debug.Assert(type.IsClass);
-
+        if (!type.IsClass)
+        {
+            throw new ArgumentException($"{type.Name} must be a class");
+        }
         ArgumentNullException.ThrowIfNull(type, nameof(type));
 
         if (IsExported(type))
@@ -125,7 +128,13 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.BeginInterface(typeName, baseClassName);
         {
             _writer.PushIndent();
+
+            if (this.IncludeDiscriminator && baseClass != null)
+            {
+                Discriminator(typeName);
+            }
             ExportMembers(type);
+
             _writer.PopIndent();
         }
         _writer.EndInterface(typeName);
@@ -344,6 +353,15 @@ public class TypescriptExporter : TypeExporter<Type>
         _vocabExporter.AddPending(vocabType);
 
         return true;
+    }
+
+    TypescriptExporter Discriminator(string name)
+    {
+        _writer.
+        SOL().
+            Variable("$type", $"'{name}'").
+        EOL();
+        return this;
     }
 
     string DataType(Type type)

@@ -62,7 +62,7 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
     string ToErrorString(string json, JsonException error)
     {
         StringBuilder sb = new StringBuilder();
-        //sb.AppendLine(error.Message);
+        sb.AppendLine(error.Message);
         if (error.Path != null)
         {
             sb.Append("Property with error: ");
