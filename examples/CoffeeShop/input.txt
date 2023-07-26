@@ -1,8 +1,7 @@
 # Ported from Typechat example
 i'd like a latte that's it
-# i'll have a dark roast coffee thank you
+i'll have a dark roast coffee thank you
 get me a coffee please
-could i please get two mochas that's all
 
 # These should always work
 i want a coffee

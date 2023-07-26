@@ -17,7 +17,7 @@ public class CoffeeShop : ConsoleApp
     {
         _typeSchema = GenerateSchema();
         _service = KernelFactory.JsonTranslator<Cart>(_typeSchema.Schema, Config.LoadOpenAI());
-        _service.CompletionReceived += this.OnCompletionReceived;
+       // _service.CompletionReceived += this.OnCompletionReceived;
     }
 
     public TypeSchema Schema => _typeSchema;
@@ -25,30 +25,35 @@ public class CoffeeShop : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Cart cart = await _service.TranslateAsync(input);
+
         string json = Json.Stringify(cart);
-        PrintAnyUnknown(cart);
         Console.WriteLine(json);
+
+        if (PrintAnyUnknown(cart) == 0)
+        {
+            Console.WriteLine("Success!");
+        }
     }
 
-    void PrintAnyUnknown(Cart cart)
+    int PrintAnyUnknown(Cart cart)
     {
-        if (cart.Items == null)
-        {
-            return;
-        }
         int countUnknown = 0;
-        foreach(var item in cart.Items)
+        if (cart.Items != null)
         {
-            if (item is UnknownItem unknown)
+            foreach (var item in cart.Items)
             {
-                if (countUnknown == 0)
+                if (item is UnknownItem unknown)
                 {
-                    Console.WriteLine("I didn't understand the following:");
+                    if (countUnknown == 0)
+                    {
+                        Console.WriteLine("I didn't understand the following:");
+                    }
+                    Console.WriteLine(unknown.Text);
+                    ++countUnknown;
                 }
-                Console.WriteLine(unknown.Text);
-                ++countUnknown;
             }
         }
+        return countUnknown;
     }
 
     private void OnCompletionReceived(string value)
@@ -64,7 +69,6 @@ public class CoffeeShop : ConsoleApp
     public static async Task<int> Main(string[] args)
     {
         CoffeeShop app = new CoffeeShop();
-        Console.WriteLine(app.Schema.Schema.Text);
         await app.RunAsync("☕> ", args.GetOrNull(2));
         return 0;
     }

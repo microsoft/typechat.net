@@ -20,22 +20,28 @@ public class Json
     }
 
     public static readonly Json Default = new Json();
+    public static readonly Json Indented = new Json(true);
 
     JsonSerializerOptions _options;
 
-    public Json()
+    public Json(bool indented = false)
     {
         _options = DefaultOptions();
+        _options.WriteIndented = indented;
     }
 
-    public static string Stringify(object value)
+    public static string Stringify(object value, bool indented = true)
     {
-        return Default.Serialize(value);
+        return indented ?
+               Indented.Serialize(value) :
+               Default.Serialize(value);
     }
 
-    public static string Stringify<T>(T value)
+    public static string Stringify<T>(T value, bool indented = true)
     {
-        return Default.Serialize<T>(value);
+        return indented ?
+               Indented.Serialize(value) :
+               Default.Serialize<T>(value);
     }
 
     public static object? Parse(string json, Type type)
