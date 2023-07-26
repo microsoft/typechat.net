@@ -22,16 +22,16 @@ public class SentimentApp : ConsoleApp
         _service = KernelFactory.JsonTranslator<SentimentResponse>(Config.LoadOpenAI());
     }
 
-    protected override async Task ProcessRequestAsync(string line, CancellationToken cancelToken)
+    protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        SentimentResponse response = await _service.TranslateAsync(line);
-        await WriteLineAsync($"The sentiment is {response.Sentiment}");
+        SentimentResponse response = await _service.TranslateAsync(input);
+        Console.WriteLine($"The sentiment is {response.Sentiment}");
     }
 
     public static async Task<int> Main(string[] args)
     {
         SentimentApp app = new SentimentApp();
-        await app.RunAsync();
+        await app.RunAsync("😀> ", args.GetOrNull(0));
         return 0;
     }
 }

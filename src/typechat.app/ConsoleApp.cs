@@ -13,27 +13,66 @@ public abstract class ConsoleApp
     }
 
 
-    public string? InteractivePrompt { get; set; } = "😀> ";
+    public string? ConsolePrompt { get; set; } = ">";
     public IList<string> StopStrings => _stopStrings;
+    public string CommentPrefix = "#";
+
+    public Task RunAsync(string consolePrompt, string? inputFilePath = null)
+    {
+        ConsolePrompt = consolePrompt;
+        if (string.IsNullOrEmpty(inputFilePath))
+        {
+            return RunAsync();
+        }
+        else
+        {
+            return RunBatchAsync(inputFilePath);
+        }
+    }
 
     public async Task RunAsync(CancellationToken cancelToken = default)
     {
         while (!cancelToken.IsCancellationRequested)
         {
-            Console.Write(InteractivePrompt);
+            Console.Write(ConsolePrompt);
             string? input = await ReadLineAsync(cancelToken).ConfigureAwait(false);
             if (IsStop(input))
             {
                 break;
             }
-            try
+            await EvalInput(input, cancelToken).ConfigureAwait(false);
+        }
+    }
+
+    public async Task RunBatchAsync(string batchFilePath, CancellationToken cancelToken = default)
+    {
+        using var reader = new StreamReader(batchFilePath);
+        string line = null;
+        while (!cancelToken.IsCancellationRequested &&
+              (line = reader.ReadLine()) != null)
+        {
+            line = line.Trim();
+            if (line.Length == 0 ||
+               line.StartsWith(CommentPrefix))
             {
-                await ProcessRequestAsync(input, cancelToken).ConfigureAwait(false);
+                continue;
             }
-            catch (Exception ex)
-            {
-                await WriteLineAsync(ex.Message).ConfigureAwait(false);
-            }
+
+            Console.Write(ConsolePrompt);
+            Console.WriteLine(line);
+            await EvalInput(line, cancelToken).ConfigureAwait(false);
+        }
+    }
+
+    async Task EvalInput(string input, CancellationToken cancelToken)
+    {
+        try
+        {
+            await ProcessRequestAsync(input, cancelToken).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            await OnError(input, ex);
         }
     }
 
@@ -64,5 +103,11 @@ public abstract class ConsoleApp
         }
     }
 
-    protected abstract Task ProcessRequestAsync(string line, CancellationToken cancelToken);
+    protected abstract Task ProcessRequestAsync(string input, CancellationToken cancelToken);
+    protected virtual Task OnError(string input, Exception ex)
+    {
+        Console.WriteLine(ex);
+        Console.WriteLine();
+        return Task.CompletedTask;
+    }
 }

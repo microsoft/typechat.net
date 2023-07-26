@@ -13,13 +13,8 @@ namespace CoffeeShop;
 
 [JsonPolymorphic]
 [JsonDerivedType(typeof(LineItem), typeDiscriminator: nameof(LineItem))]
-[JsonDerivedType(typeof(UnknownText), typeDiscriminator: nameof(UnknownText))]
+[JsonDerivedType(typeof(UnknownItem), typeDiscriminator: nameof(UnknownItem))]
 public abstract class CartItem { }
-
-[JsonPolymorphic]
-[JsonDerivedType(typeof(EspressoDrink), typeDiscriminator: nameof(EspressoDrink))]
-[JsonDerivedType(typeof(CoffeeDrink), typeDiscriminator: nameof(CoffeeDrink))]
-public abstract class Product { }
 
 public class Cart
 {
@@ -27,12 +22,14 @@ public class Cart
     public CartItem[] Items;
 }
 
-// Use this type for order items that match nothing else
-public class UnknownText : CartItem
+[Comment("Use this type for order items that match nothing else")]
+public class UnknownItem : CartItem
 {
-    public string Text; // The text that wasn't understoodx
+    [Comment("The text that wasn't understoodx")]
+    public string Text;
 }
 
+[Comment("Use this type for ALL other order items")]
 public class LineItem : CartItem
 {
     [JsonPropertyName("product")]
@@ -40,6 +37,12 @@ public class LineItem : CartItem
     [JsonPropertyName("quantity")]
     public int Quantity;
 }
+
+[JsonPolymorphic]
+[JsonDerivedType(typeof(EspressoDrink), typeDiscriminator: nameof(EspressoDrink))]
+[JsonDerivedType(typeof(CoffeeDrink), typeDiscriminator: nameof(CoffeeDrink))]
+[Comment("Product is always contained inside LineItem")]
+public abstract class Product { }
 
 public class EspressoDrink : Product
 {

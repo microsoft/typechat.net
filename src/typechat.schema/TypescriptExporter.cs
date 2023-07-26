@@ -359,7 +359,7 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         _writer.
         SOL().
-            Variable("$type", name).
+            Variable("$type", $"'{name}'").
         EOL();
         return this;
     }
