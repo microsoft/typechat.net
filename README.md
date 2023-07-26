@@ -58,11 +58,14 @@ You will need Visual Studio 2022. VS Code is not tested.
 
 To see TypeChat in action, we recommend exploring the [TypeChat example projects](./examples). 
 
-- You will need to provide an Open API key
+### Api Key
+- You will need to provide an **Open API key**
 - Go to the ***examples*** folder in the solution
 - Create appSettings.Development.json
 - Add your Api Key
 
+
+Each example includes an **input.txt** with sample input. 
 
 # Contributing
 
