@@ -48,6 +48,9 @@ public class EspressoDrink : LineItem
     [JsonPropertyName("size")]
     [Comment("The default is 'Grande'")]
     public EspressoSize? Size { get; set; }
+
+    [JsonPropertyName("option")]
+    public DrinkOption? Option { get; set; }
 }
 
 public class CoffeeDrink : LineItem
@@ -62,6 +65,9 @@ public class CoffeeDrink : LineItem
     [JsonPropertyName("size")]
     [Comment("The default is 'Grande'")]
     public CoffeeSize? Size { get; set; }
+
+    [JsonPropertyName("option")]
+    public DrinkOption? Options { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -91,12 +97,35 @@ public enum EspressoSize
     Quad
 }
 
+[JsonPolymorphic]
+[JsonDerivedType(typeof(Creamer), typeDiscriminator: nameof(Creamer))]
+[JsonDerivedType(typeof(Milk), typeDiscriminator: nameof(Milk))]
+public abstract class DrinkOption
+{
+}
+
+public class Creamer : DrinkOption
+{
+    [Vocab(CoffeeShopVocabs.Names.Creamers, Inline = true)]
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+}
+
+public class Milk : DrinkOption
+{
+    [Vocab(CoffeeShopVocabs.Names.Milks, Inline = true)]
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+}
+
 public static class CoffeeShopVocabs
 {
     public static class Names
     {
         public const string CoffeeDrinks = "CoffeeDrinks";
         public const string EspressoDrinks = "EspressoDrinks";
+        public const string Milks = "Milks";
+        public const string Creamers = "Creamers";
     }
 
     public static VocabCollection All()
@@ -104,7 +133,9 @@ public static class CoffeeShopVocabs
         return new VocabCollection
         {
             CoffeeDrinks(),
-            EspressoDrinks()
+            EspressoDrinks(),
+            Milks(),
+            Creamers()
         };
     }
 
@@ -115,6 +146,36 @@ public static class CoffeeShopVocabs
     public static VocabType EspressoDrinks()
     {
         return new VocabType(Names.EspressoDrinks, new Vocab { "espresso", "lungo", "ristretto", "macchiato" });
+    }
+    public static VocabType Milks()
+    {
+        return new VocabType(Names.Milks, new Vocab
+        {
+            "whole milk",
+            "two percent milk",
+            "nonfat milk",
+            "coconut milk",
+            "soy milk",
+            "almond milk",
+            "oat milk"
+        });
+    }
+
+    public static VocabType Creamers()
+    {
+        return new VocabType(Names.Creamers, new Vocab
+        {
+            "whole milk creamer",
+            "two percent milk creamer",
+            "one percent milk creamer",
+            "nonfat milk creamer",
+            "coconut milk creamer",
+            "soy milk creamer",
+            "almond milk creamer",
+            "oat milk creamer",
+            "half and half",
+            "heavy cream"
+        });
     }
 }
 

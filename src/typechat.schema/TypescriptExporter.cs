@@ -131,7 +131,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
             if (this.IncludeDiscriminator && baseClass != null)
             {
-                Discriminator(typeName);
+                ExportDiscriminator(type);
             }
             ExportMembers(type);
 
@@ -321,45 +321,67 @@ public class TypescriptExporter : TypeExporter<Type>
             return this;
         }
 
-        _writer.
-        SOL().
-            Variable(
+        _writer.SOL();
+        {
+            _writer.Variable(
                 member.PropertyName(),
                 DataType(actualType),
                 type.IsArray,
                 isNullable
-            ).
-        EOL();
+            );
+        }
+        _writer.EOL();
         return this;
     }
 
     bool ExportVocab(MemberInfo member, Type type, bool isNullable)
     {
-        VocabType? vocabType = _vocabExporter?.Vocabs.VocabFor(member);
-        if (vocabType == null)
+        VocabAttribute? vocabAttr = member.Vocab();
+        if (vocabAttr == null ||
+            !vocabAttr.HasName)
         {
+            // No vocab
             return false;
         }
-        _writer.
-        SOL().
-            Variable(
-                member.PropertyName(),
-                vocabType.Name,
-                type.IsArray,
-                isNullable
-            ).
-        EOL();
 
-        _vocabExporter.AddPending(vocabType);
+        VocabType? vocabType = _vocabExporter?.Vocabs.Get(vocabAttr.Name);
+        if (vocabType == null)
+        {
+            // No vocab
+            throw new TypescriptExportException(TypescriptExportException.ErrorCode.VocabNotFound, vocabAttr.Name);
+        }
 
+        if (vocabAttr.Inline)
+        {
+            _writer.SOL();
+            {
+                _writer.Variable(member.PropertyName(), vocabType.Vocab.Strings());
+            }
+            _writer.EOL();
+        }
+        else
+        {
+            _writer.SOL();
+            {
+                _writer.Variable(
+                    member.PropertyName(),
+                    vocabType.Name,
+                    type.IsArray,
+                    isNullable
+                );
+            }
+            _writer.EOL();
+
+            _vocabExporter.AddPending(vocabType);
+        }
         return true;
     }
 
-    TypescriptExporter Discriminator(string name)
+    protected virtual TypescriptExporter ExportDiscriminator(Type type)
     {
         _writer.
         SOL().
-            Variable("$type", $"'{name}'").
+            Variable("$type", $"'{type.Name}'").
         EOL();
         return this;
     }

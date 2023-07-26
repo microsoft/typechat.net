@@ -11,7 +11,7 @@ public class SchemaTests : TypeChatTest
         ValidateBasic(typeof(SentimentResponse), schema);
         Assert.True(schema.Schema.Text.Contains("sentiment"));
 
-        schema = TypescriptExporter.GenerateSchema(typeof(Order));
+        schema = TypescriptExporter.GenerateSchema(typeof(Order), TestVocabs.All());
         ValidateBasic(typeof(Order), schema);
     }
 
@@ -30,6 +30,16 @@ public class SchemaTests : TypeChatTest
         ValidateBasic(typeof(Order), schema);
         ValidateVocab(schema, dessertVocab);
         ValidateVocab(schema, fruitsVocab);
+    }
+
+    [Fact]
+    public void ExportVocabInline()
+    {
+        var milks = TestVocabs.Milks();
+        VocabCollection vocabs = new VocabCollection { milks };
+        var schema = TypescriptExporter.GenerateSchema(typeof(Milk), vocabs);
+        ValidateBasic(typeof(Milk), schema);
+        ValidateVocabInline(schema, milks);
     }
 
     [Fact]
@@ -66,6 +76,13 @@ public class SchemaTests : TypeChatTest
 
     void ValidateVocab(TypeSchema schema, VocabType vocab)
     {
+        ValidateVocab(schema.Schema.Text, vocab.Vocab);
+    }
+
+    void ValidateVocabInline(TypeSchema schema, VocabType vocab)
+    {
+        // Type should not be emitted. Kludgy test
+        Assert.False(schema.Schema.Text.Contains(vocab.Name));
         ValidateVocab(schema.Schema.Text, vocab.Vocab);
     }
 

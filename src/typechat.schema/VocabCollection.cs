@@ -57,19 +57,3 @@ public class VocabCollection : IVocabCollection
         return GetEnumerator();
     }
 }
-
-public static class VocabStoreEx
-{
-    public static VocabType? VocabFor(this IVocabCollection store, MemberInfo member)
-    {
-        ArgumentNullException.ThrowIfNull(member, nameof(member));
-
-        string? vocabName = member.VocabName();
-        if (string.IsNullOrEmpty(vocabName))
-        {
-            return null;
-        }
-
-        return store.Get(vocabName);
-    }
-}

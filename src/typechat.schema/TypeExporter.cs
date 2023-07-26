@@ -20,7 +20,6 @@ public abstract class TypeExporter<T>
         _pendingTypes?.Clear();
     }
 
-
     public void AddPending(T type)
     {
         if (!IsExported(type) && ShouldExport(type))

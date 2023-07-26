@@ -19,9 +19,6 @@ public class TypescriptVocabExporter : TypeExporter<VocabType>
 
     public IVocabCollection Vocabs => _store;
 
-    public bool AddPending(PropertyInfo property) => AddPending(property);
-    public bool AddPending(FieldInfo field) => AddPending(field);
-
     public override void ExportType(VocabType type)
     {
         ArgumentNullException.ThrowIfNull(type, nameof(type));
@@ -38,19 +35,6 @@ public class TypescriptVocabExporter : TypeExporter<VocabType>
         }
         _writer.EOS();
         AddExported(type);
-    }
-
-    bool AddPending(MemberInfo member)
-    {
-        VocabType? vocab = _store.VocabFor(member);
-        if (vocab == null ||
-            IsExported(vocab))
-        {
-            return false;
-        }
-
-        AddPending(vocab);
-        return true;
     }
 
     void ExportValues(IVocab vocab)

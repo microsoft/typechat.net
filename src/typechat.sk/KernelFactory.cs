@@ -35,6 +35,13 @@ public static class KernelFactory
         return JsonTranslator<T>(config.Model, config);
     }
 
+    public static TypeChatJsonTranslator<T> JsonTranslator<T>(SchemaText schema, OpenAIConfig config)
+    {
+        ArgumentNullException.ThrowIfNull(config, nameof(config));
+
+        return JsonTranslator<T>(schema, config.Model, config);
+    }
+
     public static TypeChatJsonTranslator<T> JsonTranslator<T>(this IKernel kernel, TypeChat.SchemaText schema, ModelInfo model)
     {
         TypeChatJsonTranslator<T> typechat = new TypeChatJsonTranslator<T>(

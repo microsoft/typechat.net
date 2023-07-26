@@ -1,5 +1,4 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
-using System.Reflection;
 
 namespace Microsoft.TypeChat.Schema;
 
@@ -121,9 +120,14 @@ internal static class TypeEx
                 member.Name;
     }
 
+    public static VocabAttribute? Vocab(this MemberInfo member)
+    {
+        return member.GetCustomAttribute(typeof(VocabAttribute)) as VocabAttribute;
+    }
+
     public static string? VocabName(this MemberInfo member)
     {
-        VocabAttribute? attr = member.GetCustomAttribute(typeof(VocabAttribute)) as VocabAttribute;
+        VocabAttribute? attr = member.Vocab();
         return attr != null ?
                attr.Name :
                null;

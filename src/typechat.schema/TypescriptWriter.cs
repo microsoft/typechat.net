@@ -123,6 +123,12 @@ public class TypescriptWriter
         return this;
     }
 
+    public TypescriptWriter Variable(string name, IEnumerable<string> literals)
+    {
+        Name(name).Colon().Space().Literals(literals).Semicolon();
+        return this;
+    }
+
     public TypescriptWriter Type(string name)
     {
         return Append(Typescript.Keywords.Type).Space().Name(name);

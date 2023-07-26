@@ -14,6 +14,7 @@ public class VocabAttribute : Attribute
     }
 
     public string? Name { get; set; }
+    public bool Inline { get; set; } = false;
 
     public bool HasName => !string.IsNullOrEmpty(Name);
 }
