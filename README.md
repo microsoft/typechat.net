@@ -14,7 +14,7 @@ Brings TypeChat to .NET.
 - Json Translators
 - Json Validators
 
-The library is a faithful port of the original Typescript library with .NET idiom introduced suitably. But it does not implement bindings to a specific AI model or API. For that you use the Typechat.sk library below, or roll your own.
+The library is an ***in-progress*** port of the TypeChat library with .NET idiom introduced suitably. But it does not implement bindings to a specific AI model or API. For that you use the Typechat.sk library below, or roll your own.
 
 ## TypeChat.Schema ##
 The library provides experimental exporters for .NET Types to Typescript schema. 
