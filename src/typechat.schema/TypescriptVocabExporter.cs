@@ -1,79 +1,55 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Reflection;
-
 namespace Microsoft.TypeChat.Schema;
 
-public class TypescriptVocabExporter
+public class TypescriptVocabExporter : TypeExporter<VocabType>
 {
     TypescriptWriter _writer;
-    HashSet<string> _exported;
-    IVocabStore _store;
+    IVocabCollection _store;
 
-    public TypescriptVocabExporter(TypescriptWriter writer, IVocabStore store)
+    public TypescriptVocabExporter(TypescriptWriter writer, IVocabCollection store)
+        : base()
     {
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         ArgumentNullException.ThrowIfNull(store, nameof(store));
 
         _writer = writer;
         _store = store;
-        _exported = new HashSet<string>();
     }
 
-    public IVocabStore Vocabs
+    public IVocabCollection Vocabs => _store;
+
+    public bool AddPending(PropertyInfo property) => AddPending(property);
+    public bool AddPending(FieldInfo field) => AddPending(field);
+
+    public override void ExportType(VocabType type)
     {
-        get => _store;
-        set
-        {
-            ArgumentNullException.ThrowIfNull(value, nameof(Vocabs));
-            _store = value;
-        }
-    }
+        ArgumentNullException.ThrowIfNull(type, nameof(type));
 
-    public bool Export(PropertyInfo property) => ExportMember(property);
-    public bool Export(FieldInfo field) => ExportMember(field);
-
-    public void Export(IVocab vocab, string? typeName = null)
-    {
-        typeName ??= vocab.Name;
-        ArgumentException.ThrowIfNullOrEmpty(typeName, nameof(typeName));
-
-        if (IsExported(typeName))
+        if (IsExported(type))
         {
             return;
         }
 
         _writer.SOL();
-        _writer.Type(typeName).Space().Assign().Space();
+        _writer.Type(type.Name).Space().Assign().Space();
         {
-            ExportValues(vocab);
+            ExportValues(type.Vocab);
         }
         _writer.EOS();
-        AddExported(vocab);
+        AddExported(type);
     }
 
-    bool ExportMember(MemberInfo member)
+    bool AddPending(MemberInfo member)
     {
-        ArgumentNullException.ThrowIfNull(member, nameof(member));
-
-        VocabAttribute? vocabAttr = member.GetCustomAttribute(typeof(VocabAttribute)) as VocabAttribute;
-        if (vocabAttr == null ||
-            !vocabAttr.HasName)
-        {
-            return false;
-        }
-        if (IsExported(vocabAttr.Name))
-        {
-            return true;
-        }
-
-        IVocab? vocab = _store.Get(vocabAttr.Name);
-        if (vocab == null)
+        VocabType? vocab = _store.VocabFor(member);
+        if (vocab == null ||
+            IsExported(vocab))
         {
             return false;
         }
 
-        Export(vocab);
+        AddPending(vocab);
         return true;
     }
 
@@ -82,13 +58,5 @@ public class TypescriptVocabExporter
         var values = from entry in vocab
                      select entry.Text;
         _writer.Literals(values);
-    }
-
-    bool IsExported(IVocab vocab) => IsExported(vocab.Name);
-    bool IsExported(string vocabName) => _exported.Contains(vocabName);
-
-    void AddExported(IVocab vocab)
-    {
-        _exported.Add(vocab.Name);
     }
 }

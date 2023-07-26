@@ -1,15 +1,17 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Reflection;
-
 namespace Microsoft.TypeChat.Schema;
 
-public class TypescriptExporter
+public class TypescriptExporter : TypeExporter<Type>
 {
-    public static TypeSchema GenerateSchema(Type type)
+    public static TypeSchema GenerateSchema(Type type, IVocabCollection? vocabs = null)
     {
         using StringWriter writer = new StringWriter();
         TypescriptExporter exporter = new TypescriptExporter(writer);
+        if (vocabs != null)
+        {
+            exporter.Vocabs = vocabs;
+        }
         exporter.Export(type);
         string schema = writer.ToString();
 
@@ -17,9 +19,8 @@ public class TypescriptExporter
     }
 
     TypescriptWriter _writer;
-    HashSet<Type> _exportedTypes;
     HashSet<Type> _nonExportTypes;
-    Queue<Type>? _pendingTypes;
+    TypescriptVocabExporter? _vocabExporter;
 
     public TypescriptExporter(TextWriter writer)
         : this(new TypescriptWriter(writer))
@@ -27,10 +28,10 @@ public class TypescriptExporter
     }
 
     public TypescriptExporter(TypescriptWriter writer)
+        : base()
     {
         ArgumentNullException.ThrowIfNull(writer, nameof(writer));
         _writer = writer;
-        _exportedTypes = new HashSet<Type>();
         _nonExportTypes = new HashSet<Type>()
         {
             typeof(string),
@@ -44,49 +45,60 @@ public class TypescriptExporter
     public bool IncludeComments { get; set; } = true;
     public bool EnumsAsLiterals { get; set; } = false;
 
-    public TypescriptExporter Clear()
+    public IVocabCollection Vocabs
     {
-        _writer.Clear();
-        _exportedTypes?.Clear();
-        _pendingTypes?.Clear();
-        return this;
-    }
-
-    public TypescriptExporter Export(Type type)
-    {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
-
-        AddPending(type);
-        return ExportQueued();
-    }
-
-    public TypescriptExporter ExportQueued()
-    {
-        Type type;
-        while ((type = GetPending()) != null)
+        get
         {
-            if (type.IsArray)
+            return _vocabExporter?.Vocabs;
+        }
+        set
+        {
+            if (value != null)
             {
-                AddPending(type.GetElementType());
+                _vocabExporter = new TypescriptVocabExporter(_writer, value);
             }
             else
             {
-                if (type.IsEnum)
-                {
-                    ExportEnum(type);
-                }
-                else
-                {
-                    ExportClass(type);
-                }
-                if (IncludeSubclasses)
-                {
-                    AddPending(type.Subclasses());
-                    AddPending(type.Implementors());
-                }
+                _vocabExporter = null;
             }
         }
-        return this;
+    }
+
+    public override void Clear()
+    {
+        base.Clear();
+        _writer.Clear();
+        _vocabExporter?.Clear();
+    }
+
+    public override void ExportQueued()
+    {
+        base.ExportQueued();
+        _vocabExporter?.ExportQueued();
+    }
+
+    public override void ExportType(Type type)
+    {
+        if (type.IsArray)
+        {
+            AddPending(type.GetElementType());
+        }
+        else
+        {
+            if (type.IsEnum)
+            {
+                ExportEnum(type);
+            }
+            else
+            {
+                ExportClass(type);
+            }
+            if (IncludeSubclasses)
+            {
+                AddPending(type.Subclasses());
+                AddPending(type.Implementors());
+            }
+        }
     }
 
     public TypescriptExporter ExportClass(Type type)
@@ -292,16 +304,46 @@ public class TypescriptExporter
     TypescriptExporter ExportVariable(MemberInfo member, Type type)
     {
         Type? nullableType = type.GetNullableType();
+        bool isNullable = (nullableType != null);
+        Type actualType = isNullable ? nullableType : type;
+        if (actualType.IsString() &&
+            ExportVocab(member, actualType, isNullable))
+        {
+            return this;
+        }
+
         _writer.
-            SOL().
-                Variable(
-                    member.PropertyName(),
-                    DataType((nullableType != null) ? nullableType : type),
-                    type.IsArray,
-                    (nullableType != null)
-                ).
-            EOL();
+        SOL().
+            Variable(
+                member.PropertyName(),
+                DataType(actualType),
+                type.IsArray,
+                isNullable
+            ).
+        EOL();
         return this;
+    }
+
+    bool ExportVocab(MemberInfo member, Type type, bool isNullable)
+    {
+        VocabType? vocabType = _vocabExporter?.Vocabs.VocabFor(member);
+        if (vocabType == null)
+        {
+            return false;
+        }
+        _writer.
+        SOL().
+            Variable(
+                member.PropertyName(),
+                vocabType.Name,
+                type.IsArray,
+                isNullable
+            ).
+        EOL();
+
+        _vocabExporter.AddPending(vocabType);
+
+        return true;
     }
 
     string DataType(Type type)
@@ -320,36 +362,7 @@ public class TypescriptExporter
         return typeName;
     }
 
-    void AddPending(Type type)
-    {
-        if (!IsExported(type) && ShouldExport(type))
-        {
-            _pendingTypes ??= new Queue<Type>();
-            _pendingTypes.Enqueue(type);
-        }
-    }
-
-    public void AddPending(IEnumerable<Type> types)
-    {
-        foreach (var t in types)
-        {
-            AddPending(t);
-        }
-    }
-
-    public Type? GetPending()
-    {
-        if (_pendingTypes != null && _pendingTypes.Count > 0)
-        {
-            return _pendingTypes.Dequeue();
-        }
-
-        return null;
-    }
-
-    bool IsExported(Type type) => _exportedTypes.Contains(type);
-
-    bool ShouldExport(Type type)
+    protected override bool ShouldExport(Type type)
     {
         if (type.IsPrimitive ||
             type.IsNullable())
@@ -361,10 +374,5 @@ public class TypescriptExporter
             type = type.GetElementType();
         }
         return (!type.IsPrimitive && !_nonExportTypes.Contains(type));
-    }
-
-    void AddExported(Type type)
-    {
-        _exportedTypes.Add(type);
     }
 }

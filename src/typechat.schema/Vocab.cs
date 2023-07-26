@@ -4,20 +4,23 @@ namespace Microsoft.TypeChat.Schema;
 
 public interface IVocab : IEnumerable<VocabEntry>
 {
-    string Name { get; }
-
     bool Contains(VocabEntry entry);
 }
 
-public class Vocab : SortedSet<VocabEntry>, IVocab
+public class Vocab : List<VocabEntry>, IVocab
 {
-    string _name;
+    public Vocab() { }
 
-    public Vocab(string name)
+    public Vocab(params string[] entries)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(name, nameof(name));
-        _name = name;
+        for (int i = 0; i < entries.Length; ++i)
+        {
+            Add(entries[i]);
+        }
     }
 
-    public string Name => _name;
+    public static implicit operator Vocab(string[] values)
+    {
+        return new Vocab(values);
+    }
 }
