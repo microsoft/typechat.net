@@ -79,6 +79,14 @@ public class SentimentResponse
     public string Sentiment { get; set; }
 }
 
+public class NullableTestObj
+{
+    public CoffeeSize Required;
+    public CoffeeSize? Optional;
+    public string Text;
+    public string? OptionalText;
+}
+
 public static class TestVocabs
 {
     public static class Names

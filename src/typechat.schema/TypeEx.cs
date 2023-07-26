@@ -51,12 +51,12 @@ internal static class TypeEx
         }
     }
 
-    public static bool IsNullable(this Type type)
+    public static bool IsNullableValueType(this Type type)
     {
         return type.IsGenericType && Nullable.GetUnderlyingType(type) != null;
     }
 
-    public static Type? GetNullableType(this Type type)
+    public static Type? GetNullableValueType(this Type type)
     {
         Type baseType = null;
         if (type.IsGenericType)
