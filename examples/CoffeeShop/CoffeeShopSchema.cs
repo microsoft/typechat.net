@@ -12,39 +12,31 @@ using Microsoft.TypeChat.Schema;
 namespace CoffeeShop;
 
 [JsonPolymorphic]
-[JsonDerivedType(typeof(LineItem), typeDiscriminator: nameof(LineItem))]
 [JsonDerivedType(typeof(UnknownItem), typeDiscriminator: nameof(UnknownItem))]
+[JsonDerivedType(typeof(EspressoDrink), typeDiscriminator: nameof(EspressoDrink))]
+[JsonDerivedType(typeof(CoffeeDrink), typeDiscriminator: nameof(CoffeeDrink))]
 public abstract class CartItem { }
 
 public class Cart
 {
     [JsonPropertyName("items")]
-    public CartItem[] Items;
+    public CartItem[] Items { get; set; }
 }
 
 [Comment("Use this type for order items that match nothing else")]
 public class UnknownItem : CartItem
 {
     [Comment("The text that wasn't understoodx")]
-    public string Text;
+    public string Text { get; set; }
 }
 
-[Comment("Use this type for ALL other order items")]
-public class LineItem : CartItem
+public abstract class LineItem : CartItem
 {
-    [JsonPropertyName("product")]
-    public Product Product;
     [JsonPropertyName("quantity")]
-    public int Quantity;
+    public int Quantity { get; set; } = 1;
 }
 
-[JsonPolymorphic]
-[JsonDerivedType(typeof(EspressoDrink), typeDiscriminator: nameof(EspressoDrink))]
-[JsonDerivedType(typeof(CoffeeDrink), typeDiscriminator: nameof(CoffeeDrink))]
-[Comment("Product is always contained inside LineItem")]
-public abstract class Product { }
-
-public class EspressoDrink : Product
+public class EspressoDrink : LineItem
 {
     [Vocab(CoffeeShopVocabs.Names.EspressoDrinks)]
     [JsonPropertyName("name")]
@@ -58,7 +50,7 @@ public class EspressoDrink : Product
     public EspressoSize? Size { get; set; }
 }
 
-public class CoffeeDrink : Product
+public class CoffeeDrink : LineItem
 {
     [Vocab(CoffeeShopVocabs.Names.CoffeeDrinks)]
     [JsonPropertyName("name")]
@@ -124,4 +116,21 @@ public static class CoffeeShopVocabs
     {
         return new VocabType(Names.EspressoDrinks, new Vocab { "espresso", "lungo", "ristretto", "macchiato" });
     }
+}
+
+internal static class Test
+{
+    public static Cart TestCart()
+    {
+        Cart cart = new Cart
+        {
+            Items = new CartItem[]
+            {
+                new EspressoDrink {Name = "espresso", Quantity = 1 },
+                new CoffeeDrink {Name = "coffee", Size = CoffeeSize.Tall, Quantity = 2},
+            }
+        };
+        return cart;
+    }
+
 }

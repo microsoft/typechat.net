@@ -15,14 +15,36 @@ public class CoffeeShop : ConsoleApp
     CoffeeShop()
     {
         _service = KernelFactory.JsonTranslator<Cart>(Config.LoadOpenAI());
-        _service.CompletionReceived += this.OnCompletionReceived;
+        //_service.CompletionReceived += this.OnCompletionReceived;
     }
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Cart cart = await _service.TranslateAsync(input);
         string json = Json.Stringify(cart);
+        PrintAnyUnknown(cart);
         Console.WriteLine(json);
+    }
+
+    void PrintAnyUnknown(Cart cart)
+    {
+        if (cart.Items == null)
+        {
+            return;
+        }
+        int countUnknown = 0;
+        foreach(var item in cart.Items)
+        {
+            if (item is UnknownItem unknown)
+            {
+                if (countUnknown == 0)
+                {
+                    Console.WriteLine("I didn't understand the following:");
+                }
+                Console.WriteLine(unknown.Text);
+                ++countUnknown;
+            }
+        }
     }
 
     private void OnCompletionReceived(string value)
@@ -35,36 +57,8 @@ public class CoffeeShop : ConsoleApp
         return TypescriptExporter.GenerateSchema(typeof(Cart), CoffeeShopVocabs.All());
     }
 
-    static Cart TestCart()
-    {
-        Cart cart = new Cart
-        {
-            Items = new CartItem[]
-            {
-                new LineItem
-                {
-                    Product = new EspressoDrink {Name = "espresso" },
-                    Quantity = 1
-                },
-                new LineItem
-                {
-                    Product = new CoffeeDrink {Name = "coffee", Size = CoffeeSize.Tall},
-                    Quantity = 2
-                }
-            }
-        };
-        return cart;
-    }
-
     public static async Task<int> Main(string[] args)
     {
-        var cart = TestCart();
-        string json = Json.Stringify(cart);
-        Console.WriteLine(json);
-
-        var schema = GetSchema();
-        Console.WriteLine(schema.Schema.Text);
-
         CoffeeShop app = new CoffeeShop();
         await app.RunAsync("☕> ", args.GetOrNull(2));
         return 0;
