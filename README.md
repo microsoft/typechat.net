@@ -10,7 +10,7 @@ TypeChat.NET consists of the following assemblies:
 - TypeChat.SK: Integration with Semantic Kernel. 
 
 ## TypeChat ##
-Brings ideas of TypeChat to .NET.
+Brings TypeChat to .NET.
 - Json Translators
 - Json Validators
 
