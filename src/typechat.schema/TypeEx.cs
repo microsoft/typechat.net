@@ -51,6 +51,19 @@ internal static class TypeEx
         }
     }
 
+    public static bool IsAbstract(this PropertyInfo property)
+    {
+        var methods = property.GetAccessors();
+        for (int i = 0; i < methods.Length; ++i)
+        {
+            if (methods[i].IsAbstract)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static bool IsNullableValueType(this Type type)
     {
         return type.IsGenericType && Nullable.GetUnderlyingType(type) != null;
@@ -110,6 +123,12 @@ internal static class TypeEx
         return from comment in member.CommentAttributes()
                where comment.HasText
                select comment.Text;
+    }
+
+    public static bool IsIgnore(this MemberInfo member)
+    {
+        JsonIgnoreAttribute? attr = (JsonIgnoreAttribute)member.GetCustomAttribute(typeof(JsonIgnoreAttribute), true);
+        return attr != null;
     }
 
     public static string PropertyName(this MemberInfo member)

@@ -7,29 +7,60 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
 namespace CoffeeShop;
+
+/*
+    THIS IS A *CODE FIRST* SCHEMA FOR A COFFEE SHOP
+    The serialization format is System.Text.Json
+    THIS IS AUTO CONVERTED TO Typescript schema at runtime.
+
+    Do not rename properties or refactor without testing.
+    The model can be VERY sensitive to property names.
+    E.g. changing 'productName' to 'name' can lead to the model being less stringent about what it places in that field. 
+ */
 
 [JsonPolymorphic]
 [JsonDerivedType(typeof(UnknownItem), typeDiscriminator: nameof(UnknownItem))]
 [JsonDerivedType(typeof(EspressoDrink), typeDiscriminator: nameof(EspressoDrink))]
 [JsonDerivedType(typeof(CoffeeDrink), typeDiscriminator: nameof(CoffeeDrink))]
 [JsonDerivedType(typeof(LatteDrink), typeDiscriminator:nameof(LatteDrink))]
-[JsonDerivedType(typeof(BakeryProduct), typeDiscriminator:nameof(BakeryProduct))]
-public abstract class CartItem { }
+[JsonDerivedType(typeof(BakeryItem), typeDiscriminator:nameof(BakeryItem))]
+public abstract class CartItem
+{
+    public virtual void GetUnknown(StringBuilder sb) { return;}
+}
 
 public class Cart
 {
     [JsonPropertyName("items")]
     public CartItem[] Items { get; set; }
+
+    public virtual void GetUnknown(StringBuilder sb)
+    {
+        if (Items != null)
+        {
+            foreach(CartItem item in Items)
+            {
+                item.GetUnknown(sb);
+            }
+        }
+    }
 }
 
-[Comment("Use this type for order items that match nothing else")]
+[Comment("Use this type for products with names that match NO listed PRODUCT NAME")]
 public class UnknownItem : CartItem
 {
-    [Comment("The text that wasn't understoodx")]
+    [Comment("The text that wasn't understood")]
+    [JsonPropertyName("text")]
     public string Text { get; set; }
+
+    public override void GetUnknown(StringBuilder sb)
+    {
+        sb.AppendLine(Text);
+    }
 }
 
 public abstract class LineItem : CartItem
@@ -41,41 +72,26 @@ public abstract class LineItem : CartItem
 public class EspressoDrink : LineItem
 {
     [Vocab(CoffeeShopVocabs.Names.EspressoDrinks)]
-    [JsonPropertyName("name")]
+    [JsonPropertyName("productName")]
     public string Name { get; set; }
 
     [JsonPropertyName("temperature")]
     public CoffeeTemperature? Temperature { get; set; }
 
     [JsonPropertyName("size")]
-    [Comment("The default is 'Grande'")]
+    [Comment("The default is 'Doppio'")]
     public EspressoSize? Size { get; set; }
 
-    [JsonPropertyName("option")]
-    public DrinkOption[]? Option { get; set; }
+    [JsonPropertyName("options")]
+    public DrinkOption[]? Options { get; set; }
+
+    public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
 }
 
 public class CoffeeDrink : LineItem
 {
     [Vocab(CoffeeShopVocabs.Names.CoffeeDrinks)]
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
-
-    [JsonPropertyName("temperature")]
-    public CoffeeTemperature? Temperature { get; set; }
-
-    [JsonPropertyName("size")]
-    [Comment("The default is 'Grande'")]
-    public CoffeeSize? Size { get; set; }
-
-    [JsonPropertyName("option")]
-    public DrinkOption[]? Options { get; set; }
-}
-
-public class LatteDrink : LineItem
-{
-    [Vocab(CoffeeShopVocabs.Names.LatteDrinks)]
-    [JsonPropertyName("name")]
+    [JsonPropertyName("productName")]
     public string Name { get; set; }
 
     [JsonPropertyName("temperature")]
@@ -87,6 +103,37 @@ public class LatteDrink : LineItem
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
+
+    public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
+}
+
+public class LatteDrink : LineItem
+{
+    [Vocab(CoffeeShopVocabs.Names.LatteDrinks)]
+    [JsonPropertyName("productName")]
+    public string Name { get; set; }
+
+    [JsonPropertyName("temperature")]
+    public CoffeeTemperature? Temperature { get; set; }
+
+    [JsonPropertyName("size")]
+    [Comment("The default is 'Grande'")]
+    public CoffeeSize? Size { get; set; }
+
+    [JsonPropertyName("options")]
+    public DrinkOption[]? Options { get; set; }
+
+    public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
+}
+
+public class BakeryItem : LineItem
+{
+    [Vocab(CoffeeShopVocabs.Names.BakeryProducts)]
+    [JsonPropertyName("productName")]
+    public string Name { get; set; }
+
+    [JsonPropertyName("options")]
+    public BakeryOption[]? Options { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -117,6 +164,7 @@ public enum EspressoSize
 }
 
 [JsonPolymorphic]
+[JsonDerivedType(typeof(UnknownDrinkOption), typeDiscriminator: nameof(UnknownDrinkOption))]
 [JsonDerivedType(typeof(Creamer), typeDiscriminator: nameof(Creamer))]
 [JsonDerivedType(typeof(Milk), typeDiscriminator: nameof(Milk))]
 [JsonDerivedType(typeof(Caffeine), typeDiscriminator: nameof(Caffeine))]
@@ -126,64 +174,82 @@ public enum EspressoSize
 [JsonDerivedType(typeof(LattePreparation), typeDiscriminator: nameof(LattePreparation))]
 public abstract class DrinkOption
 {
+    public virtual void GetUnknown(StringBuilder sb)
+    {
+        return;
+    }
+}
+
+[Comment("Use this type for DrinkOptions that match nothing else OR if you are NOT SURE. ")]
+public class UnknownDrinkOption : DrinkOption
+{
+    [Comment("The text that wasn't understood")]
+    [JsonPropertyName("text")]
+    public string Text { get; set; }
+
+    public override void GetUnknown(StringBuilder sb)
+    {
+        sb.AppendLine(Text);
+    }
 }
 
 public class Creamer : DrinkOption
 {
     [Vocab(CoffeeShopVocabs.Names.Creamers)]
-    [JsonPropertyName("name")]
+    [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Milk : DrinkOption
 {
     [Vocab(CoffeeShopVocabs.Names.Milks)]
-    [JsonPropertyName("name")]
+    [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Caffeine : DrinkOption
 {
     [Vocab(CoffeeShopVocabs.Names.Caffeines)]
-    [JsonPropertyName("name")]
+    [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Sweetner : DrinkOption
 {
     [Vocab(CoffeeShopVocabs.Names.Sweetners)]
-    [JsonPropertyName("name")]
+    [JsonPropertyName("optionName")]
     public string Name { get; set; }
+
+    [JsonPropertyName("optionQuantity")]
+    public OptionQuantity? Quantity { get; set; }
 }
 
 public class Syrup : DrinkOption
 {
     [Vocab(CoffeeShopVocabs.Names.Syrups)]
-    [JsonPropertyName("name")]
+    [Comment("NO OTHER OPTIONS ALLOWED")]
+    [JsonPropertyName("optionName")]
     public string Name { get; set; }
+
+    [JsonPropertyName("optionQuantity")]
+    public OptionQuantity? Quantity { get; set; }
 }
 
 public class Topping : DrinkOption
 {
     [Vocab(CoffeeShopVocabs.Names.Toppings)]
-    [JsonPropertyName("name")]
+    [JsonPropertyName("optionName")]
     public string Name { get; set; }
+
+    [JsonPropertyName("optionQuantity")]
+    public OptionQuantity? Quantity { get; set; }
 }
 
 public class LattePreparation : DrinkOption
 {
     [Vocab(CoffeeShopVocabs.Names.LattePreparations)]
-    [JsonPropertyName("name")]
+    [JsonPropertyName("optionName")]
     public string Name { get; set; }
-}
-
-public class BakeryProduct : LineItem
-{
-    [Vocab(CoffeeShopVocabs.Names.BakeryProducts)]
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
-    [JsonPropertyName("options")]
-    public BakeryOption[]? Options { get; set; }
 }
 
 [JsonDerivedType(typeof(BakeryTopping), typeDiscriminator: nameof(BakeryTopping))]
@@ -202,6 +268,26 @@ public class BakeryPreparation : BakeryOption
     [Vocab(CoffeeShopVocabs.Names.BakeryPreparations)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
+}
+
+[JsonPolymorphic]
+[JsonDerivedType(typeof(StringOptionQuantity), typeDiscriminator:nameof(StringOptionQuantity))]
+[JsonDerivedType(typeof(NumberOptionQuantity), typeDiscriminator: nameof(NumberOptionQuantity))]
+public abstract class OptionQuantity
+{
+}
+
+public class StringOptionQuantity : OptionQuantity
+{
+    [Vocab(CoffeeShopVocabs.Names.OptionQuantity)]
+    [JsonPropertyName("amount")]
+    public string Amount { get; set; }
+}
+
+public class NumberOptionQuantity : OptionQuantity
+{
+    [JsonPropertyName("amount")]
+    public int Amount { get; set; }
 }
 
 /// <summary>
@@ -229,6 +315,8 @@ public static class CoffeeShopVocabs
         public const string BakeryProducts = "BakeryProducts";
         public const string BakeryToppings = "BakeryToppings";
         public const string BakeryPreparations = "BakeryPreparations";
+
+        public const string OptionQuantity = "OptionQuantity";
     }
 
     public static VocabCollection All()
@@ -249,7 +337,9 @@ public static class CoffeeShopVocabs
 
             BakeryProducts(),
             BakeryToppings(),
-            BakeryPreparations()
+            BakeryPreparations(),
+
+            OptionQuantities()
         };
     }
 
@@ -388,10 +478,26 @@ public static class CoffeeShopVocabs
     {
         return new VocabType(Names.BakeryPreparations, new Vocab { "warmed", "cut in half" });
     }
+
+    public static VocabType OptionQuantities()
+    {
+        return new VocabType(Names.OptionQuantity, new Vocab { "no", "light", "regular", "extra" });
+    }
 }
 
-internal static class Test
+internal static class CartEx
 {
+    public static void GetUnknown(this DrinkOption[] options, StringBuilder sb)
+    {
+        if (options != null)
+        {
+            foreach (var option in options)
+            {
+                option.GetUnknown(sb);
+            }
+        }
+    }
+
     public static Cart TestCart()
     {
         Cart cart = new Cart

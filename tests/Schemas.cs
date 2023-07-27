@@ -84,7 +84,23 @@ public class NullableTestObj
     public CoffeeSize Required;
     public CoffeeSize? Optional;
     public string Text;
-    public string? OptionalText;
+
+    [JsonPropertyName("optionalText")]
+    public string? OptionalText { get; set; }
+
+    public string? OptionalTextField { get; set; }
+
+    public int Amt;
+    public int? OptionalAmt;
+}
+
+public class WrapperNullableObj
+{
+    public NullableTestObj? Test { get; set; }
+
+    [Vocab(TestVocabs.Names.Milks, Inline = true)]
+    [JsonPropertyName("milk")]
+    public string? OptionalMilk { get; set; }
 }
 
 public static class TestVocabs

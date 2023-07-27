@@ -80,6 +80,15 @@ public class TypescriptWriter
     public TypescriptWriter Extends() => Append(Typescript.Keywords.Extends);
 
     public TypescriptWriter Name(string name) => Append(name);
+    public TypescriptWriter Name(string name, bool nullable)
+    {
+        Name(name);
+        if (nullable)
+        {
+            _writer.Question();
+        }
+        return this;
+    }
     public TypescriptWriter DataType(string name) => Colon().Space().Name(name);
     public TypescriptWriter Array() => Append(Typescript.Punctuation.Array);
     public TypescriptWriter Literal(string value)
@@ -109,12 +118,7 @@ public class TypescriptWriter
         bool isArray = false,
         bool nullable = false)
     {
-        Name(name);
-        if (nullable)
-        {
-            _writer.Question();
-        }
-        Colon().Space().Name(dataType);
+        Name(name, nullable).Colon().Space().Name(dataType);
         if (isArray)
         {
             Array();
@@ -123,9 +127,9 @@ public class TypescriptWriter
         return this;
     }
 
-    public TypescriptWriter Variable(string name, IEnumerable<string> literals)
+    public TypescriptWriter Variable(string name, bool nullable, IEnumerable<string> literals)
     {
-        Name(name).Colon().Space().Literals(literals).Semicolon();
+        Name(name, nullable).Colon().Space().Literals(literals).Semicolon();
         return this;
     }
 
