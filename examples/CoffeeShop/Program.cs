@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using System;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.TypeChat;
@@ -18,7 +19,7 @@ public class CoffeeShop : ConsoleApp
         _typeSchema = GenerateSchema();
         _service = KernelFactory.JsonTranslator<Cart>(_typeSchema.Schema, Config.LoadOpenAI());
         // Uncomment to see the raw reponse from the AI
-       // _service.CompletionReceived += this.OnCompletionReceived;
+        // _service.CompletionReceived += this.OnCompletionReceived;
     }
 
     public TypeSchema Schema => _typeSchema;
@@ -30,31 +31,26 @@ public class CoffeeShop : ConsoleApp
         string json = Json.Stringify(cart);
         Console.WriteLine(json);
 
-        if (PrintAnyUnknown(cart) == 0)
+        if (!PrintAnyUnknown(cart))
         {
             Console.WriteLine("Success!");
         }
     }
 
-    int PrintAnyUnknown(Cart cart)
+    bool PrintAnyUnknown(Cart cart)
     {
-        int countUnknown = 0;
         if (cart.Items != null)
         {
-            foreach (var item in cart.Items)
+            StringBuilder sb = new StringBuilder();
+            cart.GetUnknown(sb);
+            if (sb.Length > 0)
             {
-                if (item is UnknownItem unknown)
-                {
-                    if (countUnknown == 0)
-                    {
-                        Console.WriteLine("I didn't understand the following:");
-                    }
-                    Console.WriteLine(unknown.Text);
-                    ++countUnknown;
-                }
+                Console.WriteLine("I didn't understand the following:");
+                Console.WriteLine(sb.ToString());
+                return true;
             }
         }
-        return countUnknown;
+        return false;
     }
 
     private void OnCompletionReceived(string value)
@@ -74,7 +70,7 @@ public class CoffeeShop : ConsoleApp
         CoffeeShop app = new CoffeeShop();
 
         // Un-comment to print auto-generated schema at start:
-        //Console.WriteLine(app.Schema.Schema.Text);
+       // Console.WriteLine(app.Schema.Schema.Text);
 
         await app.RunAsync("☕> ", args.GetOrNull(0));
 

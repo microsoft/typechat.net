@@ -291,15 +291,22 @@ public class TypescriptExporter : TypeExporter<Type>
 
     TypescriptExporter ExportProperty(PropertyInfo property)
     {
-        ExportComments(property);
-        ExportVariable(property, property.PropertyType);
+        if (!property.IsAbstract() &&
+            !property.IsIgnore())
+        {
+            ExportComments(property);
+            ExportVariable(property, property.PropertyType);
+        }
         return this;
     }
 
     TypescriptExporter ExportField(FieldInfo field)
     {
-        ExportComments(field);
-        ExportVariable(field, field.FieldType);
+        if (!field.IsIgnore())
+        {
+            ExportComments(field);
+            ExportVariable(field, field.FieldType);
+        }
         return this;
     }
 
@@ -371,7 +378,11 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             _writer.SOL();
             {
-                _writer.Variable(member.PropertyName(), vocabType.Vocab.Strings());
+                _writer.Variable(
+                    member.PropertyName(),
+                    isNullable,
+                    vocabType.Vocab.Strings()
+                );
             }
             _writer.EOL();
         }
@@ -395,10 +406,13 @@ public class TypescriptExporter : TypeExporter<Type>
 
     protected virtual TypescriptExporter ExportDiscriminator(Type type)
     {
-        _writer.
-        SOL().
-            Variable("$type", $"'{type.Name}'").
-        EOL();
+        if (!type.IsAbstract)
+        {
+            _writer.
+            SOL().
+                Variable("$type", $"'{type.Name}'").
+            EOL();
+        }
         return this;
     }
 

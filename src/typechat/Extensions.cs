@@ -4,11 +4,11 @@ namespace Microsoft.TypeChat;
 
 internal static class Extensions
 {
-    public static string GetLine(this string json, long lineNumber)
+    public static string GetLine(this string text, long lineNumber)
     {
         string line;
         long i = 0;
-        using StringReader reader = new StringReader(json);
+        using StringReader reader = new StringReader(text);
         while ((line = reader.ReadLine()) != null)
         {
             if (i == lineNumber)
