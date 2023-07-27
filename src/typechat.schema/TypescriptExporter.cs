@@ -18,6 +18,8 @@ public class TypescriptExporter : TypeExporter<Type>
         return new TypeSchema(type, schema);
     }
 
+    const BindingFlags MemberFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
     TypescriptWriter _writer;
     HashSet<Type> _nonExportTypes;
     TypescriptVocabExporter? _vocabExporter;
@@ -255,7 +257,7 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         ArgumentNullException.ThrowIfNull(type, nameof(type));
 
-        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var properties = type.GetProperties(MemberFlags);
         return ExportProperties(properties);
     }
 
@@ -274,7 +276,7 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         ArgumentNullException.ThrowIfNull(type, nameof(type));
 
-        var fields = type.GetFields(BindingFlags.Public | BindingFlags.Instance);
+        var fields = type.GetFields(MemberFlags);
         return ExportFields(fields);
     }
 

@@ -34,6 +34,9 @@ public class UnknownItem : CartItem
 
 public abstract class LineItem : CartItem
 {
+    [JsonPropertyName("productName")]
+    public virtual string ProductName { get; set; }
+
     [JsonPropertyName("quantity")]
     public int Quantity { get; set; } = 1;
 }
@@ -41,14 +44,13 @@ public abstract class LineItem : CartItem
 public class EspressoDrink : LineItem
 {
     [Vocab(CoffeeShopVocabs.Names.EspressoDrinks)]
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public override string ProductName { get; set; }
 
     [JsonPropertyName("temperature")]
     public CoffeeTemperature? Temperature { get; set; }
 
     [JsonPropertyName("size")]
-    [Comment("The default is 'Grande'")]
+    [Comment("The default is 'Doppio'")]
     public EspressoSize? Size { get; set; }
 
     [JsonPropertyName("option")]
@@ -58,8 +60,7 @@ public class EspressoDrink : LineItem
 public class CoffeeDrink : LineItem
 {
     [Vocab(CoffeeShopVocabs.Names.CoffeeDrinks)]
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public override string ProductName { get; set; }
 
     [JsonPropertyName("temperature")]
     public CoffeeTemperature? Temperature { get; set; }
@@ -75,8 +76,7 @@ public class CoffeeDrink : LineItem
 public class LatteDrink : LineItem
 {
     [Vocab(CoffeeShopVocabs.Names.LatteDrinks)]
-    [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public override string ProductName { get; set; }
 
     [JsonPropertyName("temperature")]
     public CoffeeTemperature? Temperature { get; set; }
@@ -398,8 +398,8 @@ internal static class Test
         {
             Items = new CartItem[]
             {
-                new EspressoDrink {Name = "espresso", Quantity = 1 },
-                new CoffeeDrink {Name = "coffee", Size = CoffeeSize.Tall, Quantity = 2},
+                new EspressoDrink {ProductName = "espresso", Quantity = 1 },
+                new CoffeeDrink {ProductName = "coffee", Size = CoffeeSize.Tall, Quantity = 2},
             }
         };
         return cart;

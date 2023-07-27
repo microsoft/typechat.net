@@ -27,7 +27,7 @@ public class TypeChatPrompts : ITypeChatPrompts
         return $"You are a service that translates user requests into JSON objects of type \"{typeName}\" according to the following TypeScript definitions:\n" +
                $"###\n{schema}###\n" +
                "The following is a user request:\n" +
-               $"\"\n{request}\n\"\n" +
+               $"\"\"\"\n{request}\n\"\"\"\n" +
                "The following is the user request translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n";
     }
 
