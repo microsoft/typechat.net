@@ -77,6 +77,7 @@ public class CoffeeShop : ConsoleApp
         //Console.WriteLine(app.Schema.Schema.Text);
 
         await app.RunAsync("☕> ", args.GetOrNull(0));
+
         return 0;
     }
 }
