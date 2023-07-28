@@ -42,6 +42,7 @@ public class TypeChatJsonTranslator<T>
 
     public event Action<string> SendingPrompt;
     public event Action<string> CompletionReceived;
+    public event Action<string> AttemptingRepair;
 
     /// <summary>
     /// Translate a natural language request into an object of type 'T'
@@ -73,6 +74,8 @@ public class TypeChatJsonTranslator<T>
             {
                 throw new TypeChatException(TypeChatException.ErrorCode.JsonValidation, validation.Message);
             }
+
+            NotifyEvent(AttemptingRepair, validation.Message);
             prompt += $"{responseText}\n{_prompts.CreateRepairPrompt(_validator.Schema, responseText, validation.Message)}";
             attemptRepair = false;
         }

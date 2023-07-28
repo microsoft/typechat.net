@@ -13,4 +13,6 @@ public class TypescriptSchema : TypeSchema
     }
 
     public IVocabCollection? Vocabs => _vocabs;
+
+    public bool HasVocabs => (_vocabs != null);
 }

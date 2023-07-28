@@ -5,11 +5,11 @@ namespace Microsoft.TypeChat.Schema;
 /// <summary>
 /// A backing field for strings that must be from a particular vocabulary
 /// </summary>
-public class VocabField
+public struct VocabField
 {
     IVocab _vocab;
-    string? _value;
     string? _propertyName;
+    string? _value;
 
     public VocabField(string vocab, string? propertyName = null)
         : this(Vocab.Parse(vocab), propertyName)
@@ -21,8 +21,10 @@ public class VocabField
         ArgumentNullException.ThrowIfNull(vocab, nameof(vocab));
         _vocab = vocab;
         _propertyName = propertyName;
+        _value = null;
     }
 
+    [JsonPropertyName("value")]
     public string Value
     {
         get => _value;

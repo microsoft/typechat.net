@@ -11,23 +11,20 @@ namespace CoffeeShop;
 
 public class CoffeeShop : ConsoleApp
 {
-    TypescriptSchema _exportedSchema;
-    TypeChatJsonTranslator<Cart> _service;
+    TypeChatJsonTranslator<Cart> _translator;
 
     CoffeeShop()
     {
-        _exportedSchema = TypescriptExporter.GenerateSchema(typeof(Cart));
-        _service = KernelFactory.JsonTranslator<Cart>(_exportedSchema.Schema, Config.LoadOpenAI());
-        // Uncomment to see the raw reponse from the AI
-        //_service.SendingPrompt += this.OnSendingPrompt;
-        //_service.CompletionReceived += this.OnCompletionReceived;
+        _translator = KernelFactory.JsonTranslator<Cart>(Config.LoadOpenAI());
+        // Uncomment to see ALL raw messages to and from the AI
+        //base.SubscribeAllEvents(_service);
     }
 
-    public TypeSchema Schema => _exportedSchema;
+    public TypeSchema Schema => _translator.Validator.Schema;
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        Cart cart = await _service.TranslateAsync(input);
+        Cart cart = await _translator.TranslateAsync(input);
 
         string json = Json.Stringify(cart);
         Console.WriteLine(json);

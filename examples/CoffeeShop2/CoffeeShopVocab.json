@@ -1,0 +1,105 @@
+{
+  "CoffeeDrinks": [
+    "americano",
+    "coffee"
+  ],
+  "EspressoDrinks": [
+    "espresso",
+    "lungo",
+    "ristretto",
+    "macchiato"
+  ],
+  "LatteDrinks": [
+    "cappuccino",
+    "flat white",
+    "latte",
+    "latte macchiato",
+    "mocha",
+    "chai latte"
+  ],
+  "Milks": [
+    "whole milk",
+    "two percent milk",
+    "nonfat milk",
+    "coconut milk",
+    "soy milk",
+    "almond milk",
+    "oat milk"
+  ],
+  "Creamers": [
+    "whole milk creamer",
+    "two percent milk creamer",
+    "one percent milk creamer",
+    "nonfat milk creamer",
+    "coconut milk creamer",
+    "soy milk creamer",
+    "almond milk creamer",
+    "oat milk creamer",
+    "half and half",
+    "heavy cream"
+  ],
+  "Caffeines": [
+    "regular",
+    "two thirds caf",
+    "half caf",
+    "one third caf",
+    "decaf"
+  ],
+  "Toppings": [
+    "cinnamon",
+    "foam",
+    "ice",
+    "nutmeg",
+    "whipped cream",
+    "water"
+  ],
+  "Sweetners": [
+    "equal",
+    "honey",
+    "splenda",
+    "sugar",
+    "sugar in the raw",
+    "sweet n low"
+  ],
+  "Syrups": [
+    "almond syrup",
+    "buttered rum syrup",
+    "caramel syrup",
+    "cinnamon syrup",
+    "hazelnut syrup",
+    "orange syrup",
+    "peppermint syrup",
+    "raspberry syrup",
+    "toffee syrup",
+    "vanilla syrup"
+  ],
+  "LattePreparations": [
+    "for here cup",
+    "lid",
+    "with room",
+    "to go",
+    "dry",
+    "wet"
+  ],
+  "BakeryProducts": [
+    "apple bran muffin",
+    "blueberry muffin",
+    "lemon poppyseed muffin",
+    "bagel"
+  ],
+  "BakeryToppings": [
+    "butter",
+    "strawberry jam",
+    "cream cheese"
+  ],
+  "BakeryPreparations": [
+    "warmed",
+    "cut in half"
+  ],
+  "OptionQuantity": [
+    "no",
+    "light",
+    "regular",
+    "extra"
+  ]
+}

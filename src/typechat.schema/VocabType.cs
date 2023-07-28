@@ -16,8 +16,13 @@ public class VocabType : IComparable<VocabType>
         _vocab = vocab;
     }
 
+    [JsonConstructor]
+    public VocabType(string name, Vocab vocab)
+        : this(name, (IVocab)vocab)
+    {
+    }
+
     public string Name => _name;
-    [JsonIgnore]
     public IVocab Vocab => _vocab;
 
     public int CompareTo(VocabType? other)

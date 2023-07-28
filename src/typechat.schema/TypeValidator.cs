@@ -12,6 +12,10 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
         ArgumentNullException.ThrowIfNull(schema, nameof(schema));
         _schema = schema;
         _jsonValidator = new JsonSerializerTypeValidator<T>(_schema);
+        if (_schema.HasVocabs)
+        {
+            _jsonValidator.Options.Converters.Add(new DynamicVocabValueConvertor(_schema.Vocabs));
+        }
     }
 
     public TypeSchema Schema => _schema;

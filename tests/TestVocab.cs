@@ -83,13 +83,16 @@ public class TestVocab : TypeChatTest
         ValidateVocab(schema, fruitsVocab);
     }
 
-    /*
     [Fact]
-    public void SerializeVocab()
+    public async Task TestVocabFile()
     {
-        var vocabType = new VocabType("Foo", new Vocab { "One", "Two", "Three" });
-        string json = Json.Stringify(vocabType);
-        VocabType vocab2 = Json.Parse<VocabType>(json);
+        VocabCollection vocabs = await VocabFile.LoadAsync("TestVocabs.json");
+        Assert.True(vocabs.Contains("Desserts"));
+        Assert.True(vocabs.Contains("Fruits"));
+
+        var fruitType = vocabs.Get("Fruits");
+        Assert.NotNull(fruitType);
+        Assert.Contains("Banana", fruitType.Vocab);
+        Assert.Contains("Pear", fruitType.Vocab);
     }
-    */
 }

@@ -109,6 +109,14 @@ public abstract class ConsoleApp
     }
 
     protected abstract Task ProcessRequestAsync(string input, CancellationToken cancelToken);
+
+    protected void SubscribeAllEvents<T>(TypeChatJsonTranslator<T> translator)
+    {
+        translator.SendingPrompt += this.OnSendingPrompt;
+        translator.AttemptingRepair += this.OnAttemptingRepairs;
+        translator.CompletionReceived += this.OnCompletionReceived;
+    }
+
     protected virtual Task OnError(string input, Exception ex)
     {
         Console.WriteLine(ex);
@@ -126,6 +134,13 @@ public abstract class ConsoleApp
     protected void OnCompletionReceived(string value)
     {
         Console.WriteLine("### COMPLETION ");
+        Console.WriteLine(value);
+        Console.WriteLine("###");
+    }
+
+    protected void OnAttemptingRepairs(string value)
+    {
+        Console.WriteLine("### REPAIRING ERROR: ");
         Console.WriteLine(value);
         Console.WriteLine("###");
     }

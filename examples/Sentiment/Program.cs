@@ -15,16 +15,16 @@ public class SentimentResponse
 
 public class SentimentApp : ConsoleApp
 {
-    TypeChatJsonTranslator<SentimentResponse> _service;
+    TypeChatJsonTranslator<SentimentResponse> _translator;
 
     public SentimentApp()
     {
-        _service = KernelFactory.JsonTranslator<SentimentResponse>(Config.LoadOpenAI());
+        _translator = KernelFactory.JsonTranslator<SentimentResponse>(Config.LoadOpenAI());
     }
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        SentimentResponse response = await _service.TranslateAsync(input);
+        SentimentResponse response = await _translator.TranslateAsync(input);
         Console.WriteLine($"The sentiment is {response.Sentiment}");
     }
 
