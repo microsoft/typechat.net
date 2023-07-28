@@ -109,9 +109,20 @@ public class CoffeeDrink : LineItem
 
 public class LatteDrink : LineItem
 {
+    VocabField _name;
+
+    public LatteDrink()
+    {
+        _name = new VocabField(CoffeeShopVocabs.LatteDrinks, "productName");
+    }
+
     [Vocab(CoffeeShopVocabs.LatteDrinks)]
     [JsonPropertyName("productName")]
-    public string Name { get; set; }
+    public string Name
+    {
+        get => _name;
+        set => _name.Value = value;
+    }
 
     [JsonPropertyName("temperature")]
     public CoffeeTemperature? Temperature { get; set; }
@@ -226,9 +237,23 @@ public class Sweetner : DrinkOption
 
 public class Syrup : DrinkOption
 {
+    VocabField _optionaName;
+
+    public Syrup()
+    {
+        _optionaName = new VocabField(CoffeeShopVocabs.Syrups, "optionName");
+    }
+
     [Vocab(CoffeeShopVocabs.Syrups)]
     [JsonPropertyName("optionName")]
-    public string Name { get; set; }
+    public string Name
+    {
+        get => _optionaName;
+        set
+        {
+            _optionaName.Value = value;
+        }
+    }
 
     [JsonPropertyName("optionQuantity")]
     public OptionQuantity? Quantity { get; set; }
