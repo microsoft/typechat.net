@@ -36,6 +36,11 @@ public abstract class ConsoleApp
         {
             Console.Write(ConsolePrompt);
             string? input = await ReadLineAsync(cancelToken).ConfigureAwait(false);
+            input = input.Trim();
+            if (string.IsNullOrEmpty(input))
+            {
+                continue;
+            }
             if (IsStop(input))
             {
                 break;

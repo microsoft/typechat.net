@@ -14,15 +14,18 @@ namespace CoffeeShop;
 
 /*
     THIS IS A *CODE FIRST* SCHEMA FOR A COFFEE SHOP
+    It includes CONSTRAINTS VALIDATION
+
     The serialization format is System.Text.Json
     THIS IS AUTO CONVERTED TO Typescript schema at runtime.
-
+    
     Do not rename properties or refactor without testing.
     The model can be VERY sensitive to property names.
     E.g. changing 'productName' to 'name' can lead to the model being less stringent about what it places in that field. 
  */
 
-public class Cart
+[Comment("Always use ")]
+public class Cart : IConstraintValidatable
 {
     [JsonPropertyName("items")]
     public CartItem[] Items { get; set; }
@@ -37,6 +40,8 @@ public class Cart
             }
         }
     }
+
+    public void ValidateConstraints(ConstraintCheckContext context) => Items.ValidateConstraints(context);
 }
 
 [JsonPolymorphic]
@@ -47,7 +52,7 @@ public class Cart
 [JsonDerivedType(typeof(BakeryItem), typeDiscriminator: nameof(BakeryItem))]
 public abstract class CartItem
 {
-    public virtual void GetUnknown(StringBuilder sb) { return;}
+    public virtual void GetUnknown(StringBuilder sb) { return; }
 }
 
 [Comment("Use this type for products with names that match NO listed PRODUCT NAME")]
@@ -63,7 +68,6 @@ public class UnknownItem : CartItem
     }
 }
 
-[Comment("ONLY USE NAMES that productName is assignable to")]
 public abstract class LineItem : CartItem
 {
     [JsonPropertyName("quantity")]
@@ -89,7 +93,7 @@ public class EspressoDrink : LineItem
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
 }
 
-public class CoffeeDrink : LineItem
+public class CoffeeDrink : LineItem, IConstraintValidatable
 {
     [Vocab(CoffeeShopVocabs.Names.CoffeeDrinks)]
     [JsonPropertyName("productName")]
@@ -106,9 +110,11 @@ public class CoffeeDrink : LineItem
     public DrinkOption[]? Options { get; set; }
 
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
+
+    public void ValidateConstraints(ConstraintCheckContext context) => Options.ValidateConstraints(context);
 }
 
-public class LatteDrink : LineItem
+public class LatteDrink : LineItem, IConstraintValidatable
 {
     [Vocab(CoffeeShopVocabs.Names.LatteDrinks)]
     [JsonPropertyName("productName")]
@@ -125,6 +131,11 @@ public class LatteDrink : LineItem
     public DrinkOption[]? Options { get; set; }
 
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
+
+    public void ValidateConstraints(ConstraintCheckContext context)
+    {
+        context.CheckVocabEntry("productName", CoffeeShopVocabs.Names.LatteDrinks, Name);
+    }
 }
 
 public class BakeryItem : LineItem
@@ -173,13 +184,9 @@ public enum EspressoSize
 [JsonDerivedType(typeof(Syrup), typeDiscriminator: nameof(Syrup))]
 [JsonDerivedType(typeof(Topping), typeDiscriminator: nameof(Topping))]
 [JsonDerivedType(typeof(LattePreparation), typeDiscriminator: nameof(LattePreparation))]
-[Comment("ONLY USE names that optionName is assignable to")]
 public abstract class DrinkOption
 {
-    public virtual void GetUnknown(StringBuilder sb)
-    {
-        return;
-    }
+    public virtual void GetUnknown(StringBuilder sb) { return; }
 }
 
 [Comment("Use this type for DrinkOptions that match nothing else OR if you are NOT SURE. ")]
@@ -226,15 +233,19 @@ public class Sweetner : DrinkOption
     public OptionQuantity? Quantity { get; set; }
 }
 
-public class Syrup : DrinkOption
+public class Syrup : DrinkOption, IConstraintValidatable
 {
     [Vocab(CoffeeShopVocabs.Names.Syrups)]
-    [Comment("NO OTHER OPTIONS ALLOWED")]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
     [JsonPropertyName("optionQuantity")]
     public OptionQuantity? Quantity { get; set; }
+
+    public virtual void ValidateConstraints(ConstraintCheckContext context)
+    {
+        context.CheckVocabEntry("optionName", CoffeeShopVocabs.Names.Syrups, Name);
+    }
 }
 
 public class Topping : DrinkOption
@@ -273,20 +284,20 @@ public class BakeryPreparation : BakeryOption
 }
 
 [JsonPolymorphic]
-[JsonDerivedType(typeof(StringQuantity), typeDiscriminator:nameof(StringQuantity))]
-[JsonDerivedType(typeof(NumberQuantity), typeDiscriminator: nameof(NumberQuantity))]
+[JsonDerivedType(typeof(StringOptionQuantity), typeDiscriminator: nameof(StringOptionQuantity))]
+[JsonDerivedType(typeof(NumberOptionQuantity), typeDiscriminator: nameof(NumberOptionQuantity))]
 public abstract class OptionQuantity
 {
 }
 
-public class StringQuantity : OptionQuantity
+public class StringOptionQuantity : OptionQuantity
 {
     [Vocab(CoffeeShopVocabs.Names.OptionQuantity)]
     [JsonPropertyName("amount")]
     public string Amount { get; set; }
 }
 
-public class NumberQuantity : OptionQuantity
+public class NumberOptionQuantity : OptionQuantity
 {
     [JsonPropertyName("amount")]
     public int Amount { get; set; }

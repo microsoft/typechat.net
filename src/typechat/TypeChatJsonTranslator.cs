@@ -26,7 +26,16 @@ public class TypeChatJsonTranslator<T>
     }
 
     public ITypeChatLanguageModel Model => _model;
-    public IJsonTypeValidator<T> Validator => _validator;
+    public IJsonTypeValidator<T> Validator
+    {
+        get => _validator;
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(Validator));
+            _validator = value;
+        }
+    }
+
     public RequestSettings RequestSettings => _requestSettings;
 
     public bool AttemptRepair { get; set; } = true;
