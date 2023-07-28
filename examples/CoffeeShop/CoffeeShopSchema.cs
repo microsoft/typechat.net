@@ -47,7 +47,7 @@ public class Cart
 [JsonDerivedType(typeof(BakeryItem), typeDiscriminator: nameof(BakeryItem))]
 public abstract class CartItem
 {
-    public virtual void GetUnknown(StringBuilder sb) { return;}
+    public virtual void GetUnknown(StringBuilder sb) { return; }
 }
 
 [Comment("Use this type for products with names that match NO listed PRODUCT NAME")]
@@ -72,7 +72,7 @@ public abstract class LineItem : CartItem
 
 public class EspressoDrink : LineItem
 {
-    [Vocab(CoffeeShopVocabs.Names.EspressoDrinks)]
+    [Vocab(VocabNames.EspressoDrinks, "espresso | lungo | ristretto | macchiato")]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -81,7 +81,7 @@ public class EspressoDrink : LineItem
 
     [JsonPropertyName("size")]
     [Comment("The default is 'Doppio'")]
-    public EspressoSize? Size { get; set; }
+    public EspressoSize? Size { get; set; } = EspressoSize.Doppio;
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
@@ -90,8 +90,8 @@ public class EspressoDrink : LineItem
 }
 
 public class CoffeeDrink : LineItem
-{
-    [Vocab(CoffeeShopVocabs.Names.CoffeeDrinks)]
+{    
+    [Vocab(VocabNames.CoffeeDrinks, "americano | coffee")]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -100,7 +100,7 @@ public class CoffeeDrink : LineItem
 
     [JsonPropertyName("size")]
     [Comment("The default is 'Grande'")]
-    public CoffeeSize? Size { get; set; }
+    public CoffeeSize? Size { get; set; } = CoffeeSize.Grande;
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
@@ -110,7 +110,10 @@ public class CoffeeDrink : LineItem
 
 public class LatteDrink : LineItem
 {
-    [Vocab(CoffeeShopVocabs.Names.LatteDrinks)]
+    [Vocab(
+        VocabNames.LatteDrinks,
+        "cappuccino | flat white | latte | latte macchiato | mocha | chai latte"
+    )]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -119,7 +122,7 @@ public class LatteDrink : LineItem
 
     [JsonPropertyName("size")]
     [Comment("The default is 'Grande'")]
-    public CoffeeSize? Size { get; set; }
+    public CoffeeSize? Size { get; set; } = CoffeeSize.Grande;
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
@@ -129,7 +132,10 @@ public class LatteDrink : LineItem
 
 public class BakeryItem : LineItem
 {
-    [Vocab(CoffeeShopVocabs.Names.BakeryProducts)]
+    [Vocab(
+        VocabNames.BakeryProducts,
+        "apple bran muffin | blueberry muffin | lemon poppyseed muffin | bagel"
+    )]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -173,7 +179,6 @@ public enum EspressoSize
 [JsonDerivedType(typeof(Syrup), typeDiscriminator: nameof(Syrup))]
 [JsonDerivedType(typeof(Topping), typeDiscriminator: nameof(Topping))]
 [JsonDerivedType(typeof(LattePreparation), typeDiscriminator: nameof(LattePreparation))]
-[Comment("ONLY USE names that optionName is assignable to")]
 public abstract class DrinkOption
 {
     public virtual void GetUnknown(StringBuilder sb)
@@ -197,28 +202,43 @@ public class UnknownDrinkOption : DrinkOption
 
 public class Creamer : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Creamers)]
+    [Vocab(
+        VocabNames.Creamers,
+        "whole milk creamer | two percent milk creamer | one percent milk creamer | " +
+        "nonfat milk creamer | coconut milk creamer | soy milk creamer | " +
+        "almond milk creamer | oat milk creamer | half and half | heavy cream"
+    )]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Milk : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Milks)]
+    [Vocab(
+        VocabNames.Milks,
+        "whole milk | two percent milk | nonfat milk | coconut milk | " +
+        "soy milk | almond milk | oat milk"
+    )]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Caffeine : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Caffeines)]
+    [Vocab(
+        VocabNames.Caffeines,
+        "cinnamon | foam | ice | nutmeg | whipped cream | water"
+    )]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Sweetner : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Sweetners)]
+    [Vocab(
+        VocabNames.Sweetners,
+        "equal | honey | splenda | sugar | sugar in the raw | sweet n low"
+    )]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -228,8 +248,12 @@ public class Sweetner : DrinkOption
 
 public class Syrup : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Syrups)]
-    [Comment("NO OTHER OPTIONS ALLOWED")]
+    [Vocab(
+        VocabNames.Syrups,
+        "almond syrup | buttered rum syrup | caramel syrup | cinnamon syrup | " +
+        "hazelnut syrup | orange syrup | peppermint syrup | raspberry syrup | " +
+        "toffee syrup | vanilla syrup"
+    )]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -239,7 +263,10 @@ public class Syrup : DrinkOption
 
 public class Topping : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Toppings)]
+    [Vocab(
+        VocabNames.Toppings,
+        "cinnamon | foam | ice | nutmeg | whipped cream | water"
+    )]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -249,7 +276,10 @@ public class Topping : DrinkOption
 
 public class LattePreparation : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.LattePreparations)]
+    [Vocab(
+        VocabNames.LattePreparations,
+        "for here cup | lid | with room | to go | dry | wet"
+    )]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
@@ -260,20 +290,20 @@ public abstract class BakeryOption { }
 
 public class BakeryTopping : BakeryOption
 {
-    [Vocab(CoffeeShopVocabs.Names.BakeryToppings)]
+    [Vocab(VocabNames.BakeryToppings, "butter | strawberry jam | cream cheese")]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 public class BakeryPreparation : BakeryOption
 {
-    [Vocab(CoffeeShopVocabs.Names.BakeryPreparations)]
+    [Vocab(VocabNames.BakeryPreparations, "warmed | cut in half")]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 [JsonPolymorphic]
-[JsonDerivedType(typeof(StringQuantity), typeDiscriminator:nameof(StringQuantity))]
+[JsonDerivedType(typeof(StringQuantity), typeDiscriminator: nameof(StringQuantity))]
 [JsonDerivedType(typeof(NumberQuantity), typeDiscriminator: nameof(NumberQuantity))]
 public abstract class OptionQuantity
 {
@@ -281,7 +311,7 @@ public abstract class OptionQuantity
 
 public class StringQuantity : OptionQuantity
 {
-    [Vocab(CoffeeShopVocabs.Names.OptionQuantity)]
+    [Vocab(VocabNames.OptionQuantity, "no | light | regular | extra")]
     [JsonPropertyName("amount")]
     public string Amount { get; set; }
 }
@@ -299,193 +329,23 @@ public class NumberQuantity : OptionQuantity
 /// A real coffee shop will do just that - so that product lines can change, different users can be offered
 /// different options, etc
 /// </summary>
-public static class CoffeeShopVocabs
+public static class VocabNames
 {
-    public static class Names
-    {
-        public const string CoffeeDrinks = "CoffeeDrinks";
-        public const string EspressoDrinks = "EspressoDrinks";
-        public const string LatteDrinks = "LatteDrinks";
-        public const string Creamers = "Creamers";
-        public const string Milks = "Milks";
-        public const string Caffeines = "Caffeines";
-        public const string Toppings = "Toppings";
-        public const string Sweetners = "Sweetners";
-        public const string Syrups = "Syrups";
-        public const string LattePreparations = "LattePreparations";
+    public const string CoffeeDrinks = "CoffeeDrinks";
+    public const string EspressoDrinks = "EspressoDrinks";
+    public const string LatteDrinks = "LatteDrinks";
+    public const string Creamers = "Creamers";
+    public const string Milks = "Milks";
+    public const string Caffeines = "Caffeines";
+    public const string Toppings = "Toppings";
+    public const string Sweetners = "Sweetners";
+    public const string Syrups = "Syrups";
+    public const string LattePreparations = "LattePreparations";
 
-        public const string BakeryProducts = "BakeryProducts";
-        public const string BakeryToppings = "BakeryToppings";
-        public const string BakeryPreparations = "BakeryPreparations";
-
-        public const string OptionQuantity = "OptionQuantity";
-    }
-
-    public static VocabCollection All()
-    {
-        return new VocabCollection
-        {
-            CoffeeDrinks(),
-            EspressoDrinks(),
-            LatteDrinks(),
-
-            Milks(),
-            Creamers(),
-            Caffeines(),
-            Sweetners(),
-            Syrups(),
-            Toppings(),
-            LattePreparations(),
-
-            BakeryProducts(),
-            BakeryToppings(),
-            BakeryPreparations(),
-
-            OptionQuantities()
-        };
-    }
-
-    public static VocabType CoffeeDrinks()
-    {
-        return new VocabType(Names.CoffeeDrinks, new Vocab { "americano", "coffee" });
-    }
-
-    public static VocabType EspressoDrinks()
-    {
-        return new VocabType(Names.EspressoDrinks, new Vocab { "espresso", "lungo", "ristretto", "macchiato" });
-    }
-
-    public static VocabType LatteDrinks()
-    {
-        return new VocabType(Names.LatteDrinks, new Vocab
-        {
-            "cappuccino",
-            "flat white",
-            "latte",
-            "latte macchiato",
-            "mocha",
-            "chai latte"
-        });
-    }
-
-    public static VocabType Milks()
-    {
-        return new VocabType(Names.Milks, new Vocab
-        {
-            "whole milk",
-            "two percent milk",
-            "nonfat milk",
-            "coconut milk",
-            "soy milk",
-            "almond milk",
-            "oat milk"
-        });
-    }
-
-    public static VocabType Creamers()
-    {
-        return new VocabType(Names.Creamers, new Vocab
-        {
-            "whole milk creamer",
-            "two percent milk creamer",
-            "one percent milk creamer",
-            "nonfat milk creamer",
-            "coconut milk creamer",
-            "soy milk creamer",
-            "almond milk creamer",
-            "oat milk creamer",
-            "half and half",
-            "heavy cream"
-        });
-    }
-
-    public static VocabType Caffeines()
-    {
-        return new VocabType(Names.Caffeines, new Vocab
-        {
-            "regular",
-            "two thirds caf",
-            "half caf",
-            "one third caf",
-            "decaf"
-        });
-    }
-
-    public static VocabType Toppings()
-    {
-        return new VocabType(Names.Toppings, new Vocab
-        {
-            "cinnamon",
-            "foam",
-            "ice",
-            "nutmeg",
-            "whipped cream",
-            "water"
-        });
-    }
-
-    public static VocabType Sweetners()
-    {
-        return new VocabType(Names.Sweetners, new Vocab
-        {
-            "equal",
-            "honey",
-            "splenda",
-            "sugar",
-            "sugar in the raw",
-            "sweet n low"
-        });
-    }
-
-    public static VocabType Syrups()
-    {
-        return new VocabType(Names.Syrups, new Vocab
-        {
-            "almond syrup",
-            "buttered rum syrup",
-            "caramel syrup",
-            "cinnamon syrup",
-            "hazelnut syrup",
-            "orange syrup",
-            "peppermint syrup",
-            "raspberry syrup",
-            "toffee syrup",
-            "vanilla syrup"
-        });
-    }
-
-    public static VocabType LattePreparations()
-    {
-        return new VocabType(Names.LattePreparations, new Vocab
-        {
-            "for here cup",
-            "lid",
-            "with room",
-            "to go",
-            "dry",
-            "wet"
-        });
-    }
-
-    public static VocabType BakeryProducts()
-    {
-        return new VocabType(Names.BakeryProducts, new Vocab { "apple bran muffin", "blueberry muffin", "lemon poppyseed muffin", "bagel" });
-    }
-
-    public static VocabType BakeryToppings()
-    {
-        return new VocabType(Names.BakeryToppings, new Vocab { "butter", "strawberry jam", "cream cheese" });
-    }
-
-    public static VocabType BakeryPreparations()
-    {
-        return new VocabType(Names.BakeryPreparations, new Vocab { "warmed", "cut in half" });
-    }
-
-    public static VocabType OptionQuantities()
-    {
-        return new VocabType(Names.OptionQuantity, new Vocab { "no", "light", "regular", "extra" });
-    }
+    public const string BakeryProducts = "BakeryProducts";
+    public const string BakeryToppings = "BakeryToppings";
+    public const string BakeryPreparations = "BakeryPreparations";
+    public const string OptionQuantity = "OptionQuantity";
 }
 
 internal static class CartEx

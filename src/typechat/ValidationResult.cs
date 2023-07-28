@@ -13,7 +13,7 @@ public class ValidationResult<T>
     public ValidationResult(ValidationResult<object?> value)
     {
         Success = value.Success;
-        Value = (T) value.Value;
+        Value = (T)value.Value;
         Message = value.Message;
     }
 

@@ -7,6 +7,11 @@ public class VocabType : IComparable<VocabType>
     string _name;
     IVocab _vocab;
 
+    public VocabType(IVocab vocab)
+        : this("Anonymous", vocab)
+    {
+    }
+
     public VocabType(string name, IVocab vocab)
     {
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));

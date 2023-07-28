@@ -11,18 +11,18 @@ namespace CoffeeShop;
 
 public class CoffeeShop : ConsoleApp
 {
-    TypeSchema _typeSchema;
+    ExportedSchema _exportedSchema;
     TypeChatJsonTranslator<Cart> _service;
 
     CoffeeShop()
     {
-        _typeSchema = GenerateSchema();
-        _service = KernelFactory.JsonTranslator<Cart>(_typeSchema.Schema, Config.LoadOpenAI());
+        _exportedSchema = TypescriptExporter.GenerateSchema(typeof(Cart));
+        _service = KernelFactory.JsonTranslator<Cart>(_exportedSchema.Schema, Config.LoadOpenAI());
         // Uncomment to see the raw reponse from the AI
-        // _service.CompletionReceived += this.OnCompletionReceived;
+        _service.CompletionReceived += this.OnCompletionReceived;
     }
 
-    public TypeSchema Schema => _typeSchema;
+    public TypeSchema Schema => _exportedSchema;
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
@@ -58,11 +58,6 @@ public class CoffeeShop : ConsoleApp
         Console.WriteLine("=== RAW RESPONSE ===");
         Console.WriteLine(value);
         Console.WriteLine("====================");
-    }
-
-    static TypeSchema GenerateSchema()
-    {
-        return TypescriptExporter.GenerateSchema(typeof(Cart), CoffeeShopVocabs.All());
     }
 
     public static async Task<int> Main(string[] args)

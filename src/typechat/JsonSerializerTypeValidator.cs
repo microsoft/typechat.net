@@ -71,7 +71,7 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
         if (error.LineNumber != null)
         {
             sb.AppendLine("Line with error:");
-            sb.AppendLine(json.GetLine((long) error.LineNumber));
+            sb.AppendLine(json.GetLine((long)error.LineNumber));
         }
         return sb.ToString();
     }

@@ -103,6 +103,14 @@ public class WrapperNullableObj
     public string? OptionalMilk { get; set; }
 }
 
+public class LocalVocabObj
+{
+    public const string VocabName = "Local";
+
+    [Vocab(VocabName, "One | Two | Three | Four")]
+    public string Value { get; set; }
+}
+
 public static class TestVocabs
 {
     public static class Names

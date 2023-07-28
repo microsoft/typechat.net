@@ -19,16 +19,21 @@ public class ConstraintCheckContext
     public TextWriter Error => _errorWriter;
     public IVocabCollection? Vocabs => _vocabs;
 
-    public bool CheckVocabEntry(string propertyName, string vocabName, string entry)
+    public bool Check(string propertyName, VocabField field)
+    {
+        return CheckVocabEntry(propertyName, field.VocabName, field.Value);
+    }
+
+    public bool CheckVocabEntry(string propertyName, string vocabName, string value)
     {
         VocabType? vocabType = _vocabs.Get(vocabName);
         if (vocabType != null &&
-            vocabType.Vocab.Contains(entry))
+            vocabType.Vocab.Contains(value))
         {
             return true;
         }
 
-        _errorWriter.WriteLine($"{propertyName}: REMAP '{entry}' to one of: {VocabEntries(vocabType.Vocab)}");
+        _errorWriter.WriteLine($"{propertyName}: REMAP '{value}' to one of: {VocabEntries(vocabType.Vocab)}");
         return false;
     }
 

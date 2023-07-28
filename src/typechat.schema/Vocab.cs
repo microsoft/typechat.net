@@ -30,6 +30,16 @@ public class Vocab : List<VocabEntry>, IVocab
     {
         return new Vocab(values);
     }
+
+    public static Vocab? Parse(string text, char seperator = '|')
+    {
+        string[] entries = text.Split(seperator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        if (entries == null || entries.Length == 0)
+        {
+            return null;
+        }
+        return new Vocab(entries);
+    }
 }
 
 public static class VocabEx

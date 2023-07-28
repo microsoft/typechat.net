@@ -20,7 +20,6 @@ public class VocabCollection : IVocabCollection
     }
 
     public int Count => _vocabs.Count;
-
     public void Add(VocabType vocab)
     {
         ArgumentNullException.ThrowIfNull(vocab, nameof(vocab));
@@ -60,6 +59,14 @@ public class VocabCollection : IVocabCollection
 
 public static class VocabCollectionEx
 {
+    public static void Add(this IVocabCollection collection, IEnumerable<VocabType> vocabs)
+    {
+        foreach(var vocab in vocabs)
+        {
+            collection.Add(vocab);
+        }
+    }
+
     public static bool Contains(this IVocabCollection vocabs, string vocabName, VocabEntry entry)
     {
         VocabType? vocabType = vocabs.Get(vocabName);

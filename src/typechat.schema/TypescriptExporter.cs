@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Schema;
 
 public class TypescriptExporter : TypeExporter<Type>
 {
-    public static TypeSchema GenerateSchema(Type type, IVocabCollection? vocabs = null)
+    public static ExportedSchema GenerateSchema(Type type, IVocabCollection? vocabs = null)
     {
         using StringWriter writer = new StringWriter();
         TypescriptExporter exporter = new TypescriptExporter(writer);
@@ -14,8 +14,16 @@ public class TypescriptExporter : TypeExporter<Type>
         }
         exporter.Export(type);
         string schema = writer.ToString();
-
-        return new TypeSchema(type, schema);
+        if (vocabs != null &&
+            exporter.LocalVocabs != null)
+        {
+            vocabs.Add(exporter.LocalVocabs);
+        }
+        else
+        {
+            vocabs = exporter.LocalVocabs;
+        }
+        return new ExportedSchema(type, schema, vocabs);
     }
 
     const BindingFlags MemberFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -24,6 +32,7 @@ public class TypescriptExporter : TypeExporter<Type>
     HashSet<Type> _nonExportTypes;
     TypescriptVocabExporter? _vocabExporter;
     NullabilityInfoContext _nullableInfo;
+    VocabCollection _localVocabs;
 
     public TypescriptExporter(TextWriter writer)
         : this(new TypescriptWriter(writer))
@@ -68,6 +77,8 @@ public class TypescriptExporter : TypeExporter<Type>
             }
         }
     }
+
+    public VocabCollection? LocalVocabs => _localVocabs;
 
     public override void Clear()
     {
@@ -359,15 +370,21 @@ public class TypescriptExporter : TypeExporter<Type>
 
     bool ExportVocab(MemberInfo member, Type type, bool isNullable)
     {
-        VocabAttribute? vocabAttr = member.Vocab();
-        if (vocabAttr == null ||
-            !vocabAttr.HasName)
+        VocabAttribute? vocabAttr = member.VocabAttribute();
+        if (vocabAttr == null)
         {
             // No vocab
             return false;
         }
-
-        VocabType? vocabType = _vocabExporter?.Vocabs.Get(vocabAttr.Name);
+        VocabType? vocabType = null;
+        if (vocabAttr.HasEntries)
+        {
+            vocabType = ImportLocalVocab(vocabAttr);
+        }
+        else
+        {
+            vocabType = _vocabExporter?.Vocabs.Get(vocabAttr.Name);
+        }
         if (vocabType == null)
         {
             // No vocab
@@ -402,6 +419,18 @@ public class TypescriptExporter : TypeExporter<Type>
             _vocabExporter.AddPending(vocabType);
         }
         return true;
+    }
+
+    VocabType? ImportLocalVocab(VocabAttribute vocabAttr)
+    {
+        VocabType? type = vocabAttr.ToVocabType();
+        if (type != null)
+        {
+            _localVocabs ??= new VocabCollection();
+            _localVocabs.Add(type);
+
+        }
+        return type;
     }
 
     protected virtual TypescriptExporter ExportDiscriminator(Type type)
