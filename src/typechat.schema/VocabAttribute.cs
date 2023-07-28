@@ -6,15 +6,11 @@ namespace Microsoft.TypeChat.Schema;
 public class VocabAttribute : Attribute
 {
     public VocabAttribute() { }
-    public VocabAttribute(string vocabName)
-        : this(vocabName, null)
+
+    public VocabAttribute(string entries, string? vocabName = null)
     {
-    }
-    public VocabAttribute(string vocabName, string entries)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(vocabName, nameof(vocabName));
-        Name = vocabName;
         Entries = entries;
+        Name = vocabName;
     }
 
     public string? Name { get; set; }
@@ -26,6 +22,10 @@ public class VocabAttribute : Attribute
 
     public Vocab? ToVocab()
     {
+        if (!HasEntries)
+        {
+            return null;
+        }
         return Vocab.Parse(Entries);
     }
 

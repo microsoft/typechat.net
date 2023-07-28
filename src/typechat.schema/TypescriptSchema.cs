@@ -2,12 +2,12 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-public class ExportedSchema : TypeSchema
+public class TypescriptSchema : TypeSchema
 {
     IVocabCollection? _vocabs;
 
-    public ExportedSchema(Type type, string schemaText, IVocabCollection? vocabs)
-        : base(type, schemaText)
+    public TypescriptSchema(Type type, string schemaText, IVocabCollection? vocabs)
+        : base(type, new SchemaText(schemaText, SchemaText.Languages.Typescript))
     {
         _vocabs = vocabs;
     }

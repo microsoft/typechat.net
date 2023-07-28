@@ -24,7 +24,6 @@ namespace CoffeeShop;
     E.g. changing 'productName' to 'name' can lead to the model being less stringent about what it places in that field. 
  */
 
-[Comment("Always use ")]
 public class Cart : IConstraintValidatable
 {
     [JsonPropertyName("items")]
@@ -76,7 +75,7 @@ public abstract class LineItem : CartItem
 
 public class EspressoDrink : LineItem
 {
-    [Vocab(CoffeeShopVocabs.Names.EspressoDrinks)]
+    [Vocab(Name = CoffeeShopVocabs.Names.EspressoDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -95,7 +94,7 @@ public class EspressoDrink : LineItem
 
 public class CoffeeDrink : LineItem, IConstraintValidatable
 {
-    [Vocab(CoffeeShopVocabs.Names.CoffeeDrinks)]
+    [Vocab(Name = CoffeeShopVocabs.Names.CoffeeDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -116,7 +115,7 @@ public class CoffeeDrink : LineItem, IConstraintValidatable
 
 public class LatteDrink : LineItem, IConstraintValidatable
 {
-    [Vocab(CoffeeShopVocabs.Names.LatteDrinks)]
+    [Vocab(Name = CoffeeShopVocabs.Names.LatteDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -140,7 +139,7 @@ public class LatteDrink : LineItem, IConstraintValidatable
 
 public class BakeryItem : LineItem
 {
-    [Vocab(CoffeeShopVocabs.Names.BakeryProducts)]
+    [Vocab(Name = CoffeeShopVocabs.Names.BakeryProducts)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -204,28 +203,28 @@ public class UnknownDrinkOption : DrinkOption
 
 public class Creamer : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Creamers)]
+    [Vocab(Name = CoffeeShopVocabs.Names.Creamers)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Milk : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Milks)]
+    [Vocab(Name = CoffeeShopVocabs.Names.Milks)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Caffeine : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Caffeines)]
+    [Vocab(Name = CoffeeShopVocabs.Names.Caffeines)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Sweetner : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Sweetners)]
+    [Vocab(Name = CoffeeShopVocabs.Names.Sweetners)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -235,7 +234,7 @@ public class Sweetner : DrinkOption
 
 public class Syrup : DrinkOption, IConstraintValidatable
 {
-    [Vocab(CoffeeShopVocabs.Names.Syrups)]
+    [Vocab(Name = CoffeeShopVocabs.Names.Syrups)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -250,7 +249,7 @@ public class Syrup : DrinkOption, IConstraintValidatable
 
 public class Topping : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.Toppings)]
+    [Vocab(Name = CoffeeShopVocabs.Names.Toppings)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -260,7 +259,7 @@ public class Topping : DrinkOption
 
 public class LattePreparation : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Names.LattePreparations)]
+    [Vocab(Name = CoffeeShopVocabs.Names.LattePreparations)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
@@ -271,14 +270,14 @@ public abstract class BakeryOption { }
 
 public class BakeryTopping : BakeryOption
 {
-    [Vocab(CoffeeShopVocabs.Names.BakeryToppings)]
+    [Vocab(Name = CoffeeShopVocabs.Names.BakeryToppings)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 public class BakeryPreparation : BakeryOption
 {
-    [Vocab(CoffeeShopVocabs.Names.BakeryPreparations)]
+    [Vocab(Name = CoffeeShopVocabs.Names.BakeryPreparations)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
@@ -292,7 +291,7 @@ public abstract class OptionQuantity
 
 public class StringOptionQuantity : OptionQuantity
 {
-    [Vocab(CoffeeShopVocabs.Names.OptionQuantity)]
+    [Vocab(Name = CoffeeShopVocabs.Names.OptionQuantity)]
     [JsonPropertyName("amount")]
     public string Amount { get; set; }
 }

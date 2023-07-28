@@ -40,7 +40,7 @@ public class TypeChatJsonTranslator<T>
 
     public bool AttemptRepair { get; set; } = true;
 
-    public event Action<string> CompletionRequest;
+    public event Action<string> SendingPrompt;
     public event Action<string> CompletionReceived;
 
     /// <summary>
@@ -60,7 +60,7 @@ public class TypeChatJsonTranslator<T>
         requestSettings ??= _requestSettings;
         string prompt = _prompts.CreateRequestPrompt(_validator.Schema, request);
         bool attemptRepair = AttemptRepair;
-        while(true)
+        while (true)
         {
             string responseText = await CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
             string jsonText = GetJson(responseText);
@@ -93,7 +93,7 @@ public class TypeChatJsonTranslator<T>
 
     protected async virtual Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken)
     {
-        NotifyEvent(CompletionRequest, prompt);
+        NotifyEvent(SendingPrompt, prompt);
         string completion = await Model.CompleteAsync(prompt, settings, cancelToken).ConfigureAwait(false);
         NotifyEvent(CompletionReceived, completion);
         return completion;

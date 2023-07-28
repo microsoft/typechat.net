@@ -7,7 +7,7 @@ public class TestVocab : TypeChatTest
     [Fact]
     public void TestVocabAttribute()
     {
-        VocabAttribute attribute = new VocabAttribute("Test", "One | Two | Three");
+        VocabAttribute attribute = new VocabAttribute("One | Two | Three", "Test");
         Vocab? vocab = attribute.ToVocab();
         Assert.NotNull(vocab);
         Assert.True(vocab.Count == 3);
@@ -28,9 +28,9 @@ public class TestVocab : TypeChatTest
         using StringWriter writer = new StringWriter();
         TypescriptExporter exporter = new TypescriptExporter(writer);
         exporter.Export(typeof(LocalVocabObj));
-        Assert.NotNull(exporter.LocalVocabs);
-        Assert.True(exporter.LocalVocabs.Count == 1);
-        IVocab localVocab = exporter.LocalVocabs.Get(LocalVocabObj.VocabName).Vocab;
+        Assert.NotNull(exporter.UsedVocabs);
+        Assert.True(exporter.UsedVocabs.Count == 1);
+        IVocab localVocab = exporter.UsedVocabs.Get(LocalVocabObj.VocabName).Vocab;
         Assert.Equal(vocab, localVocab);
     }
 
@@ -82,4 +82,14 @@ public class TestVocab : TypeChatTest
         ValidateVocab(schema, dessertVocab);
         ValidateVocab(schema, fruitsVocab);
     }
+
+    /*
+    [Fact]
+    public void SerializeVocab()
+    {
+        var vocabType = new VocabType("Foo", new Vocab { "One", "Two", "Three" });
+        string json = Json.Stringify(vocabType);
+        VocabType vocab2 = Json.Parse<VocabType>(json);
+    }
+    */
 }

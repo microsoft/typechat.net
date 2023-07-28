@@ -5,22 +5,33 @@ namespace Microsoft.TypeChat.Schema;
 /// <summary>
 /// A backing field for strings that must be from a particular vocabulary
 /// </summary>
-public struct VocabField
+public class VocabField
 {
-    string _vocabName;
-    string _value;
+    IVocab _vocab;
+    string? _value;
+    string? _propertyName;
 
-    public VocabField(string vocabName)
+    public VocabField(string vocab, string? propertyName = null)
+        : this(Vocab.Parse(vocab), propertyName)
     {
-        _vocabName = vocabName;
     }
 
-    public string VocabName => _vocabName;
+    public VocabField(IVocab vocab, string? propertyName = null)
+    {
+        ArgumentNullException.ThrowIfNull(vocab, nameof(vocab));
+        _vocab = vocab;
+        _propertyName = propertyName;
+    }
 
     public string Value
     {
         get => _value;
-        set => _value = value;
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(Value));
+            _vocab.ThrowIfNotInVocab(_propertyName, value);
+            _value = value;
+        }
     }
 
     public static implicit operator string(VocabField field)

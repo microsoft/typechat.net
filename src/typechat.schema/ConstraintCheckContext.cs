@@ -19,35 +19,19 @@ public class ConstraintCheckContext
     public TextWriter Error => _errorWriter;
     public IVocabCollection? Vocabs => _vocabs;
 
-    public bool Check(string propertyName, VocabField field)
-    {
-        return CheckVocabEntry(propertyName, field.VocabName, field.Value);
-    }
-
     public bool CheckVocabEntry(string propertyName, string vocabName, string value)
     {
         VocabType? vocabType = _vocabs.Get(vocabName);
-        if (vocabType != null &&
-            vocabType.Vocab.Contains(value))
+        if (vocabType == null)
+        {
+            return false;
+        }
+        string? validationResult = vocabType.Vocab.ValidateConstraints(propertyName, value);
+        if (string.IsNullOrEmpty(validationResult))
         {
             return true;
         }
-
-        _errorWriter.WriteLine($"{propertyName}: REMAP '{value}' to one of: {VocabEntries(vocabType.Vocab)}");
+        _errorWriter.WriteLine(validationResult);
         return false;
-    }
-
-    string VocabEntries(IVocab vocab)
-    {
-        StringBuilder sb = new StringBuilder();
-        foreach (var value in vocab.Strings())
-        {
-            if (sb.Length > 0)
-            {
-                sb.Append(" | ");
-            }
-            sb.Append('\'').Append(value).Append('\'');
-        }
-        return sb.ToString();
     }
 }

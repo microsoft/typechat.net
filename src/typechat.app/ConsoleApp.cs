@@ -115,4 +115,18 @@ public abstract class ConsoleApp
         Console.WriteLine();
         return Task.CompletedTask;
     }
+
+    protected void OnSendingPrompt(string value)
+    {
+        Console.WriteLine("### PROMPT ");
+        Console.WriteLine(value);
+        Console.WriteLine("###");
+    }
+
+    protected void OnCompletionReceived(string value)
+    {
+        Console.WriteLine("### COMPLETION ");
+        Console.WriteLine(value);
+        Console.WriteLine("###");
+    }
 }

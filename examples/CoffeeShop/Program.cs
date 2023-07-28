@@ -11,7 +11,7 @@ namespace CoffeeShop;
 
 public class CoffeeShop : ConsoleApp
 {
-    ExportedSchema _exportedSchema;
+    TypescriptSchema _exportedSchema;
     TypeChatJsonTranslator<Cart> _service;
 
     CoffeeShop()
@@ -19,7 +19,8 @@ public class CoffeeShop : ConsoleApp
         _exportedSchema = TypescriptExporter.GenerateSchema(typeof(Cart));
         _service = KernelFactory.JsonTranslator<Cart>(_exportedSchema.Schema, Config.LoadOpenAI());
         // Uncomment to see the raw reponse from the AI
-        _service.CompletionReceived += this.OnCompletionReceived;
+        //_service.SendingPrompt += this.OnSendingPrompt;
+        //_service.CompletionReceived += this.OnCompletionReceived;
     }
 
     public TypeSchema Schema => _exportedSchema;
@@ -53,21 +54,21 @@ public class CoffeeShop : ConsoleApp
         return false;
     }
 
-    private void OnCompletionReceived(string value)
-    {
-        Console.WriteLine("=== RAW RESPONSE ===");
-        Console.WriteLine(value);
-        Console.WriteLine("====================");
-    }
-
     public static async Task<int> Main(string[] args)
     {
-        CoffeeShop app = new CoffeeShop();
+        try
+        {
+            CoffeeShop app = new CoffeeShop();
+            // Un-comment to print auto-generated schema at start:
+            Console.WriteLine(app.Schema.Schema.Text);
 
-        // Un-comment to print auto-generated schema at start:
-        Console.WriteLine(app.Schema.Schema.Text);
-
-        await app.RunAsync("☕> ", args.GetOrNull(0));
+            await app.RunAsync("☕> ", args.GetOrNull(0));
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex);
+            return -1;
+        }
 
         return 0;
     }

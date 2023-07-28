@@ -58,6 +58,7 @@ A coffee with sugar and almond milk AND an espresso with foam
 A coffee with sugar and almond milk AND a doppio espresso with foam
 a large coffee, a bagel with jam and a second bagel with cream, cut in half
 a large coffee, a bagel with jam, and one bagel with cream. Only cut the *second* bagel in half
+a coffee with low fat milk, a machiato with foam, almond milk and raw sugar
 
 # =============================
 # These should give an unknown

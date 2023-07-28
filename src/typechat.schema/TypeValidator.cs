@@ -4,16 +4,17 @@ namespace Microsoft.TypeChat.Schema;
 
 public class TypeValidator<T> : IJsonTypeValidator<T>
 {
+    TypescriptSchema _schema;
     JsonSerializerTypeValidator<T> _jsonValidator;
-    IVocabCollection? _vocabs;
 
-    public TypeValidator(TypeSchema schema, IVocabCollection? vocabs)
+    public TypeValidator(TypescriptSchema schema)
     {
-        _jsonValidator = new JsonSerializerTypeValidator<T>(schema);
-        _vocabs = vocabs;
+        ArgumentNullException.ThrowIfNull(schema, nameof(schema));
+        _schema = schema;
+        _jsonValidator = new JsonSerializerTypeValidator<T>(_schema);
     }
 
-    public TypeSchema Schema => _jsonValidator.Schema;
+    public TypeSchema Schema => _schema;
 
     public ValidationResult<T> Validate(string json)
     {
@@ -36,7 +37,7 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
     string CheckConstraints(IConstraintValidatable obj)
     {
         using StringWriter errors = new StringWriter();
-        ConstraintCheckContext context = new ConstraintCheckContext(errors, _vocabs);
+        ConstraintCheckContext context = new ConstraintCheckContext(errors, _schema.Vocabs);
         obj.ValidateConstraints(context);
         return errors.ToString();
     }
