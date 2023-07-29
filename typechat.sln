@@ -20,15 +20,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{17
 		examples\appSettings.json = examples\appSettings.json
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sentiment", "examples\Sentiment\Sentiment.csproj", "{68E9AF34-7982-4BA4-864D-D24DF937A6A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sentiment", "examples\Sentiment\sentiment.csproj", "{68E9AF34-7982-4BA4-864D-D24DF937A6A2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.app", "src\typechat.app\typechat.app.csproj", "{4F6278AB-D48C-43B8-BEF5-F28B1150B3C7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.schema", "src\typechat.schema\typechat.schema.csproj", "{6A28E737-6B93-4E01-A11B-0EAF1392B4E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeShop", "examples\CoffeeShop\CoffeeShop.csproj", "{AB618076-FA46-4014-871A-B78179E248FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "coffeeShop", "examples\CoffeeShop\coffeeShop.csproj", "{AB618076-FA46-4014-871A-B78179E248FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeShop2", "examples\CoffeeShop2\CoffeeShop2.csproj", "{67AC4986-54B8-490F-8582-657651E3E62C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "coffeeShop2", "examples\CoffeeShop2\coffeeShop2.csproj", "{67AC4986-54B8-490F-8582-657651E3E62C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.program", "src\typechat.program\typechat.program.csproj", "{C223E3DB-9B2E-4839-A56E-838030300938}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "math", "examples\math\math.csproj", "{131566E6-2B78-486C-AFF5-7202A437E79F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +72,14 @@ Global
 		{67AC4986-54B8-490F-8582-657651E3E62C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67AC4986-54B8-490F-8582-657651E3E62C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67AC4986-54B8-490F-8582-657651E3E62C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C223E3DB-9B2E-4839-A56E-838030300938}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C223E3DB-9B2E-4839-A56E-838030300938}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C223E3DB-9B2E-4839-A56E-838030300938}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C223E3DB-9B2E-4839-A56E-838030300938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{131566E6-2B78-486C-AFF5-7202A437E79F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{131566E6-2B78-486C-AFF5-7202A437E79F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{131566E6-2B78-486C-AFF5-7202A437E79F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{131566E6-2B78-486C-AFF5-7202A437E79F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +88,7 @@ Global
 		{68E9AF34-7982-4BA4-864D-D24DF937A6A2} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 		{AB618076-FA46-4014-871A-B78179E248FF} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 		{67AC4986-54B8-490F-8582-657651E3E62C} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
+		{131566E6-2B78-486C-AFF5-7202A437E79F} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A9AF678-E669-4AF2-9644-7EBB970DAC41}
