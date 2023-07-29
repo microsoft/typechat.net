@@ -7,9 +7,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public struct VocabField
 {
-    IVocab _vocab;
+    VocabString _value;
     string? _propertyName;
-    string? _value;
 
     public VocabField(string vocab, string? propertyName = null)
         : this(Vocab.Parse(vocab), propertyName)
@@ -19,9 +18,8 @@ public struct VocabField
     public VocabField(IVocab vocab, string? propertyName = null)
     {
         ArgumentNullException.ThrowIfNull(vocab, nameof(vocab));
-        _vocab = vocab;
+        _value = new VocabString(vocab, null);
         _propertyName = propertyName;
-        _value = null;
     }
 
     [JsonPropertyName("value")]
@@ -31,8 +29,7 @@ public struct VocabField
         set
         {
             ArgumentNullException.ThrowIfNull(value, nameof(Value));
-            _vocab.ThrowIfNotInVocab(_propertyName, value);
-            _value = value;
+            _value.Set(_propertyName, value);
         }
     }
 

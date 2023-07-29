@@ -54,6 +54,12 @@ public struct VocabString : IStringType
         _vocab.ThrowIfNotInVocab(propertyName, _value);
     }
 
+    internal void Set(string? propertyName, string value)
+    {
+        _vocab.ThrowIfNotInVocab(propertyName, value);
+        _value = value;
+    }
+
     internal void BindVocab(string vocabName)
     {
         _vocab = _vocabs?.Get(vocabName)?.Vocab;
@@ -77,10 +83,10 @@ public class DynamicVocabField
     string _propertyName;
     VocabString _value;
 
-    public DynamicVocabField(string vocabName, Type type, string propertyName)
+    public DynamicVocabField(string vocabName, string propertyName)
     {
         _vocabName = vocabName;
-        _propertyName = $"${type.Name}\n{propertyName}";
+        _propertyName = propertyName;
     }
 
     void Set(VocabString newValue)

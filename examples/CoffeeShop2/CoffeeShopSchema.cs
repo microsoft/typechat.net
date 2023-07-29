@@ -115,7 +115,7 @@ public class LatteDrink : LineItem
 
     public LatteDrink()
     {
-        _productName = new DynamicVocabField(CoffeeShopVocabs.LatteDrinks, typeof(LatteDrink), "productName");
+        _productName = new DynamicVocabField(CoffeeShopVocabs.LatteDrinks, "productName");
     }
 
     [Vocab(Name = CoffeeShopVocabs.LatteDrinks)]
