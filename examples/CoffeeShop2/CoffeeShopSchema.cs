@@ -115,12 +115,12 @@ public class LatteDrink : LineItem
 
     public LatteDrink()
     {
-        _productName = new DynamicVocabField(CoffeeShopVocabs.LatteDrinks, "productName");
+        _productName = new DynamicVocabField(CoffeeShopVocabs.LatteDrinks, typeof(LatteDrink), "productName");
     }
 
     [Vocab(Name = CoffeeShopVocabs.LatteDrinks)]
     [JsonPropertyName("productName")]
-    public DynamicVocabValue Name
+    public VocabString Name
     {
         get => _productName;
         set => _productName.Value = value;

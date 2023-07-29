@@ -2,15 +2,22 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-public struct DynamicVocabValue : IStringType
+public struct VocabString : IStringType
 {
-    public DynamicVocabValue()
+    public VocabString()
     {
         _value = null;
+        _vocab = null;
         _vocabs = null;
     }
 
-    internal DynamicVocabValue(IVocabCollection vocabs, string? value)
+    public VocabString(IVocab vocab, string value)
+    {
+        _vocab = vocab;
+        _value = value;
+    }
+
+    internal VocabString(IVocabCollection vocabs, string? value)
     {
         _vocabs = vocabs;
         _value = value;
@@ -18,6 +25,7 @@ public struct DynamicVocabValue : IStringType
 
     string? _value;
     IVocabCollection? _vocabs;
+    IVocab? _vocab;
 
     [JsonPropertyName("value")]
     public string? Value
@@ -29,45 +37,59 @@ public struct DynamicVocabValue : IStringType
         }
     }
 
+    [JsonIgnore]
+    public IVocab? Vocab
+    {
+        get => _vocab;
+    }
+
     internal IVocabCollection? Vocabs
     {
         get => _vocabs;
         set => _vocabs = value;
     }
 
-    internal void ValidateConstraints(string vocabName, string? propertyName)
+    public void ValidateConstraints(string? propertyName = null)
     {
-        if (_vocabs != null)
-        {
-            _vocabs.ThrowIfNotInVocab(vocabName, propertyName, _value);
-        }
+        _vocab.ThrowIfNotInVocab(propertyName, _value);
     }
 
-    public static implicit operator string(DynamicVocabValue value)
+    internal void BindVocab(string vocabName)
+    {
+        _vocab = _vocabs?.Get(vocabName)?.Vocab;
+    }
+
+    internal void ValidateConstraints(string vocabName, string? propertyName = null)
+    {
+        BindVocab(vocabName);
+        _vocab.ThrowIfNotInVocab(propertyName, _value);
+    }
+
+    public static implicit operator string(VocabString value)
     {
         return value._value;
     }
-
 }
+
 public class DynamicVocabField
 {
     string _vocabName;
-    string? _propertyName;
-    DynamicVocabValue _value;
+    string _propertyName;
+    VocabString _value;
 
-    public DynamicVocabField(string vocabName, string? propertyName = null)
+    public DynamicVocabField(string vocabName, Type type, string propertyName)
     {
         _vocabName = vocabName;
-        _propertyName = propertyName;
+        _propertyName = $"${type.Name}\n{propertyName}";
     }
 
-    void Set(DynamicVocabValue newValue)
+    void Set(VocabString newValue)
     {
         newValue.ValidateConstraints(_vocabName, _propertyName);
         _value = newValue;
     }
 
-    public DynamicVocabValue Value
+    public VocabString Value
     {
         get => _value;
         set
@@ -76,7 +98,7 @@ public class DynamicVocabField
         }
     }
 
-    public static implicit operator DynamicVocabValue(DynamicVocabField field)
+    public static implicit operator VocabString(DynamicVocabField field)
     {
         return field._value;
     }
@@ -87,7 +109,7 @@ public class DynamicVocabField
     }
 }
 
-public class DynamicVocabValueConvertor : JsonConverter<DynamicVocabValue>
+public class DynamicVocabValueConvertor : JsonConverter<VocabString>
 {
     IVocabCollection _vocabs;
 
@@ -97,13 +119,13 @@ public class DynamicVocabValueConvertor : JsonConverter<DynamicVocabValue>
         _vocabs = vocabs;
     }
 
-    public override DynamicVocabValue Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override VocabString Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         string? value = reader.GetString();
-        return new DynamicVocabValue(_vocabs, value);
+        return new VocabString(_vocabs, value);
     }
 
-    public override void Write(Utf8JsonWriter writer, DynamicVocabValue value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, VocabString value, JsonSerializerOptions options)
     {
         throw new NotImplementedException();
     }

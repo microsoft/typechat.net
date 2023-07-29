@@ -27,19 +27,12 @@ public static class ConstraintValidationEx
         }
     }
 
-    public static void ThrowIfNotInVocab(this IVocabCollection vocabs, string vocabName, string? propertyName, string? value)
+    public static void ThrowIfNotInVocab(this IVocab vocab, string? propertyName, string? value)
     {
-        VocabType? vocabType = vocabs.Get(vocabName);
-        if (vocabType == null ||
-            value == null)
+        if (vocab == null)
         {
             throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, $"{value} is not a known value");
         }
-        vocabType.Vocab.ThrowIfNotInVocab(propertyName, value);
-    }
-
-    public static void ThrowIfNotInVocab(this IVocab vocab, string? propertyName, string? value)
-    {
         string? error;
         if (propertyName == null)
         {
