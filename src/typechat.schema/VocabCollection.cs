@@ -6,7 +6,6 @@ namespace Microsoft.TypeChat.Schema;
 
 public interface IVocabCollection : IEnumerable<VocabType>
 {
-    void Add(VocabType vocab);
     VocabType? Get(string name);
 }
 
@@ -32,8 +31,30 @@ public class VocabCollection : IVocabCollection
         Add(new VocabType(name, vocab));
     }
 
+    public void Add(IEnumerable<VocabType> vocabs)
+    {
+        ArgumentNullException.ThrowIfNull(vocabs, nameof(vocabs));
+
+        foreach (var vocab in vocabs)
+        {
+            Add(vocab);
+        }
+    }
+
+    public void Add(IDictionary<string, string[]> vocabRecords)
+    {
+        ArgumentNullException.ThrowIfNull(vocabRecords, nameof(vocabRecords));
+        foreach (var record in vocabRecords)
+        {
+            var vocab = new Vocab(record.Value);
+            vocab.TrimExcess();
+            Add(record.Key, vocab);
+        }
+    }
+
     public void Clear() => _vocabs.Clear();
 
+    public bool Contains(string vocabName) => _vocabs.ContainsKey(vocabName);
     public bool Contains(VocabType item) => _vocabs.ContainsKey(item.Name);
 
     public VocabType? Get(string name)
@@ -57,3 +78,13 @@ public class VocabCollection : IVocabCollection
         return GetEnumerator();
     }
 }
+
+public static class VocabCollectionEx
+{
+    public static bool Contains(this IVocabCollection vocabs, string vocabName, VocabEntry entry)
+    {
+        VocabType? vocabType = vocabs.Get(vocabName);
+        return (vocabType != null && vocabType.Vocab.Contains(entry));
+    }
+}
+

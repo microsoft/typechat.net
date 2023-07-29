@@ -14,9 +14,11 @@ namespace CoffeeShop;
 
 /*
     THIS IS A *CODE FIRST* SCHEMA FOR A COFFEE SHOP
+    It includes CONSTRAINTS VALIDATION
+
     The serialization format is System.Text.Json
     THIS IS AUTO CONVERTED TO Typescript schema at runtime.
-
+    
     Do not rename properties or refactor without testing.
     The model can be VERY sensitive to property names.
     E.g. changing 'productName' to 'name' can lead to the model being less stringent about what it places in that field. 
@@ -71,7 +73,7 @@ public abstract class LineItem : CartItem
 
 public class EspressoDrink : LineItem
 {
-    [Vocab(CoffeeShopVocabs.EspressoDrinks)]
+    [Vocab(Name = CoffeeShopVocabs.EspressoDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -80,7 +82,7 @@ public class EspressoDrink : LineItem
 
     [JsonPropertyName("size")]
     [Comment("The default is 'Doppio'")]
-    public EspressoSize? Size { get; set; } = EspressoSize.Doppio;
+    public EspressoSize? Size { get; set; }
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
@@ -90,7 +92,7 @@ public class EspressoDrink : LineItem
 
 public class CoffeeDrink : LineItem
 {
-    [Vocab(CoffeeShopVocabs.CoffeeDrinks)]
+    [Vocab(Name = CoffeeShopVocabs.CoffeeDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -99,7 +101,7 @@ public class CoffeeDrink : LineItem
 
     [JsonPropertyName("size")]
     [Comment("The default is 'Grande'")]
-    public CoffeeSize? Size { get; set; } = CoffeeSize.Grande;
+    public CoffeeSize? Size { get; set; }
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
@@ -109,19 +111,19 @@ public class CoffeeDrink : LineItem
 
 public class LatteDrink : LineItem
 {
-    VocabField _name;
+    DynamicVocabField _productName;
 
     public LatteDrink()
     {
-        _name = new VocabField(CoffeeShopVocabs.LatteDrinks, "productName");
+        _productName = new DynamicVocabField(CoffeeShopVocabs.LatteDrinks, "productName");
     }
 
-    [Vocab(CoffeeShopVocabs.LatteDrinks)]
+    [Vocab(Name = CoffeeShopVocabs.LatteDrinks)]
     [JsonPropertyName("productName")]
-    public string Name
+    public VocabString Name
     {
-        get => _name;
-        set => _name.Value = value;
+        get => _productName;
+        set => _productName.Value = value;
     }
 
     [JsonPropertyName("temperature")]
@@ -129,7 +131,7 @@ public class LatteDrink : LineItem
 
     [JsonPropertyName("size")]
     [Comment("The default is 'Grande'")]
-    public CoffeeSize? Size { get; set; } = CoffeeSize.Grande;
+    public CoffeeSize? Size { get; set; }
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
@@ -139,7 +141,7 @@ public class LatteDrink : LineItem
 
 public class BakeryItem : LineItem
 {
-    [Vocab(CoffeeShopVocabs.BakeryProducts)]
+    [Vocab(Name = CoffeeShopVocabs.BakeryProducts)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -185,10 +187,7 @@ public enum EspressoSize
 [JsonDerivedType(typeof(LattePreparation), typeDiscriminator: nameof(LattePreparation))]
 public abstract class DrinkOption
 {
-    public virtual void GetUnknown(StringBuilder sb)
-    {
-        return;
-    }
+    public virtual void GetUnknown(StringBuilder sb) { return; }
 }
 
 [Comment("Use this type for DrinkOptions that match nothing else OR if you are NOT SURE. ")]
@@ -206,28 +205,28 @@ public class UnknownDrinkOption : DrinkOption
 
 public class Creamer : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Creamers)]
+    [Vocab(Name = CoffeeShopVocabs.Creamers)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Milk : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Milks)]
+    [Vocab(Name = CoffeeShopVocabs.Milks)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Caffeine : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Caffeines)]
+    [Vocab(Name = CoffeeShopVocabs.Caffeines)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Sweetner : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Sweetners)]
+    [Vocab(Name = CoffeeShopVocabs.Sweetners)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -237,23 +236,9 @@ public class Sweetner : DrinkOption
 
 public class Syrup : DrinkOption
 {
-    VocabField _optionaName;
-
-    public Syrup()
-    {
-        _optionaName = new VocabField(CoffeeShopVocabs.Syrups, "optionName");
-    }
-
-    [Vocab(CoffeeShopVocabs.Syrups)]
+    [Vocab(Name = CoffeeShopVocabs.Syrups)]
     [JsonPropertyName("optionName")]
-    public string Name
-    {
-        get => _optionaName;
-        set
-        {
-            _optionaName.Value = value;
-        }
-    }
+    public string Name { get; set; }
 
     [JsonPropertyName("optionQuantity")]
     public OptionQuantity? Quantity { get; set; }
@@ -261,7 +246,7 @@ public class Syrup : DrinkOption
 
 public class Topping : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Toppings)]
+    [Vocab(Name = CoffeeShopVocabs.Toppings)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -271,7 +256,7 @@ public class Topping : DrinkOption
 
 public class LattePreparation : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.LattePreparations)]
+    [Vocab(Name = CoffeeShopVocabs.LattePreparations)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
@@ -282,14 +267,14 @@ public abstract class BakeryOption { }
 
 public class BakeryTopping : BakeryOption
 {
-    [Vocab(CoffeeShopVocabs.BakeryToppings)]
+    [Vocab(Name = CoffeeShopVocabs.BakeryToppings)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 public class BakeryPreparation : BakeryOption
 {
-    [Vocab(CoffeeShopVocabs.BakeryPreparations)]
+    [Vocab(Name = CoffeeShopVocabs.BakeryPreparations)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
@@ -303,7 +288,7 @@ public abstract class OptionQuantity
 
 public class StringQuantity : OptionQuantity
 {
-    [Vocab(CoffeeShopVocabs.OptionQuantity)]
+    [Vocab(Name = CoffeeShopVocabs.OptionQuantity)]
     [JsonPropertyName("amount")]
     public string Amount { get; set; }
 }
@@ -323,35 +308,28 @@ public class NumberQuantity : OptionQuantity
 /// </summary>
 public static class CoffeeShopVocabs
 {
-    public const string EspressoDrinks = "espresso | lungo | ristretto | macchiato";
+    public const string CoffeeDrinks = "CoffeeDrinks";
+    public const string EspressoDrinks = "EspressoDrinks";
+    public const string LatteDrinks = "LatteDrinks";
+    public const string Creamers = "Creamers";
+    public const string Milks = "Milks";
+    public const string Caffeines = "Caffeines";
+    public const string Toppings = "Toppings";
+    public const string Sweetners = "Sweetners";
+    public const string Syrups = "Syrups";
+    public const string LattePreparations = "LattePreparations";
 
-    public const string CoffeeDrinks = "americano | coffee";
+    public const string BakeryProducts = "BakeryProducts";
+    public const string BakeryToppings = "BakeryToppings";
+    public const string BakeryPreparations = "BakeryPreparations";
 
-    public const string LatteDrinks = "cappuccino | flat white | latte | latte macchiato | mocha | chai latte";
+    public const string OptionQuantity = "OptionQuantity";
 
-    public const string Creamers =
-        "whole milk creamer | two percent milk creamer | one percent milk creamer | " +
-        "nonfat milk creamer | coconut milk creamer | soy milk creamer | " +
-        "almond milk creamer | oat milk creamer | half and half | heavy cream";
+    public static VocabCollection Load()
+    {
+        return VocabFile.Load("CoffeeShopVocab.json");
+    }
 
-    public const string Milks =
-        "whole milk | two percent milk | nonfat milk | coconut milk | " +
-        "soy milk | almond milk | oat milk";
-
-    public const string Caffeines = "regular | two thirds caf | half caf | one third caf | decaf";
-    public const string Toppings = "cinnamon | foam | ice | nutmeg | whipped cream | water";
-    public const string Sweetners = "equal | honey | splenda | sugar | sugar in the raw | sweet n low";
-    public const string Syrups =
-        "almond syrup | buttered rum syrup | caramel syrup | cinnamon syrup | " +
-        "hazelnut syrup | orange syrup | peppermint syrup | raspberry syrup | " +
-        "toffee syrup | vanilla syrup";
-
-    public const string LattePreparations = "for here cup | lid | with room | to go | dry | wet";
-
-    public const string BakeryProducts = "apple bran muffin | blueberry muffin | lemon poppyseed muffin | bagel";
-    public const string BakeryToppings = "butter | strawberry jam | cream cheese";
-    public const string BakeryPreparations = "warmed | cut in half";
-    public const string OptionQuantity = "no | light | regular | extra";
 }
 
 internal static class CartEx

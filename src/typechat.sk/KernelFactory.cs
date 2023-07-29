@@ -4,42 +4,37 @@ namespace Microsoft.TypeChat.SemanticKernel;
 
 public static class KernelFactory
 {
-    public static TypeChatJsonTranslator<T> JsonTranslator<T>(SchemaText schema, ModelInfo model, OpenAIConfig config)
+    public static IKernel CreateKernel(OpenAIConfig config, string? modelName = null)
     {
-        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        modelName ??= config.Model;
+        ArgumentException.ThrowIfNullOrEmpty(modelName, nameof(modelName));
 
         // Create kernel
         KernelBuilder kb = new KernelBuilder();
-        kb.WithChatModel(model.Name, config);
+        kb.WithChatModel(modelName, config);
         IKernel kernel = kb.Build();
-        // And Json translator
+        return kernel;
+    }
+
+    public static TypeChatJsonTranslator<T> JsonTranslator<T>(OpenAIConfig config)
+    {
+        ArgumentNullException.ThrowIfNull(config, nameof(config));
+        return JsonTranslator<T>(config.Model, config);
+    }
+
+    public static TypeChatJsonTranslator<T> JsonTranslator<T>(SchemaText schema, ModelInfo model, OpenAIConfig config)
+    {
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        IKernel kernel = CreateKernel(config, model.Name);
         return kernel.JsonTranslator<T>(schema, model);
     }
 
     public static TypeChatJsonTranslator<T> JsonTranslator<T>(ModelInfo model, OpenAIConfig config)
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
-
-        // Create kernel
-        KernelBuilder kb = new KernelBuilder();
-        kb.WithChatModel(model.Name, config);
-        IKernel kernel = kb.Build();
+        IKernel kernel = CreateKernel(config, model.Name);
         // And Json translator
         return kernel.JsonTranslator<T>(model);
-    }
-
-    public static TypeChatJsonTranslator<T> JsonTranslator<T>(OpenAIConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config, nameof(config));
-
-        return JsonTranslator<T>(config.Model, config);
-    }
-
-    public static TypeChatJsonTranslator<T> JsonTranslator<T>(SchemaText schema, OpenAIConfig config)
-    {
-        ArgumentNullException.ThrowIfNull(config, nameof(config));
-
-        return JsonTranslator<T>(schema, config.Model, config);
     }
 
     public static TypeChatJsonTranslator<T> JsonTranslator<T>(this IKernel kernel, TypeChat.SchemaText schema, ModelInfo model)
@@ -51,12 +46,12 @@ public static class KernelFactory
         return typechat;
     }
 
-    public static TypeChatJsonTranslator<T> JsonTranslator<T>(this IKernel kernel, ModelInfo model)
+    public static TypeChatJsonTranslator<T> JsonTranslator<T>(this IKernel kernel, ModelInfo model, IVocabCollection? vocabs = null)
     {
-        TypeSchema schema = TypescriptExporter.GenerateSchema(typeof(T));
+        TypescriptSchema schema = TypescriptExporter.GenerateSchema(typeof(T), vocabs);
         TypeChatJsonTranslator<T> typechat = new TypeChatJsonTranslator<T>(
             kernel.CompletionService(model),
-            new JsonSerializerTypeValidator<T>(schema)
+            new TypeValidator<T>(schema)
         );
         return typechat;
     }

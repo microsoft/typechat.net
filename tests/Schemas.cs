@@ -34,20 +34,20 @@ public class CoffeeOrder
 
 public class Creamer
 {
-    [Vocab(TestVocabs.Names.Creamers)]
+    [Vocab(Name = TestVocabs.Names.Creamers)]
     public string Name { get; set; }
 }
 
 public class Milk
 {
-    [Vocab(TestVocabs.Names.Milks, Inline = true)]
+    [Vocab(Name = TestVocabs.Names.Milks, Inline = true)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 public class DessertOrder
 {
-    [Vocab(TestVocabs.Names.Desserts)]
+    [Vocab(Name = TestVocabs.Names.Desserts)]
     [JsonPropertyName("dessert")]
     public string Name { get; set; }
     [JsonPropertyName("quantity")]
@@ -56,7 +56,7 @@ public class DessertOrder
 
 public class FruitOrder
 {
-    [Vocab(TestVocabs.Names.Fruits)]
+    [Vocab(Name = TestVocabs.Names.Fruits)]
     [JsonPropertyName("fruit")]
     public string Name { get; set; }
     [JsonPropertyName("quantity")]
@@ -98,9 +98,17 @@ public class WrapperNullableObj
 {
     public NullableTestObj? Test { get; set; }
 
-    [Vocab(TestVocabs.Names.Milks, Inline = true)]
+    [Vocab(Name = TestVocabs.Names.Milks, Inline = true)]
     [JsonPropertyName("milk")]
     public string? OptionalMilk { get; set; }
+}
+
+public class LocalVocabObj
+{
+    public const string VocabName = "Local";
+
+    [Vocab("One | Two | Three | Four", VocabName)]
+    public string Value { get; set; }
 }
 
 public static class TestVocabs

@@ -32,6 +32,8 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
         _options = options;
     }
 
+    public JsonSerializerOptions Options => _options;
+
     public ValidationResult<object?> Validate(TypeSchema schema, string json)
     {
         try
@@ -71,7 +73,7 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
         if (error.LineNumber != null)
         {
             sb.AppendLine("Line with error:");
-            sb.AppendLine(json.GetLine((long) error.LineNumber));
+            sb.AppendLine(json.GetLine((long)error.LineNumber));
         }
         return sb.ToString();
     }
@@ -113,6 +115,7 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
     }
 
     public TypeSchema Schema => _schema;
+    public JsonSerializerOptions Options => _validator.Options;
 
     public ValidationResult<T> Validate(string json)
     {

@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.TypeChat.Schema;
 
-public struct VocabEntry : IComparable<VocabEntry>
+public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
 {
     string _text;
 
@@ -24,6 +24,11 @@ public struct VocabEntry : IComparable<VocabEntry>
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
         return _text.Equals(obj);
+    }
+
+    public bool Equals(VocabEntry other)
+    {
+        return _text.Equals(other._text);
     }
 
     public override int GetHashCode()

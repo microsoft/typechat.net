@@ -4,18 +4,17 @@ namespace Microsoft.TypeChat.Schema;
 
 public class TypescriptExporter : TypeExporter<Type>
 {
-    public static TypeSchema GenerateSchema(Type type, IVocabCollection? vocabs = null)
+    public static TypescriptSchema GenerateSchema(Type type, IVocabCollection? knownVocabs = null)
     {
         using StringWriter writer = new StringWriter();
         TypescriptExporter exporter = new TypescriptExporter(writer);
-        if (vocabs != null)
+        if (knownVocabs != null)
         {
-            exporter.Vocabs = vocabs;
+            exporter.Vocabs = knownVocabs;
         }
         exporter.Export(type);
         string schema = writer.ToString();
-
-        return new TypeSchema(type, schema);
+        return new TypescriptSchema(type, schema, exporter.UsedVocabs);
     }
 
     const BindingFlags MemberFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -24,6 +23,7 @@ public class TypescriptExporter : TypeExporter<Type>
     HashSet<Type> _nonExportTypes;
     TypescriptVocabExporter? _vocabExporter;
     NullabilityInfoContext _nullableInfo;
+    VocabCollection _usedVocabs;
 
     public TypescriptExporter(TextWriter writer)
         : this(new TypescriptWriter(writer))
@@ -68,6 +68,8 @@ public class TypescriptExporter : TypeExporter<Type>
             }
         }
     }
+
+    public VocabCollection? UsedVocabs => _usedVocabs;
 
     public override void Clear()
     {
@@ -359,49 +361,85 @@ public class TypescriptExporter : TypeExporter<Type>
 
     bool ExportVocab(MemberInfo member, Type type, bool isNullable)
     {
-        VocabAttribute? vocabAttr = member.Vocab();
-        if (vocabAttr == null ||
-            !vocabAttr.HasName)
+        VocabAttribute? vocabAttr = member.VocabAttribute();
+        if (vocabAttr == null)
         {
             // No vocab
             return false;
         }
-
-        VocabType? vocabType = _vocabExporter?.Vocabs.Get(vocabAttr.Name);
-        if (vocabType == null)
+        IVocab? vocab = null;
+        VocabType? vocabType = null;
+        if (vocabAttr.HasEntries)
         {
-            // No vocab
-            throw new TypescriptExportException(TypescriptExportException.ErrorCode.VocabNotFound, vocabAttr.Name);
+            // VocabAttribute has hardcoded vocabulary
+            vocab = vocabAttr.ToVocab();
+            if (vocabAttr.HasName)
+            {
+                vocabType = new VocabType(vocabAttr.Name, vocab);
+            }
+        }
+        else
+        {
+            // Resolve vocabulary from an external source
+            vocabType = _vocabExporter?.Vocabs.Get(vocabAttr.Name);
+            vocab = vocabType?.Vocab;
         }
 
         if (vocabAttr.Inline)
         {
-            _writer.SOL();
+            if (vocab == null)
             {
-                _writer.Variable(
-                    member.PropertyName(),
-                    isNullable,
-                    vocabType.Vocab.Strings()
-                );
+                // No vocab
+                throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, vocabAttr.Name);
             }
-            _writer.EOL();
+            ExportVocabInline(member, isNullable, vocab);
         }
         else
         {
-            _writer.SOL();
+            if (vocabType == null)
             {
-                _writer.Variable(
-                    member.PropertyName(),
-                    vocabType.Name,
-                    type.IsArray,
-                    isNullable
-                );
+                // No vocab
+                throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, vocabAttr.Name);
             }
-            _writer.EOL();
-
-            _vocabExporter.AddPending(vocabType);
+            ExportVocabType(member, type, vocabType, isNullable);
         }
+
+        if (vocabType != null)
+        {
+            _usedVocabs ??= new VocabCollection();
+            _usedVocabs.Add(vocabType);
+        }
+
         return true;
+    }
+
+    void ExportVocabInline(MemberInfo member, bool isNullable, IVocab vocab)
+    {
+        _writer.SOL();
+        {
+            _writer.Variable(
+                member.PropertyName(),
+                isNullable,
+                vocab.Strings()
+            );
+        }
+        _writer.EOL();
+    }
+
+    void ExportVocabType(MemberInfo member, Type type, VocabType vocabType, bool isNullable)
+    {
+        _writer.SOL();
+        {
+            _writer.Variable(
+                member.PropertyName(),
+                vocabType.Name,
+                type.IsArray,
+                isNullable
+            );
+        }
+        _writer.EOL();
+
+        _vocabExporter.AddPending(vocabType);
     }
 
     protected virtual TypescriptExporter ExportDiscriminator(Type type)

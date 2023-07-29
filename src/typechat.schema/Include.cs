@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 global using System;
+global using System.Collections;
 global using System.Diagnostics;
 global using System.Threading;
 global using System.Threading.Tasks;

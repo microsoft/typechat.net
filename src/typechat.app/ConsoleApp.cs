@@ -36,6 +36,11 @@ public abstract class ConsoleApp
         {
             Console.Write(ConsolePrompt);
             string? input = await ReadLineAsync(cancelToken).ConfigureAwait(false);
+            input = input.Trim();
+            if (string.IsNullOrEmpty(input))
+            {
+                continue;
+            }
             if (IsStop(input))
             {
                 break;
@@ -104,10 +109,39 @@ public abstract class ConsoleApp
     }
 
     protected abstract Task ProcessRequestAsync(string input, CancellationToken cancelToken);
+
+    protected void SubscribeAllEvents<T>(TypeChatJsonTranslator<T> translator)
+    {
+        translator.SendingPrompt += this.OnSendingPrompt;
+        translator.AttemptingRepair += this.OnAttemptingRepairs;
+        translator.CompletionReceived += this.OnCompletionReceived;
+    }
+
     protected virtual Task OnError(string input, Exception ex)
     {
         Console.WriteLine(ex);
         Console.WriteLine();
         return Task.CompletedTask;
+    }
+
+    protected void OnSendingPrompt(string value)
+    {
+        Console.WriteLine("### PROMPT ");
+        Console.WriteLine(value);
+        Console.WriteLine("###");
+    }
+
+    protected void OnCompletionReceived(string value)
+    {
+        Console.WriteLine("### COMPLETION ");
+        Console.WriteLine(value);
+        Console.WriteLine("###");
+    }
+
+    protected void OnAttemptingRepairs(string value)
+    {
+        Console.WriteLine("### REPAIRING ERROR: ");
+        Console.WriteLine(value);
+        Console.WriteLine("###");
     }
 }

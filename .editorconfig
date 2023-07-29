@@ -154,7 +154,7 @@ dotnet_diagnostic.IDE0071.severity = warning # Simplify interpolation
 dotnet_diagnostic.IDE0073.severity = warning # Require file header
 dotnet_diagnostic.IDE0082.severity = warning # Convert typeof to nameof
 # dotnet_diagnostic.IDE0090.severity = warning # Simplify new expression
-dotnet_diagnostic.IDE0130.severity = warning # Namespace does not match folder structure
+# dotnet_diagnostic.IDE0130.severity = warning # Namespace does not match folder structure
 dotnet_diagnostic.IDE0161.severity = warning # Use file-scoped namespace
 
 # Suppressed diagnostics

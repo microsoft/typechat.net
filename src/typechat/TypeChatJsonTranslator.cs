@@ -26,13 +26,23 @@ public class TypeChatJsonTranslator<T>
     }
 
     public ITypeChatLanguageModel Model => _model;
-    public IJsonTypeValidator<T> Validator => _validator;
+    public IJsonTypeValidator<T> Validator
+    {
+        get => _validator;
+        set
+        {
+            ArgumentNullException.ThrowIfNull(value, nameof(Validator));
+            _validator = value;
+        }
+    }
+
     public RequestSettings RequestSettings => _requestSettings;
 
     public bool AttemptRepair { get; set; } = true;
 
-    public event Action<string> CompletionRequest;
+    public event Action<string> SendingPrompt;
     public event Action<string> CompletionReceived;
+    public event Action<string> AttemptingRepair;
 
     /// <summary>
     /// Translate a natural language request into an object of type 'T'
@@ -51,7 +61,7 @@ public class TypeChatJsonTranslator<T>
         requestSettings ??= _requestSettings;
         string prompt = _prompts.CreateRequestPrompt(_validator.Schema, request);
         bool attemptRepair = AttemptRepair;
-        while(true)
+        while (true)
         {
             string responseText = await CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
             string jsonText = GetJson(responseText);
@@ -64,6 +74,8 @@ public class TypeChatJsonTranslator<T>
             {
                 throw new TypeChatException(TypeChatException.ErrorCode.JsonValidation, validation.Message);
             }
+
+            NotifyEvent(AttemptingRepair, validation.Message);
             prompt += $"{responseText}\n{_prompts.CreateRepairPrompt(_validator.Schema, responseText, validation.Message)}";
             attemptRepair = false;
         }
@@ -84,7 +96,7 @@ public class TypeChatJsonTranslator<T>
 
     protected async virtual Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken)
     {
-        NotifyEvent(CompletionRequest, prompt);
+        NotifyEvent(SendingPrompt, prompt);
         string completion = await Model.CompleteAsync(prompt, settings, cancelToken).ConfigureAwait(false);
         NotifyEvent(CompletionReceived, completion);
         return completion;

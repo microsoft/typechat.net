@@ -3,6 +3,7 @@ using System;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.SemanticKernel;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 using Microsoft.TypeChat.SemanticKernel;
@@ -11,13 +12,25 @@ namespace CoffeeShop;
 
 public class CoffeeShop : ConsoleApp
 {
+    IVocabCollection _vocabs;
+    IKernel _kernel;
     TypeChatJsonTranslator<Cart> _translator;
 
     CoffeeShop()
     {
-        _translator = KernelFactory.JsonTranslator<Cart>(Config.LoadOpenAI());
-        // Uncomment to see ALL raw messages to and from the AI
-        //base.SubscribeAllEvents(_service);
+        var config = Config.LoadOpenAI();
+        _kernel = KernelFactory.CreateKernel(config);
+
+        // Load a standard vocabulary from file.
+        // But you can also use a different vocab for each request.
+        _vocabs = CoffeeShopVocabs.Load();
+        // Here we crete a single translator and hold on to it.
+        // But you can create instances of the translator on demand, one for each request. 
+        // Each with a different vocab specific to the request
+        // E.g. you could service a different vocab to a Vegan user. Or show more options to a Premimum user
+        _translator = _kernel.JsonTranslator<Cart>(config.Model, _vocabs);
+        // Uncomment to see the raw reponse from the AI
+        //_service.CompletionReceived += this.OnCompletionReceived;
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -57,14 +70,12 @@ public class CoffeeShop : ConsoleApp
         {
             CoffeeShop app = new CoffeeShop();
             // Un-comment to print auto-generated schema at start:
-            // Console.WriteLine(app.Schema.Schema.Text);
-
+            Console.WriteLine(app.Schema.Schema.Text);
             await app.RunAsync("☕> ", args.GetOrNull(0));
         }
         catch(Exception ex)
         {
             Console.WriteLine(ex);
-            return -1;
         }
 
         return 0;
