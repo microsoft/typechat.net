@@ -5,6 +5,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
+    <RootNamespace>CoffeeShop</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

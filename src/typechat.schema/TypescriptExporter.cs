@@ -101,11 +101,6 @@ public class TypescriptExporter : TypeExporter<Type>
             {
                 ExportClass(type);
             }
-            if (IncludeSubclasses)
-            {
-                AddPending(type.Subclasses());
-                AddPending(type.Implementors());
-            }
         }
     }
 
@@ -147,6 +142,12 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.EndInterface(typeName);
 
         AddExported(type);
+
+        if (IncludeSubclasses)
+        {
+            AddPending(type.Subclasses());
+            AddPending(type.Implementors());
+        }
 
         return this;
     }
