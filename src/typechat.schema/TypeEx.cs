@@ -2,6 +2,10 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+public interface IStringType
+{
+}
+
 public static class TypeEx
 {
     public static IEnumerable<CommentAttribute> CommentAttributes(this MemberInfo member)
@@ -58,7 +62,7 @@ public static class TypeEx
 
     internal static bool IsString(this Type type)
     {
-        return type == typeof(string);
+        return type == typeof(string) || type.IsAssignableTo(typeof(IStringType));
     }
 
     internal static bool IsNumber(this Type type)

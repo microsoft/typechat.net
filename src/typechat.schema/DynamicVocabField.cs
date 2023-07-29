@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-public struct DynamicVocabValue
+public struct DynamicVocabValue : IStringType
 {
     public DynamicVocabValue()
     {
@@ -74,6 +74,11 @@ public class DynamicVocabField
         {
             Set(value);
         }
+    }
+
+    public static implicit operator DynamicVocabValue(DynamicVocabField field)
+    {
+        return field._value;
     }
 
     public static implicit operator string(DynamicVocabField field)

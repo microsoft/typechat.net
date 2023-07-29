@@ -66,12 +66,17 @@ public class CoffeeShop : ConsoleApp
 
     public static async Task<int> Main(string[] args)
     {
-        CoffeeShop app = new CoffeeShop();
-
-        // Un-comment to print auto-generated schema at start:
-        Console.WriteLine(app.Schema.Schema.Text);
-
-        await app.RunAsync("☕> ", args.GetOrNull(0));
+        try
+        {
+            CoffeeShop app = new CoffeeShop();
+            // Un-comment to print auto-generated schema at start:
+            Console.WriteLine(app.Schema.Schema.Text);
+            await app.RunAsync("☕> ", args.GetOrNull(0));
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
 
         return 0;
     }

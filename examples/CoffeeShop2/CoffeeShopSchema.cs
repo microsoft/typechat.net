@@ -24,7 +24,7 @@ namespace CoffeeShop;
     E.g. changing 'productName' to 'name' can lead to the model being less stringent about what it places in that field. 
  */
 
-public class Cart : IConstraintValidatable
+public class Cart
 {
     [JsonPropertyName("items")]
     public CartItem[] Items { get; set; }
@@ -39,8 +39,6 @@ public class Cart : IConstraintValidatable
             }
         }
     }
-
-    public void ValidateConstraints(ConstraintCheckContext context) => Items.ValidateConstraints(context);
 }
 
 [JsonPolymorphic]
@@ -75,7 +73,7 @@ public abstract class LineItem : CartItem
 
 public class EspressoDrink : LineItem
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.EspressoDrinks)]
+    [Vocab(Name = CoffeeShopVocabs.EspressoDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -92,9 +90,9 @@ public class EspressoDrink : LineItem
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
 }
 
-public class CoffeeDrink : LineItem, IConstraintValidatable
+public class CoffeeDrink : LineItem
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.CoffeeDrinks)]
+    [Vocab(Name = CoffeeShopVocabs.CoffeeDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -109,15 +107,24 @@ public class CoffeeDrink : LineItem, IConstraintValidatable
     public DrinkOption[]? Options { get; set; }
 
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
-
-    public void ValidateConstraints(ConstraintCheckContext context) => Options.ValidateConstraints(context);
 }
 
-public class LatteDrink : LineItem, IConstraintValidatable
+public class LatteDrink : LineItem
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.LatteDrinks)]
+    DynamicVocabField _productName;
+
+    public LatteDrink()
+    {
+        _productName = new DynamicVocabField(CoffeeShopVocabs.LatteDrinks, "productName");
+    }
+
+    [Vocab(Name = CoffeeShopVocabs.LatteDrinks)]
     [JsonPropertyName("productName")]
-    public string Name { get; set; }
+    public DynamicVocabValue Name
+    {
+        get => _productName;
+        set => _productName.Value = value;
+    }
 
     [JsonPropertyName("temperature")]
     public CoffeeTemperature? Temperature { get; set; }
@@ -130,16 +137,11 @@ public class LatteDrink : LineItem, IConstraintValidatable
     public DrinkOption[]? Options { get; set; }
 
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
-
-    public void ValidateConstraints(ConstraintCheckContext context)
-    {
-        context.CheckVocabEntry("productName", CoffeeShopVocabs.Names.LatteDrinks, Name);
-    }
 }
 
 public class BakeryItem : LineItem
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.BakeryProducts)]
+    [Vocab(Name = CoffeeShopVocabs.BakeryProducts)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -203,28 +205,28 @@ public class UnknownDrinkOption : DrinkOption
 
 public class Creamer : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.Creamers)]
+    [Vocab(Name = CoffeeShopVocabs.Creamers)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Milk : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.Milks)]
+    [Vocab(Name = CoffeeShopVocabs.Milks)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Caffeine : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.Caffeines)]
+    [Vocab(Name = CoffeeShopVocabs.Caffeines)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Sweetner : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.Sweetners)]
+    [Vocab(Name = CoffeeShopVocabs.Sweetners)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -232,24 +234,19 @@ public class Sweetner : DrinkOption
     public OptionQuantity? Quantity { get; set; }
 }
 
-public class Syrup : DrinkOption, IConstraintValidatable
+public class Syrup : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.Syrups)]
+    [Vocab(Name = CoffeeShopVocabs.Syrups)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
     [JsonPropertyName("optionQuantity")]
     public OptionQuantity? Quantity { get; set; }
-
-    public virtual void ValidateConstraints(ConstraintCheckContext context)
-    {
-        context.CheckVocabEntry("optionName", CoffeeShopVocabs.Names.Syrups, Name);
-    }
 }
 
 public class Topping : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.Toppings)]
+    [Vocab(Name = CoffeeShopVocabs.Toppings)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -259,7 +256,7 @@ public class Topping : DrinkOption
 
 public class LattePreparation : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.LattePreparations)]
+    [Vocab(Name = CoffeeShopVocabs.LattePreparations)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
@@ -270,33 +267,33 @@ public abstract class BakeryOption { }
 
 public class BakeryTopping : BakeryOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.BakeryToppings)]
+    [Vocab(Name = CoffeeShopVocabs.BakeryToppings)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 public class BakeryPreparation : BakeryOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.BakeryPreparations)]
+    [Vocab(Name = CoffeeShopVocabs.BakeryPreparations)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 [JsonPolymorphic]
-[JsonDerivedType(typeof(StringOptionQuantity), typeDiscriminator: nameof(StringOptionQuantity))]
-[JsonDerivedType(typeof(NumberOptionQuantity), typeDiscriminator: nameof(NumberOptionQuantity))]
+[JsonDerivedType(typeof(StringQuantity), typeDiscriminator: nameof(StringQuantity))]
+[JsonDerivedType(typeof(NumberQuantity), typeDiscriminator: nameof(NumberQuantity))]
 public abstract class OptionQuantity
 {
 }
 
-public class StringOptionQuantity : OptionQuantity
+public class StringQuantity : OptionQuantity
 {
-    [Vocab(Name = CoffeeShopVocabs.Names.OptionQuantity)]
+    [Vocab(Name = CoffeeShopVocabs.OptionQuantity)]
     [JsonPropertyName("amount")]
     public string Amount { get; set; }
 }
 
-public class NumberOptionQuantity : OptionQuantity
+public class NumberQuantity : OptionQuantity
 {
     [JsonPropertyName("amount")]
     public int Amount { get; set; }
@@ -311,25 +308,22 @@ public class NumberOptionQuantity : OptionQuantity
 /// </summary>
 public static class CoffeeShopVocabs
 {
-    public static class Names
-    {
-        public const string CoffeeDrinks = "CoffeeDrinks";
-        public const string EspressoDrinks = "EspressoDrinks";
-        public const string LatteDrinks = "LatteDrinks";
-        public const string Creamers = "Creamers";
-        public const string Milks = "Milks";
-        public const string Caffeines = "Caffeines";
-        public const string Toppings = "Toppings";
-        public const string Sweetners = "Sweetners";
-        public const string Syrups = "Syrups";
-        public const string LattePreparations = "LattePreparations";
+    public const string CoffeeDrinks = "CoffeeDrinks";
+    public const string EspressoDrinks = "EspressoDrinks";
+    public const string LatteDrinks = "LatteDrinks";
+    public const string Creamers = "Creamers";
+    public const string Milks = "Milks";
+    public const string Caffeines = "Caffeines";
+    public const string Toppings = "Toppings";
+    public const string Sweetners = "Sweetners";
+    public const string Syrups = "Syrups";
+    public const string LattePreparations = "LattePreparations";
 
-        public const string BakeryProducts = "BakeryProducts";
-        public const string BakeryToppings = "BakeryToppings";
-        public const string BakeryPreparations = "BakeryPreparations";
+    public const string BakeryProducts = "BakeryProducts";
+    public const string BakeryToppings = "BakeryToppings";
+    public const string BakeryPreparations = "BakeryPreparations";
 
-        public const string OptionQuantity = "OptionQuantity";
-    }
+    public const string OptionQuantity = "OptionQuantity";
 
     public static VocabCollection Load()
     {

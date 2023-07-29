@@ -19,7 +19,7 @@ public class ConstraintCheckContext
     public TextWriter Error => _errorWriter;
     public IVocabCollection? Vocabs => _vocabs;
 
-    public bool CheckVocabEntry(string propertyName, string vocabName, string value)
+    public bool CheckVocab(string propertyName, string vocabName, string value)
     {
         VocabType? vocabType = _vocabs.Get(vocabName);
         if (vocabType == null)
