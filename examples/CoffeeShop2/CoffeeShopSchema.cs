@@ -73,7 +73,7 @@ public abstract class LineItem : CartItem
 
 public class EspressoDrink : LineItem
 {
-    [Vocab(Name = CoffeeShopVocabs.EspressoDrinks)]
+    [JsonVocab(Name = CoffeeShopVocabs.EspressoDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -92,7 +92,7 @@ public class EspressoDrink : LineItem
 
 public class CoffeeDrink : LineItem
 {
-    [Vocab(Name = CoffeeShopVocabs.CoffeeDrinks)]
+    [JsonVocab(Name = CoffeeShopVocabs.CoffeeDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -111,20 +111,9 @@ public class CoffeeDrink : LineItem
 
 public class LatteDrink : LineItem
 {
-    DynamicVocabField _productName;
-
-    public LatteDrink()
-    {
-        _productName = new DynamicVocabField(CoffeeShopVocabs.LatteDrinks, "productName");
-    }
-
-    [Vocab(Name = CoffeeShopVocabs.LatteDrinks)]
+    [JsonVocab(Name = CoffeeShopVocabs.LatteDrinks)]
     [JsonPropertyName("productName")]
-    public VocabString Name
-    {
-        get => _productName;
-        set => _productName.Value = value;
-    }
+    public string Name { get; set; }
 
     [JsonPropertyName("temperature")]
     public CoffeeTemperature? Temperature { get; set; }
@@ -141,7 +130,7 @@ public class LatteDrink : LineItem
 
 public class BakeryItem : LineItem
 {
-    [Vocab(Name = CoffeeShopVocabs.BakeryProducts)]
+    [JsonVocab(Name = CoffeeShopVocabs.BakeryProducts)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -205,28 +194,28 @@ public class UnknownDrinkOption : DrinkOption
 
 public class Creamer : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Creamers)]
+    [JsonVocab(Name = CoffeeShopVocabs.Creamers)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Milk : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Milks)]
+    [JsonVocab(Name = CoffeeShopVocabs.Milks)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Caffeine : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Caffeines)]
+    [JsonVocab(Name = CoffeeShopVocabs.Caffeines)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Sweetner : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Sweetners)]
+    [JsonVocab(Name = CoffeeShopVocabs.Sweetners)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -236,7 +225,7 @@ public class Sweetner : DrinkOption
 
 public class Syrup : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Syrups)]
+    [JsonVocab(Name = CoffeeShopVocabs.Syrups)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -246,7 +235,7 @@ public class Syrup : DrinkOption
 
 public class Topping : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.Toppings)]
+    [JsonVocab(Name = CoffeeShopVocabs.Toppings)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -256,7 +245,7 @@ public class Topping : DrinkOption
 
 public class LattePreparation : DrinkOption
 {
-    [Vocab(Name = CoffeeShopVocabs.LattePreparations)]
+    [JsonVocab(Name = CoffeeShopVocabs.LattePreparations)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
@@ -267,14 +256,14 @@ public abstract class BakeryOption { }
 
 public class BakeryTopping : BakeryOption
 {
-    [Vocab(Name = CoffeeShopVocabs.BakeryToppings)]
+    [JsonVocab(Name = CoffeeShopVocabs.BakeryToppings)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 public class BakeryPreparation : BakeryOption
 {
-    [Vocab(Name = CoffeeShopVocabs.BakeryPreparations)]
+    [JsonVocab(Name = CoffeeShopVocabs.BakeryPreparations)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
@@ -288,7 +277,7 @@ public abstract class OptionQuantity
 
 public class StringQuantity : OptionQuantity
 {
-    [Vocab(Name = CoffeeShopVocabs.OptionQuantity)]
+    [JsonVocab(Name = CoffeeShopVocabs.OptionQuantity)]
     [JsonPropertyName("amount")]
     public string Amount { get; set; }
 }

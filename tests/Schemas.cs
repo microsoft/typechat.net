@@ -34,20 +34,20 @@ public class CoffeeOrder
 
 public class Creamer
 {
-    [Vocab(Name = TestVocabs.Names.Creamers)]
+    [JsonVocab(Name = TestVocabs.Names.Creamers)]
     public string Name { get; set; }
 }
 
 public class Milk
 {
-    [Vocab(Name = TestVocabs.Names.Milks, Inline = true)]
+    [JsonVocab(Name = TestVocabs.Names.Milks, Inline = true)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 public class DessertOrder
 {
-    [Vocab(Name = TestVocabs.Names.Desserts)]
+    [JsonVocab(Name = TestVocabs.Names.Desserts)]
     [JsonPropertyName("dessert")]
     public string Name { get; set; }
     [JsonPropertyName("quantity")]
@@ -56,7 +56,7 @@ public class DessertOrder
 
 public class FruitOrder
 {
-    [Vocab(Name = TestVocabs.Names.Fruits)]
+    [JsonVocab(Name = TestVocabs.Names.Fruits)]
     [JsonPropertyName("fruit")]
     public string Name { get; set; }
     [JsonPropertyName("quantity")]
@@ -98,16 +98,22 @@ public class WrapperNullableObj
 {
     public NullableTestObj? Test { get; set; }
 
-    [Vocab(Name = TestVocabs.Names.Milks, Inline = true)]
+    [JsonVocab(Name = TestVocabs.Names.Milks, Inline = true)]
     [JsonPropertyName("milk")]
     public string? OptionalMilk { get; set; }
+}
+
+public class ConverterTestObj
+{
+    [JsonVocab("Whole | Two Percent | Almond | Soy")]
+    public string Milk { get; set; }
 }
 
 public class LocalVocabObj
 {
     public const string VocabName = "Local";
 
-    [Vocab("One | Two | Three | Four", VocabName)]
+    [JsonVocab("One | Two | Three | Four", Name = VocabName)]
     public string Value { get; set; }
 }
 

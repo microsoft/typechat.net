@@ -6,73 +6,62 @@ public struct VocabString : IStringType
 {
     public VocabString()
     {
-        _value = null;
-        _vocab = null;
-        _vocabs = null;
+        Value = null;
+        VocabName = null;
     }
 
-    public VocabString(IVocab vocab, string value)
+    public VocabString(string vocabName, string value)
     {
-        _vocab = vocab;
-        _value = value;
+        VocabName = vocabName;
+        Value = value;
     }
-
-    internal VocabString(IVocabCollection vocabs, string? value)
-    {
-        _vocabs = vocabs;
-        _value = value;
-    }
-
-    string? _value;
-    IVocabCollection? _vocabs;
-    IVocab? _vocab;
 
     [JsonPropertyName("value")]
-    public string? Value
+    public string? Value { get; set; }
+
+    [JsonPropertyName("vocab")]
+    public string VocabName { get; set; }
+
+    public void ValidateConstraints(IVocab vocab, string? propertyName = null)
     {
-        get => _value;
-        set
-        {
-            _value = value;
-        }
+        vocab.ThrowIfNotInVocab(propertyName, Value);
     }
 
-    [JsonIgnore]
-    public IVocab? Vocab
+    public void ValidateConstraints(IVocabCollection vocabs, string? propertyName = null)
     {
-        get => _vocab;
-    }
-
-    internal IVocabCollection? Vocabs
-    {
-        get => _vocabs;
-        set => _vocabs = value;
-    }
-
-    public void ValidateConstraints(string? propertyName = null)
-    {
-        _vocab.ThrowIfNotInVocab(propertyName, _value);
-    }
-
-    internal void Set(string? propertyName, string value)
-    {
-        _vocab.ThrowIfNotInVocab(propertyName, value);
-        _value = value;
-    }
-
-    internal void BindVocab(string vocabName)
-    {
-        _vocab = _vocabs?.Get(vocabName)?.Vocab;
-    }
-
-    internal void ValidateConstraints(string vocabName, string? propertyName = null)
-    {
-        BindVocab(vocabName);
-        _vocab.ThrowIfNotInVocab(propertyName, _value);
+        vocabs.ThrowIfNotInVocab(VocabName, propertyName, Value);
     }
 
     public static implicit operator string(VocabString value)
     {
-        return value._value;
+        return value.Value;
     }
 }
+
+public class VocabStringJsonConvertor : JsonConverter<VocabString>
+{
+    IVocabCollection _vocabs;
+
+    public VocabStringJsonConvertor(IVocabCollection vocabs)
+    {
+        ArgumentNullException.ThrowIfNull(vocabs, nameof(vocabs));
+        _vocabs = vocabs;
+    }
+
+    public IVocabCollection Vocabs => _vocabs;
+
+    public override VocabString Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var convertor = (JsonConverter<VocabString>)options.GetConverter(typeof(VocabString));
+        var vocabString = convertor.Read(ref reader, typeToConvert, options);
+        vocabString.ValidateConstraints(_vocabs);
+        return vocabString;
+    }
+
+    public override void Write(Utf8JsonWriter writer, VocabString value, JsonSerializerOptions options)
+    {
+        var convertor = (JsonConverter<VocabString>)options.GetConverter(typeof(VocabString));
+        convertor.Write(writer, value, options);
+    }
+}
+

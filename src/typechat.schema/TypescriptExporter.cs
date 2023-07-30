@@ -342,7 +342,7 @@ public class TypescriptExporter : TypeExporter<Type>
         }
 
         if (actualType.IsString() &&
-            ExportVocab(member, actualType, isNullable))
+            ExportJsonVocab(member, actualType, isNullable))
         {
             return this;
         }
@@ -359,10 +359,9 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.EOL();
         return this;
     }
-
-    bool ExportVocab(MemberInfo member, Type type, bool isNullable)
+    bool ExportJsonVocab(MemberInfo member, Type type, bool isNullable)
     {
-        VocabAttribute? vocabAttr = member.VocabAttribute();
+        JsonVocabAttribute? vocabAttr = member.JsonVocabAttribute();
         if (vocabAttr == null)
         {
             // No vocab
@@ -370,10 +369,10 @@ public class TypescriptExporter : TypeExporter<Type>
         }
         IVocab? vocab = null;
         VocabType? vocabType = null;
-        if (vocabAttr.HasEntries)
+        if (vocabAttr.HasVocab)
         {
             // VocabAttribute has hardcoded vocabulary
-            vocab = vocabAttr.ToVocab();
+            vocab = vocabAttr.Vocab;
             if (vocabAttr.HasName)
             {
                 vocabType = new VocabType(vocabAttr.Name, vocab);
@@ -403,6 +402,11 @@ public class TypescriptExporter : TypeExporter<Type>
                 throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, vocabAttr.Name);
             }
             ExportVocabType(member, type, vocabType, isNullable);
+        }
+
+        if (!vocabAttr.HasPropertyName)
+        {
+            vocabAttr.PropertyName = member.PropertyName();
         }
 
         if (vocabType != null)

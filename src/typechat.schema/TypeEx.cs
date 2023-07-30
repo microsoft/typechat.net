@@ -27,17 +27,9 @@ public static class TypeEx
                select comment.Text;
     }
 
-    public static VocabAttribute? VocabAttribute(this MemberInfo member)
+    public static JsonVocabAttribute? JsonVocabAttribute(this MemberInfo member)
     {
-        return member.GetCustomAttribute(typeof(VocabAttribute)) as VocabAttribute;
-    }
-
-    public static string? VocabName(this MemberInfo member)
-    {
-        VocabAttribute? attr = member.VocabAttribute();
-        return attr != null ?
-               attr.Name :
-               null;
+        return member.GetCustomAttribute(typeof(JsonVocabAttribute)) as JsonVocabAttribute;
     }
 
     internal static bool IsObject(this Type type)

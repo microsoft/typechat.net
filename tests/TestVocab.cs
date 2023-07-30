@@ -7,7 +7,11 @@ public class TestVocab : TypeChatTest
     [Fact]
     public void TestVocabAttribute()
     {
-        VocabAttribute attribute = new VocabAttribute("One | Two | Three", "Test");
+        JsonVocabAttribute attribute = new JsonVocabAttribute
+        {
+            Entries = "One | Two | Three",
+            Name = "Test"
+        };
         Vocab? vocab = attribute.ToVocab();
         Assert.NotNull(vocab);
         Assert.True(vocab.Count == 3);
@@ -21,7 +25,7 @@ public class TestVocab : TypeChatTest
     [Fact]
     public void ExportLocal()
     {
-        VocabAttribute? vattr = typeof(LocalVocabObj).GetProperties()[0].VocabAttribute();
+        JsonVocabAttribute? vattr = typeof(LocalVocabObj).GetProperties()[0].JsonVocabAttribute();
         Assert.NotNull(vattr);
         Vocab vocab = vattr.ToVocab();
 
@@ -94,5 +98,24 @@ public class TestVocab : TypeChatTest
         Assert.NotNull(fruitType);
         Assert.Contains("Banana", fruitType.Vocab);
         Assert.Contains("Pear", fruitType.Vocab);
+    }
+
+    [Fact]
+    public void JsonVocab()
+    {
+        var obj = new ConverterTestObj();
+        obj.Milk = "Cream";
+
+        string json = Json.Stringify(obj);
+        Assert.Throws<SchemaException>(() => Json.Parse<ConverterTestObj>(json));
+
+        obj.Milk = "Whole";
+        json = Json.Stringify(obj);
+        var obj2 = Json.Parse<ConverterTestObj>(json);
+        Assert.Equal(obj.Milk, obj2.Milk);
+
+        obj.Milk = "Almond";
+        json = Json.Stringify(obj);
+        obj2 = Json.Parse<ConverterTestObj>(json);
     }
 }
