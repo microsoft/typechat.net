@@ -23,6 +23,15 @@ public class Vocab : List<VocabEntry>, IVocab
 
     public Vocab() { }
 
+    public Vocab(IVocab src)
+    {
+        ArgumentNullException.ThrowIfNull(src, nameof(src));
+        foreach (var entry in src)
+        {
+            Add(entry);
+        }
+    }
+
     public Vocab(params string[] entries)
     {
         Add(entries);

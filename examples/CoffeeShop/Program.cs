@@ -61,7 +61,7 @@ public class CoffeeShop : ConsoleApp
 
             await app.RunAsync("☕> ", args.GetOrNull(0));
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex);
             return -1;

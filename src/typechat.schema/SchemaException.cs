@@ -17,7 +17,7 @@ public class SchemaException : Exception
     {
     }
 
-    public SchemaException(ErrorCode code, string? message, Exception? inner = null)
+    public SchemaException(ErrorCode code, string? message = null, Exception? inner = null)
         : base(message, inner)
     {
         _errorCode = code;

@@ -1,4 +1,4 @@
-﻿  // Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System;
 using System.Collections.Generic;
@@ -71,7 +71,7 @@ public abstract class LineItem : CartItem
 
 public class EspressoDrink : LineItem
 {
-    [Vocab(CoffeeShopVocabs.EspressoDrinks)]
+    [JsonVocab(CoffeeShopVocabs.EspressoDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -90,7 +90,7 @@ public class EspressoDrink : LineItem
 
 public class CoffeeDrink : LineItem
 {
-    [Vocab(CoffeeShopVocabs.CoffeeDrinks)]
+    [JsonVocab(CoffeeShopVocabs.CoffeeDrinks)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -109,20 +109,9 @@ public class CoffeeDrink : LineItem
 
 public class LatteDrink : LineItem
 {
-    VocabField _name;
-
-    public LatteDrink()
-    {
-        _name = new VocabField(CoffeeShopVocabs.LatteDrinks, "productName");
-    }
-
-    [Vocab(CoffeeShopVocabs.LatteDrinks)]
+    [JsonVocab(CoffeeShopVocabs.LatteDrinks, PropertyName = "productName")]
     [JsonPropertyName("productName")]
-    public string Name
-    {
-        get => _name;
-        set => _name.Value = value;
-    }
+    public string Name { get; set; }
 
     [JsonPropertyName("temperature")]
     public CoffeeTemperature? Temperature { get; set; }
@@ -139,7 +128,7 @@ public class LatteDrink : LineItem
 
 public class BakeryItem : LineItem
 {
-    [Vocab(CoffeeShopVocabs.BakeryProducts)]
+    [JsonVocab(CoffeeShopVocabs.BakeryProducts)]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -206,28 +195,28 @@ public class UnknownDrinkOption : DrinkOption
 
 public class Creamer : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Creamers)]
+    [JsonVocab(CoffeeShopVocabs.Creamers)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Milk : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Milks)]
+    [JsonVocab(CoffeeShopVocabs.Milks)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Caffeine : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Caffeines)]
+    [JsonVocab(CoffeeShopVocabs.Caffeines)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
 public class Sweetner : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Sweetners)]
+    [JsonVocab(CoffeeShopVocabs.Sweetners)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -237,23 +226,9 @@ public class Sweetner : DrinkOption
 
 public class Syrup : DrinkOption
 {
-    VocabField _optionaName;
-
-    public Syrup()
-    {
-        _optionaName = new VocabField(CoffeeShopVocabs.Syrups, "optionName");
-    }
-
-    [Vocab(CoffeeShopVocabs.Syrups)]
+    [JsonVocab(CoffeeShopVocabs.Syrups)]
     [JsonPropertyName("optionName")]
-    public string Name
-    {
-        get => _optionaName;
-        set
-        {
-            _optionaName.Value = value;
-        }
-    }
+    public string Name { get; set; }
 
     [JsonPropertyName("optionQuantity")]
     public OptionQuantity? Quantity { get; set; }
@@ -261,7 +236,7 @@ public class Syrup : DrinkOption
 
 public class Topping : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.Toppings)]
+    [JsonVocab(CoffeeShopVocabs.Toppings)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 
@@ -271,7 +246,7 @@ public class Topping : DrinkOption
 
 public class LattePreparation : DrinkOption
 {
-    [Vocab(CoffeeShopVocabs.LattePreparations)]
+    [JsonVocab(CoffeeShopVocabs.LattePreparations)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
@@ -282,14 +257,14 @@ public abstract class BakeryOption { }
 
 public class BakeryTopping : BakeryOption
 {
-    [Vocab(CoffeeShopVocabs.BakeryToppings)]
+    [JsonVocab(CoffeeShopVocabs.BakeryToppings)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
 public class BakeryPreparation : BakeryOption
 {
-    [Vocab(CoffeeShopVocabs.BakeryPreparations)]
+    [JsonVocab(CoffeeShopVocabs.BakeryPreparations)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
@@ -303,7 +278,7 @@ public abstract class OptionQuantity
 
 public class StringQuantity : OptionQuantity
 {
-    [Vocab(CoffeeShopVocabs.OptionQuantity)]
+    [JsonVocab(CoffeeShopVocabs.OptionQuantity)]
     [JsonPropertyName("amount")]
     public string Amount { get; set; }
 }
