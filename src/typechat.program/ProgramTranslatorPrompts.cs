@@ -25,6 +25,6 @@ public class ProgramTranslatorPrompts : JsonTranslatorPrompts
                $"###\n{apiDef}###\n" +
                "The following is a user request:\n" +
                $"\"\"\"\n{request}\n\"\"\"\n" +
-               "The following is the user request translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n";
+               "The following is the user request translated into a JSON object with NO indentation and no properties with the value undefined:\n";
     }
 }
