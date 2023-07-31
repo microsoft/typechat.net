@@ -22,21 +22,10 @@ namespace CoffeeShop;
     E.g. changing 'productName' to 'name' can lead to the model being less stringent about what it places in that field. 
  */
 
-public class Cart
+public partial class Cart
 {
     [JsonPropertyName("items")]
     public CartItem[] Items { get; set; }
-
-    public virtual void GetUnknown(StringBuilder sb)
-    {
-        if (Items != null)
-        {
-            foreach (CartItem item in Items)
-            {
-                item.GetUnknown(sb);
-            }
-        }
-    }
 }
 
 [JsonPolymorphic]
@@ -45,22 +34,16 @@ public class Cart
 [JsonDerivedType(typeof(CoffeeDrink), typeDiscriminator: nameof(CoffeeDrink))]
 [JsonDerivedType(typeof(LatteDrink), typeDiscriminator: nameof(LatteDrink))]
 [JsonDerivedType(typeof(BakeryItem), typeDiscriminator: nameof(BakeryItem))]
-public abstract class CartItem
+public abstract partial class CartItem
 {
-    public virtual void GetUnknown(StringBuilder sb) { return; }
 }
 
 [Comment("Use this type for products with names that match NO listed PRODUCT NAME")]
-public class UnknownItem : CartItem
+public partial class UnknownItem : CartItem
 {
     [Comment("The text that wasn't understood")]
     [JsonPropertyName("text")]
     public string Text { get; set; }
-
-    public override void GetUnknown(StringBuilder sb)
-    {
-        sb.AppendLine(Text);
-    }
 }
 
 public abstract class LineItem : CartItem
@@ -69,7 +52,7 @@ public abstract class LineItem : CartItem
     public int Quantity { get; set; } = 1;
 }
 
-public class EspressoDrink : LineItem
+public partial class EspressoDrink : LineItem
 {
     [JsonVocab(CoffeeShopVocabs.EspressoDrinks)]
     [JsonPropertyName("productName")]
@@ -84,11 +67,9 @@ public class EspressoDrink : LineItem
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
-
-    public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
 }
 
-public class CoffeeDrink : LineItem
+public partial class CoffeeDrink : LineItem
 {
     [JsonVocab(CoffeeShopVocabs.CoffeeDrinks)]
     [JsonPropertyName("productName")]
@@ -103,11 +84,9 @@ public class CoffeeDrink : LineItem
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
-
-    public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
 }
 
-public class LatteDrink : LineItem
+public partial class LatteDrink : LineItem
 {
     [JsonVocab(CoffeeShopVocabs.LatteDrinks, PropertyName = "productName")]
     [JsonPropertyName("productName")]
@@ -122,8 +101,6 @@ public class LatteDrink : LineItem
 
     [JsonPropertyName("options")]
     public DrinkOption[]? Options { get; set; }
-
-    public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
 }
 
 public class BakeryItem : LineItem
