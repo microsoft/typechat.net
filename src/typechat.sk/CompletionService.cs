@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.SemanticKernel;
 
-public class CompletionService : ITypeChatLanguageModel
+public class CompletionService : ILanguageModel
 {
     ITextCompletion _service;
     ModelInfo _model;

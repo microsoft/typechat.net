@@ -110,7 +110,7 @@ public abstract class ConsoleApp
 
     protected abstract Task ProcessRequestAsync(string input, CancellationToken cancelToken);
 
-    protected void SubscribeAllEvents<T>(TypeChatJsonTranslator<T> translator)
+    protected void SubscribeAllEvents<T>(JsonTranslator<T> translator)
     {
         translator.SendingPrompt += this.OnSendingPrompt;
         translator.AttemptingRepair += this.OnAttemptingRepairs;
