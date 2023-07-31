@@ -1,19 +1,29 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.SemanticKernel;
 
 namespace Math;
 
 public class Math : ConsoleApp
 {
+    ProgramTranslator _translator;
+
     Math()
     {
+        string apiDef = File.ReadAllText("mathSchema.ts");
+        var languageModel = KernelFactory.CreateLanguageModel(Config.LoadOpenAI());
+        _translator = new ProgramTranslator(languageModel, apiDef);
         // Uncomment to see ALL raw messages to and from the AI
-        //base.SubscribeAllEvents(_service);
+        _translator.CompletionReceived += base.OnCompletionReceived;
     }
 
-    protected override Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public TypeSchema Schema => _translator.Validator.Schema;
+
+    protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        return Task.CompletedTask;
+        Program program = await _translator.TranslateAsync(input);
+        string json = Json.Stringify(program);
+        Console.WriteLine(json);
     }
 
     public static async Task<int> Main(string[] args)
@@ -22,7 +32,7 @@ public class Math : ConsoleApp
         {
             Math app = new Math();
             // Un-comment to print auto-generated schema at start:
-            // Console.WriteLine(app.Schema.Schema.Text);
+            Console.WriteLine(app.Schema.Schema);
             await app.RunAsync("➕➖✖️➗🟰> ", args.GetOrNull(0));
         }
         catch (Exception ex)

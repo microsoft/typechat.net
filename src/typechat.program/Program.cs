@@ -12,17 +12,14 @@ public class Program
 [Comment("An expression is a JSON value, a function call, or a reference to the result of a preceding expression.")]
 [JsonPolymorphic]
 [JsonDerivedType(typeof(Call), typeDiscriminator: nameof(Call))]
-[JsonDerivedType(typeof(Value), typeDiscriminator: nameof(Value))]
 [JsonDerivedType(typeof(ResultRef), typeDiscriminator: nameof(ResultRef))]
-public abstract class Expr { }
-
-[JsonPolymorphic]
 [JsonDerivedType(typeof(String), typeDiscriminator: nameof(String))]
 [JsonDerivedType(typeof(Number), typeDiscriminator: nameof(Number))]
 [JsonDerivedType(typeof(Bool), typeDiscriminator: nameof(Bool))]
 [JsonDerivedType(typeof(Array), typeDiscriminator: nameof(Array))]
-public class Value : Expr { }
+public abstract class Expr { }
 
+public abstract class Value : Expr { }
 public class String : Value { }
 public class Number : Value { }
 public class Bool : Value { }

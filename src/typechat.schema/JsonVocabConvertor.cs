@@ -7,7 +7,6 @@ public class JsonVocabConvertor : JsonConverter<string?>
     string? _propertyName;
     string? _vocabName;
     IVocab _vocab;
-    IVocabCollection _vocabs;
 
     public JsonVocabConvertor() { }
 

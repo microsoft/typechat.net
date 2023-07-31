@@ -2,16 +2,16 @@
 
 namespace Microsoft.TypeChat;
 
-public class TypeChatPrompts : ITypeChatPrompts
+public class JsonTranslatorPrompts : IJsonTranslatorPrompts
 {
-    public static readonly TypeChatPrompts Default = new TypeChatPrompts();
+    public static readonly JsonTranslatorPrompts Default = new JsonTranslatorPrompts();
 
-    public string CreateRequestPrompt(TypeSchema schema, string request)
+    public virtual string CreateRequestPrompt(TypeSchema schema, string request)
     {
         return RequestPrompt(schema, request);
     }
 
-    public string CreateRepairPrompt(TypeSchema schema, string json, string validationError)
+    public virtual string CreateRepairPrompt(TypeSchema schema, string json, string validationError)
     {
         return RepairPrompt(validationError);
     }
@@ -33,7 +33,7 @@ public class TypeChatPrompts : ITypeChatPrompts
 
     public static string RepairPrompt(string json, TypeSchema schema, string validationError)
     {
-        return  $"The following is an INVALID JSON object of type \"{schema.TypeName}\"\n" +
+        return $"The following is an INVALID JSON object of type \"{schema.TypeName}\"\n" +
                 $"###\n{json}###\n" +
                 "The JSON should match this Typescript definition:" +
                 $"###\n{schema.Schema.Text}###\n" +

@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-public struct VocabString : IStringType
+internal struct VocabString : IStringType
 {
     public VocabString()
     {
@@ -35,33 +35,6 @@ public struct VocabString : IStringType
     public static implicit operator string(VocabString value)
     {
         return value.Value;
-    }
-}
-
-public class VocabStringJsonConvertor : JsonConverter<VocabString>
-{
-    IVocabCollection _vocabs;
-
-    public VocabStringJsonConvertor(IVocabCollection vocabs)
-    {
-        ArgumentNullException.ThrowIfNull(vocabs, nameof(vocabs));
-        _vocabs = vocabs;
-    }
-
-    public IVocabCollection Vocabs => _vocabs;
-
-    public override VocabString Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        var convertor = (JsonConverter<VocabString>)options.GetConverter(typeof(VocabString));
-        var vocabString = convertor.Read(ref reader, typeToConvert, options);
-        vocabString.ValidateConstraints(_vocabs);
-        return vocabString;
-    }
-
-    public override void Write(Utf8JsonWriter writer, VocabString value, JsonSerializerOptions options)
-    {
-        var convertor = (JsonConverter<VocabString>)options.GetConverter(typeof(VocabString));
-        convertor.Write(writer, value, options);
     }
 }
 

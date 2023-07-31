@@ -15,7 +15,7 @@ public class SentimentResponse
 
 public class SentimentApp : ConsoleApp
 {
-    TypeChatJsonTranslator<SentimentResponse> _translator;
+    JsonTranslator<SentimentResponse> _translator;
 
     public SentimentApp()
     {

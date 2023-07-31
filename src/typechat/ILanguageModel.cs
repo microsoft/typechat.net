@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public interface ITypeChatLanguageModel
+public interface ILanguageModel
 {
     Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken);
 }

@@ -14,7 +14,7 @@ public class CoffeeShop : ConsoleApp
 {
     IVocabCollection _vocabs;
     IKernel _kernel;
-    TypeChatJsonTranslator<Cart> _translator;
+    JsonTranslator<Cart> _translator;
 
     CoffeeShop()
     {
@@ -29,8 +29,6 @@ public class CoffeeShop : ConsoleApp
         // Each with a different vocab specific to the request
         // E.g. you could service a different vocab to a Vegan user. Or show more options to a Premimum user
         _translator = _kernel.JsonTranslator<Cart>(config.Model, _vocabs);
-        // Uncomment to see the raw reponse from the AI
-        //_service.CompletionReceived += this.OnCompletionReceived;
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -70,10 +68,10 @@ public class CoffeeShop : ConsoleApp
         {
             CoffeeShop app = new CoffeeShop();
             // Un-comment to print auto-generated schema at start:
-            Console.WriteLine(app.Schema.Schema.Text);
+            //Console.WriteLine(app.Schema.Schema.Text);
             await app.RunAsync("☕> ", args.GetOrNull(0));
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             Console.WriteLine(ex);
         }

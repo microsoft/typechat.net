@@ -2,17 +2,22 @@
 
 namespace Microsoft.TypeChat;
 
-public class TypeChatJsonTranslator<T>
+public class JsonTranslator<T>
 {
-    ITypeChatLanguageModel _model;
-    ITypeChatPrompts _prompts;
+    ILanguageModel _model;
+    IJsonTranslatorPrompts _prompts;
     IJsonTypeValidator<T> _validator;
     RequestSettings _requestSettings;
 
-    public TypeChatJsonTranslator(
-        ITypeChatLanguageModel model,
+    public JsonTranslator(ILanguageModel model, SchemaText schema)
+        : this(model, new JsonSerializerTypeValidator<T>(schema))
+    {
+    }
+
+    public JsonTranslator(
+        ILanguageModel model,
         IJsonTypeValidator<T> validator,
-        ITypeChatPrompts? prompts = null
+        IJsonTranslatorPrompts? prompts = null
         )
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
@@ -20,12 +25,12 @@ public class TypeChatJsonTranslator<T>
 
         _model = model;
         _validator = validator;
-        prompts ??= TypeChatPrompts.Default;
+        prompts ??= JsonTranslatorPrompts.Default;
         _prompts = prompts;
         _requestSettings = new RequestSettings(); // Default settings
     }
 
-    public ITypeChatLanguageModel Model => _model;
+    public ILanguageModel Model => _model;
     public IJsonTypeValidator<T> Validator
     {
         get => _validator;
@@ -90,7 +95,7 @@ public class TypeChatJsonTranslator<T>
     {
         ArgumentException.ThrowIfNullOrEmpty(json, nameof(json));
 
-        string prompt = TypeChatPrompts.RepairPrompt(json, _validator.Schema, validationError);
+        string prompt = JsonTranslatorPrompts.RepairPrompt(json, _validator.Schema, validationError);
         return await CompleteAsync(prompt, settings, cancelToken).ConfigureAwait(false);
     }
 
@@ -104,12 +109,12 @@ public class TypeChatJsonTranslator<T>
 
     public virtual string CreateRequestPrompt(string request)
     {
-        return TypeChatPrompts.RequestPrompt(Validator.Schema.TypeName, Validator.Schema.Schema, request);
+        return JsonTranslatorPrompts.RequestPrompt(Validator.Schema.TypeName, Validator.Schema.Schema, request);
     }
 
     public virtual string CreateRepairPrompt(string validationError)
     {
-        return TypeChatPrompts.RepairPrompt(validationError);
+        return JsonTranslatorPrompts.RepairPrompt(validationError);
     }
 
     protected void NotifyEvent(Action<string> evt, string value)

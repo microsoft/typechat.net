@@ -11,13 +11,13 @@ namespace CoffeeShop;
 
 public class CoffeeShop : ConsoleApp
 {
-    TypeChatJsonTranslator<Cart> _translator;
+    JsonTranslator<Cart> _translator;
 
     CoffeeShop()
     {
         _translator = KernelFactory.JsonTranslator<Cart>(Config.LoadOpenAI());
         // Uncomment to see ALL raw messages to and from the AI
-        //base.SubscribeAllEvents(_service);
+        //base.SubscribeAllEvents(_translator);
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
