@@ -7,14 +7,17 @@ namespace Math;
 public class Math : ConsoleApp
 {
     ProgramTranslator _translator;
+    ProgramInterpreter _interpreter;
 
     Math()
     {
         string apiDef = File.ReadAllText("mathSchema.ts");
         var languageModel = KernelFactory.CreateLanguageModel(Config.LoadOpenAI());
         _translator = new ProgramTranslator(languageModel, apiDef);
+        _interpreter = new ProgramInterpreter(HandleCall);
         // Uncomment to see ALL raw messages to and from the AI
         _translator.CompletionReceived += base.OnCompletionReceived;
+        _translator.SendingPrompt += base.OnSendingPrompt;
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -22,8 +25,29 @@ public class Math : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Program program = await _translator.TranslateAsync(input);
-        string json = Json.Stringify(program);
-        Console.WriteLine(json);
+        double result = _interpreter.Run(program);
+        Console.WriteLine(result);
+    }
+
+    AnyValue HandleCall(string name, AnyValue[] args)
+    {
+        switch(name)
+        {
+            default:
+                return double.NaN;
+            case "add":
+                return args[0] + args[1];
+            case "sub":
+                return args[0] + args[1];
+            case "mul":
+                return args[0] * args[1];
+            case "div":
+                return args[0] / args[1];
+            case "neg":
+                return -args[0];
+            case "id":
+                return args[0];
+        }
     }
 
     public static async Task<int> Main(string[] args)

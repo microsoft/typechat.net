@@ -2,54 +2,74 @@
 
 namespace Microsoft.TypeChat;
 
-[Comment("A program consists of a sequence of function calls that are evaluated in order")]
-public class Program
+[JsonConverter(typeof(JsonProgramConvertor))]
+public partial class Program
 {
-    [JsonPropertyName("steps")]
-    public Call[] Steps { get; set; }
+    public Steps Steps
+    {
+        get;
+        private set;
+    }
 }
 
-[Comment("An expression is a JSON value, a function call, or a reference to the result of a preceding expression.")]
-[JsonPolymorphic]
-[JsonDerivedType(typeof(Call), typeDiscriminator: nameof(Call))]
-[JsonDerivedType(typeof(ResultRef), typeDiscriminator: nameof(ResultRef))]
-[JsonDerivedType(typeof(Value), typeDiscriminator: nameof(Value))]
-public abstract class Expr { }
-
-[Comment("Value are ONE of the fo")]
-[Comment("type Json Value = string | number | boolean | null | Expr[]")]
-public class Value : Expr
+public abstract partial class Expr
 {
-    public enum Type
+    public JsonElement Source
     {
-        Null,
-        String,
-        Number,
-        Bool,
-        Array
+        get;
+        private set;
+    }
+}
+
+public partial class Steps : Expr
+{
+    public FunctionCall[] Calls
+    {
+        get;
+        private set;
+    }
+}
+
+public partial class FunctionCall : Expr
+{
+    public string Name
+    {
+        get;
+        private set;
     }
 
-    public string? String { get; set; }
-    public double? Number { get; set; }
-    public bool? Bool { get; set; }
-    public Expr[]? Array { get; set; }
+    public Expr[] Args
+    {
+        get;
+        private set;
+    }
 }
 
-[Comment("A function call specifies a function name and a list of argument expressions.")]
-[Comment("Arguments may contain nested function calls and result references.")]
-public class Call : Expr
+public partial class ResultRef : Expr
 {
-    // Name of the function
-    [JsonPropertyName("func")]
-    public string Func { get; set; }
-    // Arguments for the function, if any
-    [JsonPropertyName("args")]
-    public Expr[]? Args { get; set; }
-};
-
-public class ResultRef : Expr
-{
-    // Index of the previous expression in the "@steps" array
-    [JsonPropertyName("ref")]
+    [Comment("Index of the previous expression in the \"@steps\" array")]
     public int Ref { get; set; }
+}
+
+public partial class ValueExpr : Expr
+{
+    public JsonElement Value
+    {
+        get;
+        private set;
+    }
+}
+
+public partial class ArrayExpr : Expr
+{
+    public Expr[] Value
+    {
+        get;
+        private set;
+    }
+}
+
+public partial class UnknownExpr : Expr
+{
+
 }

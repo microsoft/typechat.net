@@ -6,7 +6,7 @@ public class TypescriptSchema : TypeSchema
 {
     IVocabCollection? _vocabs;
 
-    public TypescriptSchema(Type type, string schemaText, IVocabCollection? vocabs)
+    public TypescriptSchema(Type type, string schemaText, IVocabCollection? vocabs = null)
         : base(type, new SchemaText(schemaText, SchemaText.Languages.Typescript))
     {
         _vocabs = vocabs;
@@ -15,4 +15,9 @@ public class TypescriptSchema : TypeSchema
     public IVocabCollection? Vocabs => _vocabs;
 
     public bool HasVocabs => (_vocabs != null);
+
+    public static TypescriptSchema Load(Type type, string filePath)
+    {
+        return new TypescriptSchema(type, File.ReadAllText(filePath));
+    }
 }

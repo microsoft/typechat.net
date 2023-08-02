@@ -14,17 +14,17 @@ public class ProgramTranslatorPrompts : JsonTranslatorPrompts
 
     public override string CreateRequestPrompt(TypeSchema schema, string request)
     {
-        return RequestPrompt(request, schema.Schema.Text, _apiDef);
+        return RequestProgramPrompt(request, schema.Schema.Text, _apiDef);
     }
 
-    public static string RequestPrompt(string request, string programSchema, string apiDef)
+    public static string RequestProgramPrompt(string request, string programSchema, string apiDef)
     {
         return "You are a service that translates user requests into programs represented as JSON using the following TypeScript definitions:\n" +
-               $"###\n{programSchema}###\n" +
+               $"```\n{programSchema}```\n" +
                "The programs can call functions from the API defined in the following TypeScript definitions:\n" +
-               $"###\n{apiDef}###\n" +
+               $"```\n{apiDef}```\n" +
                "The following is a user request:\n" +
                $"\"\"\"\n{request}\n\"\"\"\n" +
-               "The following is the user request translated into a JSON object with NO indentation and no properties with the value undefined:\n";
+               "The following is the user request translated into a JSON object with with 2 spaces of indentation and no properties with the value undefined:\n";
     }
 }
