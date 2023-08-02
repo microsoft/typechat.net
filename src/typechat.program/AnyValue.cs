@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat;
 public struct AnyValue
 {
     public readonly static AnyValue Undefined = new AnyValue();
-    public readonly static AnyValue EmptyArray = new AnyValue[0];
+    public readonly static AnyValue[] EmptyArray = new AnyValue[0];
 
     JsonValueKind _type;
     double _number;
@@ -123,6 +123,10 @@ public struct AnyValue
     public static implicit operator AnyValue(double number)
     {
         return new AnyValue(number);
+    }
+    public static implicit operator double(AnyValue value)
+    {
+        return value.Number;
     }
     public static implicit operator AnyValue(string value)
     {

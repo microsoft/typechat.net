@@ -9,7 +9,8 @@ public class ProgramException : Exception
         InvalidProgram,
         UnsupportedType,
         TypeMistmatch,
-        NullValue,
+        InvalidResultRef,
+        NoResult,
     }
 
     ErrorCode _errorCode;

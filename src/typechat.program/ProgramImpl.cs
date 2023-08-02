@@ -69,6 +69,10 @@ public partial class ResultRef : Expr
     {
         Debug.Assert(value.ValueKind == JsonValueKind.Number);
         Ref = value.GetInt32();
+        if (Ref < 0)
+        {
+            throw new ProgramException(ProgramException.ErrorCode.InvalidResultRef, $"{Ref} ins not a valid ref");
+        }
     }
 }
 

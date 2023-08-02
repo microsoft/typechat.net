@@ -23,7 +23,7 @@ public class TestProgram : TypeChatTest
 
     [Theory]
     [MemberData(nameof(GetTestPrograms))]
-    public void TestParse(string source)
+    public void TestParse(string source, double result)
     {
         Program program = new ProgramParser().Parse(source);
         ValidateProgram(program);
@@ -31,10 +31,40 @@ public class TestProgram : TypeChatTest
 
     [Theory]
     [MemberData(nameof(GetTestPrograms))]
-    public void TestJsonConvert(string source)
+    public void TestJsonConvert(string source, double result)
     {
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetTestPrograms))]
+    public void TestInterpreter(string source, double expectedResult)
+    {
+        Program program = Json.Parse<Program>(source);
+        ValidateProgram(program);
+        ProgramInterpreter interpreter = new ProgramInterpreter();
+        double result = interpreter.Run(program, MathOp);
+        Assert.Equal(expectedResult, result);
+    }
+
+    AnyValue MathOp(string name, AnyValue[] args)
+    {
+        switch (name)
+        {
+            default:
+                return double.NaN;
+            case "add":
+                return args[0] + args[1];
+            case "sub":
+                return args[0] + args[1];
+            case "mul":
+                return args[0] * args[1];
+            case "div":
+                return args[0] / args[1];
+            case "id":
+                return args[0];
+        }
     }
 
     // TODO: more validation.. actually inspect the AST and compare against
@@ -63,8 +93,9 @@ public class TestProgram : TypeChatTest
         JsonDocument doc = LoadPrograms();
         foreach (var obj in doc.RootElement.EnumerateObject())
         {
+            double result = obj.Value.GetProperty("result").GetDouble();
             var program = obj.Value.GetProperty("source");
-            yield return new[] { program.ToString() };
+            yield return new object[] { program.ToString(), result };
         }
     }
 }

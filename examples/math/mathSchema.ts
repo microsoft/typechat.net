@@ -11,6 +11,8 @@ export type API = {
     div(x: number, y: number): number;
     // Negate a number
     neg(x: number): number;
+    // Identity function
+    id(x: number): number;
     // Unknown request
     unknown(text: string): number;
 }

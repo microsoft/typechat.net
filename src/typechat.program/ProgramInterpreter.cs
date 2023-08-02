@@ -11,7 +11,7 @@ public class ProgramInterpreter
         _results = new List<AnyValue>();
     }
 
-    public AnyValue Run(Program program, Func<Call, AnyValue, AnyValue> caller)
+    public AnyValue Run(Program program, Func<string, AnyValue[], AnyValue> handler)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
         _results.Clear();
@@ -20,11 +20,17 @@ public class ProgramInterpreter
         for (int i = 0; i < steps.Calls.Length; ++i)
         {
             Call call = steps.Calls[i];
-            AnyValue args = Eval(call.Args);
-            AnyValue result = caller(call, args);
+            AnyValue result = Eval(call, handler);
             _results.Add(result);
         }
         return (_results.Count > 0) ? _results[_results.Count - 1] : AnyValue.Undefined;
+    }
+
+    AnyValue Eval(Call call, Func<string, AnyValue[], AnyValue> handler)
+    {
+        AnyValue[] args = Eval(call.Args);
+        AnyValue result = handler(call.Name, args);
+        return result;
     }
 
     AnyValue Eval(Expr expr)
@@ -33,6 +39,9 @@ public class ProgramInterpreter
         {
             default:
                 break;
+
+            case ResultRef result:
+                return Eval(result);
 
             case ValueExpr value:
                 return Eval(value);
@@ -43,7 +52,7 @@ public class ProgramInterpreter
         return AnyValue.Undefined;
     }
 
-    AnyValue Eval(Expr[] expressions)
+    AnyValue[] Eval(Expr[] expressions)
     {
         if (expressions.Length == 0)
         {
@@ -72,7 +81,7 @@ public class ProgramInterpreter
         }
     }
 
-    AnyValue Eval(ArrayExpr expr)
+    AnyValue[] Eval(ArrayExpr expr)
     {
         AnyValue[] results = new AnyValue[expr.Value.Length];
         for (int i = 0; i < expr.Value.Length; ++i)
@@ -80,5 +89,14 @@ public class ProgramInterpreter
             results[i] = Eval(expr.Value[i]);
         }
         return results;
+    }
+
+    AnyValue Eval(ResultRef expr)
+    {
+        if (expr.Ref >= _results.Count)
+        {
+            throw new ProgramException(ProgramException.ErrorCode.NoResult, $"Referencing {expr.Ref} from {_results.Count} results");
+        }
+        return _results[expr.Ref];
     }
 }
