@@ -4,17 +4,17 @@ namespace Microsoft.TypeChat;
 
 public class ProgramInterpreter
 {
-    List<AnyValue> _results;
-    Func<string, AnyValue[], AnyValue> _handler;
+    List<AnyJsonValue> _results;
+    Func<string, AnyJsonValue[], AnyJsonValue> _handler;
 
-    public ProgramInterpreter(Func<string, AnyValue[], AnyValue> handler)
+    public ProgramInterpreter(Func<string, AnyJsonValue[], AnyJsonValue> handler)
     {
         ArgumentNullException.ThrowIfNull(handler, nameof(handler));
-        _results = new List<AnyValue>();
+        _results = new List<AnyJsonValue>();
         _handler = handler;
     }
 
-    public AnyValue Run(Program program)
+    public AnyJsonValue Run(Program program)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
         _results.Clear();
@@ -23,22 +23,22 @@ public class ProgramInterpreter
         for (int i = 0; i < steps.Calls.Length; ++i)
         {
             FunctionCall call = steps.Calls[i];
-            AnyValue result = Eval(call);
+            AnyJsonValue result = Eval(call);
             _results.Add(result);
         }
-        return (_results.Count > 0) ? _results[_results.Count - 1] : AnyValue.Undefined;
+        return (_results.Count > 0) ? _results[_results.Count - 1] : AnyJsonValue.Undefined;
     }
 
-    AnyValue Eval(FunctionCall call)
+    AnyJsonValue Eval(FunctionCall call)
     {
-        AnyValue[] args = Eval(call.Args);
-        AnyValue result = _handler(call.Name, args);
+        AnyJsonValue[] args = Eval(call.Args);
+        AnyJsonValue result = _handler(call.Name, args);
         return result;
     }
 
-    AnyValue Eval(Expr expr)
+    AnyJsonValue Eval(Expression expr)
     {
-        switch(expr)
+        switch (expr)
         {
             default:
                 break;
@@ -46,7 +46,7 @@ public class ProgramInterpreter
             case FunctionCall call:
                 return Eval(call);
 
-            case ResultRef result:
+            case ResultReference result:
                 return Eval(result);
 
             case ValueExpr value:
@@ -55,17 +55,17 @@ public class ProgramInterpreter
             case ArrayExpr array:
                 return Eval(array);
         }
-        return AnyValue.Undefined;
+        return AnyJsonValue.Undefined;
     }
 
-    AnyValue[] Eval(Expr[] expressions)
+    AnyJsonValue[] Eval(Expression[] expressions)
     {
         if (expressions.Length == 0)
         {
-            return AnyValue.EmptyArray;
+            return AnyJsonValue.EmptyArray;
         }
 
-        AnyValue[] args = new AnyValue[expressions.Length];
+        AnyJsonValue[] args = new AnyJsonValue[expressions.Length];
         for (int i = 0; i < expressions.Length; ++i)
         {
             args[i] = Eval(expressions[i]);
@@ -74,9 +74,9 @@ public class ProgramInterpreter
     }
 
 
-    AnyValue Eval(ValueExpr expr)
+    AnyJsonValue Eval(ValueExpr expr)
     {
-        switch(expr.Value.ValueKind)
+        switch (expr.Value.ValueKind)
         {
             default:
                 throw new ProgramException(ProgramException.ErrorCode.UnsupportedType, $"{expr.Value.ValueKind}");
@@ -87,9 +87,9 @@ public class ProgramInterpreter
         }
     }
 
-    AnyValue[] Eval(ArrayExpr expr)
+    AnyJsonValue[] Eval(ArrayExpr expr)
     {
-        AnyValue[] results = new AnyValue[expr.Value.Length];
+        AnyJsonValue[] results = new AnyJsonValue[expr.Value.Length];
         for (int i = 0; i < expr.Value.Length; ++i)
         {
             results[i] = Eval(expr.Value[i]);
@@ -97,7 +97,7 @@ public class ProgramInterpreter
         return results;
     }
 
-    AnyValue Eval(ResultRef expr)
+    AnyJsonValue Eval(ResultReference expr)
     {
         if (expr.Ref >= _results.Count)
         {

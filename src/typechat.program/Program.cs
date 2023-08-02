@@ -12,7 +12,7 @@ public partial class Program
     }
 }
 
-public abstract partial class Expr
+public abstract partial class Expression
 {
     public JsonElement Source
     {
@@ -21,7 +21,7 @@ public abstract partial class Expr
     }
 }
 
-public partial class Steps : Expr
+public partial class Steps : Expression
 {
     public FunctionCall[] Calls
     {
@@ -30,7 +30,7 @@ public partial class Steps : Expr
     }
 }
 
-public partial class FunctionCall : Expr
+public partial class FunctionCall : Expression
 {
     public string Name
     {
@@ -38,20 +38,20 @@ public partial class FunctionCall : Expr
         private set;
     }
 
-    public Expr[] Args
+    public Expression[] Args
     {
         get;
         private set;
     }
 }
 
-public partial class ResultRef : Expr
+public partial class ResultReference : Expression
 {
     [Comment("Index of the previous expression in the \"@steps\" array")]
     public int Ref { get; set; }
 }
 
-public partial class ValueExpr : Expr
+public partial class ValueExpr : Expression
 {
     public JsonElement Value
     {
@@ -60,16 +60,25 @@ public partial class ValueExpr : Expr
     }
 }
 
-public partial class ArrayExpr : Expr
+public partial class ArrayExpr : Expression
 {
-    public Expr[] Value
+    public Expression[] Value
     {
         get;
         private set;
     }
 }
 
-public partial class UnknownExpr : Expr
+public partial class ObjectExpr : Expression
+{
+    public Dictionary<string, Expression> Value
+    {
+        get;
+        private set;
+    }
+}
+
+public partial class UnknownExpr : Expression
 {
 
 }

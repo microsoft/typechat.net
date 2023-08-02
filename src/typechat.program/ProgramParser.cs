@@ -23,7 +23,7 @@ public class ProgramParser
     {
         JsonElement root = programSource.RootElement;
         root.EnsureIsType(JsonValueKind.Object);
-        Expr expr = ParseObject(root);
+        Expression expr = ParseObject(root);
         if (expr is Steps steps)
         {
             return new Program(programSource, steps);
@@ -50,24 +50,24 @@ public class ProgramParser
     FunctionCall ParseCall(JsonElement source, JsonElement funcName)
     {
         Debug.Assert(source.ValueKind == JsonValueKind.Object);
-        Expr[] args = ParseArgs(source);
+        Expression[] args = ParseArgs(source);
         return new FunctionCall(source, funcName, args);
     }
 
-    public Expr[] ParseArgs(JsonElement elt)
+    public Expression[] ParseArgs(JsonElement elt)
     {
         if (!elt.TryGetProperty(ExprNames.Args, out JsonElement args))
         {
-            return Expr.Empty;
+            return Expression.Empty;
         }
         args.EnsureIsType(JsonValueKind.Array, ExprNames.Args);
         return ParseExprArray(args);
     }
 
-    Expr[] ParseExprArray(JsonElement elt)
+    Expression[] ParseExprArray(JsonElement elt)
     {
         Debug.Assert(elt.ValueKind == JsonValueKind.Array);
-        Expr[] expr = new Expr[elt.GetArrayLength()];
+        Expression[] expr = new Expression[elt.GetArrayLength()];
         for (int i = 0; i < expr.Length; ++i)
         {
             expr[i] = ParseExpr(elt[i]);
@@ -75,7 +75,7 @@ public class ProgramParser
         return expr;
     }
 
-    Expr ParseObject(JsonElement elt)
+    Expression ParseObject(JsonElement elt)
     {
         Debug.Assert(elt.ValueKind == JsonValueKind.Object);
 
@@ -87,17 +87,34 @@ public class ProgramParser
         else if (elt.TryGetProperty(ExprNames.Ref, out JsonElement refValue))
         {
             refValue.EnsureIsType(JsonValueKind.Number, ExprNames.Ref);
-            return new ResultRef(elt, refValue);
+            return new ResultReference(elt, refValue);
         }
         else if (elt.TryGetProperty(ExprNames.Steps, out JsonElement steps))
         {
             steps.EnsureIsType(JsonValueKind.Array, ExprNames.Steps);
             return ParseSteps(steps);
         }
+        else
+        {
+            // Parse as generic object
+            return ParseObjectExpr(elt);
+        }
         return new UnknownExpr(elt);
     }
 
-    Expr ParseExpr(JsonElement elt)
+    ObjectExpr ParseObjectExpr(JsonElement elt)
+    {
+        Debug.Assert(elt.ValueKind == JsonValueKind.Object);
+        Dictionary<string, Expression> obj = new Dictionary<string, Expression>();
+        foreach (var property in elt.EnumerateObject())
+        {
+            obj[property.Name] = ParseExpr(property.Value);
+        }
+
+        return new ObjectExpr(elt, obj);
+    }
+
+    Expression ParseExpr(JsonElement elt)
     {
         switch (elt.ValueKind)
         {

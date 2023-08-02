@@ -29,17 +29,17 @@ public partial class Program : IDisposable
     }
 }
 
-public abstract partial class Expr
+public abstract partial class Expression
 {
-    internal static readonly Expr[] Empty = new Expr[0];
+    internal static readonly Expression[] Empty = new Expression[0];
 
-    public Expr(JsonElement source)
+    public Expression(JsonElement source)
     {
         Source = source;
     }
 }
 
-public partial class Steps : Expr
+public partial class Steps : Expression
 {
     static readonly FunctionCall[] EmptySteps = new FunctionCall[0];
 
@@ -51,9 +51,9 @@ public partial class Steps : Expr
     }
 }
 
-public partial class FunctionCall : Expr
+public partial class FunctionCall : Expression
 {
-    public FunctionCall(JsonElement source, JsonElement name, Expr[] args)
+    public FunctionCall(JsonElement source, JsonElement name, Expression[] args)
         : base(source)
     {
         Debug.Assert(name.ValueKind == JsonValueKind.String);
@@ -67,9 +67,9 @@ public partial class FunctionCall : Expr
     }
 }
 
-public partial class ResultRef : Expr
+public partial class ResultReference : Expression
 {
-    public ResultRef(JsonElement source, JsonElement value)
+    public ResultReference(JsonElement source, JsonElement value)
         : base(source)
     {
         Debug.Assert(value.ValueKind == JsonValueKind.Number);
@@ -81,7 +81,7 @@ public partial class ResultRef : Expr
     }
 }
 
-public partial class ValueExpr : Expr
+public partial class ValueExpr : Expression
 {
     public ValueExpr(JsonElement source)
         : base(source)
@@ -95,16 +95,27 @@ public partial class ValueExpr : Expr
     }
 }
 
-public partial class ArrayExpr : Expr
+public partial class ArrayExpr : Expression
 {
-    public ArrayExpr(JsonElement source, Expr[] exprs)
+    public ArrayExpr(JsonElement source, Expression[] exprs)
         : base(source)
     {
+        ArgumentNullException.ThrowIfNull(exprs, nameof(exprs));
         Value = exprs;
     }
 }
 
-public partial class UnknownExpr : Expr
+public partial class ObjectExpr : Expression
+{
+    public ObjectExpr(JsonElement source, Dictionary<string, Expression> obj)
+        : base(source)
+    {
+        ArgumentNullException.ThrowIfNull(obj, nameof(obj));
+        Value = obj;
+    }
+}
+
+public partial class UnknownExpr : Expression
 {
     public UnknownExpr(JsonElement source)
         : base(source)

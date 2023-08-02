@@ -1,0 +1,37 @@
+﻿{
+  "program1": {
+    "result": "998877One:66Two:55",
+    "source": {
+      "@steps": [
+        {
+          "@func": "concat",
+          "@args": [
+            99,
+            88,
+            "77",
+            {
+              "One": 66,
+              "Two": 55
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "program2": {
+    "result": "35HelloGoodbye",
+    "source": {
+      "@steps": [
+        {
+          "@func": "concat",
+          "@args": [
+            3,
+            5,
+            "Hello",
+            "Goodbye"
+          ]
+        }
+      ]
+    }
+  }
+}

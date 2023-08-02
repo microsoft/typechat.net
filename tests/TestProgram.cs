@@ -6,11 +6,18 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TestProgram : TypeChatTest
 {
-    static JsonDocument LoadPrograms()
+    static JsonDocument LoadMathPrograms()
     {
-        string json = File.ReadAllText("testPrograms.json");
+        string json = File.ReadAllText("mathPrograms.json");
         return Json.Parse<JsonDocument>(json);
     }
+
+    static JsonDocument LoadStringPrograms()
+    {
+        string json = File.ReadAllText("stringPrograms.json");
+        return Json.Parse<JsonDocument>(json);
+    }
+
     //[Fact]
     public void TestSchema()
     {
@@ -29,9 +36,22 @@ public class TestProgram : TypeChatTest
         ValidateProgram(program);
     }
 
+    [Fact]
+    public void TestParseGeneral()
+    {
+        var doc = LoadStringPrograms();
+        foreach (var obj in doc.RootElement.EnumerateObject())
+        {
+            var source = obj.Value.GetProperty("source");
+            Program program = Json.Parse<Program>(source.ToString());
+            ValidateProgram(program);
+            program.Dispose();        }
+    }
+
+
     [Theory]
     [MemberData(nameof(GetTestPrograms))]
-    public void TestJsonConvert(string source, double result)
+    public void TestJsonConvertor(string source, object result)
     {
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
@@ -43,12 +63,14 @@ public class TestProgram : TypeChatTest
     {
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
-        ProgramInterpreter interpreter = new ProgramInterpreter(MathOp);
+
+        MathAPI api = new MathAPI();
+        ProgramInterpreter interpreter = new ProgramInterpreter(api.HandleCall);
         double result = interpreter.Run(program);
         Assert.Equal(expectedResult, result);
     }
 
-    AnyValue MathOp(string name, AnyValue[] args)
+    AnyJsonValue MathOp(string name, AnyJsonValue[] args)
     {
         switch (name)
         {
@@ -90,12 +112,25 @@ public class TestProgram : TypeChatTest
 
     public static IEnumerable<object[]> GetTestPrograms()
     {
-        JsonDocument doc = LoadPrograms();
-        foreach (var obj in doc.RootElement.EnumerateObject())
+        JsonDocument doc = LoadMathPrograms();
+        //JsonDocument doc2 = LoadStringPrograms();
+        return GetPrograms(doc);
+    }
+
+    static IEnumerable<object[]> GetPrograms(params JsonDocument[] docs)
+    {
+        foreach (var doc in docs)
         {
-            double result = obj.Value.GetProperty("result").GetDouble();
-            var program = obj.Value.GetProperty("source");
-            yield return new object[] { program.ToString(), result };
+            foreach (var obj in doc.RootElement.EnumerateObject())
+            {
+                var valueProp = obj.Value.GetProperty("result");
+                object result = valueProp.ValueKind == JsonValueKind.Number ?
+                                valueProp.GetDouble() :
+                                valueProp.GetString();
+
+                var program = obj.Value.GetProperty("source");
+                yield return new object[] { program.ToString(), result };
+            }
         }
     }
 }

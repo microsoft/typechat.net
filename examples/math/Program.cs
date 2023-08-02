@@ -16,8 +16,8 @@ public class Math : ConsoleApp
         _translator = new ProgramTranslator(languageModel, apiDef);
         _interpreter = new ProgramInterpreter(HandleCall);
         // Uncomment to see ALL raw messages to and from the AI
-        _translator.CompletionReceived += base.OnCompletionReceived;
-        _translator.SendingPrompt += base.OnSendingPrompt;
+       // _translator.CompletionReceived += base.OnCompletionReceived;
+        //_translator.SendingPrompt += base.OnSendingPrompt;
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -29,7 +29,7 @@ public class Math : ConsoleApp
         Console.WriteLine(result);
     }
 
-    AnyValue HandleCall(string name, AnyValue[] args)
+    AnyJsonValue HandleCall(string name, AnyJsonValue[] args)
     {
         switch(name)
         {
@@ -38,7 +38,7 @@ public class Math : ConsoleApp
             case "add":
                 return args[0] + args[1];
             case "sub":
-                return args[0] + args[1];
+                return args[0] - args[1];
             case "mul":
                 return args[0] * args[1];
             case "div":
@@ -56,7 +56,7 @@ public class Math : ConsoleApp
         {
             Math app = new Math();
             // Un-comment to print auto-generated schema at start:
-            Console.WriteLine(app.Schema.Schema);
+            //Console.WriteLine(app.Schema.Schema);
             await app.RunAsync("➕➖✖️➗🟰> ", args.GetOrNull(0));
         }
         catch (Exception ex)

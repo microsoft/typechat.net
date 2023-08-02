@@ -4,37 +4,41 @@ using System.Runtime.InteropServices;
 
 namespace Microsoft.TypeChat;
 
-public struct AnyValue
+/// <summary>
+/// Represents any Json Value incluing undefined and null.
+/// Use JsonValueKind to get the Type
+/// </summary>
+public struct AnyJsonValue
 {
-    public readonly static AnyValue Undefined = new AnyValue();
-    public readonly static AnyValue[] EmptyArray = new AnyValue[0];
+    public readonly static AnyJsonValue Undefined = new AnyJsonValue();
+    public readonly static AnyJsonValue[] EmptyArray = new AnyJsonValue[0];
 
     JsonValueKind _type;
     double _number;
     object? _obj;
 
-    public AnyValue()
+    public AnyJsonValue()
     {
         _type = JsonValueKind.Undefined;
         _number = 0;
         _obj = null;
     }
 
-    public AnyValue(double number)
+    public AnyJsonValue(double number)
     {
         _type = JsonValueKind.Number;
         _number = number;
         _obj = null;
     }
 
-    public AnyValue(string value)
+    public AnyJsonValue(string value)
     {
         _type = JsonValueKind.String;
         _number = 0;
         _obj = value;
     }
 
-    public AnyValue(AnyValue[] values)
+    public AnyJsonValue(AnyJsonValue[] values)
     {
         _type = JsonValueKind.Array;
         _number = 0;
@@ -61,7 +65,7 @@ public struct AnyValue
     {
         get
         {
-            switch(_type)
+            switch (_type)
             {
                 default:
                     throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Expected boolean");
@@ -97,7 +101,7 @@ public struct AnyValue
         }
     }
 
-    public AnyValue[] Array
+    public AnyJsonValue[] Array
     {
         get
         {
@@ -105,7 +109,7 @@ public struct AnyValue
             {
                 Throw(JsonValueKind.Array);
             }
-            return _obj as AnyValue[];
+            return _obj as AnyJsonValue[];
         }
     }
 
@@ -120,20 +124,20 @@ public struct AnyValue
         throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Expected {expected}, Actual {_type}");
     }
 
-    public static implicit operator AnyValue(double number)
+    public static implicit operator AnyJsonValue(double number)
     {
-        return new AnyValue(number);
+        return new AnyJsonValue(number);
     }
-    public static implicit operator double(AnyValue value)
+    public static implicit operator double(AnyJsonValue value)
     {
         return value.Number;
     }
-    public static implicit operator AnyValue(string value)
+    public static implicit operator AnyJsonValue(string value)
     {
-        return new AnyValue(value);
+        return new AnyJsonValue(value);
     }
-    public static implicit operator AnyValue(AnyValue[] values)
+    public static implicit operator AnyJsonValue(AnyJsonValue[] values)
     {
-        return new AnyValue(values);
+        return new AnyJsonValue(values);
     }
 }

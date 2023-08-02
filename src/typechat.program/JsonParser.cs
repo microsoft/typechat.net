@@ -2,8 +2,6 @@
 
 namespace Microsoft.TypeChat;
 
-delegate T JsonParserFunc<T>(ref Utf8JsonReader reader);
-
 internal static class JsonParser
 {
     public static JsonElement GetStringProperty(this JsonElement elt, string propertyName)
