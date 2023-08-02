@@ -12,4 +12,10 @@
     <ProjectReference Include="..\typechat\typechat.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ProgramSchema.ts">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

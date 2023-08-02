@@ -1,6 +1,6 @@
 ﻿{
   "program1": {
-    "result": 43,  
+    "result": 43,
     "source": {
       "@steps": [
         {
@@ -25,6 +25,41 @@
             },
             {
               "@ref": 1
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "program2": {
+    "result": 53,
+    "source": {
+      "@steps": [
+        {
+          "@func": "add",
+          "@args": [
+            3,
+            {
+              "@func": "mul",
+              "@args": [
+                4,
+                5
+              ]
+            }
+          ]
+        },
+        {
+          "@func": "add",
+          "@args": [
+            {
+              "@ref": 0
+            },
+            {
+              "@func": "mul",
+              "@args": [
+                5,
+                6
+              ]
             }
           ]
         }

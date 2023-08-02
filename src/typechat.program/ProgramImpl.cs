@@ -60,6 +60,11 @@ public partial class Call : Expr
         Name = name.GetString();
         Args = args;
     }
+
+    public override string ToString()
+    {
+        return Name;
+    }
 }
 
 public partial class ResultRef : Expr
@@ -82,6 +87,11 @@ public partial class ValueExpr : Expr
         : base(source)
     {
         Value = source;
+    }
+
+    public override string ToString()
+    {
+        return Value.ToString();
     }
 }
 

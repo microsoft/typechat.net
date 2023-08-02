@@ -14,7 +14,7 @@ public class Math : ConsoleApp
         string apiDef = File.ReadAllText("mathSchema.ts");
         var languageModel = KernelFactory.CreateLanguageModel(Config.LoadOpenAI());
         _translator = new ProgramTranslator(languageModel, apiDef);
-        _interpreter = new ProgramInterpreter();
+        _interpreter = new ProgramInterpreter(HandleCall);
         // Uncomment to see ALL raw messages to and from the AI
         _translator.CompletionReceived += base.OnCompletionReceived;
     }
@@ -24,7 +24,7 @@ public class Math : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Program program = await _translator.TranslateAsync(input);
-        double result = _interpreter.Run(program, HandleCall);
+        double result = _interpreter.Run(program);
         Console.WriteLine(result);
     }
 
@@ -42,6 +42,8 @@ public class Math : ConsoleApp
                 return args[0] * args[1];
             case "div":
                 return args[0] / args[1];
+            case "neg":
+                return -args[0];
             case "id":
                 return args[0];
         }

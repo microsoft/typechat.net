@@ -5,13 +5,16 @@ namespace Microsoft.TypeChat;
 public class ProgramInterpreter
 {
     List<AnyValue> _results;
+    Func<string, AnyValue[], AnyValue> _handler;
 
-    public ProgramInterpreter()
+    public ProgramInterpreter(Func<string, AnyValue[], AnyValue> handler)
     {
+        ArgumentNullException.ThrowIfNull(handler, nameof(handler));
         _results = new List<AnyValue>();
+        _handler = handler;
     }
 
-    public AnyValue Run(Program program, Func<string, AnyValue[], AnyValue> handler)
+    public AnyValue Run(Program program)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
         _results.Clear();
@@ -20,16 +23,16 @@ public class ProgramInterpreter
         for (int i = 0; i < steps.Calls.Length; ++i)
         {
             Call call = steps.Calls[i];
-            AnyValue result = Eval(call, handler);
+            AnyValue result = Eval(call);
             _results.Add(result);
         }
         return (_results.Count > 0) ? _results[_results.Count - 1] : AnyValue.Undefined;
     }
 
-    AnyValue Eval(Call call, Func<string, AnyValue[], AnyValue> handler)
+    AnyValue Eval(Call call)
     {
         AnyValue[] args = Eval(call.Args);
-        AnyValue result = handler(call.Name, args);
+        AnyValue result = _handler(call.Name, args);
         return result;
     }
 
@@ -39,6 +42,9 @@ public class ProgramInterpreter
         {
             default:
                 break;
+
+            case Call call:
+                return Eval(call);
 
             case ResultRef result:
                 return Eval(result);

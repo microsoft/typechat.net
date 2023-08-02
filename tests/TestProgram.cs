@@ -43,8 +43,8 @@ public class TestProgram : TypeChatTest
     {
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
-        ProgramInterpreter interpreter = new ProgramInterpreter();
-        double result = interpreter.Run(program, MathOp);
+        ProgramInterpreter interpreter = new ProgramInterpreter(MathOp);
+        double result = interpreter.Run(program);
         Assert.Equal(expectedResult, result);
     }
 
