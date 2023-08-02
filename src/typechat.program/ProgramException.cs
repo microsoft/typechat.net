@@ -11,6 +11,7 @@ public class ProgramException : Exception
         TypeMistmatch,
         InvalidResultRef,
         NoResult,
+        InvalidArgCount,
     }
 
     ErrorCode _errorCode;
