@@ -1,31 +1,34 @@
 ﻿{
   "program1": {
-    "@steps": [
-      {
-        "@func": "mul",
-        "@args": [
-          3,
-          5
-        ]
-      },
-      {
-        "@func": "mul",
-        "@args": [
-          4,
-          7
-        ]
-      },
-      {
-        "@func": "add",
-        "@args": [
-          {
-            "@ref": 0
-          },
-          {
-            "@ref": 1
-          }
-        ]
-      }
-    ]
+    "result": 43,  
+    "source": {
+      "@steps": [
+        {
+          "@func": "mul",
+          "@args": [
+            3,
+            5
+          ]
+        },
+        {
+          "@func": "mul",
+          "@args": [
+            4,
+            7
+          ]
+        },
+        {
+          "@func": "add",
+          "@args": [
+            {
+              "@ref": 0
+            },
+            {
+              "@ref": 1
+            }
+          ]
+        }
+      ]
+    }
   }
 }

@@ -26,9 +26,36 @@ public class TestProgram : TypeChatTest
     public void TestParse(string source)
     {
         Program program = new ProgramParser().Parse(source);
+        ValidateProgram(program);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetTestPrograms))]
+    public void TestJsonConvert(string source)
+    {
+        Program program = Json.Parse<Program>(source);
+        ValidateProgram(program);
+    }
+
+    // TODO: more validation.. actually inspect the AST and compare against
+    // the JSON DOM
+    void ValidateProgram(Program program)
+    {
         Assert.NotNull(program.Steps);
-        Assert.NotNull(program.Steps.Calls);
-        Assert.True(program.Steps.Calls.Length > 0);
+
+        var calls = program.Steps.Calls;
+        Assert.NotNull(calls);
+        Assert.True(calls.Length > 0);
+        foreach (var call in calls)
+        {
+            ValidateCall(call);
+        }
+    }
+
+    void ValidateCall(Call call)
+    {
+        Assert.NotNull(call.Name);
+        Assert.NotEmpty(call.Name);
     }
 
     public static IEnumerable<object[]> GetTestPrograms()
@@ -36,8 +63,8 @@ public class TestProgram : TypeChatTest
         JsonDocument doc = LoadPrograms();
         foreach (var obj in doc.RootElement.EnumerateObject())
         {
-            var program = obj.Value.ToString();
-            yield return new[] { program };
+            var program = obj.Value.GetProperty("source");
+            yield return new[] { program.ToString() };
         }
     }
 }

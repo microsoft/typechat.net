@@ -31,23 +31,23 @@ public class ProgramParser
         throw new ProgramException(ProgramException.ErrorCode.InvalidProgram, root.ToString());
     }
 
-    public Steps ParseSteps(JsonElement source)
+    Steps ParseSteps(JsonElement source)
     {
         Debug.Assert(source.ValueKind == JsonValueKind.Array);
         Call[] steps = new Call[source.GetArrayLength()];
         for (int i = 0; i < steps.Length; ++i)
         {
-            steps[i] = ParseFunc(source[i]);
+            steps[i] = ParseCall(source[i]);
         }
         return new Steps(source, steps);
     }
 
-    public Call ParseFunc(JsonElement elt)
+    Call ParseCall(JsonElement elt)
     {
-        return ParseFunc(elt, elt.GetStringProperty(ExprNames.Func));
+        return ParseCall(elt, elt.GetStringProperty(ExprNames.Func));
     }
 
-    public Call ParseFunc(JsonElement source, JsonElement funcName)
+    Call ParseCall(JsonElement source, JsonElement funcName)
     {
         Debug.Assert(source.ValueKind == JsonValueKind.Object);
         Expr[] args = ParseArgs(source);
@@ -75,14 +75,14 @@ public class ProgramParser
         return expr;
     }
 
-    public Expr ParseObject(JsonElement elt)
+    Expr ParseObject(JsonElement elt)
     {
         Debug.Assert(elt.ValueKind == JsonValueKind.Object);
 
         if (elt.TryGetProperty(ExprNames.Func, out JsonElement funcName))
         {
             funcName.EnsureIsType(JsonValueKind.String, ExprNames.Func);
-            return ParseFunc(elt, funcName);
+            return ParseCall(elt, funcName);
         }
         else if (elt.TryGetProperty(ExprNames.Ref, out JsonElement refValue))
         {
@@ -97,7 +97,7 @@ public class ProgramParser
         return new UnknownExpr(elt);
     }
 
-    public Expr ParseExpr(JsonElement elt)
+    Expr ParseExpr(JsonElement elt)
     {
         switch (elt.ValueKind)
         {
