@@ -6,6 +6,7 @@ It applies the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NE
 
 TypeChat.NET consists of the following assemblies:
 - TypeChat
+- TypeChat.Program: Json program generation and evaluation
 - TypeChat.Schema: Experimental classes for exporting .NET types as Typescript schema. 
 - TypeChat.SK: Integration with Semantic Kernel. 
 
