@@ -7,6 +7,7 @@ public class ProgramException : Exception
     public enum ErrorCode
     {
         InvalidProgram,
+        UnsupportedType,
         TypeMistmatch,
         NullValue,
     }
