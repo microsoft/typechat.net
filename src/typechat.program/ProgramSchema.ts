@@ -17,7 +17,7 @@ export type Expression = JsonValue | FunctionCall | ResultReference;
 
 // A JSON value is a string, a number, a boolean, null, an object, or an array. Function calls and result
 // references can be nested in objects and arrays.
-export type JsonValue = string | number | boolean | null | { [x: string]: Expression } | Expression[];
+export type JsonValue = string | number | boolean | null  | Expression[];
 
 // A result reference represents the value of an expression from a preceding step.
 export type ResultReference = {

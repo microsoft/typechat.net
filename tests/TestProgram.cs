@@ -82,7 +82,7 @@ public class TestProgram : TypeChatTest
         }
     }
 
-    void ValidateCall(Call call)
+    void ValidateCall(FunctionCall call)
     {
         Assert.NotNull(call.Name);
         Assert.NotEmpty(call.Name);

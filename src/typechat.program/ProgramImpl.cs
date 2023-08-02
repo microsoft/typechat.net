@@ -41,9 +41,9 @@ public abstract partial class Expr
 
 public partial class Steps : Expr
 {
-    static readonly Call[] EmptySteps = new Call[0];
+    static readonly FunctionCall[] EmptySteps = new FunctionCall[0];
 
-    public Steps(JsonElement source, Call[]? calls)
+    public Steps(JsonElement source, FunctionCall[]? calls)
         : base(source)
     {
         calls ??= EmptySteps;
@@ -51,9 +51,9 @@ public partial class Steps : Expr
     }
 }
 
-public partial class Call : Expr
+public partial class FunctionCall : Expr
 {
-    public Call(JsonElement source, JsonElement name, Expr[] args)
+    public FunctionCall(JsonElement source, JsonElement name, Expr[] args)
         : base(source)
     {
         Debug.Assert(name.ValueKind == JsonValueKind.String);

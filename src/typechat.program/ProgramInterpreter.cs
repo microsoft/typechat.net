@@ -22,14 +22,14 @@ public class ProgramInterpreter
         Steps steps = program.Steps;
         for (int i = 0; i < steps.Calls.Length; ++i)
         {
-            Call call = steps.Calls[i];
+            FunctionCall call = steps.Calls[i];
             AnyValue result = Eval(call);
             _results.Add(result);
         }
         return (_results.Count > 0) ? _results[_results.Count - 1] : AnyValue.Undefined;
     }
 
-    AnyValue Eval(Call call)
+    AnyValue Eval(FunctionCall call)
     {
         AnyValue[] args = Eval(call.Args);
         AnyValue result = _handler(call.Name, args);
@@ -43,7 +43,7 @@ public class ProgramInterpreter
             default:
                 break;
 
-            case Call call:
+            case FunctionCall call:
                 return Eval(call);
 
             case ResultRef result:

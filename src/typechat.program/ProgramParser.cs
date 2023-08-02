@@ -34,7 +34,7 @@ public class ProgramParser
     Steps ParseSteps(JsonElement source)
     {
         Debug.Assert(source.ValueKind == JsonValueKind.Array);
-        Call[] steps = new Call[source.GetArrayLength()];
+        FunctionCall[] steps = new FunctionCall[source.GetArrayLength()];
         for (int i = 0; i < steps.Length; ++i)
         {
             steps[i] = ParseCall(source[i]);
@@ -42,16 +42,16 @@ public class ProgramParser
         return new Steps(source, steps);
     }
 
-    Call ParseCall(JsonElement elt)
+    FunctionCall ParseCall(JsonElement elt)
     {
         return ParseCall(elt, elt.GetStringProperty(ExprNames.Func));
     }
 
-    Call ParseCall(JsonElement source, JsonElement funcName)
+    FunctionCall ParseCall(JsonElement source, JsonElement funcName)
     {
         Debug.Assert(source.ValueKind == JsonValueKind.Object);
         Expr[] args = ParseArgs(source);
-        return new Call(source, funcName, args);
+        return new FunctionCall(source, funcName, args);
     }
 
     public Expr[] ParseArgs(JsonElement elt)

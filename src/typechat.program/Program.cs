@@ -23,14 +23,14 @@ public abstract partial class Expr
 
 public partial class Steps : Expr
 {
-    public Call[] Calls
+    public FunctionCall[] Calls
     {
         get;
         private set;
     }
 }
 
-public partial class Call : Expr
+public partial class FunctionCall : Expr
 {
     public string Name
     {

@@ -17,6 +17,7 @@ public class Math : ConsoleApp
         _interpreter = new ProgramInterpreter(HandleCall);
         // Uncomment to see ALL raw messages to and from the AI
         _translator.CompletionReceived += base.OnCompletionReceived;
+        _translator.SendingPrompt += base.OnSendingPrompt;
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
