@@ -6,17 +6,7 @@ public class Json
 {
     public static JsonSerializerOptions DefaultOptions()
     {
-        var options = new JsonSerializerOptions
-        {
-            IncludeFields = true,
-            IgnoreReadOnlyFields = true,
-            AllowTrailingCommas = true,
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        };
-
-        options.Converters.Add(new JsonStringEnumConverter());
-        return options;
+        return JsonSerializerTypeValidator.DefaultOptions();
     }
 
     public static readonly Json Default = new Json();

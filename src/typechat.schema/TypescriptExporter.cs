@@ -37,6 +37,7 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer = writer;
         _nonExportTypes = new HashSet<Type>()
         {
+            typeof(object),
             typeof(string),
             typeof(Array),
             typeof(Nullable<>)

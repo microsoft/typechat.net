@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Text.Json;
+
 namespace Microsoft.TypeChat.Tests;
 
 public enum Coffees
@@ -115,6 +117,17 @@ public class LocalVocabObj
 
     [JsonVocab("One | Two | Three | Four", Name = VocabName)]
     public string Value { get; set; }
+}
+
+public class JsonFunc
+{
+    public string Name { get; set; }
+}
+
+public class JsonExpr
+{
+    public JsonFunc Func;
+    public JsonElement Value;
 }
 
 public static class TestVocabs

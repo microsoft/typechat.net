@@ -12,6 +12,11 @@ public class TestProgram : TypeChatTest
         Assert.True(lines.Contains("steps", "Call"));
         Assert.True(lines.Contains("func", "string"));
         Assert.True(lines.Contains("args", "Expr[]"));
-        Assert.True(lines.Contains("interface Value"));
+    }
+
+    [Fact]
+    public void TestExpr()
+    {
+
     }
 }

@@ -22,8 +22,6 @@ public class Math : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Program program = await _translator.TranslateAsync(input);
-        string json = Json.Stringify(program);
-        Console.WriteLine(json);
     }
 
     public static async Task<int> Main(string[] args)

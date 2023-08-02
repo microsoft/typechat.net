@@ -17,7 +17,7 @@ public class ProgramTranslatorPrompts : JsonTranslatorPrompts
         return RequestPrompt(request, schema.Schema.Text, _apiDef);
     }
 
-    public static string RequestPrompt(string request, string programSchema, string apiDef)
+    public static string RequestProgramPrompt(string request, string programSchema, string apiDef)
     {
         return "You are a service that translates user requests into programs represented as JSON using the following TypeScript definitions:\n" +
                $"###\n{programSchema}###\n" +
