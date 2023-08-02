@@ -14,6 +14,11 @@ public class ProgramParser
 
     public ProgramParser() { }
 
+    public Program Parse(string programSource)
+    {
+        return Parse(JsonDocument.Parse(programSource));
+    }
+
     public Program Parse(JsonDocument programSource)
     {
         JsonElement root = programSource.RootElement;
@@ -56,7 +61,7 @@ public class ProgramParser
             return Expr.Empty;
         }
         args.EnsureIsType(JsonValueKind.Array, ExprNames.Args);
-        return ParseExprArray(elt);
+        return ParseExprArray(args);
     }
 
     Expr[] ParseExprArray(JsonElement elt)
