@@ -34,19 +34,34 @@ public class Math : ConsoleApp
         switch(name)
         {
             default:
-                return double.NaN;
-            case "add":
-                return args[0] + args[1];
-            case "sub":
-                return args[0] - args[1];
-            case "mul":
-                return args[0] * args[1];
-            case "div":
-                return args[0] / args[1];
+                return BinaryOp(name, args);
             case "neg":
                 return -args[0];
             case "id":
                 return args[0];
+        }
+    }
+
+    double BinaryOp(string name, AnyJsonValue[] args)
+    {
+        if (args.Length < 2)
+        {
+            throw new InvalidOperationException();
+        }
+        double x = args[0];
+        double y = args[1];
+        switch (name)
+        {
+            default:
+                return double.NaN;
+            case "add":
+                return x + y;
+            case "sub":
+                return x - y;
+            case "mul":
+                return x * y;
+            case "div":
+                return x / y;
         }
     }
 

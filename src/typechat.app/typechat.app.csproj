@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\typechat.program\typechat.program.csproj" />
     <ProjectReference Include="..\typechat.sk\typechat.sk.csproj" />
     <ProjectReference Include="..\typechat\typechat.csproj" />
   </ItemGroup>
