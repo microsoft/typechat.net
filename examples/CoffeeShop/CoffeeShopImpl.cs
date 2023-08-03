@@ -3,6 +3,12 @@ using System.Text;
 
 namespace CoffeeShop;
 
+/**
+ * We use partial classes to deliberately keep SCHEMA separate from implementation
+ * CoffeeShopSchema.cs defines the shape of the data
+ * CoffeeShopImpl.cs has the code. 
+ **/
+
 public partial class Cart
 {
     public virtual void GetUnknown(StringBuilder sb)
@@ -43,4 +49,12 @@ public partial class CoffeeDrink : LineItem
 public partial class LatteDrink : LineItem
 {
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
+}
+
+public abstract partial class DrinkOption
+{
+    public virtual void GetUnknown(StringBuilder sb)
+    {
+        return;
+    }
 }

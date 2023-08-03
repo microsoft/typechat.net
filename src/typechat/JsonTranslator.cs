@@ -4,10 +4,13 @@ namespace Microsoft.TypeChat;
 
 public class JsonTranslator<T>
 {
+    public const int DefaultMaxRepairAttempts = 1;
+
     ILanguageModel _model;
     IJsonTranslatorPrompts _prompts;
     IJsonTypeValidator<T> _validator;
     RequestSettings _requestSettings;
+    int _maxRepairAttempts;
 
     public JsonTranslator(ILanguageModel model, SchemaText schema)
         : this(model, new JsonSerializerTypeValidator<T>(schema))
@@ -28,6 +31,7 @@ public class JsonTranslator<T>
         prompts ??= JsonTranslatorPrompts.Default;
         _prompts = prompts;
         _requestSettings = new RequestSettings(); // Default settings
+        _maxRepairAttempts = DefaultMaxRepairAttempts;
     }
 
     public ILanguageModel Model => _model;
@@ -43,7 +47,27 @@ public class JsonTranslator<T>
 
     public RequestSettings RequestSettings => _requestSettings;
 
-    public bool AttemptRepair { get; set; } = true;
+    public int MaxRepairAttempts
+    {
+        get => _maxRepairAttempts;
+        set
+        {
+            if (value < 0)
+            {
+                value = 0;
+            }
+            _maxRepairAttempts = value;
+        }
+    }
+
+    public bool AttemptRepair
+    {
+        get => (_maxRepairAttempts > 0);
+        set
+        {
+            MaxRepairAttempts = value ? DefaultMaxRepairAttempts : 0;
+        }
+    }
 
     public event Action<string> SendingPrompt;
     public event Action<string> CompletionReceived;
@@ -65,7 +89,7 @@ public class JsonTranslator<T>
     {
         requestSettings ??= _requestSettings;
         string prompt = _prompts.CreateRequestPrompt(_validator.Schema, request);
-        bool attemptRepair = AttemptRepair;
+        int repairAttempts = 0;
         while (true)
         {
             string responseText = await CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
@@ -75,14 +99,15 @@ public class JsonTranslator<T>
             {
                 return validation.Value;
             }
-            if (!attemptRepair)
+
+            // Attempt to repair the Json that was sent
+            ++repairAttempts;
+            if (repairAttempts > _maxRepairAttempts)
             {
                 throw new TypeChatException(TypeChatException.ErrorCode.JsonValidation, validation.Message);
             }
-
             NotifyEvent(AttemptingRepair, validation.Message);
             prompt += $"{responseText}\n{_prompts.CreateRepairPrompt(_validator.Schema, responseText, validation.Message)}";
-            attemptRepair = false;
         }
     }
 
