@@ -29,7 +29,7 @@ public class TestProgram : TypeChatTest
     }
 
     [Theory]
-    [MemberData(nameof(GetTestPrograms))]
+    [MemberData(nameof(GetMathPrograms))]
     public void TestParse(string source, double result)
     {
         Program program = new ProgramParser().Parse(source);
@@ -45,21 +45,21 @@ public class TestProgram : TypeChatTest
             var source = obj.Value.GetProperty("source");
             Program program = Json.Parse<Program>(source.ToString());
             ValidateProgram(program);
-            program.Dispose();        }
+            program.Dispose();
+        }
     }
 
-
     [Theory]
-    [MemberData(nameof(GetTestPrograms))]
-    public void TestJsonConvertor(string source, object result)
+    [MemberData(nameof(GetMathPrograms))]
+    public void TestJsonConvertor_Math(string source, object result)
     {
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
     }
 
     [Theory]
-    [MemberData(nameof(GetTestPrograms))]
-    public void TestInterpreter(string source, double expectedResult)
+    [MemberData(nameof(GetMathPrograms))]
+    public void TestInterpreter_Math(string source, double expectedResult)
     {
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
@@ -70,23 +70,17 @@ public class TestProgram : TypeChatTest
         Assert.Equal(expectedResult, result);
     }
 
-    AnyJsonValue MathOp(string name, AnyJsonValue[] args)
+    [Theory]
+    [MemberData(nameof(GetStringPrograms))]
+    public void TestInterpreter_String(string source, string expectedResult)
     {
-        switch (name)
-        {
-            default:
-                return double.NaN;
-            case "add":
-                return args[0] + args[1];
-            case "sub":
-                return args[0] + args[1];
-            case "mul":
-                return args[0] * args[1];
-            case "div":
-                return args[0] / args[1];
-            case "id":
-                return args[0];
-        }
+        Program program = Json.Parse<Program>(source);
+        ValidateProgram(program);
+
+        StringAPI api = new StringAPI();
+        ProgramInterpreter interpreter = new ProgramInterpreter(api.HandleCall);
+        string result = interpreter.Run(program);
+        Assert.Equal(expectedResult, result);
     }
 
     // TODO: more validation.. actually inspect the AST and compare against
@@ -110,10 +104,15 @@ public class TestProgram : TypeChatTest
         Assert.NotEmpty(call.Name);
     }
 
-    public static IEnumerable<object[]> GetTestPrograms()
+    public static IEnumerable<object[]> GetMathPrograms()
     {
         JsonDocument doc = LoadMathPrograms();
-        //JsonDocument doc2 = LoadStringPrograms();
+        return GetPrograms(doc);
+    }
+
+    public static IEnumerable<object[]> GetStringPrograms()
+    {
+        JsonDocument doc = LoadStringPrograms();
         return GetPrograms(doc);
     }
 

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Microsoft.TypeChat;
 
@@ -33,6 +34,7 @@ public struct AnyJsonValue
 
     public AnyJsonValue(string value)
     {
+        ArgumentNullException.ThrowIfNull(value, nameof(value));
         _type = JsonValueKind.String;
         _number = 0;
         _obj = value;
@@ -40,7 +42,16 @@ public struct AnyJsonValue
 
     public AnyJsonValue(AnyJsonValue[] values)
     {
+        ArgumentNullException.ThrowIfNull(values, nameof(values));
         _type = JsonValueKind.Array;
+        _number = 0;
+        _obj = values;
+    }
+
+    public AnyJsonValue(Dictionary<string, AnyJsonValue> values)
+    {
+        ArgumentNullException.ThrowIfNull(values, nameof(values));
+        _type = JsonValueKind.Object;
         _number = 0;
         _obj = values;
     }
@@ -113,11 +124,46 @@ public struct AnyJsonValue
         }
     }
 
+    public Dictionary<string, AnyJsonValue> Object
+    {
+        get
+        {
+            if (_type != JsonValueKind.Object)
+            {
+                Throw(JsonValueKind.Object);
+            }
+            return _obj as Dictionary<string, AnyJsonValue>;
+        }
+    }
+
     public void Clear()
     {
         _obj = null;
         _number = 0;
     }
+
+    public override string ToString()
+    {
+        switch (_type)
+        {
+            default:
+                break;
+            case JsonValueKind.String:
+                return String;
+            case JsonValueKind.Number:
+                return Number.ToString();
+            case JsonValueKind.Undefined:
+                return "undefined";
+            case JsonValueKind.Null:
+                return "null";
+            case JsonValueKind.True:
+                return "true";
+            case JsonValueKind.False:
+                return "false";
+        }
+        return base.ToString();
+    }
+
 
     void Throw(JsonValueKind expected)
     {
@@ -132,11 +178,19 @@ public struct AnyJsonValue
     {
         return value.Number;
     }
+    public static implicit operator string(AnyJsonValue value)
+    {
+        return value.String;
+    }
     public static implicit operator AnyJsonValue(string value)
     {
         return new AnyJsonValue(value);
     }
     public static implicit operator AnyJsonValue(AnyJsonValue[] values)
+    {
+        return new AnyJsonValue(values);
+    }
+    public static implicit operator AnyJsonValue(Dictionary<string, AnyJsonValue> values)
     {
         return new AnyJsonValue(values);
     }

@@ -54,18 +54,20 @@ public class MathAPI
     AnyJsonValue BinaryOp(string name, Operators op, AnyJsonValue[] args)
     {
         CheckArgLength(name, 2, args);
+        double x = args[0];
+        double y = args[1];
         switch (op)
         {
             default:
                 throw new NotSupportedException();
             case Operators.Add:
-                return args[0] + args[1];
+                return x + y;
             case Operators.Sub:
-                return args[0] - args[1];
+                return x - y;
             case Operators.Mul:
-                return args[0] * args[1];
+                return x * y;
             case Operators.Div:
-                return args[0] / args[1];
+                return x / y;
         }
     }
 

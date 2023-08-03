@@ -1,6 +1,6 @@
 ﻿{
   "program1": {
-    "result": "998877One:66Two:55",
+    "result": "998877[One, 66][Two, 55]",
     "source": {
       "@steps": [
         {

@@ -54,7 +54,11 @@ public class ProgramInterpreter
 
             case ArrayExpr array:
                 return Eval(array);
+
+            case ObjectExpr obj:
+                return Eval(obj);
         }
+
         return AnyJsonValue.Undefined;
     }
 
@@ -93,6 +97,16 @@ public class ProgramInterpreter
         for (int i = 0; i < expr.Value.Length; ++i)
         {
             results[i] = Eval(expr.Value[i]);
+        }
+        return results;
+    }
+
+    Dictionary<string, AnyJsonValue> Eval(ObjectExpr expr)
+    {
+        Dictionary<string, AnyJsonValue> results = new Dictionary<string, AnyJsonValue>(expr.Value.Count);
+        foreach(var property in expr.Value)
+        {
+            results[property.Key] = Eval(property.Value);
         }
         return results;
     }

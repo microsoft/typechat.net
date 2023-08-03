@@ -10,7 +10,7 @@ TypeChat.NET consists of the following assemblies:
 - TypeChat.Schema: Experimental classes for exporting .NET types as Typescript schema. 
 - TypeChat.SK: Integration with Semantic Kernel. 
 
-TypeChat.NET is still in **active development** with very frequent changes. 
+TypeChat.NET is in **active development** with very frequent changes. 
 
 ## TypeChat ##
 Brings TypeChat to .NET.
