@@ -16,8 +16,9 @@ public class CoffeeShop : ConsoleApp
     CoffeeShop()
     {
         _translator = KernelFactory.JsonTranslator<Cart>(Config.LoadOpenAI());
+        _translator.MaxRepairAttempts = 3;
         // Uncomment to see ALL raw messages to and from the AI
-        base.SubscribeAllEvents(_translator);
+        //base.SubscribeAllEvents(_translator);
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -57,7 +58,7 @@ public class CoffeeShop : ConsoleApp
         {
             CoffeeShop app = new CoffeeShop();
             // Un-comment to print auto-generated schema at start:
-            Console.WriteLine(app.Schema.Schema.Text);
+            //Console.WriteLine(app.Schema.Schema.Text);
 
             await app.RunAsync("☕> ", args.GetOrNull(0));
         }

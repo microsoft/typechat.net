@@ -16,10 +16,11 @@ public class CompletionService : ILanguageModel
 
     public ModelInfo Model => _model;
 
-    public Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken)
+    public async Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken)
     {
         CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
-        return _service.CompleteAsync(prompt, requestSettings, cancelToken);
+        string response = await _service.CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+        return response;
     }
 
     CompleteRequestSettings? ToRequestSettings(RequestSettings? settings)

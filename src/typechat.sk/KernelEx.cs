@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using Microsoft.SemanticKernel.AI.TextCompletion;
+using Microsoft.SemanticKernel.Reliability;
 
 namespace Microsoft.TypeChat.SemanticKernel;
 
@@ -29,6 +30,19 @@ public static class KernelEx
             builder = builder.WithOpenAIChatCompletionService(modelName, config.ApiKey, config.Organization, modelName, true);
         }
         return builder;
+    }
+
+    public static KernelBuilder WithRetry(this KernelBuilder builder, int maxRetries, TimeSpan? retryPauseMs = null)
+    {
+        retryPauseMs ??= TimeSpan.FromMilliseconds(100);
+        HttpRetryConfig config = new HttpRetryConfig
+        {
+            MinRetryDelay = retryPauseMs.Value,
+            MaxRetryDelay = retryPauseMs.Value,
+            MaxRetryCount = maxRetries,
+            UseExponentialBackoff = false
+        };
+        return builder.WithRetryHandlerFactory(new DefaultHttpRetryHandlerFactory(config));
     }
 
     public static CompletionService CompletionService(this IKernel kernel, ModelInfo model)

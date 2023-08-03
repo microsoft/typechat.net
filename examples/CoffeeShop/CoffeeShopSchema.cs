@@ -105,7 +105,7 @@ public partial class LatteDrink : LineItem
 
 public class BakeryItem : LineItem
 {
-    [JsonVocab(CoffeeShopVocabs.BakeryProducts)]
+    [JsonVocab(CoffeeShopVocabs.BakeryProducts, PropertyName = "productName")]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -149,15 +149,9 @@ public enum EspressoSize
 [JsonDerivedType(typeof(Syrup), typeDiscriminator: nameof(Syrup))]
 [JsonDerivedType(typeof(Topping), typeDiscriminator: nameof(Topping))]
 [JsonDerivedType(typeof(LattePreparation), typeDiscriminator: nameof(LattePreparation))]
-public abstract class DrinkOption
-{
-    public virtual void GetUnknown(StringBuilder sb)
-    {
-        return;
-    }
-}
+public abstract partial class DrinkOption { }
 
-[Comment("Use this type for DrinkOptions that match nothing else OR if you are NOT SURE. ")]
+[Comment("Use this type for DrinkOptions that match nothing else OR if you are NOT SURE.")]
 public class UnknownDrinkOption : DrinkOption
 {
     [Comment("The text that wasn't understood")]

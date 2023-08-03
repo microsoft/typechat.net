@@ -118,4 +118,26 @@ public class TestVocab : TypeChatTest
         json = Json.Stringify(obj);
         obj2 = Json.Parse<ConverterTestObj>(json);
     }
+
+
+    public void ValidateVocab(TypeSchema schema, VocabType vocab)
+    {
+        ValidateVocab(schema.Schema.Text, vocab.Vocab);
+    }
+
+    public void ValidateVocabInline(TypeSchema schema, VocabType vocab)
+    {
+        // Type should not be emitted. Kludgy test
+        Assert.False(schema.Schema.Text.Contains(vocab.Name));
+        ValidateVocab(schema.Schema.Text, vocab.Vocab);
+    }
+
+    public void ValidateVocab(string text, IVocab vocab)
+    {
+        // Kludgy for now
+        foreach (var entry in vocab)
+        {
+            Assert.True(text.Contains($"'{entry}'"));
+        }
+    }
 }

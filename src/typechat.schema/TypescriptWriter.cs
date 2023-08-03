@@ -35,6 +35,7 @@ public class TypescriptWriter
         _writer.Clear();
         return this;
     }
+
     public TypescriptWriter Append(string token)
     {
         if (!string.IsNullOrEmpty(token))
@@ -62,10 +63,15 @@ public class TypescriptWriter
         _writer.Write(Typescript.Punctuation.EOL);
         return this;
     }
-    public TypescriptWriter Semicolon() => Append(Typescript.Punctuation.Semicolon);
-    public TypescriptWriter Comma() => Append(Typescript.Punctuation.Comma);
+
+    public TypescriptWriter LBrace() { _writer.LBrace(); return this; }
+    public TypescriptWriter RBrace() { _writer.RBrace(); return this; }
+    public TypescriptWriter LParan() { _writer.LParan(); return this; }
+    public TypescriptWriter RParan() { _writer.RParan(); return this; }
+    public TypescriptWriter Semicolon() { _writer.Semicolon(); return this; }
+    public TypescriptWriter Comma() { _writer.Comma(); return this; }
     public TypescriptWriter EOS() => Semicolon().EOL();
-    public TypescriptWriter Colon() => Append(Typescript.Punctuation.Colon);
+    public TypescriptWriter Colon() { _writer.Colon(); return this; }
     public TypescriptWriter Assign() => Append(Typescript.Operators.Assign);
     public TypescriptWriter Or() => Append(Typescript.Operators.Or);
     public TypescriptWriter Comment(string text)
@@ -73,8 +79,8 @@ public class TypescriptWriter
         return Append(Typescript.Punctuation.Comment).Space().Append(text).EOL();
     }
 
-    public TypescriptWriter StartBlock() => Append(Typescript.Punctuation.LBrace).EOL();
-    public TypescriptWriter EndBlock() => Append(Typescript.Punctuation.RBrace).EOL();
+    public TypescriptWriter StartBlock() => LBrace().EOL();
+    public TypescriptWriter EndBlock() => RBrace().EOL();
 
     public TypescriptWriter Export() => Append(Typescript.Keywords.Export);
     public TypescriptWriter Extends() => Append(Typescript.Keywords.Extends);
@@ -96,6 +102,7 @@ public class TypescriptWriter
         _writer.SQuote().Write(value).SQuote();
         return this;
     }
+
     public TypescriptWriter Literals(IEnumerable<string> values)
     {
         ArgumentNullException.ThrowIfNull(values, nameof(values));
@@ -112,8 +119,23 @@ public class TypescriptWriter
         return this;
     }
 
+    public TypescriptWriter Variable(
+        string name,
+        string dataType,
+        bool isArray = false,
+        bool nullable = false)
+    {
+        return DeclareVariable(name, dataType, isArray, nullable).Semicolon();
+    }
 
-    public TypescriptWriter Variable(string name,
+    public TypescriptWriter Variable(string name, bool nullable, IEnumerable<string> literals)
+    {
+        Name(name, nullable).Colon().Space().Literals(literals).Semicolon();
+        return this;
+    }
+
+    public TypescriptWriter DeclareVariable(
+        string name,
         string dataType,
         bool isArray = false,
         bool nullable = false)
@@ -123,13 +145,26 @@ public class TypescriptWriter
         {
             Array();
         }
-        Semicolon();
         return this;
     }
 
-    public TypescriptWriter Variable(string name, bool nullable, IEnumerable<string> literals)
+    public TypescriptWriter Argument(
+        string name,
+        string dataType,
+        int argNumber,
+        int argCount,
+        bool isArray = false,
+        bool nullable = false)
     {
-        Name(name, nullable).Colon().Space().Literals(literals).Semicolon();
+        if (argNumber > 0)
+        {
+            Space();
+        }
+        DeclareVariable(name, dataType, isArray, nullable);
+        if (argNumber < argCount - 1)
+        {
+            Comma();
+        }
         return this;
     }
 
@@ -147,6 +182,7 @@ public class TypescriptWriter
     {
         return Type(name).Space().StartBlock();
     }
+
     public TypescriptWriter EndType(string name)
     {
         // TODO: validation here to verify Begin & End match
@@ -157,6 +193,7 @@ public class TypescriptWriter
     {
         return Append(Typescript.Keywords.Interface).Space().Name(name);
     }
+
     public TypescriptWriter BeginInterface(string name, string baseType = null)
     {
         if (string.IsNullOrEmpty(baseType))
@@ -169,9 +206,36 @@ public class TypescriptWriter
         }
         return this;
     }
+
     public TypescriptWriter EndInterface(string name)
     {
         // TODO: validation here to verify Begin & End match
         return SOL().EndBlock();
+    }
+
+    public TypescriptWriter BeginMethodDeclare(string name)
+    {
+        return Name(name).LParan();
+    }
+
+    public TypescriptWriter EndMethodDeclare(string? returnType = null)
+    {
+        RParan();
+        if (!string.IsNullOrEmpty(returnType))
+        {
+            Colon().Space().Name(returnType);
+        }
+        return Semicolon();
+    }
+
+    public static string WriteCode(Action<TypescriptWriter> codeGen)
+    {
+        ArgumentNullException.ThrowIfNull(codeGen, nameof(codeGen));
+
+        using StringWriter sw = new StringWriter();
+        TypescriptWriter writer = new TypescriptWriter(sw);
+        codeGen(writer);
+        sw.Flush();
+        return sw.ToString();
     }
 }

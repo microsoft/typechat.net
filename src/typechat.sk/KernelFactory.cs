@@ -17,7 +17,9 @@ public static class KernelFactory
 
         // Create kernel
         KernelBuilder kb = new KernelBuilder();
-        kb.WithChatModel(modelName, config);
+        kb.WithChatModel(modelName, config)
+          .WithRetry(config.MaxRetries, config.MaxPauseMs);
+
         IKernel kernel = kb.Build();
         return kernel;
     }
