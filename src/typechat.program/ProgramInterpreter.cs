@@ -2,6 +2,11 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Evaluates a JSON program using a simple interpreter.
+/// Function calls in the program are passed to the onCall callback function for validation and dispatch.
+/// NOTE: the interpreter is synchronous for simplicity, but will be made entirely async in an upcoming checkin. 
+/// </summary>
 public class ProgramInterpreter
 {
     List<AnyJsonValue> _results;

@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Translates natural language requests into simple programs, represented as JSON, that compose
+/// </summary>
 public class ProgramTranslator : JsonTranslator<Program>
 {
     public ProgramTranslator(ILanguageModel model, string apiDef)
