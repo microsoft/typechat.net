@@ -148,7 +148,7 @@ public class TypescriptWriter
         return this;
     }
 
-    public TypescriptWriter Argument(
+    public TypescriptWriter Parameter(
         string name,
         string dataType,
         int argNumber,
@@ -215,7 +215,7 @@ public class TypescriptWriter
 
     public TypescriptWriter BeginMethodDeclare(string name)
     {
-        return Name(name).LParan();
+        return SOL().Name(name).LParan();
     }
 
     public TypescriptWriter EndMethodDeclare(string? returnType = null)
@@ -225,7 +225,7 @@ public class TypescriptWriter
         {
             Colon().Space().Name(returnType);
         }
-        return Semicolon();
+        return EOS();
     }
 
     public static string WriteCode(Action<TypescriptWriter> codeGen)

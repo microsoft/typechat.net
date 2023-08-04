@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 using Microsoft.TypeChat.SemanticKernel;
 
 namespace Math;
@@ -11,13 +12,12 @@ public class Math : ConsoleApp
 
     Math()
     {
-        string apiDef = File.ReadAllText("mathSchema.ts");
+        var apiSchema = TypescriptExporter.GenerateSchema(typeof(IMathAPI));
         var languageModel = KernelFactory.CreateLanguageModel(Config.LoadOpenAI());
-        _translator = new ProgramTranslator(languageModel, apiDef);
+        _translator = new ProgramTranslator(languageModel, apiSchema.Schema.Text);
         _interpreter = new ProgramInterpreter(HandleCall);
         // Uncomment to see ALL raw messages to and from the AI
-       // _translator.CompletionReceived += base.OnCompletionReceived;
-        //_translator.SendingPrompt += base.OnSendingPrompt;
+        // _translator.CompletionReceived += base.OnCompletionReceived;
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -35,6 +35,8 @@ public class Math : ConsoleApp
         {
             default:
                 return BinaryOp(name, args);
+            case "unknown":
+                return double.NaN;
             case "neg":
                 return -args[0];
             case "id":

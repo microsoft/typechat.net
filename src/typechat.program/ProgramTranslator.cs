@@ -10,7 +10,6 @@ public class ProgramTranslator : JsonTranslator<Program>
     public ProgramTranslator(ILanguageModel model, string apiDef)
         : this(
               model,
-              //TypescriptExporter.GenerateSchema(typeof(Program)),
               TypescriptSchema.Load(typeof(Program), "ProgramSchema.ts"),
               apiDef
               )

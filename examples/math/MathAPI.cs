@@ -1,6 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Tests;
+using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
+
+namespace Math;
 
 [Comment("This is a schema for writing programs that evaluate expressions")]
 public interface IMathAPI

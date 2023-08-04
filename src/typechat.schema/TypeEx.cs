@@ -79,6 +79,11 @@ public static class TypeEx
         }
     }
 
+    internal static bool IsVoid(this Type type)
+    {
+        return type == typeof(void);
+    }
+
     internal static bool IsAbstract(this PropertyInfo property)
     {
         var methods = property.GetAccessors();
