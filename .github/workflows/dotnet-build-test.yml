@@ -3,7 +3,7 @@
 # each targeting a single version of the dotnet SDK.
 #
 
-name: dotnet-build-and-test
+name: dotnet-build-test
 
 on:
   workflow_dispatch:
