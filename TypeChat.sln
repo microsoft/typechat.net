@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat", "src\typechat\typechat.csproj", "{E682D47B-D290-4CD1-8D7A-EC00FD323D9B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat", "src\typechat\TypeChat.csproj", "{E682D47B-D290-4CD1-8D7A-EC00FD323D9B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.sk", "src\typechat.sk\typechat.sk.csproj", "{3E986252-C73E-4FD5-99A1-CE2FAB8899FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.SemanticKernel", "src\typechat.sk\TypeChat.SemanticKernel.csproj", "{3E986252-C73E-4FD5-99A1-CE2FAB8899FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.tests", "tests\typechat.tests.csproj", "{E96D1542-438E-4ED9-A8B8-203DC8620FC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.Tests", "tests\TypeChat.Tests.csproj", "{E96D1542-438E-4ED9-A8B8-203DC8620FC2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4EE943BA-EA53-4CD2-A2E3-7B2A2C61FAE3}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,19 +21,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{17
 		examples\Directory.Build.targets = examples\Directory.Build.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sentiment", "examples\Sentiment\sentiment.csproj", "{68E9AF34-7982-4BA4-864D-D24DF937A6A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sentiment", "examples\Sentiment\Sentiment.csproj", "{68E9AF34-7982-4BA4-864D-D24DF937A6A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.app", "src\typechat.app\typechat.app.csproj", "{4F6278AB-D48C-43B8-BEF5-F28B1150B3C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.App", "src\typechat.app\TypeChat.App.csproj", "{4F6278AB-D48C-43B8-BEF5-F28B1150B3C7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.schema", "src\typechat.schema\typechat.schema.csproj", "{6A28E737-6B93-4E01-A11B-0EAF1392B4E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.Schema", "src\typechat.schema\TypeChat.Schema.csproj", "{6A28E737-6B93-4E01-A11B-0EAF1392B4E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "coffeeShop", "examples\CoffeeShop\coffeeShop.csproj", "{AB618076-FA46-4014-871A-B78179E248FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeShop", "examples\CoffeeShop\CoffeeShop.csproj", "{AB618076-FA46-4014-871A-B78179E248FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "coffeeShop2", "examples\CoffeeShop2\coffeeShop2.csproj", "{67AC4986-54B8-490F-8582-657651E3E62C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeShop2", "examples\CoffeeShop2\CoffeeShop2.csproj", "{67AC4986-54B8-490F-8582-657651E3E62C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.program", "src\typechat.program\typechat.program.csproj", "{C223E3DB-9B2E-4839-A56E-838030300938}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.Program", "src\typechat.program\TypeChat.Program.csproj", "{C223E3DB-9B2E-4839-A56E-838030300938}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "math", "examples\math\math.csproj", "{131566E6-2B78-486C-AFF5-7202A437E79F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Math", "examples\Math\Math.csproj", "{131566E6-2B78-486C-AFF5-7202A437E79F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
