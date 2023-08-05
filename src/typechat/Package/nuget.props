@@ -1,0 +1,41 @@
+<Project>
+  <!-- NuGet package properties -->
+  <PropertyGroup>
+    <PackageId>Microsoft.TypeChat</PackageId>
+    <Version>0.1.0</Version>
+    <IsPackable>true</IsPackable>
+    <Authors>Microsoft</Authors>
+    <Company>Microsoft</Company>
+    <Product>TypeChat</Product>
+    <Description>TypeChat is a library that makes it easy to build natural language interfaces using types.</Description>
+
+    <!-- Required license, copyright, and repo information. Packages can override. -->
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <PackageProjectUrl>https://github.com/microsoft/typechat.net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/microsoft/typechat.net</RepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl>icon.png</PackageIconUrl>
+    <PackageReadmeFile>NUGET.md</PackageReadmeFile>
+
+    <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!-- Generate XML documentation file for IntelliSense and publish it in the package -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- SourceLink allows step-through debugging for source hosted on GitHub. -->
+    <!-- https://github.com/dotnet/sourcelink -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Package\icon.png" Pack="true" PackagePath="." />
+    <None Include="Package\NUGET.md" Pack="true" PackagePath="." />
+  </ItemGroup>
+</Project>
