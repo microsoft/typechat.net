@@ -56,7 +56,7 @@ jobs:
         # queries: security-extended,security-and-quality
 
     - name: DotNet Build
-      run: dotnet build typechat.sln
+      run: dotnet build TypeChat.sln
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
