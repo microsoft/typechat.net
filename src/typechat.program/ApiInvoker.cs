@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Reflection;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -14,6 +12,7 @@ public class ApiInvoker
 
     ApiTypeInfo _typeInfo;
     object _apiImpl;
+    Dictionary<string, object?[]> _argsPool;
 
     public ApiInvoker(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
@@ -26,6 +25,7 @@ public class ApiInvoker
         ArgumentNullException.ThrowIfNull(apiImpl, nameof(apiImpl));
         _typeInfo = typeInfo;
         _apiImpl = apiImpl;
+        _argsPool = new Dictionary<string, object?[]>();
     }
 
     public AnyJsonValue InvokeMethod(string name, AnyJsonValue[] args)
@@ -37,22 +37,35 @@ public class ApiInvoker
     }
 
     // Future: caching, pooling
-    object?[] CreateCallArgs(string name, AnyJsonValue[] jsonArgs, ParameterInfo[] paramInfo)
+    object?[] CreateCallArgs(string name, AnyJsonValue[] jsonArgs, ParameterInfo[] paramsInfo)
     {
-        if (jsonArgs.Length != paramInfo.Length)
+        if (jsonArgs.Length != paramsInfo.Length)
         {
-            ProgramException.ThrowArgCountMismatch(name, paramInfo.Length, jsonArgs.Length);
+            ProgramException.ThrowArgCountMismatch(name, paramsInfo.Length, jsonArgs.Length);
         }
-        if (paramInfo.Length == 0)
+        if (paramsInfo.Length == 0)
         {
             return EmptyArgs;
         }
-        object?[] args = new object[jsonArgs.Length];
-        for (int i = 0; i < paramInfo.Length; ++i)
+        //object?[] args = new object[jsonArgs.Length];
+        object?[] args = GetArgs(name, paramsInfo.Length);
+        for (int i = 0; i < paramsInfo.Length; ++i)
         {
-            Type paramType = paramInfo[i].ParameterType;
+            Type paramType = paramsInfo[i].ParameterType;
             args[i] = jsonArgs[i].ToObject(paramType);
         }
+        return args;
+    }
+
+    object?[] GetArgs(string name, int argLength)
+    {
+        object?[] args = _argsPool.GetValueOrDefault(name);
+        if (args == null)
+        {
+            args = new object?[argLength];
+            _argsPool[name] = args;
+        }
+        Debug.Assert(args.Length == argLength);
         return args;
     }
 }
