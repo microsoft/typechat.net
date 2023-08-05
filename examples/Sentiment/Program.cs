@@ -3,6 +3,7 @@ using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 using Microsoft.TypeChat.SemanticKernel;
 
 namespace Sentiment;
@@ -10,6 +11,7 @@ namespace Sentiment;
 public class SentimentResponse
 {
     [JsonPropertyName("sentiment")]
+    [JsonVocab("negative | neutral | positive")]
     public string Sentiment { get; set; }
 }
 
@@ -30,8 +32,17 @@ public class SentimentApp : ConsoleApp
 
     public static async Task<int> Main(string[] args)
     {
-        SentimentApp app = new SentimentApp();
-        await app.RunAsync("😀> ", args.GetOrNull(0));
+        try
+        {
+            SentimentApp app = new SentimentApp();
+            await app.RunAsync("😀> ", args.GetOrNull(0));
+        }
+        catch(Exception ex)
+        {
+            WriteError(ex);
+            return -1;
+        }
+
         return 0;
     }
 }

@@ -9,10 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\appSettings.Development.json" Link="appSettings.Development.json">
+    <Content Include="..\appSettings.json" Link="appSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\appSettings.json" Link="appSettings.json">
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('..\appSettings.Development.json')">
+    <Content Include="..\appSettings.Development.json" Link="appSettings.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
