@@ -17,6 +17,15 @@ public class TypescriptExporter : TypeExporter<Type>
         return new TypescriptSchema(type, schema, exporter.UsedVocabs);
     }
 
+    public static TypescriptSchema GenerateAPI(Type type)
+    {
+        using StringWriter writer = new StringWriter();
+        TypescriptExporter exporter = new TypescriptExporter(writer);
+        exporter.ExportAPI(type);
+        string schema = writer.ToString();
+        return new TypescriptSchema(type, schema, exporter.UsedVocabs);
+    }
+
     const BindingFlags MemberFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
     TypescriptWriter _writer;
@@ -46,6 +55,12 @@ public class TypescriptExporter : TypeExporter<Type>
     }
 
     public TypescriptWriter Writer => _writer;
+    //
+    // Use this to *customize* how a .NET Type is mapped to a Typescript type
+    // Return null if you can't map and defaults are used.
+    //
+    public Func<Type, string?> TypeMapper { get; set; }
+
     public bool IncludeSubclasses { get; set; } = true;
     public bool IncludeComments { get; set; } = true;
     public bool EnumsAsLiterals { get; set; } = false;
@@ -107,11 +122,11 @@ public class TypescriptExporter : TypeExporter<Type>
 
     public TypescriptExporter ExportClass(Type type)
     {
+        ArgumentNullException.ThrowIfNull(type, nameof(type));
         if (!type.IsClass)
         {
             throw new ArgumentException($"{type.Name} must be a class");
         }
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
 
         if (IsExported(type))
         {
@@ -155,8 +170,11 @@ public class TypescriptExporter : TypeExporter<Type>
 
     public TypescriptExporter ExportEnum(Type type)
     {
-        Debug.Assert(type.IsEnum);
         ArgumentNullException.ThrowIfNull(type, nameof(type));
+        if (!type.IsEnum)
+        {
+            throw new ArgumentException($"{type.Name} must be Enum");
+        }
 
         if (IsExported(type))
         {
@@ -171,6 +189,37 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             ExportEnumAsEnum(type);
         }
+        AddExported(type);
+
+        return this;
+    }
+
+    /// <summary>
+    /// Export an API as an interface, but will not automatically export interfaces that are inherited from
+    /// </summary>
+    public TypescriptExporter ExportAPI(Type type)
+    {
+        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        if (!type.IsInterface)
+        {
+            throw new ArgumentException($"{type.Name} must be an interface");
+        }
+
+        if (IsExported(type))
+        {
+            return this;
+        }
+
+        string typeName = type.Name;
+        ExportComments(type);
+        _writer.BeginInterface(typeName);
+        {
+            _writer.PushIndent();
+            ExportMethods(type);
+            _writer.PopIndent();
+        }
+        _writer.EndInterface(typeName);
+
         AddExported(type);
 
         return this;
@@ -314,6 +363,32 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
+    TypescriptExporter ExportMethods(Type type)
+    {
+        MethodInfo[] methods = type.GetMethods(MemberFlags);
+        foreach (var method in methods)
+        {
+            ExportMethod(method);
+        }
+        return this;
+    }
+
+    TypescriptExporter ExportMethod(MethodInfo methodInfo)
+    {
+        ExportComments(methodInfo);
+        _writer.BeginMethodDeclare(methodInfo.Name);
+        {
+            ParameterInfo[] parameters = methodInfo.GetParameters();
+            for (int i = 0; i < parameters.Length; ++i)
+            {
+                ParameterInfo parameter = parameters[i];
+                ExportParameter(parameter, i, parameters.Length);
+            }
+        }
+        _writer.EndMethodDeclare(DataType(methodInfo.ReturnType));
+        return this;
+    }
+
     TypescriptExporter ExportComments(MemberInfo member)
     {
         if (IncludeComments)
@@ -360,6 +435,34 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.EOL();
         return this;
     }
+
+    TypescriptExporter ExportParameter(ParameterInfo parameter, int i, int count)
+    {
+        Type type = parameter.ParameterType;
+        Type actualType;
+        bool isNullable;
+        if (type.IsValueType)
+        {
+            Type? nullableType = type.GetNullableValueType();
+            isNullable = (nullableType != null);
+            actualType = isNullable ? nullableType : type;
+        }
+        else
+        {
+            actualType = type;
+            isNullable = IsNullableRef(parameter);
+        }
+        _writer.Parameter(
+            parameter.Name,
+            DataType(type),
+            i,
+            count,
+            type.IsArray,
+            isNullable
+            );
+        return this;
+    }
+
     bool ExportJsonVocab(MemberInfo member, Type type, bool isNullable)
     {
         JsonVocabAttribute? vocabAttr = member.JsonVocabAttribute();
@@ -467,7 +570,15 @@ public class TypescriptExporter : TypeExporter<Type>
             return DataType(type.GetElementType());
         }
 
-        string typeName = Typescript.Types.ToPrimitive(type);
+        string? typeName = null;
+        if (TypeMapper != null)
+        {
+            typeName = TypeMapper(type);
+        }
+        if (typeName == null)
+        {
+            typeName = Typescript.Types.ToPrimitive(type);
+        }
         if (string.IsNullOrEmpty(typeName))
         {
             typeName = type.Name;
@@ -498,6 +609,12 @@ public class TypescriptExporter : TypeExporter<Type>
     bool IsNullableRef(FieldInfo field)
     {
         var info = _nullableInfo.Create(field);
+        return (info.WriteState == NullabilityState.Nullable);
+    }
+
+    bool IsNullableRef(ParameterInfo pinfo)
+    {
+        var info = _nullableInfo.Create(pinfo);
         return (info.WriteState == NullabilityState.Nullable);
     }
 

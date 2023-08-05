@@ -7,10 +7,14 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramTranslator : JsonTranslator<Program>
 {
+    public ProgramTranslator(ILanguageModel model, TypeSchema schema)
+        : this(model, schema.Schema)
+    {
+    }
+
     public ProgramTranslator(ILanguageModel model, string apiDef)
         : this(
               model,
-              //TypescriptExporter.GenerateSchema(typeof(Program)),
               TypescriptSchema.Load(typeof(Program), "ProgramSchema.ts"),
               apiDef
               )

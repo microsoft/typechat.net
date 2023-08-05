@@ -88,7 +88,7 @@ public class ProgramInterpreter
         switch (expr.Value.ValueKind)
         {
             default:
-                throw new ProgramException(ProgramException.ErrorCode.UnsupportedType, $"{expr.Value.ValueKind}");
+                throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{expr.Value.ValueKind}");
             case JsonValueKind.String:
                 return expr.Value.GetString();
             case JsonValueKind.Number:
@@ -109,7 +109,7 @@ public class ProgramInterpreter
     Dictionary<string, AnyJsonValue> Eval(ObjectExpr expr)
     {
         Dictionary<string, AnyJsonValue> results = new Dictionary<string, AnyJsonValue>(expr.Value.Count);
-        foreach(var property in expr.Value)
+        foreach (var property in expr.Value)
         {
             results[property.Key] = Eval(property.Value);
         }
@@ -120,7 +120,7 @@ public class ProgramInterpreter
     {
         if (expr.Ref >= _results.Count)
         {
-            throw new ProgramException(ProgramException.ErrorCode.NoResult, $"Referencing {expr.Ref} from {_results.Count} results");
+            ProgramException.ThrowInvalidResultRef(expr.Ref, _results.Count);
         }
         return _results[expr.Ref];
     }

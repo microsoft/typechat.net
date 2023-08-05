@@ -9,18 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="..\appSettings.Development.json" Link="appSettings.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="..\appSettings.json" Link="appSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
+  <ItemGroup Condition="Exists('..\appSettings.Development.json')">
+    <Content Include="..\appSettings.Development.json" Link="appSettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\src\typechat.app\typechat.app.csproj" />
-    <ProjectReference Include="..\..\src\typechat.sk\typechat.sk.csproj" />
-    <ProjectReference Include="..\..\src\typechat\typechat.csproj" />
+    <ProjectReference Include="..\..\src\typechat.app\TypeChat.App.csproj" />
+    <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
+    <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
   </ItemGroup>
 
   <ItemGroup>

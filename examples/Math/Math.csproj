@@ -5,7 +5,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
-    <AssemblyName>CoffeeShop</AssemblyName>
+    <RootNamespace>Math</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,15 +22,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\typechat.app\TypeChat.App.csproj" />
+    <ProjectReference Include="..\..\src\typechat.program\TypeChat.Program.csproj" />
+    <ProjectReference Include="..\..\src\typechat.schema\TypeChat.Schema.csproj" />
     <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
     <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="CoffeeShopVocab.json">
+    <None Update="input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="input.txt">
+    <None Update="mathSchema.ts">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

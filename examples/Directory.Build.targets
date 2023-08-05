@@ -1,0 +1,12 @@
+<Project>
+  <Target Name="BeforeBuild">
+    <Copy SourceFiles="..\appSettings.json" DestinationFiles="..\appSettings.Development.json"
+          Condition="!Exists('..\appSettings.Development.json')"/>
+  </Target>
+
+  <ItemGroup>
+    <Content Include="..\appSettings*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

@@ -12,7 +12,7 @@ namespace Microsoft.TypeChat;
 public struct AnyJsonValue
 {
     public readonly static AnyJsonValue Undefined = new AnyJsonValue();
-    public readonly static AnyJsonValue[] EmptyArray = new AnyJsonValue[0];
+    public readonly static AnyJsonValue[] EmptyArray = System.Array.Empty<AnyJsonValue>();
 
     JsonValueKind _type;
     double _number;
@@ -21,7 +21,7 @@ public struct AnyJsonValue
     public AnyJsonValue()
     {
         _type = JsonValueKind.Undefined;
-        _number = 0;
+        _number = double.NaN;
         _obj = null;
     }
 
@@ -36,15 +36,21 @@ public struct AnyJsonValue
     {
         ArgumentNullException.ThrowIfNull(value, nameof(value));
         _type = JsonValueKind.String;
-        _number = 0;
+        _number = double.NaN;
         _obj = value;
     }
 
+    public AnyJsonValue(bool value)
+    {
+        _type = value ? JsonValueKind.True : JsonValueKind.False;
+        _number = double.NaN;
+        _obj = value;
+    }
     public AnyJsonValue(AnyJsonValue[] values)
     {
         ArgumentNullException.ThrowIfNull(values, nameof(values));
         _type = JsonValueKind.Array;
-        _number = 0;
+        _number = double.NaN;
         _obj = values;
     }
 
@@ -52,8 +58,15 @@ public struct AnyJsonValue
     {
         ArgumentNullException.ThrowIfNull(values, nameof(values));
         _type = JsonValueKind.Object;
-        _number = 0;
+        _number = double.NaN;
         _obj = values;
+    }
+
+    AnyJsonValue(JsonValueKind kind)
+    {
+        _type = kind;
+        _number = double.NaN;
+        _obj = null;
     }
 
     public JsonValueKind Type => _type;
@@ -79,7 +92,8 @@ public struct AnyJsonValue
             switch (_type)
             {
                 default:
-                    throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Expected boolean");
+                    ProgramException.ThrowTypeMismatch(JsonValueKind.True, JsonValueKind.False, _type);
+                    return false;
                 case JsonValueKind.False:
                     return false;
                 case JsonValueKind.True:
@@ -164,11 +178,58 @@ public struct AnyJsonValue
         return base.ToString();
     }
 
-
-    void Throw(JsonValueKind expected)
+    public object? ToObject(Type type)
     {
-        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Expected {expected}, Actual {_type}");
+        if (type.IsNumber())
+        {
+            return Number;
+        }
+        if (type.IsString())
+        {
+            return String;
+        }
+        if (type.IsBoolean())
+        {
+            return Bool;
+        }
+        if (type.IsArray)
+        {
+            return ToObject(Array, type.GetElementType());
+        }
+        ProgramException.ThrowUnsupported(type);
+        return null;
     }
+
+    object?[] ToObject(AnyJsonValue[] jsonArray, Type type)
+    {
+        object?[] array = new object[jsonArray.Length];
+        for (int i = 0; i < jsonArray.Length; ++i)
+        {
+            array[i] = jsonArray[i].ToObject(type);
+        }
+        return array;
+    }
+
+    public static AnyJsonValue FromObject(Type type, object? obj)
+    {
+        if (type.IsNumber())
+        {
+            return new AnyJsonValue((double)obj);
+        }
+        if (type.IsString())
+        {
+            return new AnyJsonValue((string)obj);
+        }
+        if (type.IsBoolean())
+        {
+            return new AnyJsonValue((bool)obj);
+        }
+
+        ProgramException.ThrowUnsupported(type);
+        return AnyJsonValue.Undefined;
+    }
+
+    void Throw(JsonValueKind expected) => ProgramException.ThrowTypeMismatch(expected, _type);
 
     public static implicit operator AnyJsonValue(double number)
     {

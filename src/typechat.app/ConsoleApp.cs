@@ -144,4 +144,11 @@ public abstract class ConsoleApp
         Console.WriteLine(value);
         Console.WriteLine("###");
     }
+
+    protected static void WriteError(Exception ex)
+    {
+        Console.WriteLine("### EXCEPTION: ");
+        Console.WriteLine(ex.Message);
+        Console.WriteLine("###");
+    }
 }

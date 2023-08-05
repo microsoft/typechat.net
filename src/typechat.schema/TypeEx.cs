@@ -32,6 +32,38 @@ public static class TypeEx
         return member.GetCustomAttribute(typeof(JsonVocabAttribute)) as JsonVocabAttribute;
     }
 
+    public static bool IsString(this Type type)
+    {
+        return type == typeof(string) || type.IsAssignableTo(typeof(IStringType));
+    }
+
+    public static bool IsBoolean(this Type type)
+    {
+        return type == typeof(bool);
+    }
+
+    public static bool IsNumber(this Type type)
+    {
+        switch (Type.GetTypeCode(type))
+        {
+            default:
+                return false;
+
+            case TypeCode.Byte:
+            case TypeCode.Decimal:
+            case TypeCode.Double:
+            case TypeCode.Int16:
+            case TypeCode.Int32:
+            case TypeCode.Int64:
+            case TypeCode.SByte:
+            case TypeCode.Single:
+            case TypeCode.UInt16:
+            case TypeCode.UInt32:
+            case TypeCode.UInt64:
+                return true;
+        }
+    }
+
     internal static bool IsObject(this Type type)
     {
         return type == typeof(object);
@@ -52,31 +84,9 @@ public static class TypeEx
         return type.IsObject() || type.IsValueType() || type.IsEnum();
     }
 
-    internal static bool IsString(this Type type)
+    internal static bool IsVoid(this Type type)
     {
-        return type == typeof(string) || type.IsAssignableTo(typeof(IStringType));
-    }
-
-    internal static bool IsNumber(this Type type)
-    {
-        switch (Type.GetTypeCode(type))
-        {
-            default:
-                return false;
-
-            case TypeCode.Byte:
-            case TypeCode.Decimal:
-            case TypeCode.Double:
-            case TypeCode.Int16:
-            case TypeCode.Int32:
-            case TypeCode.Int64:
-            case TypeCode.SByte:
-            case TypeCode.Single:
-            case TypeCode.UInt16:
-            case TypeCode.UInt32:
-            case TypeCode.UInt64:
-                return true;
-        }
+        return type == typeof(void);
     }
 
     internal static bool IsAbstract(this PropertyInfo property)

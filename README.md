@@ -2,22 +2,27 @@
 
 TypeChat.NET is an experimental project that makes it easy to build natural language interfaces using Types.
 
-It applies the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET and integrates them with the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel). 
+TypeChat.NET explores and applies the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET and integrates them with the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel). 
 
 TypeChat.NET consists of the following assemblies:
 - TypeChat
-- TypeChat.Schema: Experimental classes for exporting .NET types as Typescript schema. 
-- TypeChat.Program: Json program generation and evaluation
+- TypeChat.Schema: Classes for exporting .NET types as Typescript schema. 
+- TypeChat.Program: Classes to generate, validate and execute ***JSON programs*** 
 - TypeChat.SK: Integration with Semantic Kernel. 
 
-TypeChat.NET is in **active development** with very frequent changes. 
+TypeChat.NET is in **active and rapid development** with very frequent updates and refactoring. 
+- **Goal**: learn how to strong typing programming with AI, particulary generative LLMs. 
+- Supported scenarios are shown in the examples. Complicated schemas with generics may not work (yet). 
+- Local performance may not be optimal (yet). Fortunately, most code will spend almost all of its time calling the AI.
+- When in doubt, look at the code. Comments and documentation will improve as the code settles. 
+
 
 ## TypeChat ##
 Brings TypeChat to .NET.
 - Json Translators
 - Json Validators
 
-The library is an ***in-progress*** port of the TypeChat library with .NET idiom introduced suitably. But it does not implement bindings to a specific AI model or API. For that you use the Typechat.sk library below, or roll your own.
+The library is a port of the TypeChat Typescript library with .NET idiom introduced as needed. But it does not implement bindings to a specific LLM model or service. For that you use the Typechat.sk library below, or roll your own.
 
 ## TypeChat.Schema ##
 The library provides exporters for .NET Types to Typescript schema. 

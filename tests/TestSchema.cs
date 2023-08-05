@@ -36,5 +36,16 @@ public class TestSchema : TypeChatTest
         Assert.True(lines.Contains("OptionalAmt?", "number"));
         Assert.True(lines.Contains("milk?"));
     }
+
+    [Fact]
+    public void ExportAPI()
+    {
+        var schema = TypescriptExporter.GenerateAPI(typeof(IMathAPI));
+        // Need better verifier
+        var lines = schema.Schema.Text.Lines();
+        Assert.True(lines.Contains("interface", "IMathAPI"));
+        Assert.True(lines.Contains("number", "add", "x", "y"));
+        Assert.True(lines.Contains("number", "unknown", "string", "text"));
+    }
 }
 
