@@ -6,17 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
     <RootNamespace>Math</RootNamespace>
-    
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Include="..\appSettings.Development.json" Link="appSettings.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\appSettings.json" Link="appSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\typechat.app\typechat.app.csproj" />
