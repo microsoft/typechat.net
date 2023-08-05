@@ -10,7 +10,7 @@ public static class KernelEx
     {
         ArgumentNullException.ThrowIfNull(config, nameof(config));
 
-        foreach(string modelName in modelNames)
+        foreach (string modelName in modelNames)
         {
             builder.WithChatModel(modelName, config);
         }

@@ -7,7 +7,7 @@ public class StringAPI
 {
     public AnyJsonValue HandleCall(string name, AnyJsonValue[] args)
     {
-        switch(name)
+        switch (name)
         {
             default:
                 throw new NotSupportedException(name);

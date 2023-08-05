@@ -37,6 +37,8 @@ public abstract partial class Expression
     {
         Source = source;
     }
+
+    public virtual JsonValueKind ValueType => Source.ValueKind;
 }
 
 public partial class Steps : Expression
@@ -61,6 +63,9 @@ public partial class FunctionCall : Expression
         Args = args;
     }
 
+    // Undefined for now. Until we walk the expression tree
+    public override JsonValueKind ValueType => JsonValueKind.Undefined;
+
     public override string ToString()
     {
         return Name;
@@ -76,7 +81,7 @@ public partial class ResultReference : Expression
         Ref = value.GetInt32();
         if (Ref < 0)
         {
-            throw new ProgramException(ProgramException.ErrorCode.InvalidResultRef, $"{Ref} ins not a valid ref");
+            ProgramException.ThrowInvalidResultRef(Ref);
         }
     }
 }

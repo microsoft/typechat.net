@@ -64,8 +64,8 @@ public class TestProgram : TypeChatTest
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
 
-        MathAPI api = new MathAPI();
-        ProgramInterpreter interpreter = new ProgramInterpreter(api.HandleCall);
+        ApiInvoker api = new ApiInvoker(new MathAPI());
+        ProgramInterpreter interpreter = new ProgramInterpreter(api.InvokeMethod);
         double result = interpreter.Run(program);
         Assert.Equal(expectedResult, result);
     }

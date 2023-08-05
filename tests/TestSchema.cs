@@ -40,7 +40,7 @@ public class TestSchema : TypeChatTest
     [Fact]
     public void ExportAPI()
     {
-        var schema = TypescriptExporter.GenerateSchema(typeof(IMathAPI));
+        var schema = TypescriptExporter.GenerateAPI(typeof(IMathAPI));
         // Need better verifier
         var lines = schema.Schema.Text.Lines();
         Assert.True(lines.Contains("interface", "IMathAPI"));

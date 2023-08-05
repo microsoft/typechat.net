@@ -17,6 +17,15 @@ public class TypescriptExporter : TypeExporter<Type>
         return new TypescriptSchema(type, schema, exporter.UsedVocabs);
     }
 
+    public static TypescriptSchema GenerateAPI(Type type)
+    {
+        using StringWriter writer = new StringWriter();
+        TypescriptExporter exporter = new TypescriptExporter(writer);
+        exporter.ExportAPI(type);
+        string schema = writer.ToString();
+        return new TypescriptSchema(type, schema, exporter.UsedVocabs);
+    }
+
     const BindingFlags MemberFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
     TypescriptWriter _writer;
@@ -46,6 +55,12 @@ public class TypescriptExporter : TypeExporter<Type>
     }
 
     public TypescriptWriter Writer => _writer;
+    //
+    // Use this to *customize* how a .NET Type is mapped to a Typescript type
+    // Return null if you can't map and defaults are used.
+    //
+    public Func<Type, string?> TypeMapper { get; set; }
+
     public bool IncludeSubclasses { get; set; } = true;
     public bool IncludeComments { get; set; } = true;
     public bool EnumsAsLiterals { get; set; } = false;
@@ -97,10 +112,6 @@ public class TypescriptExporter : TypeExporter<Type>
             if (type.IsEnum)
             {
                 ExportEnum(type);
-            }
-            else if (type.IsInterface)
-            {
-                ExportAPI(type);
             }
             else
             {
@@ -355,7 +366,7 @@ public class TypescriptExporter : TypeExporter<Type>
     TypescriptExporter ExportMethods(Type type)
     {
         MethodInfo[] methods = type.GetMethods(MemberFlags);
-        foreach(var method in methods)
+        foreach (var method in methods)
         {
             ExportMethod(method);
         }
@@ -559,7 +570,15 @@ public class TypescriptExporter : TypeExporter<Type>
             return DataType(type.GetElementType());
         }
 
-        string typeName = Typescript.Types.ToPrimitive(type);
+        string? typeName = null;
+        if (TypeMapper != null)
+        {
+            typeName = TypeMapper(type);
+        }
+        if (typeName == null)
+        {
+            typeName = Typescript.Types.ToPrimitive(type);
+        }
         if (string.IsNullOrEmpty(typeName))
         {
             typeName = type.Name;

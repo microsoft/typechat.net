@@ -78,7 +78,4 @@ public partial class ObjectExpr : Expression
     }
 }
 
-public partial class UnknownExpr : Expression
-{
-
-}
+public partial class UnknownExpr : Expression { }

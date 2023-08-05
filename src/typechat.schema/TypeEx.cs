@@ -32,32 +32,17 @@ public static class TypeEx
         return member.GetCustomAttribute(typeof(JsonVocabAttribute)) as JsonVocabAttribute;
     }
 
-    internal static bool IsObject(this Type type)
-    {
-        return type == typeof(object);
-    }
-
-    internal static bool IsValueType(this Type type)
-    {
-        return type == typeof(ValueType);
-    }
-
-    internal static bool IsEnum(this Type type)
-    {
-        return type == typeof(Enum);
-    }
-
-    internal static bool IsRoot(this Type type)
-    {
-        return type.IsObject() || type.IsValueType() || type.IsEnum();
-    }
-
-    internal static bool IsString(this Type type)
+    public static bool IsString(this Type type)
     {
         return type == typeof(string) || type.IsAssignableTo(typeof(IStringType));
     }
 
-    internal static bool IsNumber(this Type type)
+    public static bool IsBoolean(this Type type)
+    {
+        return type == typeof(bool);
+    }
+
+    public static bool IsNumber(this Type type)
     {
         switch (Type.GetTypeCode(type))
         {
@@ -77,6 +62,26 @@ public static class TypeEx
             case TypeCode.UInt64:
                 return true;
         }
+    }
+
+    internal static bool IsObject(this Type type)
+    {
+        return type == typeof(object);
+    }
+
+    internal static bool IsValueType(this Type type)
+    {
+        return type == typeof(ValueType);
+    }
+
+    internal static bool IsEnum(this Type type)
+    {
+        return type == typeof(Enum);
+    }
+
+    internal static bool IsRoot(this Type type)
+    {
+        return type.IsObject() || type.IsValueType() || type.IsEnum();
     }
 
     internal static bool IsVoid(this Type type)

@@ -99,7 +99,6 @@ public class ProgramParser
             // Parse as generic object
             return ParseObjectExpr(elt);
         }
-        return new UnknownExpr(elt);
     }
 
     ObjectExpr ParseObjectExpr(JsonElement elt)
