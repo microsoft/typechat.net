@@ -10,7 +10,7 @@ public static class KernelEx
     {
         ArgumentNullException.ThrowIfNull(config, nameof(config));
 
-        foreach(string modelName in modelNames)
+        foreach (string modelName in modelNames)
         {
             builder.WithChatModel(modelName, config);
         }
@@ -21,28 +21,33 @@ public static class KernelEx
     {
         ArgumentNullException.ThrowIfNull(config, nameof(config));
 
+        HttpClient client = null;
+        if (config.TimeoutMs > 0)
+        {
+            client = new HttpClient();
+            client.Timeout = TimeSpan.FromMilliseconds(config.TimeoutMs);
+        }
         if (config.Azure)
         {
-            builder = builder.WithAzureChatCompletionService(modelName, config.Endpoint, config.ApiKey, true, modelName);
+            builder = builder.WithAzureChatCompletionService(modelName, config.Endpoint, config.ApiKey, true, modelName, false, client);
         }
         else
         {
-            builder = builder.WithOpenAIChatCompletionService(modelName, config.ApiKey, config.Organization, modelName, true);
+            builder = builder.WithOpenAIChatCompletionService(modelName, config.ApiKey, config.Organization, modelName, true, false, client);
         }
         return builder;
     }
 
-    public static KernelBuilder WithRetry(this KernelBuilder builder, int maxRetries, TimeSpan? retryPauseMs = null)
+    public static KernelBuilder WithRetry(this KernelBuilder builder, OpenAIConfig config)
     {
-        retryPauseMs ??= TimeSpan.FromMilliseconds(100);
-        HttpRetryConfig config = new HttpRetryConfig
+        TimeSpan retryPause = TimeSpan.FromMilliseconds(config.MaxPauseMs);
+        HttpRetryConfig retryConfig = new HttpRetryConfig
         {
-            MinRetryDelay = retryPauseMs.Value,
-            MaxRetryDelay = retryPauseMs.Value,
-            MaxRetryCount = maxRetries,
+            MaxRetryDelay = retryPause,
+            MaxRetryCount = config.MaxRetries,
             UseExponentialBackoff = false
         };
-        return builder.WithRetryHandlerFactory(new DefaultHttpRetryHandlerFactory(config));
+        return builder.WithRetryHandlerFactory(new DefaultHttpRetryHandlerFactory(retryConfig));
     }
 
     public static CompletionService CompletionService(this IKernel kernel, ModelInfo model)

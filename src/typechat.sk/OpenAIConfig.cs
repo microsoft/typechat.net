@@ -23,8 +23,12 @@ public class OpenAIConfig
     public string ApiKey { get; set; }
     public string? Organization { get; set; }
     public string? Model { get; set; }
+    /// <summary>
+    /// Http Settings
+    /// </summary>
+    public int TimeoutMs { get; set; } = 15 * 1000;
     public int MaxRetries { get; set; } = 3;
-    public TimeSpan MaxPauseMs { get; set; } = TimeSpan.FromMilliseconds(100);
+    public int MaxPauseMs { get; set; } = 100;
 
     public void Validate()
     {

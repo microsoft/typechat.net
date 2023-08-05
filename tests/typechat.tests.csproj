@@ -32,12 +32,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appSettings.Development.json">
+    <Content Include="appSettings.json" Link="appSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="appSettings.json">
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('appSettings.Development.json')">
+    <Content Include="appSettings.Development.json" Link="appSettings.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="stringPrograms.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

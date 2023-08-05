@@ -2,17 +2,40 @@
 
 namespace Microsoft.TypeChat.Tests;
 
-public class MathAPI
+[Comment("This is a schema for writing programs that evaluate expressions")]
+public interface IMathAPI
 {
-    public enum Operators
-    {
-        Add,
-        Sub,
-        Mul,
-        Div,
-        Neg,
-        Id
-    }
+    [Comment("Add two numbers")]
+    double add(double x, double y);
+    [Comment("Subtract two numbers")]
+    double sub(double x, double y);
+    [Comment("Multiply two numbers")]
+    double mul(double x, double y);
+    [Comment("Divide two numbers")]
+    double div(double x, double y);
+    [Comment("Identity function")]
+    double id(double x);
+    [Comment("Negate a number")]
+    double neg(double x);
+    [Comment("Unknown request")]
+    double unknown(string text);
+}
+
+public class MathAPI : IMathAPI
+{
+    public double add(double x, double y) => x + y;
+
+    public double sub(double x, double y) => x - y;
+
+    public double mul(double x, double y) => x * y;
+
+    public double div(double x, double y) => x / y;
+
+    public double id(double x) => x;
+
+    public double neg(double x) => -x;
+
+    public double unknown(string text) => double.NaN;
 
     public AnyJsonValue HandleCall(string name, AnyJsonValue[] args)
     {
@@ -22,60 +45,38 @@ public class MathAPI
             default:
                 return double.NaN;
             case "add":
-                return BinaryOp(name, Operators.Add, args);
+                return BinaryOp(add, name, args);
             case "sub":
-                return BinaryOp(name, Operators.Sub, args);
+                return BinaryOp(sub, name, args);
             case "mul":
-                return BinaryOp(name, Operators.Mul, args);
+                return BinaryOp(mul, name, args);
             case "div":
-                return BinaryOp(name, Operators.Div, args);
+                return BinaryOp(div, name, args);
             case "neg":
-                return UnaryOp(name, Operators.Neg, args);
+                return UnaryOp(neg, name, args);
             case "id":
-                return UnaryOp(name, Operators.Id, args);
+                return UnaryOp(id, name, args);
         }
     }
 
-    AnyJsonValue UnaryOp(string name, Operators op, AnyJsonValue[] args)
+    AnyJsonValue UnaryOp(Func<double, double> fn, string name, AnyJsonValue[] args)
     {
         CheckArgLength(name, 1, args);
-        switch(op)
-        {
-            default:
-                throw new NotSupportedException();
-            case Operators.Neg:
-                double value = args[0];
-                return -value;
-            case Operators.Id:
-                return args[0];
-        }
+        return fn(args[0]);
     }
 
-    AnyJsonValue BinaryOp(string name, Operators op, AnyJsonValue[] args)
+    AnyJsonValue BinaryOp(Func<double, double, double> fn, string name, AnyJsonValue[] args)
     {
         CheckArgLength(name, 2, args);
-        double x = args[0];
-        double y = args[1];
-        switch (op)
-        {
-            default:
-                throw new NotSupportedException();
-            case Operators.Add:
-                return x + y;
-            case Operators.Sub:
-                return x - y;
-            case Operators.Mul:
-                return x * y;
-            case Operators.Div:
-                return x / y;
-        }
+        return fn(args[0], args[1]);
     }
 
     void CheckArgLength(string fnName, int expectedLength, AnyJsonValue[] args)
     {
         if (args.Length != args.Length)
         {
-            throw new ProgramException(ProgramException.ErrorCode.InvalidArgCount, $"{fnName}: Expected {expectedLength}, Got {args.Length}");
+            throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, $"{fnName}: Expected {expectedLength}, Got {args.Length}");
         }
     }
+
 }

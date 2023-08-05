@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 using Microsoft.TypeChat.SemanticKernel;
 
 namespace Math;
@@ -8,16 +9,18 @@ public class Math : ConsoleApp
 {
     ProgramTranslator _translator;
     ProgramInterpreter _interpreter;
+    ApiInvoker _api;
 
     Math()
     {
-        string apiDef = File.ReadAllText("mathSchema.ts");
-        var languageModel = KernelFactory.CreateLanguageModel(Config.LoadOpenAI());
-        _translator = new ProgramTranslator(languageModel, apiDef);
-        _interpreter = new ProgramInterpreter(HandleCall);
+        _api = new ApiInvoker(new MathAPI());
+        _translator = new ProgramTranslator(
+            KernelFactory.CreateLanguageModel(Config.LoadOpenAI()),
+            TypescriptExporter.GenerateAPI(typeof(IMathAPI))
+        );
+        _interpreter = new ProgramInterpreter(_api.InvokeMethod);
         // Uncomment to see ALL raw messages to and from the AI
-       // _translator.CompletionReceived += base.OnCompletionReceived;
-        //_translator.SendingPrompt += base.OnSendingPrompt;
+        // _translator.CompletionReceived += base.OnCompletionReceived;
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -27,42 +30,6 @@ public class Math : ConsoleApp
         Program program = await _translator.TranslateAsync(input);
         double result = _interpreter.Run(program);
         Console.WriteLine(result);
-    }
-
-    AnyJsonValue HandleCall(string name, AnyJsonValue[] args)
-    {
-        switch(name)
-        {
-            default:
-                return BinaryOp(name, args);
-            case "neg":
-                return -args[0];
-            case "id":
-                return args[0];
-        }
-    }
-
-    double BinaryOp(string name, AnyJsonValue[] args)
-    {
-        if (args.Length < 2)
-        {
-            throw new InvalidOperationException();
-        }
-        double x = args[0];
-        double y = args[1];
-        switch (name)
-        {
-            default:
-                return double.NaN;
-            case "add":
-                return x + y;
-            case "sub":
-                return x - y;
-            case "mul":
-                return x * y;
-            case "div":
-                return x / y;
-        }
     }
 
     public static async Task<int> Main(string[] args)
@@ -76,7 +43,7 @@ public class Math : ConsoleApp
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex);
+            WriteError(ex);
             return -1;
         }
 
