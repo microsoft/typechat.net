@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{17
 	ProjectSection(SolutionItems) = preProject
 		examples\appSettings.Development.json = examples\appSettings.Development.json
 		examples\appSettings.json = examples\appSettings.json
+		examples\Directory.Build.targets = examples\Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sentiment", "examples\Sentiment\sentiment.csproj", "{68E9AF34-7982-4BA4-864D-D24DF937A6A2}"
@@ -32,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "coffeeShop2", "examples\Cof
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "typechat.program", "src\typechat.program\typechat.program.csproj", "{C223E3DB-9B2E-4839-A56E-838030300938}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "math", "examples\math\math.csproj", "{131566E6-2B78-486C-AFF5-7202A437E79F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "math", "examples\math\math.csproj", "{131566E6-2B78-486C-AFF5-7202A437E79F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
