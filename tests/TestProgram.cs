@@ -79,7 +79,7 @@ public class TestProgram : TypeChatTest
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
 
-        StringAPI api = new StringAPI();
+        TextApis api = new TextApis();
         ProgramInterpreter interpreter = new ProgramInterpreter(api);
         string result = interpreter.Run(program);
         Assert.Equal(expectedResult, result);

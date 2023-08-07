@@ -3,12 +3,7 @@
 using System.Text.Json;
 namespace Microsoft.TypeChat.Tests;
 
-public interface IStringAPI
-{
-    string concat(AnyJsonValue[] args);
-    string uppercase(string text);
-}
-public class StringAPI : IStringAPI
+public class TextApis : IStringAPI, ITimeAPI
 {
     public string concat(AnyJsonValue[] args)
     {
@@ -17,15 +12,11 @@ public class StringAPI : IStringAPI
         return sb.ToString();
     }
 
-    public string uppercase(string arg)
-    {
-        return arg.ToUpper();
-    }
-
-    public string lowercase(string arg)
-    {
-        return arg.ToLower();
-    }
+    public string uppercase(string arg) => arg.ToUpper();
+    public string lowercase(string arg) => arg.ToLower();
+    public string dateTime() { return DateTime.Now.ToString(); }
+    public string date() { return DateTime.Now.Date.ToString(); }
+    public string time() { return DateTime.Now.TimeOfDay.ToString(); }
 
     public string Concat(AnyJsonValue value, StringBuilder sb)
     {

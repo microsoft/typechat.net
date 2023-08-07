@@ -46,6 +46,13 @@ public class TestSchema : TypeChatTest
         Assert.True(lines.Contains("interface", "IMathAPI"));
         Assert.True(lines.Contains("number", "add", "x", "y"));
         Assert.True(lines.Contains("number", "unknown", "string", "text"));
+
+        schema = TypescriptExporter.GenerateAPI(typeof(IStringAPI));
+        // Need better verifier
+        lines = schema.Schema.Text.Lines();
+        Assert.True(lines.Contains("interface", "IStringAPI"));
+        Assert.True(lines.Contains("string", "concat", "args"));
+        Assert.True(lines.Contains("string", "lowercase", "string"));
     }
 }
 
