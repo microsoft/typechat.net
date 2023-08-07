@@ -41,11 +41,11 @@ public class StringAPI
                 }
                 break;
             case JsonValueKind.Object:
-                var obj = value.Object;
+                var obj = value.JsonObject;
                 foreach (var kv in obj)
                 {
                     sb.Append('[').Append(kv.Key).Append(", ");
-                    Concat(kv.Value, sb);
+                    sb.Append(kv.Value);
                     sb.Append("]");
                 }
                 break;
