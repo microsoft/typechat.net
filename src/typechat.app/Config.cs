@@ -13,10 +13,14 @@ public class Config
     public static T LoadConfig<T>(string configFile, string configOverloadFile, string sectionName = default)
         where T : new()
     {
-        var config = new ConfigurationBuilder()
-                    .AddJsonFile(configFile, false, true)
-                    .AddJsonFile(configOverloadFile, false, true)
-                    .Build();
+        var configBuilder = new ConfigurationBuilder()
+                    .AddJsonFile(configFile, false, true);
+
+        if (File.Exists(configOverloadFile))
+        {
+            configBuilder.AddJsonFile(configOverloadFile, false, true);
+        }
+        var config = configBuilder.Build();
         var configSection = config.GetSection(sectionName);
         if (configSection == null)
         {

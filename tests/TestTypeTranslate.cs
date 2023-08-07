@@ -14,7 +14,7 @@ public class TestTypeTranslate : TypeChatTest, IClassFixture<Config>
     [Fact]
     public async Task TestEndToEnd()
     {
-        if (!_config.HasOpenAI)
+        if (!CanRunEndToEndTest(_config))
         {
             Trace.WriteLine("No Open AI. Skipping");
             return;
