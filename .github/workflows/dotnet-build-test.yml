@@ -1,0 +1,57 @@
+#
+# This workflow will build and run all unit tests using dotnet docker containers,
+# each targeting a single version of the dotnet SDK.
+#
+
+name: dotnet-build-test
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+  merge_group:
+    branches: ["main"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  dotnet-build-test:
+    strategy:
+        fail-fast: false
+        matrix:
+          include:
+          - { dotnet: '6.0-jammy', os: 'ubuntu', configuration: Debug }
+          - { dotnet: '7.0-jammy', os: 'ubuntu', configuration: Release }
+          - { dotnet: '8.0-preview-jammy', os: 'ubuntu', configuration: Release }
+          - { dotnet: '6.0', os: 'windows', configuration: Release }
+          - { dotnet: '7.0', os: 'windows', configuration: Debug }
+          - { dotnet: '8.0-preview', os: 'windows', configuration: Release }
+          
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:${{ matrix.dotnet }}
+      env:
+        NUGET_CERT_REVOCATION_MODE: offline
+        GITHUB_ACTIONS: 'true'
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build dotnet solutions
+      run: |
+        export SOLUTIONS=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
+        for solution in $SOLUTIONS; do
+          dotnet build -c ${{ matrix.configuration }} /warnaserror $solution
+        done
+      
+    - name: Run Tests
+      run: |
+        export UT_PROJECTS=$(find ./ -type f -name "*.Tests.csproj" | tr '\n' ' ')
+        for project in $UT_PROJECTS; do
+          dotnet test -c ${{ matrix.configuration }} $project --no-build -v Normal --logger trx
+        done

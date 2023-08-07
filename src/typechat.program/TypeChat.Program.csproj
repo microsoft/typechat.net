@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\typechat.schema\typechat.schema.csproj" />
-    <ProjectReference Include="..\typechat\typechat.csproj" />
+    <ProjectReference Include="..\typechat.schema\TypeChat.Schema.csproj" />
+    <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>
 
   <ItemGroup>
