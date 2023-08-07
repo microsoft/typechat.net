@@ -26,11 +26,11 @@ public class ProgramException : Exception
 
     internal static void ThrowTypeMismatch(JsonValueKind expected, JsonValueKind actual)
     {
-        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Expected {expected}, Actual {actual}");
+        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Type mismatch. Expected {expected}, Actual {actual}");
     }
     internal static void ThrowTypeMismatch(JsonValueKind expected1, JsonValueKind expected2, JsonValueKind actual)
     {
-        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Expected {expected1} OR {expected2}, Actual {actual}");
+        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Type mismatch. Expected {expected1} OR {expected2}, Actual {actual}");
     }
     internal static void ThrowTypeMismatch(string name, JsonValueKind expected, JsonValueKind actual)
     {

@@ -36,47 +36,4 @@ public class MathAPI : IMathAPI
     public double neg(double x) => -x;
 
     public double unknown(string text) => double.NaN;
-
-    public AnyJsonValue HandleCall(string name, AnyJsonValue[] args)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
-        switch (name)
-        {
-            default:
-                return double.NaN;
-            case "add":
-                return BinaryOp(add, name, args);
-            case "sub":
-                return BinaryOp(sub, name, args);
-            case "mul":
-                return BinaryOp(mul, name, args);
-            case "div":
-                return BinaryOp(div, name, args);
-            case "neg":
-                return UnaryOp(neg, name, args);
-            case "id":
-                return UnaryOp(id, name, args);
-        }
-    }
-
-    AnyJsonValue UnaryOp(Func<double, double> fn, string name, AnyJsonValue[] args)
-    {
-        CheckArgLength(name, 1, args);
-        return fn(args[0]);
-    }
-
-    AnyJsonValue BinaryOp(Func<double, double, double> fn, string name, AnyJsonValue[] args)
-    {
-        CheckArgLength(name, 2, args);
-        return fn(args[0], args[1]);
-    }
-
-    void CheckArgLength(string fnName, int expectedLength, AnyJsonValue[] args)
-    {
-        if (args.Length != args.Length)
-        {
-            throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, $"{fnName}: Expected {expectedLength}, Got {args.Length}");
-        }
-    }
-
 }

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Text.Json.Nodes;
+
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -61,7 +63,7 @@ public class ProgramInterpreter
                 return Eval(array);
 
             case ObjectExpr obj:
-                return Eval(obj);
+                return new AnyJsonValue(Eval(obj));
         }
 
         return AnyJsonValue.Undefined;
@@ -106,16 +108,23 @@ public class ProgramInterpreter
         return results;
     }
 
-    Dictionary<string, AnyJsonValue> Eval(ObjectExpr expr)
+    JsonObject Eval(ObjectExpr expr)
     {
-        Dictionary<string, AnyJsonValue> results = new Dictionary<string, AnyJsonValue>(expr.Value.Count);
-        foreach (var property in expr.Value)
-        {
-            results[property.Key] = Eval(property.Value);
-        }
-        return results;
+        return new JsonObject(
+            EvalObject(expr)
+        );
     }
 
+    IEnumerable<KeyValuePair<string, JsonNode>> EvalObject(ObjectExpr expr)
+    {
+        foreach (var property in expr.Value)
+        {
+            AnyJsonValue result = Eval(property.Value);
+            JsonNode node = result;
+            yield return new KeyValuePair<string, JsonNode>(property.Key, node);
+        }
+
+    }
     AnyJsonValue Eval(ResultReference expr)
     {
         if (expr.Ref >= _results.Count)
