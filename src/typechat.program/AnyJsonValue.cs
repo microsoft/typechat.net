@@ -218,8 +218,12 @@ public struct AnyJsonValue
         return base.ToString();
     }
 
-    public object? ToObject(Type type)
+    public object? ToObject(Type type, JsonSerializerOptions? serializerOptions = null)
     {
+        if (type.IsArray)
+        {
+            return ToObject(Array, type.GetElementType());
+        }
         if (type.IsNumber())
         {
             return Number;
@@ -232,15 +236,26 @@ public struct AnyJsonValue
         {
             return Bool;
         }
-        if (type.IsArray)
+        if (type == typeof(JsonObject))
         {
-            return ToObject(Array, type.GetElementType());
+            return JsonObject;
+        }
+        if (_type == JsonValueKind.Object)
+        {
+            if (_objType == JsonObjectKind.Object)
+            {
+                return _obj;
+            }
+            if (_objType == JsonObjectKind.JsonObject)
+            {
+                return JsonSerializer.Deserialize(_obj as JsonObject, type, serializerOptions);
+            }
         }
         ProgramException.ThrowUnsupported(type);
         return null;
     }
 
-    public JsonNode ToJsonNode()
+    public JsonNode ToJsonNode(JsonSerializerOptions? serializerOptions = null)
     {
         switch(_type)
         {
@@ -259,7 +274,15 @@ public struct AnyJsonValue
             case JsonValueKind.Array:
                 return new JsonArray(ToJsonNode(Array));
             case JsonValueKind.Object:
-                throw new NotSupportedException();
+                if (_objType == JsonObjectKind.JsonObject)
+                {
+                    return JsonObject;
+                }
+                if (_objType == JsonObjectKind.Object)
+                {
+                    return JsonSerializer.SerializeToNode(_obj, serializerOptions);
+                }
+                throw new ProgramException(ProgramException.ErrorCode.ConversionToJsonNotSupported);
         }
     }
 

@@ -120,7 +120,7 @@ public class ProgramInterpreter
         foreach (var property in expr.Value)
         {
             AnyJsonValue result = Eval(property.Value);
-            JsonNode node = result;
+            JsonNode node = result.ToJsonNode();
             yield return new KeyValuePair<string, JsonNode>(property.Key, node);
         }
 

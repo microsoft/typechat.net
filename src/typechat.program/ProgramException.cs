@@ -12,6 +12,7 @@ public class ProgramException : Exception
         InvalidResultRef,
         ArgCountMismatch,
         FunctionNotFound,
+        ConversionToJsonNotSupported
     }
 
     ErrorCode _errorCode;
