@@ -2,8 +2,17 @@
 
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json.Nodes;
 
 namespace Microsoft.TypeChat;
+
+public enum JsonObjectKind : byte
+{
+    NotObject = 0,
+    Dictionary,
+    JsonObject,
+    Object
+}
 
 /// <summary>
 /// Represents any Json Value incluing undefined and null.
@@ -15,12 +24,14 @@ public struct AnyJsonValue
     public readonly static AnyJsonValue[] EmptyArray = System.Array.Empty<AnyJsonValue>();
 
     JsonValueKind _type;
+    JsonObjectKind _objType;
     double _number;
     object? _obj;
 
     public AnyJsonValue()
     {
         _type = JsonValueKind.Undefined;
+        _objType = JsonObjectKind.NotObject;
         _number = double.NaN;
         _obj = null;
     }
@@ -28,6 +39,7 @@ public struct AnyJsonValue
     public AnyJsonValue(double number)
     {
         _type = JsonValueKind.Number;
+        _objType = JsonObjectKind.NotObject;
         _number = number;
         _obj = null;
     }
@@ -36,6 +48,7 @@ public struct AnyJsonValue
     {
         ArgumentNullException.ThrowIfNull(value, nameof(value));
         _type = JsonValueKind.String;
+        _objType = JsonObjectKind.NotObject;
         _number = double.NaN;
         _obj = value;
     }
@@ -43,23 +56,43 @@ public struct AnyJsonValue
     public AnyJsonValue(bool value)
     {
         _type = value ? JsonValueKind.True : JsonValueKind.False;
+        _objType = JsonObjectKind.NotObject;
         _number = double.NaN;
         _obj = value;
     }
+
     public AnyJsonValue(AnyJsonValue[] values)
     {
         ArgumentNullException.ThrowIfNull(values, nameof(values));
         _type = JsonValueKind.Array;
+        _objType = JsonObjectKind.NotObject;
         _number = double.NaN;
         _obj = values;
     }
 
-    public AnyJsonValue(Dictionary<string, AnyJsonValue> values)
+    public AnyJsonValue(Dictionary<string, AnyJsonValue> jsonObject)
     {
-        ArgumentNullException.ThrowIfNull(values, nameof(values));
+        ArgumentNullException.ThrowIfNull(jsonObject, nameof(jsonObject));
         _type = JsonValueKind.Object;
+        _objType = JsonObjectKind.Dictionary;
         _number = double.NaN;
-        _obj = values;
+        _obj = jsonObject;
+    }
+
+    public AnyJsonValue(JsonObject obj)
+    {
+        _type = JsonValueKind.Object;
+        _objType = JsonObjectKind.JsonObject;
+        _number = double.NaN;
+        _obj = obj;
+    }
+
+    public AnyJsonValue(object obj)
+    {
+        _type = JsonValueKind.Object;
+        _objType = JsonObjectKind.Object;
+        _number = double.NaN;
+        _obj = obj;
     }
 
     AnyJsonValue(JsonValueKind kind)
@@ -70,6 +103,7 @@ public struct AnyJsonValue
     }
 
     public JsonValueKind Type => _type;
+    public JsonObjectKind ObjectType => _objType;
 
     public bool IsUndefined => _type == JsonValueKind.Undefined;
 
@@ -77,10 +111,7 @@ public struct AnyJsonValue
     {
         get
         {
-            if (_type != JsonValueKind.Null)
-            {
-                Throw(JsonValueKind.Null);
-            }
+            CheckType(JsonValueKind.Null);
             return null;
         }
     }
@@ -106,10 +137,7 @@ public struct AnyJsonValue
     {
         get
         {
-            if (_type != JsonValueKind.Number)
-            {
-                Throw(JsonValueKind.Number);
-            }
+            CheckType(JsonValueKind.Number);
             return _number;
         }
     }
@@ -118,10 +146,7 @@ public struct AnyJsonValue
     {
         get
         {
-            if (_type != JsonValueKind.String)
-            {
-                Throw(JsonValueKind.String);
-            }
+            CheckType(JsonValueKind.String);
             return _obj as string;
         }
     }
@@ -130,23 +155,38 @@ public struct AnyJsonValue
     {
         get
         {
-            if (_type != JsonValueKind.Array)
-            {
-                Throw(JsonValueKind.Array);
-            }
+            CheckType(JsonValueKind.Array);
             return _obj as AnyJsonValue[];
         }
     }
 
-    public Dictionary<string, AnyJsonValue> Object
+    public Dictionary<string, AnyJsonValue> JsonDictionary
     {
         get
         {
-            if (_type != JsonValueKind.Object)
-            {
-                Throw(JsonValueKind.Object);
-            }
+            CheckType(JsonValueKind.Object);
+            CheckObjectType(JsonObjectKind.Dictionary);
             return _obj as Dictionary<string, AnyJsonValue>;
+        }
+    }
+
+    public object Object
+    {
+        get
+        {
+            CheckType(JsonValueKind.Object);
+            CheckObjectType(JsonObjectKind.Object);
+            return _obj;
+        }
+    }
+
+    public JsonObject JsonObject
+    {
+        get
+        {
+            CheckType(JsonValueKind.Object);
+            CheckObjectType(JsonObjectKind.JsonObject);
+            return _obj as JsonObject;
         }
     }
 
@@ -178,8 +218,12 @@ public struct AnyJsonValue
         return base.ToString();
     }
 
-    public object? ToObject(Type type)
+    public object? ToObject(Type type, JsonSerializerOptions? serializerOptions = null)
     {
+        if (type.IsArray)
+        {
+            return ToObject(Array, type.GetElementType());
+        }
         if (type.IsNumber())
         {
             return Number;
@@ -192,12 +236,54 @@ public struct AnyJsonValue
         {
             return Bool;
         }
-        if (type.IsArray)
+        if (type == typeof(JsonObject))
         {
-            return ToObject(Array, type.GetElementType());
+            return JsonObject;
+        }
+        if (_type == JsonValueKind.Object)
+        {
+            if (_objType == JsonObjectKind.Object)
+            {
+                return _obj;
+            }
+            if (_objType == JsonObjectKind.JsonObject)
+            {
+                return JsonSerializer.Deserialize(_obj as JsonObject, type, serializerOptions);
+            }
         }
         ProgramException.ThrowUnsupported(type);
         return null;
+    }
+
+    public JsonNode ToJsonNode(JsonSerializerOptions? serializerOptions = null)
+    {
+        switch(_type)
+        {
+            default:
+            case JsonValueKind.Null:
+            case JsonValueKind.Undefined:
+                return null;
+            case JsonValueKind.Number:
+                return Number;
+            case JsonValueKind.String:
+                return String;
+            case JsonValueKind.True:
+                return true;
+            case JsonValueKind.False:
+                return false;
+            case JsonValueKind.Array:
+                return new JsonArray(ToJsonNode(Array));
+            case JsonValueKind.Object:
+                if (_objType == JsonObjectKind.JsonObject)
+                {
+                    return JsonObject;
+                }
+                if (_objType == JsonObjectKind.Object)
+                {
+                    return JsonSerializer.SerializeToNode(_obj, serializerOptions);
+                }
+                throw new ProgramException(ProgramException.ErrorCode.ConversionToJsonNotSupported);
+        }
     }
 
     object?[] ToObject(AnyJsonValue[] jsonArray, Type type)
@@ -206,6 +292,16 @@ public struct AnyJsonValue
         for (int i = 0; i < jsonArray.Length; ++i)
         {
             array[i] = jsonArray[i].ToObject(type);
+        }
+        return array;
+    }
+
+    JsonNode[] ToJsonNode(AnyJsonValue[] jsonArray)
+    {
+        JsonNode[] array = new JsonNode[jsonArray.Length];
+        for (int i = 0; i < jsonArray.Length; ++i)
+        {
+            array[i] = jsonArray[i].ToJsonNode();
         }
         return array;
     }
@@ -229,19 +325,31 @@ public struct AnyJsonValue
         return AnyJsonValue.Undefined;
     }
 
+    void CheckType(JsonValueKind expected)
+    {
+        if (_type != expected)
+        {
+            Throw(expected);
+        }
+    }
+
+    void CheckObjectType(JsonObjectKind expected)
+    {
+        if (_objType != expected)
+        {
+            Throw(expected);
+        }
+    }
+
     void Throw(JsonValueKind expected) => ProgramException.ThrowTypeMismatch(expected, _type);
+    void Throw(JsonObjectKind expected)
+    {
+        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Expected {expected}, Actual {_objType}");
+    }
 
     public static implicit operator AnyJsonValue(double number)
     {
         return new AnyJsonValue(number);
-    }
-    public static implicit operator double(AnyJsonValue value)
-    {
-        return value.Number;
-    }
-    public static implicit operator string(AnyJsonValue value)
-    {
-        return value.String;
     }
     public static implicit operator AnyJsonValue(string value)
     {
@@ -251,8 +359,24 @@ public struct AnyJsonValue
     {
         return new AnyJsonValue(values);
     }
+    public static implicit operator AnyJsonValue(JsonNode obj)
+    {
+        return new AnyJsonValue((JsonNode)obj);
+    }
     public static implicit operator AnyJsonValue(Dictionary<string, AnyJsonValue> values)
     {
         return new AnyJsonValue(values);
+    }
+    public static implicit operator double(AnyJsonValue value)
+    {
+        return value.Number;
+    }
+    public static implicit operator string(AnyJsonValue value)
+    {
+        return value.String;
+    }
+    public static implicit operator JsonNode(AnyJsonValue value)
+    {
+        return value.ToJsonNode();
     }
 }
