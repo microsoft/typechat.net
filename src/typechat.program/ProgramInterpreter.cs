@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Text.Json.Nodes;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -11,19 +9,27 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramInterpreter
 {
+    ApiInvoker _apiInvoker;
     List<AnyJsonValue> _results;
     Func<string, AnyJsonValue[], AnyJsonValue> _handler;
+
+    public ProgramInterpreter(object apiImpl)
+    {
+        _apiInvoker = new ApiInvoker(apiImpl);
+        _handler = _apiInvoker.InvokeMethod;
+    }
 
     public ProgramInterpreter(Func<string, AnyJsonValue[], AnyJsonValue> handler)
     {
         ArgumentNullException.ThrowIfNull(handler, nameof(handler));
-        _results = new List<AnyJsonValue>();
         _handler = handler;
     }
 
     public AnyJsonValue Run(Program program)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
+
+        _results ??= new List<AnyJsonValue>();
         _results.Clear();
 
         Steps steps = program.Steps;

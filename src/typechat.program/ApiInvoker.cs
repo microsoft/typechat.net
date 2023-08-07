@@ -41,7 +41,7 @@ public class ApiInvoker
     {
         if (jsonArgs.Length != paramsInfo.Length)
         {
-            ProgramException.ThrowArgCountMismatch(name, paramsInfo.Length, jsonArgs.Length);
+            return CreateCallArgsArray(name, jsonArgs, paramsInfo);
         }
         if (paramsInfo.Length == 0)
         {
@@ -54,6 +54,18 @@ public class ApiInvoker
             Type paramType = paramsInfo[i].ParameterType;
             args[i] = jsonArgs[i].ToObject(paramType);
         }
+        return args;
+    }
+
+    object?[] CreateCallArgsArray(string name, AnyJsonValue[] jsonArgs, ParameterInfo[] paramsInfo)
+    {
+        Debug.Assert(paramsInfo.Length == 1);
+        if (!paramsInfo[0].ParameterType.IsArray)
+        {
+            ProgramException.ThrowArgCountMismatch(name, paramsInfo.Length, jsonArgs.Length);
+        }
+        object?[] args = GetArgs(name, 1);
+        args[0] = jsonArgs;
         return args;
     }
 

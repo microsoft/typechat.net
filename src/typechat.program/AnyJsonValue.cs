@@ -23,6 +23,8 @@ public struct AnyJsonValue
     public readonly static AnyJsonValue Undefined = new AnyJsonValue();
     public readonly static AnyJsonValue[] EmptyArray = System.Array.Empty<AnyJsonValue>();
 
+    const string DateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffK";
+
     JsonValueKind _type;
     JsonObjectKind _objType;
     double _number;
@@ -93,6 +95,14 @@ public struct AnyJsonValue
         _objType = JsonObjectKind.Object;
         _number = double.NaN;
         _obj = obj;
+    }
+
+    public AnyJsonValue(DateTime dateTime)
+    {
+        _type = JsonValueKind.String;
+        _objType = JsonObjectKind.NotObject;
+        _number = double.NaN;
+        _obj = dateTime.ToString(DateTimeFormat);
     }
 
     AnyJsonValue(JsonValueKind kind)

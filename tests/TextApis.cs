@@ -3,29 +3,22 @@
 using System.Text.Json;
 namespace Microsoft.TypeChat.Tests;
 
-public class StringAPI
+public class TextApis : IStringAPI, ITimeAPI
 {
-    public AnyJsonValue HandleCall(string name, AnyJsonValue[] args)
-    {
-        switch (name)
-        {
-            default:
-                throw new NotSupportedException(name);
-            case "concat":
-                return Concat(args);
-        }
-
-        //return AnyJsonValue.Undefined;
-    }
-
-    public static string Concat(AnyJsonValue[] args)
+    public string concat(AnyJsonValue[] args)
     {
         StringBuilder sb = new StringBuilder();
         Concat(args, sb);
         return sb.ToString();
     }
 
-    static string Concat(AnyJsonValue value, StringBuilder sb)
+    public string uppercase(string arg) => arg.ToUpper();
+    public string lowercase(string arg) => arg.ToLower();
+    public string dateTime() { return DateTime.Now.ToString(); }
+    public string date() { return DateTime.Now.Date.ToString(); }
+    public string time() { return DateTime.Now.TimeOfDay.ToString(); }
+
+    public string Concat(AnyJsonValue value, StringBuilder sb)
     {
         switch (value.Type)
         {
