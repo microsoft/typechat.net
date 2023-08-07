@@ -33,5 +33,55 @@
         }
       ]
     }
+  },
+  "program3": {
+    "result": "35HELLOGOODBYE",
+    "source": {
+      "@steps": [
+        {
+          "@func": "concat",
+          "@args": [
+            3,
+            5,
+            "Hello",
+            "Goodbye"
+          ]
+        },
+        {
+          "@func": "uppercase",
+          "@args": [
+            { "@ref": 0 }
+          ]
+        }
+      ]
+    }
+  },
+  "program4": {
+    "result": "35hellogoodbye",
+    "source": {
+      "@steps": [
+        {
+          "@func": "concat",
+          "@args": [
+            3,
+            5,
+            "Hello",
+            "Goodbye"
+          ]
+        },
+        {
+          "@func": "uppercase",
+          "@args": [
+            { "@ref": 0 }
+          ]
+        },
+        {
+          "@func": "lowercase",
+          "@args": [
+            { "@ref": 1 }
+          ]
+        }
+      ]
+    }
   }
 }

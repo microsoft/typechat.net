@@ -3,29 +3,31 @@
 using System.Text.Json;
 namespace Microsoft.TypeChat.Tests;
 
-public class StringAPI
+public interface IStringAPI
 {
-    public AnyJsonValue HandleCall(string name, AnyJsonValue[] args)
-    {
-        switch (name)
-        {
-            default:
-                throw new NotSupportedException(name);
-            case "concat":
-                return Concat(args);
-        }
-
-        //return AnyJsonValue.Undefined;
-    }
-
-    public static string Concat(AnyJsonValue[] args)
+    string concat(AnyJsonValue[] args);
+    string uppercase(string text);
+}
+public class StringAPI : IStringAPI
+{
+    public string concat(AnyJsonValue[] args)
     {
         StringBuilder sb = new StringBuilder();
         Concat(args, sb);
         return sb.ToString();
     }
 
-    static string Concat(AnyJsonValue value, StringBuilder sb)
+    public string uppercase(string arg)
+    {
+        return arg.ToUpper();
+    }
+
+    public string lowercase(string arg)
+    {
+        return arg.ToLower();
+    }
+
+    public string Concat(AnyJsonValue value, StringBuilder sb)
     {
         switch (value.Type)
         {
