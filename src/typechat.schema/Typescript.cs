@@ -45,6 +45,10 @@ public class Typescript : CodeLanguage
             {
                 return Types.Number;
             }
+            else if (type.IsObject())
+            {
+                return Types.Any;
+            }
             else if (type.IsVoid())
             {
                 return Types.Void;
