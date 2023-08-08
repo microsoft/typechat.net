@@ -12,6 +12,7 @@ namespace Microsoft.TypeChat.Schema;
 public interface IVocab : IEnumerable<VocabEntry>
 {
     bool Contains(VocabEntry entry);
+    bool Contains(VocabEntry entry, StringComparison comparison);
 }
 
 /// <summary>
@@ -55,6 +56,18 @@ public class Vocab : List<VocabEntry>, IVocab
                 base.Add(entries[i]);
             }
         }
+    }
+
+    public bool Contains(VocabEntry entry, StringComparison comparison)
+    {
+        for (int i = 0; i < Count; ++i)
+        {
+            if (this[i].CompareTo(entry, comparison) == 0)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static implicit operator Vocab(string[] values)

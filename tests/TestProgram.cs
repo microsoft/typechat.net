@@ -92,7 +92,8 @@ public class TestProgram : TypeChatTest
         dynamic[] args = new dynamic[2];
         args[0] = 3;
         args[1] = 4;
-        dynamic result = 0.0;
+        dynamic result = args[0] + args[1];
+        Assert.Equal(7, result);
 
         MathAPI api = new MathAPI();
         MethodInfo addMethod = GetMethod(api.GetType(), "add");
@@ -100,6 +101,11 @@ public class TestProgram : TypeChatTest
         Assert.Equal(7, result);
         JsonNode node = result;
         Assert.Equal(7, (double) node);
+
+        args[0] = "Toby";
+        Assert.Equal("Toby4", args[0] + args[1]);
+        args[1] = "_McDuff";
+        Assert.Equal("Toby_McDuff", args[0] + args[1]);
     }
 
     // TODO: more validation.. actually inspect the AST and compare against

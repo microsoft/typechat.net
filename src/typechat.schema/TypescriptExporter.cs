@@ -513,7 +513,7 @@ public class TypescriptExporter : TypeExporter<Type>
             vocabAttr.PropertyName = member.PropertyName();
         }
 
-        if (vocabType != null)
+        if (vocabType != null && vocabAttr.Enforce)
         {
             _usedVocabs ??= new VocabCollection();
             _usedVocabs.Add(vocabType);
