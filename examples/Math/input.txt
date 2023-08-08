@@ -6,3 +6,5 @@
 2 * 3 + 4 * 5
 2 3 * 4 5 * +
 multiply two by three, then multiply four by five, then sum the results
+3 + 4 * 5 + 5 * 6
+I have 100 dollars. I spent 10 bucks on a book and 35 bucks each on 2 pairs of shoes. How much money do I have left?

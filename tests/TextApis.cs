@@ -5,7 +5,7 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TextApis : IStringAPI, ITimeAPI
 {
-    public string concat(AnyJsonValue[] args)
+    public string concat(dynamic[] args)
     {
         StringBuilder sb = new StringBuilder();
         Concat(args, sb);
@@ -18,30 +18,28 @@ public class TextApis : IStringAPI, ITimeAPI
     public string date() { return DateTime.Now.Date.ToString(); }
     public string time() { return DateTime.Now.TimeOfDay.ToString(); }
 
-    public string Concat(AnyJsonValue value, StringBuilder sb)
+    public string Concat(dynamic value, StringBuilder sb)
     {
-        switch (value.Type)
+        if (value is dynamic[] array)
         {
-            default:
-                sb.Append(value.ToString());
-                break;
+            for (int i = 0; i < array.Length; ++i)
+            {
+                Concat(array[i], sb);
+            }
+        }
+        else if (value is JsonObject obj)
+        {
+            foreach (var kv in obj)
+            {
+                sb.Append('[').Append(kv.Key).Append(", ");
+                sb.Append(kv.Value);
+                sb.Append("]");
+            }
 
-            case JsonValueKind.Array:
-                var array = value.Array;
-                for (int i = 0; i < array.Length; ++i)
-                {
-                    Concat(array[i], sb);
-                }
-                break;
-            case JsonValueKind.Object:
-                var obj = value.JsonObject;
-                foreach (var kv in obj)
-                {
-                    sb.Append('[').Append(kv.Key).Append(", ");
-                    sb.Append(kv.Value);
-                    sb.Append("]");
-                }
-                break;
+        }
+        else
+        {
+            sb.Append(value);
         }
         return sb.ToString();
     }

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Reflection;
 using System.Text.Json;
 
 namespace Microsoft.TypeChat.Tests;
@@ -83,6 +84,22 @@ public class TestProgram : TypeChatTest
         ProgramInterpreter interpreter = new ProgramInterpreter(api);
         string result = interpreter.Run(program);
         Assert.Equal(expectedResult, result);
+    }
+
+    [Fact]
+    public void TestDynamic()
+    {
+        dynamic[] args = new dynamic[2];
+        args[0] = 3;
+        args[1] = 4;
+        dynamic result = 0.0;
+
+        MathAPI api = new MathAPI();
+        MethodInfo addMethod = GetMethod(api.GetType(), "add");
+        result = addMethod.Invoke(api, args);
+        Assert.Equal(7, result);
+        JsonNode node = result;
+        Assert.Equal(7, (double) node);
     }
 
     // TODO: more validation.. actually inspect the AST and compare against

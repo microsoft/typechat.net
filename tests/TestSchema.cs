@@ -51,7 +51,7 @@ public class TestSchema : TypeChatTest
         // Need better verifier
         lines = schema.Schema.Text.Lines();
         Assert.True(lines.Contains("interface", "IStringAPI"));
-        Assert.True(lines.Contains("string", "concat", "args"));
+        Assert.True(lines.Contains("string", "concat", "args", "any"));
         Assert.True(lines.Contains("string", "lowercase", "string"));
     }
 }
