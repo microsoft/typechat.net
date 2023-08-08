@@ -8,13 +8,6 @@ using Microsoft.TypeChat.SemanticKernel;
 
 namespace Sentiment;
 
-public class SentimentResponse
-{
-    [JsonPropertyName("sentiment")]
-    [JsonVocab("negative | neutral | positive")]
-    public string Sentiment { get; set; }
-}
-
 public class SentimentApp : ConsoleApp
 {
     JsonTranslator<SentimentResponse> _translator;

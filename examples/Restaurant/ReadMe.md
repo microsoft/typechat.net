@@ -1,9 +1,18 @@
-Emulates natural language ordering at a Coffee Shop that serves:
-- Coffee
-- Espresso
-- Lattes
-- Some Baked items
+# Restaurant
 
-A range of syrups and other familiar options are also offered. 
+The Restaurant example shows how to capture user intent as a set of "nouns", but with more complex linguistic input.
+This example can act as a "stress test" for language models, illustrating the line between simpler and more advanced language models in handling compound sentences, distractions, and corrections.
+This example also shows how we can create a "user intent summary" to display to a user.
+It uses a natural language experience for placing an order with the [`Order`](./src/foodOrderViewSchema.ts) type.
 
-Also demonstrates how to use ***VocabField*** to get automatic validation of vocabulary strings - along with Json Repair for any strings that were not found in the vocab.  
+# Usage
+
+Example prompts can be found in [`input.txt`](input.txt).
+
+For example, given the following order:
+
+**Input**:
+
+```
+I want three pizzas, one with mushrooms and the other two with sausage. Make one sausage a small. And give me a whole Greek and a Pale Ale. And give me a Mack and Jacks.
+```
