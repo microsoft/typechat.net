@@ -18,11 +18,13 @@ public partial class Order
         StringBuilder order = new StringBuilder();
         StringBuilder log = new StringBuilder();
 
-        if (Items != null && Items.Length > 0)
+        if (Items != null)
         {
-            foreach (var item in Items)
+            for (int i = 0; i < Items.Length; ++i)
             {
+                var item = Items[i];
                 item.Process();
+                order.Append($"[{i + 1}]: ");
                 item.Print(order, log);
                 order.AppendLine();
             }
@@ -41,7 +43,7 @@ public abstract partial class OrderItem
         IEnumerable<string> newItems = (items != null) ?
                                         items.Concat(vocab.Strings()) :
                                         vocab.Strings();
-        return newItems.ToArray();
+        return newItems.Distinct().ToArray();
     }
 
     protected string[] RemoveItems(string[] items, string[] itemsToRemove)
@@ -139,3 +141,10 @@ public partial class Salad : LineItem
     }
 }
 
+public partial class Beer : LineItem
+{
+    public override void Print(StringBuilder order, StringBuilder log)
+    {
+        order.Append($"{Quantity} {Kind}");
+    }
+}

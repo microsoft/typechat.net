@@ -34,6 +34,8 @@ public class Restaurant : ConsoleApp
         if (order.Items != null)
         {
             (string printedOrder, string log) = order.ProcessOrder();
+            Console.WriteLine();
+            Console.WriteLine("### Your order");
             Console.WriteLine(printedOrder);
             Console.WriteLine(log);
         }
@@ -45,7 +47,7 @@ public class Restaurant : ConsoleApp
         {
             Restaurant app = new Restaurant();
             // Un-comment to print auto-generated schema at start:
-            Console.WriteLine(app.Schema.Schema.Text);
+            // Console.WriteLine(app.Schema.Schema.Text);
 
             await app.RunAsync("🍕> ", args.GetOrNull(0));
         }
