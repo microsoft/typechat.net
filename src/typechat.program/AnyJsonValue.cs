@@ -6,6 +6,7 @@ using System.Text.Json.Nodes;
 
 namespace Microsoft.TypeChat;
 
+/*
 public enum JsonObjectKind : byte
 {
     NotObject = 0,
@@ -390,3 +391,4 @@ public struct AnyJsonValue
         return value.ToJsonNode();
     }
 }
+*/

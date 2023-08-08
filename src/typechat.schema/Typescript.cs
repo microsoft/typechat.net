@@ -29,6 +29,7 @@ public class Typescript : CodeLanguage
         public const string String = "string";
         public const string Number = "number";
         public const string Void = "void";
+        public const string Any = "any";
 
         public static string? ToPrimitive(Type type)
         {

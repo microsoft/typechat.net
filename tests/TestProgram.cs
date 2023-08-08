@@ -85,6 +85,28 @@ public class TestProgram : TypeChatTest
         Assert.Equal(expectedResult, result);
     }
 
+    [Fact]
+    public void TestDynamic()
+    {
+        dynamic[] args = new dynamic[2];
+        args[0] = 3;
+        args[1] = 4;
+        dynamic result = double.NaN;
+
+        MathAPI api = new MathAPI();
+        var methods = api.GetType().GetMethods();
+        foreach (var method in methods)
+        {
+            if (method.Name == "add")
+            {
+                result = method.Invoke(api, args);
+                break;
+            }
+        }
+
+        JsonNode node = result;
+    }
+
     // TODO: more validation.. actually inspect the AST and compare against
     // the JSON DOM
     void ValidateProgram(Program program)

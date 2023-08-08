@@ -12,7 +12,6 @@ public class ApiInvoker
 
     ApiTypeInfo _typeInfo;
     object _apiImpl;
-    Dictionary<string, object?[]> _argsPool;
 
     public ApiInvoker(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
@@ -25,19 +24,17 @@ public class ApiInvoker
         ArgumentNullException.ThrowIfNull(apiImpl, nameof(apiImpl));
         _typeInfo = typeInfo;
         _apiImpl = apiImpl;
-        _argsPool = new Dictionary<string, object?[]>();
     }
 
-    public AnyJsonValue InvokeMethod(string name, AnyJsonValue[] args)
+    public dynamic InvokeMethod(string name, dynamic[] args)
     {
         ApiMethod method = _typeInfo[name];
-        object?[] callArgs = CreateCallArgs(name, args, method.Params);
-        object? retVal = method.Method.Invoke(_apiImpl, callArgs);
-        return AnyJsonValue.FromObject(method.ReturnType.ParameterType, retVal);
+        dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
+        dynamic retVal = method.Method.Invoke(_apiImpl, callArgs);
+        return retVal;
     }
 
-    // Future: caching, pooling
-    object?[] CreateCallArgs(string name, AnyJsonValue[] jsonArgs, ParameterInfo[] paramsInfo)
+    dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
         if (jsonArgs.Length != paramsInfo.Length)
         {
@@ -47,37 +44,19 @@ public class ApiInvoker
         {
             return EmptyArgs;
         }
-        //object?[] args = new object[jsonArgs.Length];
-        object?[] args = GetArgs(name, paramsInfo.Length);
-        for (int i = 0; i < paramsInfo.Length; ++i)
-        {
-            Type paramType = paramsInfo[i].ParameterType;
-            args[i] = jsonArgs[i].ToObject(paramType);
-        }
-        return args;
+        return jsonArgs;
     }
 
-    object?[] CreateCallArgsArray(string name, AnyJsonValue[] jsonArgs, ParameterInfo[] paramsInfo)
+    dynamic[] CreateCallArgsArray(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
         Debug.Assert(paramsInfo.Length == 1);
         if (!paramsInfo[0].ParameterType.IsArray)
         {
             ProgramException.ThrowArgCountMismatch(name, paramsInfo.Length, jsonArgs.Length);
         }
-        object?[] args = GetArgs(name, 1);
+        // Future: Pool these
+        dynamic[] args = new dynamic[1];
         args[0] = jsonArgs;
-        return args;
-    }
-
-    object?[] GetArgs(string name, int argLength)
-    {
-        object?[] args = _argsPool.GetValueOrDefault(name);
-        if (args == null)
-        {
-            args = new object?[argLength];
-            _argsPool[name] = args;
-        }
-        Debug.Assert(args.Length == argLength);
         return args;
     }
 }
