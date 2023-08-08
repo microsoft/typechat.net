@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.Program", "src\typ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Math", "examples\Math\Math.csproj", "{131566E6-2B78-486C-AFF5-7202A437E79F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Restaurant", "examples\Restaurant\Restaurant.csproj", "{D78553D9-4CBD-4C3A-A11B-58EA0077FD84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{131566E6-2B78-486C-AFF5-7202A437E79F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{131566E6-2B78-486C-AFF5-7202A437E79F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{131566E6-2B78-486C-AFF5-7202A437E79F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D78553D9-4CBD-4C3A-A11B-58EA0077FD84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D78553D9-4CBD-4C3A-A11B-58EA0077FD84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D78553D9-4CBD-4C3A-A11B-58EA0077FD84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D78553D9-4CBD-4C3A-A11B-58EA0077FD84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{AB618076-FA46-4014-871A-B78179E248FF} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 		{67AC4986-54B8-490F-8582-657651E3E62C} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 		{131566E6-2B78-486C-AFF5-7202A437E79F} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
+		{D78553D9-4CBD-4C3A-A11B-58EA0077FD84} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A9AF678-E669-4AF2-9644-7EBB970DAC41}
