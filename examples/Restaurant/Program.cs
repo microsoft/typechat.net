@@ -26,30 +26,17 @@ public class Restaurant : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Order order = await _translator.TranslateAsync(input);
-
-        string json = Json.Stringify(order);
-        Console.WriteLine(json);
-
-        if (!PrintAnyUnknown(order))
-        {
-            Console.WriteLine("Success!");
-        }
+        PrintOrder(order);
     }
 
-    bool PrintAnyUnknown(Order order)
+    void PrintOrder(Order order)
     {
         if (order.Items != null)
         {
-            StringBuilder sb = new StringBuilder();
-            order.GetUnknown(sb);
-            if (sb.Length > 0)
-            {
-                Console.WriteLine("I didn't understand the following:");
-                Console.WriteLine(sb.ToString());
-                return true;
-            }
+            (string printedOrder, string log) = order.ProcessOrder();
+            Console.WriteLine(printedOrder);
+            Console.WriteLine(log);
         }
-        return false;
     }
 
     public static async Task<int> Main(string[] args)

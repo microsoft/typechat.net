@@ -13,6 +13,7 @@ using Microsoft.TypeChat.Schema;
 namespace Restaurant;
 
 [Comment("an order from a restaurant that serves pizza, beer, and salad")]
+[Comment("Do correct spelling mistakes")]
 public partial class Order
 {
     [JsonPropertyName("items")]
@@ -69,9 +70,10 @@ public partial class Beer : LineItem
     public string Kind { get; set; }
 }
 
-public class Salad : LineItem
+public partial class Salad : LineItem
 {
     [Comment("default: half")]
+    [JsonVocab(RestaurantVocabs.SaladPortion)]
     [JsonPropertyName("portion")]
     public string? Portion { get; set; }
 
@@ -79,11 +81,6 @@ public class Salad : LineItem
     [JsonVocab(RestaurantVocabs.SaladStyle)]
     [JsonPropertyName("style")]
     public string? Style { get; set; }
-
-    [Comment("default: whole")]
-    [JsonVocab(RestaurantVocabs.SaladSize)]
-    [JsonPropertyName("size")]
-    public string? Size { get; set; }
 
     [Comment("ingredients requested (examples: parmesan, croutons)")]
     [JsonPropertyName("addedIngredients")]
@@ -98,6 +95,30 @@ public static class RestaurantVocabs
 {
     public const string PizzaSize = "small | medium | large | extra large";
     public const string PizzaName = "Hawaiian | Yeti | Pig In a Forest | Cherry Bomb";
-    public const string SaladSize = "half | whole";
+    public const string Pizza_AvailableToppings =
+        "pepperoni | sausage | mushrooms | basil | extra cheese | extra sauce | " +
+        "anchovies | pineapple | olives | arugula | Canadian bacon | Mama Lil's Peppers";
+
+    public const string SaladIngredients = "lettuce | tomatoes | red onions | olives | peppers | parmesan | croutons";
+    public const string SaladPortion = "half | whole";
     public const string SaladStyle = "Garden | Greek";
+
+    public const string Hawaiian_Toppings = "pineapple | Canadian bacon";
+    public const string Yeti_Toppings = "extra cheese | extra sauce";
+    public const string PigInAForest_Toppings = "mushrooms | basil | Canadian bacon | arugula";
+    public const string CherryBomb_Toppings = "pepperoni | sausage | Mama Lil's Peppers";
+
+    public static readonly VocabCollection NamedPizzas = new VocabCollection()
+    {
+        {"Hawaiian", Hawaiian_Toppings },
+        {"Yeti", Yeti_Toppings },
+        {"Pig In a Forest", PigInAForest_Toppings},
+        {"Cherry Bomb", CherryBomb_Toppings }
+    };
+
+    public static readonly VocabCollection AvailableIngredients = new VocabCollection()
+    {
+        {"Pizza", Pizza_AvailableToppings},
+        {"Salad", SaladIngredients}
+    };
 }

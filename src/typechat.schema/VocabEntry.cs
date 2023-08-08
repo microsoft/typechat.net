@@ -21,6 +21,11 @@ public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
         return _text.CompareTo(other._text);
     }
 
+    public int CompareTo(VocabEntry other, StringComparison comparison)
+    {
+        return string.Compare(_text, other._text, comparison);
+    }
+
     public override bool Equals([NotNullWhen(true)] object? obj)
     {
         return _text.Equals(obj);
