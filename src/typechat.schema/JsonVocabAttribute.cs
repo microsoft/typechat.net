@@ -32,6 +32,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
 
     public string? PropertyName { get; set; }
     public bool Inline { get; set; } = true;
+    public bool Enforce { get; set; } = true;
     public IVocab? Vocab => _vocab;
 
     public bool HasEntries => (!string.IsNullOrEmpty(_entries));

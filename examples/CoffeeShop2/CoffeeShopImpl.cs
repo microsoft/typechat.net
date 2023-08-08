@@ -59,3 +59,29 @@ public abstract partial class DrinkOption
     }
 }
 
+internal static class CartEx
+{
+    public static void GetUnknown(this DrinkOption[] options, StringBuilder sb)
+    {
+        if (options != null)
+        {
+            foreach (var option in options)
+            {
+                option.GetUnknown(sb);
+            }
+        }
+    }
+
+    public static Cart TestCart()
+    {
+        Cart cart = new Cart
+        {
+            Items = new CartItem[]
+            {
+                new EspressoDrink {Name = "espresso", Quantity = 1 },
+                new CoffeeDrink {Name = "coffee", Size = CoffeeSize.Tall, Quantity = 2},
+            }
+        };
+        return cart;
+    }
+}

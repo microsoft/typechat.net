@@ -31,6 +31,11 @@ public class VocabCollection : IVocabCollection
         Add(new VocabType(name, vocab));
     }
 
+    public void Add(string name, string vocabText)
+    {
+        Add(name, Vocab.Parse(vocabText));
+    }
+
     public void Add(IEnumerable<VocabType> vocabs)
     {
         ArgumentNullException.ThrowIfNull(vocabs, nameof(vocabs));
