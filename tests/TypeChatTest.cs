@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Reflection;
+
 namespace Microsoft.TypeChat.Tests;
 
 public class TypeChatTest
@@ -45,6 +47,19 @@ public class TypeChatTest
         return (config.HasOpenAI &&
                 !string.IsNullOrEmpty(config.OpenAI.ApiKey) &&
                 config.OpenAI.ApiKey != "?");
+    }
+
+    public MethodInfo? GetMethod(Type type, string name)
+    {
+        MethodInfo[] methods = type.GetMethods();
+        foreach(var method in methods)
+        {
+            if (method.Name == name)
+            {
+                return method;
+            }
+        }
+        return null;
     }
 }
 

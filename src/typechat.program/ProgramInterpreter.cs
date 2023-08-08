@@ -9,9 +9,11 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramInterpreter
 {
+    static readonly dynamic[] EmptyArray = new dynamic[0];
+
     ApiInvoker _apiInvoker;
-    List<AnyJsonValue> _results;
-    Func<string, AnyJsonValue[], AnyJsonValue> _handler;
+    List<dynamic> _results;
+    Func<string, dynamic[], dynamic> _handler;
 
     public ProgramInterpreter(object apiImpl)
     {
@@ -19,37 +21,37 @@ public class ProgramInterpreter
         _handler = _apiInvoker.InvokeMethod;
     }
 
-    public ProgramInterpreter(Func<string, AnyJsonValue[], AnyJsonValue> handler)
+    public ProgramInterpreter(Func<string, dynamic[], dynamic> handler)
     {
         ArgumentNullException.ThrowIfNull(handler, nameof(handler));
         _handler = handler;
     }
 
-    public AnyJsonValue Run(Program program)
+    public dynamic? Run(Program program)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
 
-        _results ??= new List<AnyJsonValue>();
+        _results ??= new List<dynamic>();
         _results.Clear();
 
         Steps steps = program.Steps;
         for (int i = 0; i < steps.Calls.Length; ++i)
         {
             FunctionCall call = steps.Calls[i];
-            AnyJsonValue result = Eval(call);
+            dynamic result = Eval(call);
             _results.Add(result);
         }
-        return (_results.Count > 0) ? _results[_results.Count - 1] : AnyJsonValue.Undefined;
+        return (_results.Count > 0) ? _results[_results.Count - 1] : null;
     }
 
-    AnyJsonValue Eval(FunctionCall call)
+    dynamic Eval(FunctionCall call)
     {
-        AnyJsonValue[] args = Eval(call.Args);
-        AnyJsonValue result = _handler(call.Name, args);
+        dynamic[] args = Eval(call.Args);
+        dynamic result = _handler(call.Name, args);
         return result;
     }
 
-    AnyJsonValue Eval(Expression expr)
+    dynamic Eval(Expression expr)
     {
         switch (expr)
         {
@@ -69,20 +71,20 @@ public class ProgramInterpreter
                 return Eval(array);
 
             case ObjectExpr obj:
-                return new AnyJsonValue(Eval(obj));
+                return Eval(obj);
         }
 
-        return AnyJsonValue.Undefined;
+        return null;
     }
 
-    AnyJsonValue[] Eval(Expression[] expressions)
+    dynamic[] Eval(Expression[] expressions)
     {
         if (expressions.Length == 0)
         {
-            return AnyJsonValue.EmptyArray;
+            return EmptyArray;
         }
 
-        AnyJsonValue[] args = new AnyJsonValue[expressions.Length];
+        dynamic[] args = new dynamic[expressions.Length];
         for (int i = 0; i < expressions.Length; ++i)
         {
             args[i] = Eval(expressions[i]);
@@ -91,7 +93,7 @@ public class ProgramInterpreter
     }
 
 
-    AnyJsonValue Eval(ValueExpr expr)
+    dynamic Eval(ValueExpr expr)
     {
         switch (expr.Value.ValueKind)
         {
@@ -104,9 +106,9 @@ public class ProgramInterpreter
         }
     }
 
-    AnyJsonValue[] Eval(ArrayExpr expr)
+    dynamic[] Eval(ArrayExpr expr)
     {
-        AnyJsonValue[] results = new AnyJsonValue[expr.Value.Length];
+        dynamic[] results = new dynamic[expr.Value.Length];
         for (int i = 0; i < expr.Value.Length; ++i)
         {
             results[i] = Eval(expr.Value[i]);
@@ -125,13 +127,14 @@ public class ProgramInterpreter
     {
         foreach (var property in expr.Value)
         {
-            AnyJsonValue result = Eval(property.Value);
-            JsonNode node = result.ToJsonNode();
+            dynamic result = Eval(property.Value);
+            JsonNode node = result;
             yield return new KeyValuePair<string, JsonNode>(property.Key, node);
         }
 
     }
-    AnyJsonValue Eval(ResultReference expr)
+
+    dynamic Eval(ResultReference expr)
     {
         if (expr.Ref >= _results.Count)
         {

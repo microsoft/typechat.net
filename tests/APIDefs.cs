@@ -25,7 +25,7 @@ public interface IMathAPI
 public interface IStringAPI
 {
     [Comment("Concat all arguments")]
-    string concat(AnyJsonValue[] args);
+    string concat(dynamic[] args);
     [Comment("Uppercase the text")]
     string uppercase(string text);
     [Comment("Lowercase text")]
