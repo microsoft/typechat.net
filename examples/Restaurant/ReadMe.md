@@ -3,7 +3,7 @@
 The Restaurant example shows how to capture user intent as a set of "nouns", but with more complex linguistic input.
 This example can act as a "stress test" for language models, illustrating the line between simpler and more advanced language models in handling compound sentences, distractions, and corrections.
 This example also shows how we can create a "user intent summary" to display to a user.
-It uses a natural language experience for placing an order with the [`Order`](./src/foodOrderViewSchema.ts) type.
+It uses a natural language experience for placing an order with the [`Order`](RestaurantSchema.cs) type.
 
 # Usage
 
