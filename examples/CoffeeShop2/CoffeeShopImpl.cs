@@ -59,6 +59,14 @@ public abstract partial class DrinkOption
     }
 }
 
+public partial class UnknownDrinkOption : DrinkOption
+{
+    public override void GetUnknown(StringBuilder sb)
+    {
+        sb.AppendLine(Text);
+    }
+}
+
 internal static class CartEx
 {
     public static void GetUnknown(this DrinkOption[] options, StringBuilder sb)

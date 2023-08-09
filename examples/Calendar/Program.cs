@@ -53,7 +53,7 @@ public class CalendarApp : ConsoleApp
         {
             CalendarApp app = new CalendarApp();
             // Un-comment to print auto-generated schema at start:
-            Console.WriteLine(app.Schema.Schema.Text);
+            //Console.WriteLine(app.Schema.Schema.Text);
             await app.RunAsync("📅> ", args.GetOrNull(0));
         }
         catch (Exception ex)

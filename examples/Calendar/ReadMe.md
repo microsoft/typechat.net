@@ -1,18 +1,15 @@
-# Restaurant
+# Calendar
 
-The Restaurant example shows how to capture user intent as a set of "nouns", but with more complex linguistic input.
-This example can act as a "stress test" for language models, illustrating the line between simpler and more advanced language models in handling compound sentences, distractions, and corrections.
-This example also shows how we can create a "user intent summary" to display to a user.
-It uses a natural language experience for placing an order with the [`Order`](./src/foodOrderViewSchema.ts) type.
+The Calendar example shows how you can capture user intent as a sequence of actions, such as adding event to a calendar or searching for an event as defined by the [`CalendarActions`](CalendarActionsSchema.cs) type.
 
 # Usage
 
 Example prompts can be found in [`input.txt`](input.txt).
 
-For example, given the following order:
+For example, we could use natural language to describe an event coming up soon:
 
 **Input**:
 
 ```
-I want three pizzas, one with mushrooms and the other two with sausage. Make one sausage a small. And give me a whole Greek and a Pale Ale. And give me a Mack and Jacks.
+I need to get my tires changed from 12:00 to 2:00 pm on Friday March 15, 2024
 ```

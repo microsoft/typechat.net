@@ -1,13 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
 namespace CoffeeShop;
@@ -157,16 +152,11 @@ public abstract partial class DrinkOption
 }
 
 [Comment("Use this type for DrinkOptions that match nothing else OR if you are NOT SURE. ")]
-public class UnknownDrinkOption : DrinkOption
+public partial class UnknownDrinkOption : DrinkOption
 {
     [Comment("The text that wasn't understood")]
     [JsonPropertyName("text")]
     public string Text { get; set; }
-
-    public override void GetUnknown(StringBuilder sb)
-    {
-        sb.AppendLine(Text);
-    }
 }
 
 public class Creamer : DrinkOption
