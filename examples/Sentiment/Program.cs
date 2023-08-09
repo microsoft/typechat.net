@@ -30,7 +30,7 @@ public class SentimentApp : ConsoleApp
             SentimentApp app = new SentimentApp();
             await app.RunAsync("😀> ", args.GetOrNull(0));
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             WriteError(ex);
             return -1;

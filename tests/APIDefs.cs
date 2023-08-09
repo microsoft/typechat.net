@@ -43,3 +43,21 @@ public interface ITimeAPI
     string time();
 }
 
+public interface IMathAPIAsync
+{
+    [Comment("Add two numbers")]
+    Task<double> add(double x, double y);
+    [Comment("Subtract two numbers")]
+    Task<double> sub(double x, double y);
+    [Comment("Multiply two numbers")]
+    Task<double> mul(double x, double y);
+    [Comment("Divide two numbers")]
+    Task<double> div(double x, double y);
+    [Comment("Identity function")]
+    Task<double> id(double x);
+    [Comment("Negate a number")]
+    Task<double> neg(double x);
+    [Comment("Unknown request")]
+    Task<double> unknown(string text);
+}
+
