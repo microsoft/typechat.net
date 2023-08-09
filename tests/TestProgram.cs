@@ -108,6 +108,28 @@ public class TestProgram : TypeChatTest
         Assert.Equal("Toby_McDuff", args[0] + args[1]);
     }
 
+    [Theory]
+    [MemberData(nameof(GetStringPrograms))]
+    public void TestProgramValidator_String(string source, string expectedResult)
+    {
+        Program program = Json.Parse<Program>(source);
+        ValidateProgram(program);
+
+        ProgramValidator validator = new ProgramValidator(typeof(IStringAPI));
+        validator.Validate(program.Steps);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetMathPrograms))]
+    public void TestProgramValidator_Math(string source, string expectedResult)
+    {
+        Program program = Json.Parse<Program>(source);
+        ValidateProgram(program);
+
+        ProgramValidator validator = new ProgramValidator(typeof(IMathAPI));
+        validator.Validate(program.Steps);
+    }
+
     // TODO: more validation.. actually inspect the AST and compare against
     // the JSON DOM
     void ValidateProgram(Program program)

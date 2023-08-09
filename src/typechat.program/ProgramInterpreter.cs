@@ -21,6 +21,12 @@ public class ProgramInterpreter
         _handler = _apiInvoker.InvokeMethod;
     }
 
+    public ProgramInterpreter(ApiTypeInfo typeInfo, object apiImpl)
+    {
+        _apiInvoker = new ApiInvoker(typeInfo, apiImpl);
+        _handler = _apiInvoker.InvokeMethod;
+    }
+
     public ProgramInterpreter(Func<string, dynamic[], dynamic> handler)
     {
         ArgumentNullException.ThrowIfNull(handler, nameof(handler));

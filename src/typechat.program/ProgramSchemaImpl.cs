@@ -38,7 +38,10 @@ public abstract partial class Expression
         Source = source;
     }
 
+    [JsonIgnore]
     public virtual JsonValueKind ValueType => Source.ValueKind;
+    [JsonIgnore]
+    internal virtual Type Type => typeof(object);
 }
 
 public partial class Steps : Expression
@@ -97,6 +100,26 @@ public partial class ValueExpr : Expression
     public override string ToString()
     {
         return Value.ToString();
+    }
+
+    internal override Type Type
+    {
+        get
+        {
+            switch(ValueType)
+            {
+                default:
+                    break;
+                case JsonValueKind.String:
+                    return typeof(string);
+                case JsonValueKind.Number:
+                    return typeof(double);
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    return typeof(bool);
+            }
+            return base.Type;
+        }
     }
 }
 

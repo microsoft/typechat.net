@@ -29,13 +29,13 @@ public class ProgramException : Exception
     {
         throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Type mismatch. Expected {expected}, Actual {actual}");
     }
-    internal static void ThrowTypeMismatch(JsonValueKind expected1, JsonValueKind expected2, JsonValueKind actual)
+    internal static void ThrowTypeMismatch(Type expected, Type actual)
     {
-        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Type mismatch. Expected {expected1} OR {expected2}, Actual {actual}");
+        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Type mismatch. Expected {expected}, Actual {actual}");
     }
-    internal static void ThrowTypeMismatch(string name, JsonValueKind expected, JsonValueKind actual)
+    internal static void ThrowTypeMismatch(string name, Type expected, Type actual)
     {
-        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Function {name} Expected {expected}, Actual {actual}");
+        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Function {name} Type mismatch. Expected {expected}, Actual {actual}");
     }
     internal static void ThrowInvalidResultRef(int refId)
     {

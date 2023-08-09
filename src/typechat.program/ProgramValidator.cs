@@ -5,9 +5,15 @@ using System.Text.Json;
 
 namespace Microsoft.TypeChat;
 
-public class ProgramValidator<T>
+public class ProgramValidator
 {
     ApiTypeInfo _typeInfo;
+    Steps _steps;
+
+    public ProgramValidator(Type type)
+        : this(new ApiTypeInfo(type))
+    {
+    }
 
     public ProgramValidator(ApiTypeInfo typeInfo)
     {
@@ -15,50 +21,105 @@ public class ProgramValidator<T>
         _typeInfo = typeInfo;
     }
 
-    public void ValidateFunction(FunctionCall call)
+    public void Validate(Steps steps)
     {
-        ArgumentNullException.ThrowIfNull(call, nameof(call));
-
-        ApiMethod method = _typeInfo[call.Name];
-        ValidateParams(call, method.Params);
-    }
-
-    void ValidateParams(FunctionCall call, ParameterInfo[] parameters)
-    {
-        ValidateParameterCount(call, parameters);
-        for (int i = 0; i < parameters.Length; ++i)
+        ArgumentNullException.ThrowIfNull(steps, nameof(steps));
+        _steps = steps;
+        for (int i = 0; i < steps.Calls.Length; ++i)
         {
-            ValidateParam(call, call.Args[i], parameters[i]);
+            FunctionCall call = steps.Calls[i];
+            ApiMethod method = _typeInfo[call.Name];
+            Validate(call, method.ReturnType.ParameterType);
         }
     }
 
-    int ValidateParameterCount(FunctionCall call, ParameterInfo[] parameters)
+    void Validate(FunctionCall call, Expression expr, Type expectedType)
     {
-        Expression[] expressions = call.Args;
-        int exprCount = (expressions != null) ? expressions.Length : 0;
-        int paramCount = (parameters != null) ? parameters.Length : 0;
-        if (exprCount != paramCount)
+        if (expr is FunctionCall funcExpr)
         {
-            ProgramException.ThrowArgCountMismatch(call.Name, paramCount, exprCount);
+            Validate(funcExpr, expectedType);
+            return;
         }
-        return paramCount;
+        if (expr is ArrayExpr arrayExpr)
+        {
+            Validate(call, arrayExpr, expectedType);
+            return;
+        }
+        if (expr is ResultReference resultRef)
+        {
+            Validate(call, resultRef, expectedType);
+            return;
+        }
+        
+        if (expr.Type != expectedType && expectedType != typeof(object))
+        {
+            ProgramException.ThrowTypeMismatch(call.Name, expectedType, expr.Type);
+        }
     }
 
-    void ValidateParam(FunctionCall call, Expression expr, ParameterInfo param)
+    void Validate(FunctionCall call, ArrayExpr expr, Type expectedType)
     {
-        Type paramType = param.ParameterType;
-        JsonValueKind exprType = expr.ValueType;
-        if (expr.ValueType == JsonValueKind.Undefined)
+        if (!expectedType.IsArray)
         {
-            // We don't validate this yet. Will happen at runtime
+            ProgramException.ThrowTypeMismatch(expr.Type, expectedType);
+        }
+        Type itemType = expectedType.GetElementType();
+        Expression[] arrayItems = expr.Value;
+        for (int i = 0; i < arrayItems.Length; ++i)
+        {
+            Validate(call, arrayItems[i], itemType);
+        }
+    }
+
+    void Validate(FunctionCall call, ResultReference resultRef, Type expectedType)
+    {
+        if (resultRef.Ref < 0 ||
+            resultRef.Ref >= _steps.Calls.Length)
+        {
+            ProgramException.ThrowInvalidResultRef(resultRef.Ref);
+        }
+        ApiMethod apiMethod = _typeInfo[_steps.Calls[resultRef.Ref].Name];
+        Type returnType = apiMethod.ReturnType.ParameterType;
+        if (returnType != expectedType)
+        {
+            ProgramException.ThrowTypeMismatch(call.Name, expectedType, returnType);
+        }
+    }
+
+    void Validate(FunctionCall call, Type expectedReturnType)
+    {
+        ApiMethod apiMethod = _typeInfo[call.Name];
+        Type returnType = apiMethod.ReturnType.ParameterType;
+        if (returnType != expectedReturnType)
+        {
+            ProgramException.ThrowTypeMismatch(call.Name, expectedReturnType, returnType);
+        }
+        //
+        // Recursively validate the arguments
+        //
+        Expression[] args = call.Args;
+        if (apiMethod.Params.Length == 1 &&
+            args.Length > 1)
+        {
+            Type paramType = apiMethod.Params[0].ParameterType;
+            if (!paramType.IsArray)
+            {
+                ProgramException.ThrowTypeMismatch(call.Name, paramType, expectedReturnType);
+            }
+            for (int i = 0; i < args.Length; ++i)
+            {
+                Validate(call, args[i], paramType.GetElementType());
+            }
             return;
         }
 
-        // Very basic validation
-        var (isType, expectedType) = exprType.IsType(paramType);
-        if (!isType)
+        if (args.Length != apiMethod.Params.Length)
         {
-            ProgramException.ThrowTypeMismatch(exprType, expectedType);
+            ProgramException.ThrowArgCountMismatch(call.Name, apiMethod.Params.Length, args.Length);
+        }
+        for (int i = 0; i < args.Length; ++i)
+        {
+            Validate(call, args[i], apiMethod.Params[i].ParameterType);
         }
     }
 }
