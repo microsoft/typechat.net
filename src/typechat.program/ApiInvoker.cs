@@ -26,6 +26,8 @@ public class ApiInvoker
         _apiImpl = apiImpl;
     }
 
+    public ApiTypeInfo TypeInfo => _typeInfo;
+
     public dynamic InvokeMethod(string name, dynamic[] args)
     {
         ApiMethod method = _typeInfo[name];
