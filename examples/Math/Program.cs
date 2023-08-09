@@ -8,7 +8,6 @@ namespace Math;
 public class Math : ConsoleApp
 {
     ProgramTranslator _translator;
-    ProgramInterpreter _interpreter;
     ApiCaller _apiCaller;
 
     Math()
