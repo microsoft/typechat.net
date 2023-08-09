@@ -35,7 +35,6 @@ public class TextApis : IStringAPI, ITimeAPI
                 sb.Append(kv.Value);
                 sb.Append("]");
             }
-
         }
         else
         {
@@ -43,5 +42,4 @@ public class TextApis : IStringAPI, ITimeAPI
         }
         return sb.ToString();
     }
-
 }

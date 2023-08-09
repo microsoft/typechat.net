@@ -106,7 +106,7 @@ public partial class ValueExpr : Expression
     {
         get
         {
-            switch(ValueType)
+            switch (ValueType)
             {
                 default:
                     break;

@@ -67,9 +67,20 @@ public class TestProgram : TypeChatTest
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
 
-        ApiInvoker api = new ApiInvoker(new MathAPI());
-        ProgramInterpreter interpreter = new ProgramInterpreter(api.InvokeMethod);
-        double result = interpreter.Run(program);
+        ApiCaller api = new ApiCaller(new MathAPI());
+        double result = api.RunProgram(program);
+        Assert.Equal(expectedResult, result);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetMathPrograms))]
+    public async Task TestInterpreter_MathAsync(string source, double expectedResult)
+    {
+        Program program = Json.Parse<Program>(source);
+        ValidateProgram(program);
+
+        ApiCaller api = new ApiCaller(new MathAPIAsync());
+        double result = (double)await api.RunProgramAsync(program);
         Assert.Equal(expectedResult, result);
     }
 
@@ -80,9 +91,8 @@ public class TestProgram : TypeChatTest
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
 
-        TextApis api = new TextApis();
-        ProgramInterpreter interpreter = new ProgramInterpreter(api);
-        string result = interpreter.Run(program);
+        ApiCaller api = new ApiCaller(new TextApis());
+        string result = api.RunProgram(program);
         Assert.Equal(expectedResult, result);
     }
 
@@ -100,7 +110,7 @@ public class TestProgram : TypeChatTest
         result = addMethod.Invoke(api, args);
         Assert.Equal(7, result);
         JsonNode node = result;
-        Assert.Equal(7, (double) node);
+        Assert.Equal(7, (double)node);
 
         args[0] = "Toby";
         Assert.Equal("Toby4", args[0] + args[1]);
@@ -149,13 +159,13 @@ public class TestProgram : TypeChatTest
     public async Task TestAsync()
     {
         MathAPIAsync mathAsync = new MathAPIAsync();
-        ApiInvoker invoker = new ApiInvoker(mathAsync);
-        double result = await invoker.InvokeMethodAsync("add", 4, 5);
+        ApiCaller invoker = new ApiCaller(mathAsync);
+        double result = await invoker.CallAsync("add", 4, 5);
         Assert.Equal(9, result);
 
         MathAPI api = new MathAPI();
-        invoker = new ApiInvoker(api);
-        result = await invoker.InvokeMethodAsync("add", result, 9);
+        invoker = new ApiCaller(api);
+        result = await invoker.CallAsync("add", result, 9);
         Assert.Equal(18, result);
     }
 

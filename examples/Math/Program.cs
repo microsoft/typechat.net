@@ -9,16 +9,15 @@ public class Math : ConsoleApp
 {
     ProgramTranslator _translator;
     ProgramInterpreter _interpreter;
-    ApiInvoker _api;
+    ApiCaller _apiCaller;
 
     Math()
     {
-        _api = new ApiInvoker(new MathAPI());
+        _apiCaller = new ApiCaller(new MathAPI());
         _translator = new ProgramTranslator(
             KernelFactory.CreateLanguageModel(Config.LoadOpenAI()),
             TypescriptExporter.GenerateAPI(typeof(IMathAPI))
         );
-        _interpreter = new ProgramInterpreter(_api.InvokeMethod);
         // Uncomment to see ALL raw messages to and from the AI
         // _translator.CompletionReceived += base.OnCompletionReceived;
     }
@@ -28,7 +27,7 @@ public class Math : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Program program = await _translator.TranslateAsync(input);
-        double result = _interpreter.Run(program);
+        double result = _apiCaller.RunProgram(program);
         Console.WriteLine(result);
     }
 

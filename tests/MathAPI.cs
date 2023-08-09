@@ -21,8 +21,40 @@ public class MathAPI : IMathAPI
 
 public class MathAPIAsync : IMathAPIAsync
 {
+    public MathAPIAsync() { }
+
     public Task<double> add(double x, double y)
     {
         return Task.FromResult(x + y);
+    }
+
+    public Task<double> mul(double x, double y)
+    {
+        return Task.FromResult(x * y);
+    }
+
+    public Task<double> div(double x, double y)
+    {
+        return Task.FromResult(x / y);
+    }
+
+    public Task<double> id(double x)
+    {
+        return Task.FromResult(x);
+    }
+
+    public Task<double> neg(double x)
+    {
+        return Task.FromResult(-x);
+    }
+
+    public Task<double> sub(double x, double y)
+    {
+        return Task.FromResult(x - y);
+    }
+
+    public Task<double> unknown(string text)
+    {
+        return Task.FromResult(double.NaN);
     }
 }

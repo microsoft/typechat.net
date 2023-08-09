@@ -3,32 +3,40 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Uses Reflection to call an API
-/// T must be an interface
+/// Runs programs against an API
+/// Relies on the DLR for type checking etc. 
 /// </summary>
-public class ApiInvoker
+public class ApiCaller
 {
     public static readonly object?[] EmptyArgs = Array.Empty<object?>();
 
     ApiTypeInfo _typeInfo;
     object _apiImpl;
+    ProgramInterpreter _interpreter;
 
-    public ApiInvoker(object apiImpl)
+    public ApiCaller(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
     {
     }
 
-    public ApiInvoker(ApiTypeInfo typeInfo, object apiImpl)
+    public ApiCaller(ApiTypeInfo typeInfo, object apiImpl)
     {
         ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
         ArgumentNullException.ThrowIfNull(apiImpl, nameof(apiImpl));
         _typeInfo = typeInfo;
         _apiImpl = apiImpl;
+        _interpreter = new ProgramInterpreter();
     }
 
     public ApiTypeInfo TypeInfo => _typeInfo;
 
-    public dynamic InvokeMethod(string name, params dynamic[] args)
+    /// <summary>
+    /// Call a method with name using the given args
+    /// </summary>
+    /// <param name="name">method name</param>
+    /// <param name="args">arguments for method</param>
+    /// <returns>Result, if any</returns>
+    public dynamic Call(string name, params dynamic[] args)
     {
         ApiMethod method = _typeInfo[name];
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
@@ -36,16 +44,43 @@ public class ApiInvoker
         return retVal;
     }
 
-    public async Task<dynamic> InvokeMethodAsync(string name, params dynamic[] args)
+    /// <summary>
+    /// Call a method with name using the given args
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="args"></param>
+    /// <returns>Result, if any</returns>
+    public async Task<dynamic> CallAsync(string name, params dynamic[] args)
     {
         ApiMethod method = _typeInfo[name];
         if (!method.ReturnType.IsAsync())
         {
-            return InvokeMethod(name, args);
+            return Call(name, args);
         }
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
         dynamic task = (Task)method.Method.Invoke(_apiImpl, callArgs);
         return await task;
+    }
+
+    /// <summary>
+    /// Run a program that targets this API
+    /// </summary>
+    /// <param name="program">Json program to run</param>
+    /// <returns>Program result</returns>
+    public dynamic RunProgram(Program program)
+    {
+        ArgumentNullException.ThrowIfNull(program, nameof(program));
+        return _interpreter.Run(program, Call);
+    }
+
+    /// <summary>
+    /// Run a program against this API asynchronously
+    /// </summary>
+    /// <param name="program"></param>
+    /// <returns></returns>
+    public Task<dynamic> RunProgramAsync(Program program)
+    {
+        return _interpreter.RunAsync(program, CallAsync);
     }
 
     dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)

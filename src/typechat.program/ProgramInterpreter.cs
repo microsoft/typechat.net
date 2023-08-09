@@ -3,43 +3,31 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Evaluates a JSON program using a simple interpreter.
-/// Function calls in the program are passed to the onCall callback function for validation and dispatch.
-/// NOTE: the interpreter is synchronous for simplicity, but will be made entirely async in an upcoming checkin. 
+/// Evaluates a JSON program using a simple lighweight interpreter.
+/// This class is stateful, and not thread safe For multiple threads, use multiple interpreters: interpreters are extremely lightweight
+/// Function calls in the program are passed to the handler callback function for dispatch.
 /// </summary>
 public class ProgramInterpreter
 {
     static readonly dynamic[] EmptyArray = new dynamic[0];
 
-    ApiInvoker _apiInvoker;
     List<dynamic> _results;
-    Func<string, dynamic[], dynamic> _handler;
+    Func<string, dynamic[], dynamic>? _callHandler;
+    Func<string, dynamic[], Task<dynamic>>? _callHandlerAsync;
 
-    public ProgramInterpreter(object apiImpl)
+    public ProgramInterpreter()
     {
-        _apiInvoker = new ApiInvoker(apiImpl);
-        _handler = _apiInvoker.InvokeMethod;
+        _results = new List<dynamic>();
     }
 
-    public ProgramInterpreter(ApiTypeInfo typeInfo, object apiImpl)
-    {
-        _apiInvoker = new ApiInvoker(typeInfo, apiImpl);
-        _handler = _apiInvoker.InvokeMethod;
-    }
-
-    public ProgramInterpreter(Func<string, dynamic[], dynamic> handler)
-    {
-        ArgumentNullException.ThrowIfNull(handler, nameof(handler));
-        _handler = handler;
-    }
-
-    public dynamic? Run(Program program)
+    public dynamic? Run(Program program, Func<string, dynamic[], dynamic> callHandler)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
+        ArgumentNullException.ThrowIfNull(callHandler, nameof(callHandler));
 
-        _results ??= new List<dynamic>();
-        _results.Clear();
+        Clear();
 
+        _callHandler = callHandler;
         Steps steps = program.Steps;
         for (int i = 0; i < steps.Calls.Length; ++i)
         {
@@ -47,14 +35,50 @@ public class ProgramInterpreter
             dynamic result = Eval(call);
             _results.Add(result);
         }
+        return GetResult();
+    }
+
+    public async Task<dynamic?> RunAsync(Program program, Func<string, dynamic[], Task<dynamic>> callHandlerAsync)
+    {
+        ArgumentNullException.ThrowIfNull(program, nameof(program));
+        ArgumentNullException.ThrowIfNull(callHandlerAsync, nameof(callHandlerAsync));
+
+        Clear();
+        _callHandlerAsync = callHandlerAsync;
+
+        Steps steps = program.Steps;
+        for (int i = 0; i < steps.Calls.Length; ++i)
+        {
+            FunctionCall call = steps.Calls[i];
+            dynamic result = await EvalAsync(call);
+            _results.Add(result);
+        }
+        return GetResult();
+    }
+
+    void Clear()
+    {
+        _results.Clear();
+        _callHandler = null;
+        _callHandlerAsync = null;
+    }
+
+    dynamic? GetResult()
+    {
         return (_results.Count > 0) ? _results[_results.Count - 1] : null;
     }
 
     dynamic Eval(FunctionCall call)
     {
         dynamic[] args = Eval(call.Args);
-        dynamic result = _handler(call.Name, args);
+        dynamic result = _callHandler(call.Name, args);
         return result;
+    }
+
+    async Task<dynamic> EvalAsync(FunctionCall call)
+    {
+        dynamic[] args = await EvalAsync(call.Args);
+        return await _callHandlerAsync(call.Name, args);
     }
 
     dynamic Eval(Expression expr)
@@ -83,6 +107,32 @@ public class ProgramInterpreter
         return null;
     }
 
+    async Task<dynamic> EvalAsync(Expression expr)
+    {
+        switch (expr)
+        {
+            default:
+                break;
+
+            case FunctionCall call:
+                return await EvalAsync(call);
+
+            case ResultReference result:
+                return Eval(result);
+
+            case ValueExpr value:
+                return Eval(value);
+
+            case ArrayExpr array:
+                return await EvalAsync(array);
+
+            case ObjectExpr obj:
+                return await EvalAsync(obj);
+        }
+
+        return null;
+    }
+
     dynamic[] Eval(Expression[] expressions)
     {
         if (expressions.Length == 0)
@@ -98,6 +148,20 @@ public class ProgramInterpreter
         return args;
     }
 
+    async Task<dynamic[]> EvalAsync(Expression[] expressions)
+    {
+        if (expressions.Length == 0)
+        {
+            return EmptyArray;
+        }
+
+        dynamic[] args = new dynamic[expressions.Length];
+        for (int i = 0; i < expressions.Length; ++i)
+        {
+            args[i] = await EvalAsync(expressions[i]);
+        }
+        return args;
+    }
 
     dynamic Eval(ValueExpr expr)
     {
@@ -114,30 +178,36 @@ public class ProgramInterpreter
 
     dynamic[] Eval(ArrayExpr expr)
     {
-        dynamic[] results = new dynamic[expr.Value.Length];
-        for (int i = 0; i < expr.Value.Length; ++i)
-        {
-            results[i] = Eval(expr.Value[i]);
-        }
-        return results;
+        return Eval(expr.Value);
+    }
+
+    Task<dynamic[]> EvalAsync(ArrayExpr expr)
+    {
+        return EvalAsync(expr.Value);
     }
 
     JsonObject Eval(ObjectExpr expr)
     {
-        return new JsonObject(
-            EvalObject(expr)
-        );
-    }
-
-    IEnumerable<KeyValuePair<string, JsonNode>> EvalObject(ObjectExpr expr)
-    {
+        JsonObject jsonObject = new JsonObject();
         foreach (var property in expr.Value)
         {
             dynamic result = Eval(property.Value);
             JsonNode node = result;
-            yield return new KeyValuePair<string, JsonNode>(property.Key, node);
+            jsonObject.Add(property.Key, node);
         }
+        return jsonObject;
+    }
 
+    async Task<JsonObject> EvalAsync(ObjectExpr expr)
+    {
+        JsonObject jsonObj = new JsonObject();
+        foreach (var property in expr.Value)
+        {
+            dynamic result = await EvalAsync(property.Value);
+            JsonNode node = result;
+            jsonObj.Add(property.Key, node);
+        }
+        return jsonObj;
     }
 
     dynamic Eval(ResultReference expr)
