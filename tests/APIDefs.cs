@@ -43,3 +43,8 @@ public interface ITimeAPI
     string time();
 }
 
+public interface IMathAPIAsync
+{
+    Task<double> add(double x, double y);
+}
+

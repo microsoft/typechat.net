@@ -145,6 +145,20 @@ public class TestProgram : TypeChatTest
         }
     }
 
+    [Fact]
+    public async Task TestAsync()
+    {
+        MathAPIAsync mathAsync = new MathAPIAsync();
+        ApiInvoker invoker = new ApiInvoker(mathAsync);
+        double result = await invoker.InvokeMethodAsync("add", 4, 5);
+        Assert.Equal(9, result);
+
+        MathAPI api = new MathAPI();
+        invoker = new ApiInvoker(api);
+        result = await invoker.InvokeMethodAsync("add", result, 9);
+        Assert.Equal(18, result);
+    }
+
     void ValidateCall(FunctionCall call)
     {
         Assert.NotNull(call.Name);

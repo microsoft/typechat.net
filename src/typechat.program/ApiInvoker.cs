@@ -28,12 +28,24 @@ public class ApiInvoker
 
     public ApiTypeInfo TypeInfo => _typeInfo;
 
-    public dynamic InvokeMethod(string name, dynamic[] args)
+    public dynamic InvokeMethod(string name, params dynamic[] args)
     {
         ApiMethod method = _typeInfo[name];
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
         dynamic retVal = method.Method.Invoke(_apiImpl, callArgs);
         return retVal;
+    }
+
+    public async Task<dynamic> InvokeMethodAsync(string name, params dynamic[] args)
+    {
+        ApiMethod method = _typeInfo[name];
+        if (!method.ReturnType.IsAsync())
+        {
+            return InvokeMethod(name, args);
+        }
+        dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
+        dynamic task = (Task)method.Method.Invoke(_apiImpl, callArgs);
+        return await task;
     }
 
     dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)

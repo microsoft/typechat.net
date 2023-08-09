@@ -18,3 +18,11 @@ public class MathAPI : IMathAPI
 
     public double unknown(string text) => double.NaN;
 }
+
+public class MathAPIAsync : IMathAPIAsync
+{
+    public Task<double> add(double x, double y)
+    {
+        return Task.FromResult(x + y);
+    }
+}

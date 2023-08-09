@@ -3,8 +3,8 @@ namespace Microsoft.TypeChat;
 
 internal static class TypeEx
 {
-    static (bool, JsonValueKind) Compare(JsonValueKind x, JsonValueKind expected)
+    internal static bool IsAsync(this ParameterInfo returnType)
     {
-        return (x == expected, expected);
+        return (returnType.ParameterType.IsAssignableTo(typeof(Task)));
     }
 }
