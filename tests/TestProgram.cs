@@ -102,10 +102,10 @@ public class TestProgram : ProgramTest
         JsonNode node = result;
         Assert.Equal(7, (double)node);
 
-        args[0] = "Toby";
-        Assert.Equal("Toby4", args[0] + args[1]);
-        args[1] = "_McDuff";
-        Assert.Equal("Toby_McDuff", args[0] + args[1]);
+        args[0] = "Mario";
+        Assert.Equal("Mario", args[0] + args[1]);
+        args[1] = "_Minderbinder";
+        Assert.Equal("Mario_Minderbinder", args[0] + args[1]);
     }
 
     [Theory]
@@ -144,24 +144,28 @@ public class TestProgram : ProgramTest
         {
             Name = new Name
             {
-                FirstName = "Toby",
-                LastName = "McDuff"
+                FirstName = "Mario",
+                LastName = "Minderbinder"
             },
             Location = new Location
             {
-                City = "Bellevue",
-                State = "WA",
-                Country = "USA"
+                City = "Barsoom",
+                State = "Helium",
+                Country = "Mars"
             },
-            Age = 4
+            Age = 24
         };
-        string json = Json.Stringify(person);
-        dynamic jsonObj = JsonObject.Parse(Json.Stringify(person));
-
-        string json2 = PersonAPI.Caller.Call("toJson", jsonObj);
+        dynamic personJson = JsonObject.Parse(Json.Stringify(person));
+        string json2 = PersonAPI.Caller.Call("toJson", personJson);
         Person person2 = JsonSerializer.Deserialize<Person>(json2) as Person;
-        dynamic result = PersonAPI.Caller.Call("hasName", person.Name, person2);
+        // This should throw a type mismatch because params are in wrong order
+        Assert.ThrowsAny<Exception>(() => PersonAPI.Caller.Call("isPerson", person, person2.Age, person2.Name));
+        dynamic result = PersonAPI.Caller.Call("isPerson", person, person2.Name, person2.Age);
         Assert.True(result);
+        person2.Name.LastName = "Yossarian";
+        result = PersonAPI.Caller.Call("isPerson", person, person2.Name, person2.Age);
+        Assert.False(result);
+
     }
 
     // TODO: more validation.. actually inspect the AST and compare against

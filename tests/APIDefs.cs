@@ -65,5 +65,5 @@ public interface ITimeAPI
 public interface IPersonApi
 {
     string toJson(Person person);
-    bool hasName(Name name, Person person);
+    bool isPerson(Person person, Name name, int age);
 }

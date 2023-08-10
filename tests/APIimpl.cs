@@ -66,12 +66,12 @@ public class PersonAPI : IPersonApi
     public static PersonAPI Default = new PersonAPI();
     public static ApiCaller Caller = new ApiCaller(Default);
 
-    public bool hasName(Name name, Person person)
+    public bool isPerson(Person person, Name name, int age)
     {
         return (person.Name.FirstName == name.FirstName &&
-               person.Name.LastName == name.LastName);
+               person.Name.LastName == name.LastName &&
+               person.Age == age);
     }
-
     public string toJson(Person person)
     {
         return Json.Stringify(person);
