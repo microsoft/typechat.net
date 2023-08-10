@@ -65,7 +65,8 @@ public class ProgramInterpreter
 
     dynamic? GetResult()
     {
-        return (_results.Count > 0) ? _results[_results.Count - 1] : null;
+        dynamic? result = (_results.Count > 0) ? _results[_results.Count - 1] : null;
+        return result;
     }
 
     dynamic Eval(FunctionCall call)

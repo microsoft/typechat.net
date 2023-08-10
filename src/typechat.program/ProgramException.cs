@@ -49,6 +49,10 @@ public class ProgramException : Exception
     {
         throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Function {name} not found");
     }
+    internal static void ThrowVariableNotFound(string name)
+    {
+        throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Variable {name} not found");
+    }
     internal static void ThrowArgCountMismatch(string name, int expectedCount, int actualCount)
     {
         throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, $"Function {name} Arg Count: Expected {expectedCount}, Got {actualCount}");

@@ -19,21 +19,23 @@ public struct ApiMethod
 
 public class ApiTypeInfo
 {
+    Type _type;
     Dictionary<string, ApiMethod> _typeInfo;
 
-    public ApiTypeInfo(Type type)
-        : this(GetPublicMethods(type))
+    public ApiTypeInfo(Type type, MethodInfo[]? apiMethods = null)
     {
-    }
+        ArgumentNullException.ThrowIfNull(type, nameof(type));
 
-    public ApiTypeInfo(MethodInfo[]? apiMethods = null)
-    {
+        _type = type;
+        apiMethods ??= GetPublicMethods(type);
         _typeInfo = new Dictionary<string, ApiMethod>();
         if (apiMethods != null)
         {
             Add(apiMethods);
         }
     }
+
+    public Type Type => _type;
 
     public ApiMethod this[string functionName]
     {

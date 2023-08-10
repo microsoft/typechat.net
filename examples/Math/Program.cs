@@ -17,6 +17,7 @@ public class Math : ConsoleApp
             KernelFactory.CreateLanguageModel(Config.LoadOpenAI()),
             TypescriptExporter.GenerateAPI(typeof(IMathAPI))
         );
+        _apiCaller.Calling += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
         // _translator.CompletionReceived += base.OnCompletionReceived;
     }
@@ -27,7 +28,12 @@ public class Math : ConsoleApp
     {
         Program program = await _translator.TranslateAsync(input);
         double result = _apiCaller.RunProgram(program);
-        Console.WriteLine(result);
+        Console.WriteLine($"Result: {result}");
+    }
+
+    private void DisplayCall(string functionName, dynamic[] args)
+    {
+        Console.WriteLine(ApiCaller.CallToString(functionName, args));
     }
 
     public static async Task<int> Main(string[] args)

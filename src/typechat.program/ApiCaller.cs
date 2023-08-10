@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Text;
+
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -30,6 +32,8 @@ public class ApiCaller
 
     public ApiTypeInfo TypeInfo => _typeInfo;
 
+    public event Action<string, dynamic[]> Calling;
+
     /// <summary>
     /// Call a method with name using the given args
     /// </summary>
@@ -39,6 +43,8 @@ public class ApiCaller
     public dynamic Call(string name, params dynamic[] args)
     {
         ApiMethod method = _typeInfo[name];
+
+        NotifyCalling(name, args);
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
         dynamic retVal = method.Method.Invoke(_apiImpl, callArgs);
         return retVal;
@@ -57,6 +63,9 @@ public class ApiCaller
         {
             return Call(name, args);
         }
+
+        NotifyCalling(name, args);
+
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
         dynamic task = (Task)method.Method.Invoke(_apiImpl, callArgs);
         return await task;
@@ -83,6 +92,19 @@ public class ApiCaller
         return _interpreter.RunAsync(program, CallAsync);
     }
 
+    public static string CallToString(string functionName, dynamic[] args)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.Append($"{functionName}(");
+        for (int i = 0; i < args.Length; ++i)
+        {
+            if (i > 0) { sb.Append(", "); }
+            sb.Append(args[i]);
+        }
+        sb.Append(")");
+        return sb.ToString();
+    }
+
     dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
         if (jsonArgs.Length != paramsInfo.Length)
@@ -107,5 +129,17 @@ public class ApiCaller
         dynamic[] args = new dynamic[1];
         args[0] = jsonArgs;
         return args;
+    }
+
+    void NotifyCalling(string name, dynamic[] args)
+    {
+        if (Calling != null)
+        {
+            try
+            {
+                Calling(name, args);
+            }
+            catch { }
+        }
     }
 }

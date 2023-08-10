@@ -2,6 +2,8 @@
 
 using System.Reflection;
 using System.Text.Json;
+using System.Linq.Expressions;
+using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Microsoft.TypeChat.Tests;
 
@@ -123,10 +125,8 @@ public class TestProgram : TypeChatTest
     public void TestProgramValidator_String(string source, string expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        ValidateProgram(program);
-
         ProgramValidator validator = new ProgramValidator(typeof(IStringAPI));
-        validator.Validate(program.Steps);
+        validator.Validate(program);
     }
 
     [Theory]
@@ -134,10 +134,19 @@ public class TestProgram : TypeChatTest
     public void TestProgramValidator_Math(string source, string expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        ValidateProgram(program);
-
         ProgramValidator validator = new ProgramValidator(typeof(IMathAPI));
-        validator.Validate(program.Steps);
+        validator.Validate(program);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetMathPrograms))]
+    public void TestProgramCompiler_Math(string source, string expectedResult)
+    {
+        Program program = Json.Parse<Program>(source);
+        ProgramCompiler compiler = new ProgramCompiler(typeof(IMathAPI));
+        MathAPI api = new MathAPI();
+        BlockExpression block = compiler.Compile(api, program) as BlockExpression;
+        Assert.True(block.Expressions.Count > 0);
     }
 
     // TODO: more validation.. actually inspect the AST and compare against

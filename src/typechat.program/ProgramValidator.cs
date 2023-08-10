@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Reflection;
-using System.Text.Json;
-
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// (Experimental) Lightweight program validator
+/// Traverses the supplied program and validates that it is Type Safe
+/// ObjectExpr is currently not supported
+/// </summary>
 public class ProgramValidator
 {
     ApiTypeInfo _typeInfo;
@@ -21,13 +23,25 @@ public class ProgramValidator
         _typeInfo = typeInfo;
     }
 
-    public void Validate(Steps steps)
+    public void Validate(Program program)
     {
-        ArgumentNullException.ThrowIfNull(steps, nameof(steps));
+        ArgumentNullException.ThrowIfNull(program, nameof(program));
+
+        Clear();
+        Validate(program.Steps);
+    }
+
+    void Clear()
+    {
+        _steps = null;
+    }
+
+    void Validate(Steps steps)
+    {
         _steps = steps;
-        for (int i = 0; i < steps.Calls.Length; ++i)
+        for (int i = 0; i < _steps.Calls.Length; ++i)
         {
-            FunctionCall call = steps.Calls[i];
+            FunctionCall call = _steps.Calls[i];
             ApiMethod method = _typeInfo[call.Name];
             Validate(call, method.ReturnType.ParameterType);
         }
@@ -35,22 +49,20 @@ public class ProgramValidator
 
     void Validate(FunctionCall call, Expression expr, Type expectedType)
     {
-        if (expr is FunctionCall funcExpr)
+        switch (expr)
         {
-            Validate(funcExpr, expectedType);
-            return;
+            default:
+                break;
+            case FunctionCall funcExpr:
+                Validate(funcExpr, expectedType);
+                return;
+            case ArrayExpr arrayExpr:
+                Validate(call, arrayExpr, expectedType);
+                return;
+            case ResultReference resultRef:
+                Validate(call, resultRef, expectedType);
+                return;
         }
-        if (expr is ArrayExpr arrayExpr)
-        {
-            Validate(call, arrayExpr, expectedType);
-            return;
-        }
-        if (expr is ResultReference resultRef)
-        {
-            Validate(call, resultRef, expectedType);
-            return;
-        }
-        
         if (expr.Type != expectedType && expectedType != typeof(object))
         {
             ProgramException.ThrowTypeMismatch(call.Name, expectedType, expr.Type);
