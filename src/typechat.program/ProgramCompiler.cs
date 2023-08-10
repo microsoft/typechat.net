@@ -30,7 +30,7 @@ public class ProgramCompiler
         _block = new List<LinqExpression>();
     }
 
-    public LinqExpression Compile(object api, Program program)
+    public System.Linq.Expressions.Expression Compile(object api, Program program)
     {
         ArgumentNullException.ThrowIfNull(api, nameof(api));
         ArgumentNullException.ThrowIfNull(program, nameof(program));
@@ -129,6 +129,10 @@ public class ProgramCompiler
         {
             default:
                 throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{expr.Value.ValueKind}");
+            case JsonValueKind.True:
+                return LinqExpression.Constant(true);
+            case JsonValueKind.False:
+                return LinqExpression.Constant(false);
             case JsonValueKind.String:
                 return LinqExpression.Constant(expr.Value.GetString());
             case JsonValueKind.Number:

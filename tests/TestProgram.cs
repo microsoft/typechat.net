@@ -7,20 +7,8 @@ using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Microsoft.TypeChat.Tests;
 
-public class TestProgram : TypeChatTest
+public class TestProgram : ProgramTest
 {
-    static JsonDocument LoadMathPrograms()
-    {
-        string json = File.ReadAllText("mathPrograms.json");
-        return Json.Parse<JsonDocument>(json);
-    }
-
-    static JsonDocument LoadStringPrograms()
-    {
-        string json = File.ReadAllText("stringPrograms.json");
-        return Json.Parse<JsonDocument>(json);
-    }
-
     //[Fact]
     public void TestSchema()
     {
@@ -69,7 +57,7 @@ public class TestProgram : TypeChatTest
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
 
-        ApiCaller api = new ApiCaller(new MathAPI());
+        ApiCaller api = new ApiCaller(new APIimpl());
         double result = api.RunProgram(program);
         Assert.Equal(expectedResult, result);
     }
@@ -81,7 +69,7 @@ public class TestProgram : TypeChatTest
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
 
-        ApiCaller api = new ApiCaller(new MathAPIAsync());
+        ApiCaller api = new ApiCaller(MathAPIAsync.Default);
         double result = (double)await api.RunProgramAsync(program);
         Assert.Equal(expectedResult, result);
     }
@@ -107,7 +95,7 @@ public class TestProgram : TypeChatTest
         dynamic result = args[0] + args[1];
         Assert.Equal(7, result);
 
-        MathAPI api = new MathAPI();
+        APIimpl api = new APIimpl();
         MethodInfo addMethod = GetMethod(api.GetType(), "add");
         result = addMethod.Invoke(api, args);
         Assert.Equal(7, result);
@@ -144,9 +132,36 @@ public class TestProgram : TypeChatTest
     {
         Program program = Json.Parse<Program>(source);
         ProgramCompiler compiler = new ProgramCompiler(typeof(IMathAPI));
-        MathAPI api = new MathAPI();
+        APIimpl api = new APIimpl();
         BlockExpression block = compiler.Compile(api, program) as BlockExpression;
         Assert.True(block.Expressions.Count > 0);
+    }
+
+    [Fact]
+    public void TestJsonObject()
+    {
+        Person person = new Person
+        {
+            Name = new Name
+            {
+                FirstName = "Toby",
+                LastName = "McDuff"
+            },
+            Location = new Location
+            {
+                City = "Bellevue",
+                State = "WA",
+                Country = "USA"
+            },
+            Age = 4
+        };
+        string json = Json.Stringify(person);
+        dynamic jsonObj = JsonObject.Parse(Json.Stringify(person));
+
+        string json2 = PersonAPI.Caller.Call("toJson", jsonObj);
+        Person person2 = JsonSerializer.Deserialize<Person>(json2) as Person;
+        dynamic result = PersonAPI.Caller.Call("hasName", person.Name, person2);
+        Assert.True(result);
     }
 
     // TODO: more validation.. actually inspect the AST and compare against
@@ -167,12 +182,12 @@ public class TestProgram : TypeChatTest
     [Fact]
     public async Task TestAsync()
     {
-        MathAPIAsync mathAsync = new MathAPIAsync();
+        MathAPIAsync mathAsync = MathAPIAsync.Default;
         ApiCaller invoker = new ApiCaller(mathAsync);
         double result = await invoker.CallAsync("add", 4, 5);
         Assert.Equal(9, result);
 
-        MathAPI api = new MathAPI();
+        APIimpl api = new APIimpl();
         invoker = new ApiCaller(api);
         result = await invoker.CallAsync("add", result, 9);
         Assert.Equal(18, result);
@@ -182,34 +197,5 @@ public class TestProgram : TypeChatTest
     {
         Assert.NotNull(call.Name);
         Assert.NotEmpty(call.Name);
-    }
-
-    public static IEnumerable<object[]> GetMathPrograms()
-    {
-        JsonDocument doc = LoadMathPrograms();
-        return GetPrograms(doc);
-    }
-
-    public static IEnumerable<object[]> GetStringPrograms()
-    {
-        JsonDocument doc = LoadStringPrograms();
-        return GetPrograms(doc);
-    }
-
-    static IEnumerable<object[]> GetPrograms(params JsonDocument[] docs)
-    {
-        foreach (var doc in docs)
-        {
-            foreach (var obj in doc.RootElement.EnumerateObject())
-            {
-                var valueProp = obj.Value.GetProperty("result");
-                object result = valueProp.ValueKind == JsonValueKind.Number ?
-                                valueProp.GetDouble() :
-                                valueProp.GetString();
-
-                var program = obj.Value.GetProperty("source");
-                yield return new object[] { program.ToString(), result };
-            }
-        }
     }
 }

@@ -170,6 +170,10 @@ public class ProgramInterpreter
         {
             default:
                 throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{expr.Value.ValueKind}");
+            case JsonValueKind.True:
+                return true;
+            case JsonValueKind.False:
+                return false;
             case JsonValueKind.String:
                 return expr.Value.GetString();
             case JsonValueKind.Number:

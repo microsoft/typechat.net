@@ -107,6 +107,9 @@ public class ApiCaller
 
     dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
+        // If any of input paramters are JsonObjects, deserialize them
+        ConvertJsonObjects(jsonArgs, paramsInfo);
+
         if (jsonArgs.Length != paramsInfo.Length)
         {
             return CreateCallArgsArray(name, jsonArgs, paramsInfo);
@@ -129,6 +132,21 @@ public class ApiCaller
         dynamic[] args = new dynamic[1];
         args[0] = jsonArgs;
         return args;
+    }
+
+    dynamic[] ConvertJsonObjects(dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
+    {
+        Type jsonObjType = typeof(JsonObject);
+        for (int i = 0; i < jsonArgs.Length; ++i)
+        {
+            JsonObject jsonObj = jsonArgs[i] as JsonObject;
+            if (jsonObj != null && paramsInfo[i].ParameterType != jsonObjType)
+            {
+                object typedObj = jsonObj.Deserialize(paramsInfo[i].ParameterType);
+                jsonArgs[i] = typedObj;
+            }
+        }
+        return jsonArgs;
     }
 
     void NotifyCalling(string name, dynamic[] args)
