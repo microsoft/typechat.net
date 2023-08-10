@@ -20,7 +20,8 @@ public struct ApiMethod
 public class ApiTypeInfo
 {
     Type _type;
-    Dictionary<string, ApiMethod> _typeInfo;
+    List<MethodInfo> _methods;
+    List<ApiMethod> _typeInfo;
 
     public ApiTypeInfo(Type type, MethodInfo[]? apiMethods = null)
     {
@@ -28,7 +29,7 @@ public class ApiTypeInfo
 
         _type = type;
         apiMethods ??= GetPublicMethods(type);
-        _typeInfo = new Dictionary<string, ApiMethod>();
+        _typeInfo = new List<ApiMethod>();
         if (apiMethods != null)
         {
             Add(apiMethods);
@@ -52,7 +53,7 @@ public class ApiTypeInfo
 
     public void Add(MethodInfo method)
     {
-        _typeInfo.Add(method.Name, new ApiMethod(method));
+        _typeInfo.Add(new ApiMethod(method));
     }
 
     public void Add(MethodInfo[] methods)
@@ -66,9 +67,12 @@ public class ApiTypeInfo
     public ApiMethod? Get(string name)
     {
         ArgumentNullException.ThrowIfNullOrEmpty(name, nameof(name));
-        if (_typeInfo.TryGetValue(name, out ApiMethod method))
+        foreach (var typeInfo in _typeInfo)
         {
-            return method;
+            if (typeInfo.Method.Name == name)
+            {
+                return typeInfo;
+            }
         }
         return null;
     }

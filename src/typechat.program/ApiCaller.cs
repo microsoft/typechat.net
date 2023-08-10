@@ -107,9 +107,6 @@ public class ApiCaller
 
     dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
-        // If any of input paramters are JsonObjects, deserialize them
-        ConvertJsonObjects(jsonArgs, paramsInfo);
-
         if (jsonArgs.Length != paramsInfo.Length)
         {
             return CreateCallArgsArray(name, jsonArgs, paramsInfo);
@@ -118,6 +115,8 @@ public class ApiCaller
         {
             return EmptyArgs;
         }
+        // If any of input paramters are JsonObjects, deserialize them
+        ConvertJsonObjects(jsonArgs, paramsInfo);
         return jsonArgs;
     }
 
