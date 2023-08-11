@@ -84,7 +84,7 @@ public class ProgramCompiler
         return LinqExpression.Assign(resultVar, callExpr);
     }
 
-    LinqExpression Compile(FunctionCall call)
+    MethodCallExpression Compile(FunctionCall call)
     {
         return Compile(call, _apiTypeInfo[call.Name]);
     }
@@ -158,7 +158,7 @@ public class ProgramCompiler
         return LinqExpression.NewArrayInit(typeof(object), elements);
     }
 
-    LinqExpression Compile(ResultReference refExpr)
+    ParameterExpression Compile(ResultReference refExpr)
     {
         return GetVariable(ResultVarName(refExpr.Ref));
     }
