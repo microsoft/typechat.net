@@ -1,4 +1,18 @@
 ﻿{
+  "program0": {
+    "result": 15,
+    "source": {
+      "@steps": [
+        {
+          "@func": "mul",
+          "@args": [
+            3,
+            5
+          ]
+        }
+      ]
+    }
+  },
   "program1": {
     "result": 43,
     "source": {

@@ -42,8 +42,7 @@ public class ApiCaller
     /// <returns>Result, if any</returns>
     public dynamic Call(string name, params dynamic[] args)
     {
-        ApiMethod method = _typeInfo[name];
-
+        var method = BindMethod(name, args);
         NotifyCalling(name, args);
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
         dynamic retVal = method.Method.Invoke(_apiImpl, callArgs);
@@ -58,7 +57,7 @@ public class ApiCaller
     /// <returns>Result, if any</returns>
     public async Task<dynamic> CallAsync(string name, params dynamic[] args)
     {
-        ApiMethod method = _typeInfo[name];
+        ApiMethod method = BindMethod(name, args);
         if (!method.ReturnType.IsAsync())
         {
             return Call(name, args);
@@ -158,5 +157,10 @@ public class ApiCaller
             }
             catch { }
         }
+    }
+
+    protected virtual ApiMethod BindMethod(string name, dynamic[] args)
+    {
+        return _typeInfo[name];
     }
 }

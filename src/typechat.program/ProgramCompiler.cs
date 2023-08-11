@@ -15,7 +15,8 @@ public class ProgramCompiler
     ApiTypeInfo _apiTypeInfo;
     ConstantExpression _apiImpl;
     Dictionary<string, ParameterExpression> _variables;
-    List<LinqExpression> _block;
+    List<ParameterExpression> _variableBlock;
+    List<LinqExpression> _codeBlock;
 
     public ProgramCompiler(Type type)
         : this(new ApiTypeInfo(type))
@@ -27,40 +28,51 @@ public class ProgramCompiler
         ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
         _apiTypeInfo = typeInfo;
         _variables = new Dictionary<string, ParameterExpression>();
-        _block = new List<LinqExpression>();
+        _variableBlock = new List<ParameterExpression>();
+        _codeBlock = new List<LinqExpression>();
     }
 
-    public System.Linq.Expressions.Expression Compile(object api, Program program)
+    /// <summary>
+    /// Return a Lambda Expression representation for the program to run against
+    /// the given implementation of an api
+    /// </summary>
+    /// <param name="apiImpl"></param>
+    /// <param name="program"></param>
+    /// <returns></returns>
+    public LambdaExpression CompileToExpressionTree(Program program, object apiImpl)
     {
-        ArgumentNullException.ThrowIfNull(api, nameof(api));
+        ArgumentNullException.ThrowIfNull(apiImpl, nameof(apiImpl));
         ArgumentNullException.ThrowIfNull(program, nameof(program));
-
-        if (!_apiTypeInfo.Type.IsAssignableFrom(api.GetType()))
-        {
-            throw new ArgumentException($"Api must be of type {_apiTypeInfo.Type}");
-        }
 
         Clear();
 
-        _apiImpl = LinqExpression.Constant(api);
-        _block.Add(_apiImpl);
-        _block.AddRange(CompileSteps(program.Steps));
-        return LinqExpression.Block(_block);
+        _apiImpl = LinqExpression.Constant(apiImpl);
+        CompileSteps(program.Steps);
+        BlockExpression block = LinqExpression.Block(_variableBlock, _codeBlock);
+        return LinqExpression.Lambda(block);
+    }
+
+    public Delegate Compile(Program program, object apiImpl)
+    {
+        LambdaExpression lambda = CompileToExpressionTree(program, apiImpl);
+        return lambda.Compile();
     }
 
     void Clear()
     {
         _apiImpl = null;
         _variables.Clear();
-        _block.Clear();
+        _variableBlock.Clear();
+        _codeBlock.Clear();
     }
 
-    IEnumerable<LinqExpression> CompileSteps(Steps steps)
+    void CompileSteps(Steps steps)
     {
         FunctionCall[] calls = steps.Calls;
         for (int i = 0; i < calls.Length; ++i)
         {
-            yield return CompileStep(calls[i], i);
+            LinqExpression expr = CompileStep(calls[i], i);
+            _codeBlock.Add(expr);
         }
     }
 
@@ -162,6 +174,7 @@ public class ProgramCompiler
 
         var variable = LinqExpression.Variable(type, name);
         _variables.Add(name, variable);
+        _variableBlock.Add(variable);
         return variable;
     }
 

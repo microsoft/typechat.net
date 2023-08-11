@@ -19,24 +19,26 @@ public struct ApiMethod
 
 public class ApiTypeInfo
 {
-    Type _type;
     List<MethodInfo> _methods;
     List<ApiMethod> _typeInfo;
 
-    public ApiTypeInfo(Type type, MethodInfo[]? apiMethods = null)
+    public ApiTypeInfo(Type type)
+        : this(GetPublicMethods(type))
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
-
-        _type = type;
-        apiMethods ??= GetPublicMethods(type);
+    }
+    /// <summary>
+    /// Api type information
+    /// </summary>
+    /// <param name="type">Api type</param>
+    /// <param name="apiMethods">Set of methods for your API</param>
+    public ApiTypeInfo(MethodInfo[]? apiMethods = null)
+    {
         _typeInfo = new List<ApiMethod>();
         if (apiMethods != null)
         {
             Add(apiMethods);
         }
     }
-
-    public Type Type => _type;
 
     public ApiMethod this[string functionName]
     {
