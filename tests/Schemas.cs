@@ -214,3 +214,24 @@ public static class TestVocabs
         return new VocabType(Names.Creamers, vocab);
     }
 }
+
+public class Person
+{
+    public Name Name { get; set; }
+    public int Age { get; set; }
+
+    public Location Location { get; set; }
+}
+
+public class Name
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+}
+
+public class Location
+{
+    public string City { get; set; }
+    public string State { get; set; }
+    public string Country { get; set; }
+}

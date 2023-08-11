@@ -2,23 +2,13 @@
 
 using System.Reflection;
 using System.Text.Json;
+using System.Linq.Expressions;
+using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Microsoft.TypeChat.Tests;
 
-public class TestProgram : TypeChatTest
+public class TestProgram : ProgramTest
 {
-    static JsonDocument LoadMathPrograms()
-    {
-        string json = File.ReadAllText("mathPrograms.json");
-        return Json.Parse<JsonDocument>(json);
-    }
-
-    static JsonDocument LoadStringPrograms()
-    {
-        string json = File.ReadAllText("stringPrograms.json");
-        return Json.Parse<JsonDocument>(json);
-    }
-
     //[Fact]
     public void TestSchema()
     {
@@ -79,7 +69,7 @@ public class TestProgram : TypeChatTest
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
 
-        ApiCaller api = new ApiCaller(new MathAPIAsync());
+        ApiCaller api = new ApiCaller(MathAPIAsync.Default);
         double result = (double)await api.RunProgramAsync(program);
         Assert.Equal(expectedResult, result);
     }
@@ -112,10 +102,10 @@ public class TestProgram : TypeChatTest
         JsonNode node = result;
         Assert.Equal(7, (double)node);
 
-        args[0] = "Toby";
-        Assert.Equal("Toby4", args[0] + args[1]);
-        args[1] = "_McDuff";
-        Assert.Equal("Toby_McDuff", args[0] + args[1]);
+        args[0] = "Mario";
+        Assert.Equal("Mario4", args[0] + args[1]);
+        args[1] = "_Minderbinder";
+        Assert.Equal("Mario_Minderbinder", args[0] + args[1]);
     }
 
     [Theory]
@@ -123,10 +113,8 @@ public class TestProgram : TypeChatTest
     public void TestProgramValidator_String(string source, string expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        ValidateProgram(program);
-
         ProgramValidator validator = new ProgramValidator(typeof(IStringAPI));
-        validator.Validate(program.Steps);
+        validator.Validate(program);
     }
 
     [Theory]
@@ -134,10 +122,8 @@ public class TestProgram : TypeChatTest
     public void TestProgramValidator_Math(string source, string expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        ValidateProgram(program);
-
         ProgramValidator validator = new ProgramValidator(typeof(IMathAPI));
-        validator.Validate(program.Steps);
+        validator.Validate(program);
     }
 
     // TODO: more validation.. actually inspect the AST and compare against
@@ -158,7 +144,7 @@ public class TestProgram : TypeChatTest
     [Fact]
     public async Task TestAsync()
     {
-        MathAPIAsync mathAsync = new MathAPIAsync();
+        MathAPIAsync mathAsync = MathAPIAsync.Default;
         ApiCaller invoker = new ApiCaller(mathAsync);
         double result = await invoker.CallAsync("add", 4, 5);
         Assert.Equal(9, result);
@@ -173,34 +159,5 @@ public class TestProgram : TypeChatTest
     {
         Assert.NotNull(call.Name);
         Assert.NotEmpty(call.Name);
-    }
-
-    public static IEnumerable<object[]> GetMathPrograms()
-    {
-        JsonDocument doc = LoadMathPrograms();
-        return GetPrograms(doc);
-    }
-
-    public static IEnumerable<object[]> GetStringPrograms()
-    {
-        JsonDocument doc = LoadStringPrograms();
-        return GetPrograms(doc);
-    }
-
-    static IEnumerable<object[]> GetPrograms(params JsonDocument[] docs)
-    {
-        foreach (var doc in docs)
-        {
-            foreach (var obj in doc.RootElement.EnumerateObject())
-            {
-                var valueProp = obj.Value.GetProperty("result");
-                object result = valueProp.ValueKind == JsonValueKind.Number ?
-                                valueProp.GetDouble() :
-                                valueProp.GetString();
-
-                var program = obj.Value.GetProperty("source");
-                yield return new object[] { program.ToString(), result };
-            }
-        }
     }
 }

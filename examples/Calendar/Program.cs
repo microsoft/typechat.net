@@ -32,7 +32,7 @@ public class CalendarApp : ConsoleApp
     bool PrintUnknown(CalendarActions calendarActions)
     {
         int countUnknown = 0;
-        foreach(var action in calendarActions.Actions)
+        foreach (var action in calendarActions.Actions)
         {
             if (action is UnknownAction unknown)
             {

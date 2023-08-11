@@ -4,6 +4,8 @@ namespace Microsoft.TypeChat.Tests;
 
 public class MathAPI : IMathAPI
 {
+    public static MathAPI Default = new MathAPI();
+
     public double add(double x, double y) => x + y;
 
     public double sub(double x, double y) => x - y;
@@ -21,6 +23,8 @@ public class MathAPI : IMathAPI
 
 public class MathAPIAsync : IMathAPIAsync
 {
+    public static MathAPIAsync Default = new MathAPIAsync();
+
     public MathAPIAsync() { }
 
     public Task<double> add(double x, double y)
@@ -56,5 +60,22 @@ public class MathAPIAsync : IMathAPIAsync
     public Task<double> unknown(string text)
     {
         return Task.FromResult(double.NaN);
+    }
+}
+
+public class PersonAPI : IPersonApi
+{
+    public static PersonAPI Default = new PersonAPI();
+    public static ApiCaller Caller = new ApiCaller(Default);
+
+    public bool isPerson(Person person, Name name, int age)
+    {
+        return (person.Name.FirstName == name.FirstName &&
+               person.Name.LastName == name.LastName &&
+               person.Age == age);
+    }
+    public string toJson(Person person)
+    {
+        return Json.Stringify(person);
     }
 }

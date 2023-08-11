@@ -65,7 +65,8 @@ public class ProgramInterpreter
 
     dynamic? GetResult()
     {
-        return (_results.Count > 0) ? _results[_results.Count - 1] : null;
+        dynamic? result = (_results.Count > 0) ? _results[_results.Count - 1] : null;
+        return result;
     }
 
     dynamic Eval(FunctionCall call)
@@ -169,6 +170,10 @@ public class ProgramInterpreter
         {
             default:
                 throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{expr.Value.ValueKind}");
+            case JsonValueKind.True:
+                return true;
+            case JsonValueKind.False:
+                return false;
             case JsonValueKind.String:
                 return expr.Value.GetString();
             case JsonValueKind.Number:

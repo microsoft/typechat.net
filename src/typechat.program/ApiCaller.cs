@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Text;
+
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -30,6 +32,8 @@ public class ApiCaller
 
     public ApiTypeInfo TypeInfo => _typeInfo;
 
+    public event Action<string, dynamic[]> Calling;
+
     /// <summary>
     /// Call a method with name using the given args
     /// </summary>
@@ -38,7 +42,8 @@ public class ApiCaller
     /// <returns>Result, if any</returns>
     public dynamic Call(string name, params dynamic[] args)
     {
-        ApiMethod method = _typeInfo[name];
+        var method = BindMethod(name, args);
+        NotifyCalling(name, args);
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
         dynamic retVal = method.Method.Invoke(_apiImpl, callArgs);
         return retVal;
@@ -52,11 +57,14 @@ public class ApiCaller
     /// <returns>Result, if any</returns>
     public async Task<dynamic> CallAsync(string name, params dynamic[] args)
     {
-        ApiMethod method = _typeInfo[name];
+        ApiMethod method = BindMethod(name, args);
         if (!method.ReturnType.IsAsync())
         {
             return Call(name, args);
         }
+
+        NotifyCalling(name, args);
+
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
         dynamic task = (Task)method.Method.Invoke(_apiImpl, callArgs);
         return await task;
@@ -83,6 +91,19 @@ public class ApiCaller
         return _interpreter.RunAsync(program, CallAsync);
     }
 
+    public static string CallToString(string functionName, dynamic[] args)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.Append($"{functionName}(");
+        for (int i = 0; i < args.Length; ++i)
+        {
+            if (i > 0) { sb.Append(", "); }
+            sb.Append(args[i]);
+        }
+        sb.Append(")");
+        return sb.ToString();
+    }
+
     dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
         if (jsonArgs.Length != paramsInfo.Length)
@@ -93,6 +114,8 @@ public class ApiCaller
         {
             return EmptyArgs;
         }
+        // If any of input paramters are JsonObjects, deserialize them
+        ConvertJsonObjects(jsonArgs, paramsInfo);
         return jsonArgs;
     }
 
@@ -107,5 +130,37 @@ public class ApiCaller
         dynamic[] args = new dynamic[1];
         args[0] = jsonArgs;
         return args;
+    }
+
+    dynamic[] ConvertJsonObjects(dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
+    {
+        Type jsonObjType = typeof(JsonObject);
+        for (int i = 0; i < jsonArgs.Length; ++i)
+        {
+            JsonObject jsonObj = jsonArgs[i] as JsonObject;
+            if (jsonObj != null && paramsInfo[i].ParameterType != jsonObjType)
+            {
+                object typedObj = jsonObj.Deserialize(paramsInfo[i].ParameterType);
+                jsonArgs[i] = typedObj;
+            }
+        }
+        return jsonArgs;
+    }
+
+    void NotifyCalling(string name, dynamic[] args)
+    {
+        if (Calling != null)
+        {
+            try
+            {
+                Calling(name, args);
+            }
+            catch { }
+        }
+    }
+
+    protected virtual ApiMethod BindMethod(string name, dynamic[] args)
+    {
+        return _typeInfo[name];
     }
 }
