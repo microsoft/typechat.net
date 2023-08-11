@@ -10,12 +10,11 @@ public class TestProgramCompiler : ProgramTest
 {
     [Theory]
     [MemberData(nameof(GetMathPrograms))]
-    public void TestProgramCompiler_Math(string source, double expectedResult)
+    public void Test_Math(string source, double expectedResult)
     {
         Program program = Json.Parse<Program>(source);
         ProgramCompiler compiler = new ProgramCompiler(typeof(IMathAPI));
-        APIimpl api = new APIimpl();
-        LambdaExpression lambda = compiler.CompileToExpressionTree(program, api);
+        LambdaExpression lambda = compiler.CompileToExpressionTree(program, MathAPI.Default);
         Assert.NotNull(lambda.Body);
 
         BlockExpression block = lambda.Body as BlockExpression;
@@ -24,6 +23,15 @@ public class TestProgramCompiler : ProgramTest
         Delegate compiledProgram = lambda.Compile();
         var result = (double) compiledProgram.DynamicInvoke();
         Assert.Equal(expectedResult, result);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetMathProgramsFail))]
+    public void TestMath_CompileFail(string source, double expectedResults)
+    {
+        Program program = Json.Parse<Program>(source);
+        ProgramCompiler compiler = new ProgramCompiler(typeof(IMathAPI));
+        Assert.ThrowsAny<Exception>(() => compiler.CompileToExpressionTree(program, MathAPI.Default));
     }
 
     [Fact]

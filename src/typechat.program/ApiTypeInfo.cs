@@ -19,7 +19,6 @@ public struct ApiMethod
 
 public class ApiTypeInfo
 {
-    List<MethodInfo> _methods;
     List<ApiMethod> _typeInfo;
 
     public ApiTypeInfo(Type type)

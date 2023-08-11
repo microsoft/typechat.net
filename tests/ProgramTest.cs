@@ -13,6 +13,12 @@ public class ProgramTest : TypeChatTest
         return Json.Parse<JsonDocument>(json);
     }
 
+    public static JsonDocument LoadMathProgramsFail()
+    {
+        string json = File.ReadAllText("mathPrograms_Fail.json");
+        return Json.Parse<JsonDocument>(json);
+    }
+
     public static JsonDocument LoadStringPrograms()
     {
         string json = File.ReadAllText("stringPrograms.json");
@@ -22,6 +28,12 @@ public class ProgramTest : TypeChatTest
     public static IEnumerable<object[]> GetMathPrograms()
     {
         JsonDocument doc = LoadMathPrograms();
+        return GetPrograms(doc);
+    }
+
+    public static IEnumerable<object[]> GetMathProgramsFail()
+    {
+        JsonDocument doc = LoadMathProgramsFail();
         return GetPrograms(doc);
     }
 

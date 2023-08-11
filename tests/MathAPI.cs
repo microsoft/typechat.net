@@ -2,8 +2,10 @@
 
 namespace Microsoft.TypeChat.Tests;
 
-public class APIimpl : IMathAPI
+public class MathAPI : IMathAPI
 {
+    public static MathAPI Default = new MathAPI();
+
     public double add(double x, double y) => x + y;
 
     public double sub(double x, double y) => x - y;

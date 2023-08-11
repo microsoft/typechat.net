@@ -57,7 +57,7 @@ public class TestProgram : ProgramTest
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
 
-        ApiCaller api = new ApiCaller(new APIimpl());
+        ApiCaller api = new ApiCaller(new MathAPI());
         double result = api.RunProgram(program);
         Assert.Equal(expectedResult, result);
     }
@@ -95,7 +95,7 @@ public class TestProgram : ProgramTest
         dynamic result = args[0] + args[1];
         Assert.Equal(7, result);
 
-        APIimpl api = new APIimpl();
+        MathAPI api = new MathAPI();
         MethodInfo addMethod = GetMethod(api.GetType(), "add");
         result = addMethod.Invoke(api, args);
         Assert.Equal(7, result);
@@ -149,7 +149,7 @@ public class TestProgram : ProgramTest
         double result = await invoker.CallAsync("add", 4, 5);
         Assert.Equal(9, result);
 
-        APIimpl api = new APIimpl();
+        MathAPI api = new MathAPI();
         invoker = new ApiCaller(api);
         result = await invoker.CallAsync("add", result, 9);
         Assert.Equal(18, result);
