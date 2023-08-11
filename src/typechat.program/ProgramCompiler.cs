@@ -76,7 +76,7 @@ public class ProgramCompiler
         }
     }
 
-    LinqExpression CompileStep(FunctionCall call, int stepNumber)
+    BinaryExpression CompileStep(FunctionCall call, int stepNumber)
     {
         ApiMethod method = _apiTypeInfo[call.Name];
         LinqExpression resultVar = AddVariable(method.ReturnType.ParameterType, ResultVarName(stepNumber));
@@ -89,7 +89,7 @@ public class ProgramCompiler
         return Compile(call, _apiTypeInfo[call.Name]);
     }
 
-    LinqExpression Compile(FunctionCall call, ApiMethod method)
+    MethodCallExpression Compile(FunctionCall call, ApiMethod method)
     {
         LinqExpression[]? args = Compile(call.Args);
         return LinqExpression.Call(_apiImpl, method.Method, args);
@@ -135,7 +135,7 @@ public class ProgramCompiler
         return linqExpressions;
     }
 
-    LinqExpression Compile(ValueExpr expr)
+    ConstantExpression Compile(ValueExpr expr)
     {
         switch (expr.Value.ValueKind)
         {
@@ -152,7 +152,7 @@ public class ProgramCompiler
         }
     }
 
-    LinqExpression Compile(ArrayExpr expr)
+    NewArrayExpression Compile(ArrayExpr expr)
     {
         LinqExpression[] elements = Compile(expr.Value);
         return LinqExpression.NewArrayInit(typeof(object), elements);
@@ -168,7 +168,7 @@ public class ProgramCompiler
         throw new NotSupportedException();
     }
 
-    LinqExpression AddVariable(Type type, string name)
+    ParameterExpression AddVariable(Type type, string name)
     {
         Debug.Assert(!_variables.ContainsKey(name));
 
@@ -178,7 +178,7 @@ public class ProgramCompiler
         return variable;
     }
 
-    LinqExpression GetVariable(string name)
+    ParameterExpression? GetVariable(string name)
     {
         if (_variables.TryGetValue(name, out ParameterExpression variable))
         {
