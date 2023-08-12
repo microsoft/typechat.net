@@ -64,10 +64,10 @@ public class Api
         }
 
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
-        dynamic retVal = await (Task<object?>)method.Method.Invoke(_apiImpl, callArgs);
-        NotifyCall(name, args, retVal);
-
-        return retVal;
+        dynamic task = (Task)method.Method.Invoke(_apiImpl, callArgs);
+        var result = await task;
+        NotifyCall(name, args, result);
+        return result;
     }
 
     public static string CallToString(string functionName, dynamic[] args)
