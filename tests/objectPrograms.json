@@ -1,0 +1,79 @@
+﻿{
+  "program1": {
+    "result": "",
+    "source": {
+      "@steps": [
+        {
+          "@func": "makePerson",
+          "@args": [
+            {
+              "FirstName": "Mario",
+              "LastName": "Minderbinder"
+            },
+            34
+          ]
+        },
+        {
+          "@func": "toJson",
+          "@args": [
+            { "@ref": 0 }
+          ]
+        }
+      ]
+    }
+  },
+  "program2": {
+    "result": "",
+    "source": {
+      "@steps": [
+        {
+          "@func": "isPerson",
+          "@args": [
+            {
+              "@func": "makePerson",
+              "@args": [
+                {
+                  "FirstName": "Mario",
+                  "LastName": "Minderbinder"
+                },
+                44
+              ]
+            },
+            {
+              "FirstName": "Mario",
+              "LastName": "Yossarian"
+            },
+            34
+          ]
+        }
+      ]
+    }
+  },
+  "program3": {
+    "result": "",
+    "source": {
+      "@steps": [
+        {
+          "@func": "isPerson",
+          "@args": [
+            {
+              "@func": "makePerson",
+              "@args": [
+                {
+                  "FirstName": "Mario",
+                  "LastName": "Minderbinder"
+                },
+                34
+              ]
+            },
+            {
+              "FirstName": "Mario",
+              "LastName": "Minderbinder"
+            },
+            34
+          ]
+        }
+      ]
+    }
+  }
+}

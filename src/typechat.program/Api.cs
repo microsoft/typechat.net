@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// Runs programs against an API
 /// Relies on the DLR for type checking etc. 
 /// </summary>
-public class ApiCaller
+public class Api
 {
     public static readonly object?[] EmptyArgs = Array.Empty<object?>();
 
@@ -16,12 +16,12 @@ public class ApiCaller
     object _apiImpl;
     ProgramInterpreter _interpreter;
 
-    public ApiCaller(object apiImpl)
+    public Api(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
     {
     }
 
-    public ApiCaller(ApiTypeInfo typeInfo, object apiImpl)
+    public Api(ApiTypeInfo typeInfo, object apiImpl)
     {
         ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
         ArgumentNullException.ThrowIfNull(apiImpl, nameof(apiImpl));
@@ -32,7 +32,7 @@ public class ApiCaller
 
     public ApiTypeInfo TypeInfo => _typeInfo;
 
-    public event Action<string, dynamic[]> Calling;
+    public event Action<string, dynamic[], dynamic> CallCompleted;
 
     /// <summary>
     /// Call a method with name using the given args
@@ -43,9 +43,9 @@ public class ApiCaller
     public dynamic Call(string name, params dynamic[] args)
     {
         var method = BindMethod(name, args);
-        NotifyCalling(name, args);
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
         dynamic retVal = method.Method.Invoke(_apiImpl, callArgs);
+        NotifyCall(name, args, retVal);
         return retVal;
     }
 
@@ -63,32 +63,11 @@ public class ApiCaller
             return Call(name, args);
         }
 
-        NotifyCalling(name, args);
-
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
         dynamic task = (Task)method.Method.Invoke(_apiImpl, callArgs);
-        return await task;
-    }
-
-    /// <summary>
-    /// Run a program that targets this API
-    /// </summary>
-    /// <param name="program">Json program to run</param>
-    /// <returns>Program result</returns>
-    public dynamic RunProgram(Program program)
-    {
-        ArgumentNullException.ThrowIfNull(program, nameof(program));
-        return _interpreter.Run(program, Call);
-    }
-
-    /// <summary>
-    /// Run a program against this API asynchronously
-    /// </summary>
-    /// <param name="program"></param>
-    /// <returns></returns>
-    public Task<dynamic> RunProgramAsync(Program program)
-    {
-        return _interpreter.RunAsync(program, CallAsync);
+        var result = await task;
+        NotifyCall(name, args, result);
+        return result;
     }
 
     public static string CallToString(string functionName, dynamic[] args)
@@ -140,20 +119,20 @@ public class ApiCaller
             JsonObject jsonObj = jsonArgs[i] as JsonObject;
             if (jsonObj != null && paramsInfo[i].ParameterType != jsonObjType)
             {
-                object typedObj = jsonObj.Deserialize(paramsInfo[i].ParameterType);
+                object typedObj = JsonSerializer.Deserialize(jsonObj, paramsInfo[i].ParameterType);
                 jsonArgs[i] = typedObj;
             }
         }
         return jsonArgs;
     }
 
-    void NotifyCalling(string name, dynamic[] args)
+    void NotifyCall(string name, dynamic[] args, dynamic result)
     {
-        if (Calling != null)
+        if (CallCompleted != null)
         {
             try
             {
-                Calling(name, args);
+                CallCompleted(name, args, result);
             }
             catch { }
         }

@@ -19,6 +19,20 @@ public partial class Program : IDisposable
         GC.SuppressFinalize(this);
     }
 
+    public dynamic Run(Api api)
+    {
+        ArgumentNullException.ThrowIfNull(api, nameof(api));
+        ProgramInterpreter interpreter = new ProgramInterpreter();
+        return interpreter.Run(this, api.Call);
+    }
+
+    public Task<dynamic> RunAsync(Api api)
+    {
+        ArgumentNullException.ThrowIfNull(api, nameof(api));
+        ProgramInterpreter interpreter = new ProgramInterpreter();
+        return interpreter.RunAsync(this, api.CallAsync);
+    }
+
     protected virtual void Dispose(bool fromDispose)
     {
         if (fromDispose)

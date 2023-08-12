@@ -66,8 +66,12 @@ public class MathAPIAsync : IMathAPIAsync
 public class PersonAPI : IPersonApi
 {
     public static PersonAPI Default = new PersonAPI();
-    public static ApiCaller Caller = new ApiCaller(Default);
+    public static Api Caller = new Api(Default);
 
+    public Person makePerson(Name name, int age)
+    {
+        return new Person { Name = name, Age = age };
+    }
     public bool isPerson(Person person, Name name, int age)
     {
         return (person.Name.FirstName == name.FirstName &&

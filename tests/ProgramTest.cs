@@ -25,6 +25,12 @@ public class ProgramTest : TypeChatTest
         return Json.Parse<JsonDocument>(json);
     }
 
+    public static JsonDocument LoadObjectPrograms()
+    {
+        string json = File.ReadAllText("objectPrograms.json");
+        return Json.Parse<JsonDocument>(json);
+    }
+
     public static IEnumerable<object[]> GetMathPrograms()
     {
         JsonDocument doc = LoadMathPrograms();
@@ -40,6 +46,12 @@ public class ProgramTest : TypeChatTest
     public static IEnumerable<object[]> GetStringPrograms()
     {
         JsonDocument doc = LoadStringPrograms();
+        return GetPrograms(doc);
+    }
+
+    public static IEnumerable<object[]> GetObjectPrograms()
+    {
+        JsonDocument doc = LoadObjectPrograms();
         return GetPrograms(doc);
     }
 

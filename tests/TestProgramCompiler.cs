@@ -34,6 +34,20 @@ public class TestProgramCompiler : ProgramTest
         Assert.ThrowsAny<Exception>(() => compiler.CompileToExpressionTree(program, MathAPI.Default));
     }
 
+    [Theory]
+    [MemberData(nameof(GetObjectPrograms))]
+    public void Test_Object(string source, string expectedResults)
+    {
+        Program program = Json.Parse<Program>(source);
+        ProgramCompiler compiler = new ProgramCompiler(typeof(IPersonApi));
+        LambdaExpression lambda = compiler.CompileToExpressionTree(program, PersonAPI.Default);
+        Assert.NotNull(lambda.Body);
+
+        Delegate compiledProgram = lambda.Compile();
+        var result = compiledProgram.DynamicInvoke();
+        Assert.NotNull(result);
+    }
+
     [Fact]
     public void TestCall_JsonObject()
     {
