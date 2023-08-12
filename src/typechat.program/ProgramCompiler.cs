@@ -91,7 +91,7 @@ public class ProgramCompiler
 
     MethodCallExpression Compile(FunctionCall call, ApiMethod method)
     {
-        LinqExpression[]? args = Compile(call.Args);
+        LinqExpression[]? args = CompileArgs(call.Args, method.Params);
         return LinqExpression.Call(_apiImpl, method.Method, args);
     }
 
@@ -132,6 +132,15 @@ public class ProgramCompiler
                     args[i] = Compile(expressions[i]);
                     break;
 
+                case ValueExpr valueExpr:
+                    LinqExpression value = Compile(valueExpr);
+                    if (valueExpr.Type != paramsInfo[i].ParameterType)
+                    {
+                        value = LinqExpression.Convert(value, paramsInfo[i].ParameterType);
+                    }
+                    args[i] = value;
+                    break;
+
                 case ObjectExpr objExpr:
                     var jsonObj = Compile(objExpr);
                     if (paramsInfo[i].ParameterType != typeof(JsonObject))
@@ -141,7 +150,7 @@ public class ProgramCompiler
                     else
                     {
                         args[i] = jsonObj;
-                    } 
+                    }
                     break;
             }
         }
@@ -296,13 +305,14 @@ public class ProgramCompiler
         return LinqExpression.Convert(expr, typeof(JsonNode));
     }
 
-    MethodCallExpression DeserializeJson(LinqExpression jsonObj, Type type)
+    UnaryExpression DeserializeJson(LinqExpression jsonObj, Type type)
     {
-        return LinqExpression.Call(
+        var callExpr = LinqExpression.Call(
             CompilerApi.DeserializeMethod.Method,
             jsonObj,
             LinqExpression.Constant(type)
             );
+        return LinqExpression.Convert(callExpr, type);
     }
 
     string ResultVarName(int resultRef)

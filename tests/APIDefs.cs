@@ -64,6 +64,7 @@ public interface ITimeAPI
 [Comment("API to manipulate a Person object")]
 public interface IPersonApi
 {
+    Person makePerson(Name name, int age);
     string toJson(Person person);
     bool isPerson(Person person, Name name, int age);
 }
