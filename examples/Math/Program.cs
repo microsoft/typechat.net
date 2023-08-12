@@ -8,16 +8,16 @@ namespace Math;
 public class Math : ConsoleApp
 {
     ProgramTranslator _translator;
-    ApiCaller _apiCaller;
+    Api _api;
 
     Math()
     {
-        _apiCaller = new ApiCaller(new MathAPI());
+        _api = new Api(new MathAPI());
         _translator = new ProgramTranslator(
             KernelFactory.CreateLanguageModel(Config.LoadOpenAI()),
-            TypescriptExporter.GenerateAPI(typeof(IMathAPI))
+            typeof(IMathAPI)
         );
-        _apiCaller.Calling += this.DisplayCall;
+        _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
         // _translator.CompletionReceived += base.OnCompletionReceived;
     }
@@ -27,13 +27,15 @@ public class Math : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Program program = await _translator.TranslateAsync(input);
-        double result = _apiCaller.RunProgram(program);
+        double result = program.Run(_api);
         Console.WriteLine($"Result: {result}");
     }
 
-    private void DisplayCall(string functionName, dynamic[] args)
+    private void DisplayCall(string functionName, dynamic[] args, dynamic result)
     {
-        Console.WriteLine(ApiCaller.CallToString(functionName, args));
+        Console.Write(Api.CallToString(functionName, args));
+        Console.Write(" => ");
+        Console.WriteLine(result);
     }
 
     public static async Task<int> Main(string[] args)
