@@ -107,6 +107,7 @@ public partial class Pizza : LineItem
         {
             return;
         }
+        Size ??= "large";
         var vocabType = RestaurantVocabs.NamedPizzas.Get(Name);
         if (vocabType != null)
         {

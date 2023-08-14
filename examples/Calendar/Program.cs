@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
-using Microsoft.TypeChat.SemanticKernel;
 
 namespace Calendar;
 
@@ -15,7 +14,11 @@ public class CalendarApp : ConsoleApp
 
     CalendarApp()
     {
-        _translator = KernelFactory.JsonTranslator<CalendarActions>(Config.LoadOpenAI());
+        _translator = new JsonTranslator<CalendarActions>(
+            new CompletionService(Config.LoadOpenAI()),
+            new TypeValidator<CalendarActions>()
+        );
+
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);
     }

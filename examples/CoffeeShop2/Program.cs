@@ -6,21 +6,16 @@ using System.Text.Json.Serialization;
 using Microsoft.SemanticKernel;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
-using Microsoft.TypeChat.SemanticKernel;
 
 namespace CoffeeShop;
 
 public class CoffeeShop : ConsoleApp
 {
     IVocabCollection _vocabs;
-    IKernel _kernel;
     JsonTranslator<Cart> _translator;
 
     CoffeeShop()
     {
-        var config = Config.LoadOpenAI();
-        _kernel = KernelFactory.CreateKernel(config);
-
         // Load a standard vocabulary from file.
         // But you can also use a different vocab for each request.
         _vocabs = CoffeeShopVocabs.Load();
@@ -28,8 +23,12 @@ public class CoffeeShop : ConsoleApp
         // But you can create instances of the translator on demand, one for each request. 
         // Each with a different vocab specific to the request
         // E.g. you could service a different vocab to a Vegan user. Or show more options to a Premimum user
-        _translator = _kernel.JsonTranslator<Cart>(config.Model, _vocabs);
+        _translator = new JsonTranslator<Cart>(
+            new CompletionService(Config.LoadOpenAI()),
+            new TypeValidator<Cart>(_vocabs)
+        );
         _translator.MaxRepairAttempts = 3;
+
         //base.SubscribeAllEvents(_translator);
     }
 

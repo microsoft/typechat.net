@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
-using Microsoft.TypeChat.SemanticKernel;
 
 namespace CoffeeShop;
 
@@ -15,7 +14,7 @@ public class CoffeeShop : ConsoleApp
 
     CoffeeShop()
     {
-        _translator = KernelFactory.JsonTranslator<Cart>(Config.LoadOpenAI());
+        _translator = new JsonTranslator<Cart>(new CompletionService(Config.LoadOpenAI()), new TypeValidator<Cart>());
         _translator.MaxRepairAttempts = 3;
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);
