@@ -1,22 +1,18 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
-using Microsoft.TypeChat.SemanticKernel;
 
 namespace Math;
 
 public class Math : ConsoleApp
 {
     ProgramTranslator _translator;
-    Api _api;
+    Api<IMathAPI> _api;
 
     Math()
     {
-        _api = new Api(new MathAPI());
-        _translator = new ProgramTranslator(
-            KernelFactory.CreateLanguageModel(Config.LoadOpenAI()),
-            typeof(IMathAPI)
-        );
+        _api = new Api<IMathAPI>(new MathAPI());
+        _translator = new ProgramTranslator(new CompletionService(Config.LoadOpenAI()), _api.Type);
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
         // _translator.CompletionReceived += base.OnCompletionReceived;

@@ -4,10 +4,6 @@ using System.Text;
 
 namespace Microsoft.TypeChat;
 
-/// <summary>
-/// Runs programs against an API
-/// Relies on the DLR for type checking etc. 
-/// </summary>
 public class Api
 {
     public static readonly object?[] EmptyArgs = Array.Empty<object?>();
@@ -19,8 +15,8 @@ public class Api
     public Api(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
     {
-    }
 
+    }
     public Api(ApiTypeInfo typeInfo, object apiImpl)
     {
         ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
@@ -142,4 +138,18 @@ public class Api
     {
         return _typeInfo[name];
     }
+
+}
+/// <summary>
+/// Runs programs against an API
+/// Relies on the DLR for type checking etc. 
+/// </summary>
+public class Api<T> : Api
+{
+    public Api(object apiImpl)
+        : base(new ApiTypeInfo(typeof(T)), apiImpl)
+    {
+    }
+
+    public Type Type => typeof(T);
 }

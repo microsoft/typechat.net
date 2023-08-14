@@ -9,5 +9,4 @@ global using System.Text.Json.Serialization;
 global using System.Threading.Tasks;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Configuration.Json;
-
-global using Microsoft.TypeChat.SemanticKernel;
+global using Microsoft.TypeChat;

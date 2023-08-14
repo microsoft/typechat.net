@@ -1,11 +1,26 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.SemanticKernel;
+namespace Microsoft.TypeChat;
 
 public class CompletionService : ILanguageModel
 {
     ITextCompletion _service;
     ModelInfo _model;
+
+    public CompletionService(OpenAIConfig config, ModelInfo? model = null)
+    {
+        ArgumentNullException.ThrowIfNull(config, nameof(config));
+
+        model ??= config.Model;
+        // Create kernel
+        KernelBuilder kb = new KernelBuilder();
+        kb.WithChatModel(config.Model, config)
+          .WithRetry(config);
+
+        IKernel kernel = kb.Build();
+        _service = kernel.GetService<ITextCompletion>(model.Name);
+        _model = model;
+    }
 
     public CompletionService(ITextCompletion service, ModelInfo model)
     {

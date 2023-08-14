@@ -21,7 +21,7 @@ public class TestTypeTranslate : TypeChatTest, IClassFixture<Config>
         }
 
         SchemaText schema = SchemaText.Load("./SentimentSchema.ts");
-        var service = KernelFactory.JsonTranslator<SentimentResponse>(
+        var service = TypeChatFactory.JsonTranslator<SentimentResponse>(
             schema,
             Config.ModelNames.Gpt35Turbo,
             _config.OpenAI

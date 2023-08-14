@@ -2,7 +2,7 @@
 
 using Microsoft.SemanticKernel.Reliability;
 
-namespace Microsoft.TypeChat.SemanticKernel;
+namespace Microsoft.TypeChat;
 
 public class OpenAIConfig
 {

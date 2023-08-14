@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
-using Microsoft.TypeChat.SemanticKernel;
 
 namespace Restaurant;
 
@@ -15,7 +14,7 @@ public class Restaurant : ConsoleApp
 
     Restaurant()
     {
-        _translator = KernelFactory.JsonTranslator<Order>(Config.LoadOpenAI());
+        _translator = new JsonTranslator<Order>(new CompletionService(Config.LoadOpenAI()), new TypeValidator<Order>());
         _translator.MaxRepairAttempts = 3;
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);

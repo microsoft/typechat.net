@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
-using Microsoft.TypeChat.SemanticKernel;
 
 namespace Sentiment;
 
@@ -14,7 +13,10 @@ public class SentimentApp : ConsoleApp
 
     public SentimentApp()
     {
-        _translator = KernelFactory.JsonTranslator<SentimentResponse>(Config.LoadOpenAI());
+        _translator = new JsonTranslator<SentimentResponse>(
+            new CompletionService(Config.LoadOpenAI()),
+            new TypeValidator<SentimentResponse>()
+        );
     }
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)

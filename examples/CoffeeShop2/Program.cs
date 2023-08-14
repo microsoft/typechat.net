@@ -6,7 +6,6 @@ using System.Text.Json.Serialization;
 using Microsoft.SemanticKernel;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
-using Microsoft.TypeChat.SemanticKernel;
 
 namespace CoffeeShop;
 
@@ -19,7 +18,7 @@ public class CoffeeShop : ConsoleApp
     CoffeeShop()
     {
         var config = Config.LoadOpenAI();
-        _kernel = KernelFactory.CreateKernel(config);
+        _kernel = TypeChatFactory.CreateKernel(config);
 
         // Load a standard vocabulary from file.
         // But you can also use a different vocab for each request.

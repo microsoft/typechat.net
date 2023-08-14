@@ -7,6 +7,11 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
     TypescriptSchema _schema;
     JsonSerializerTypeValidator<T> _jsonValidator;
 
+    public TypeValidator()
+        : this(TypescriptExporter.GenerateSchema(typeof(T)))
+    {
+    }
+
     public TypeValidator(TypescriptSchema schema)
     {
         ArgumentNullException.ThrowIfNull(schema, nameof(schema));

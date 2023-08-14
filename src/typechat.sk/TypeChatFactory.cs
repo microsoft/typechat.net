@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.SemanticKernel;
+namespace Microsoft.TypeChat;
 
-public static class KernelFactory
+public static class TypeChatFactory
 {
     public static ILanguageModel CreateLanguageModel(OpenAIConfig config)
     {

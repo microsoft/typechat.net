@@ -2,7 +2,7 @@
 using Microsoft.SemanticKernel.AI.TextCompletion;
 using Microsoft.SemanticKernel.Reliability;
 
-namespace Microsoft.TypeChat.SemanticKernel;
+namespace Microsoft.TypeChat;
 
 public static class KernelEx
 {
