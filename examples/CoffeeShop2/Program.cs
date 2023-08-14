@@ -12,7 +12,6 @@ namespace CoffeeShop;
 public class CoffeeShop : ConsoleApp
 {
     IVocabCollection _vocabs;
-    IKernel _kernel;
     JsonTranslator<Cart> _translator;
 
     CoffeeShop()
