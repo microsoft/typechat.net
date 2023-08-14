@@ -7,8 +7,8 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
     TypescriptSchema _schema;
     JsonSerializerTypeValidator<T> _jsonValidator;
 
-    public TypeValidator()
-        : this(TypescriptExporter.GenerateSchema(typeof(T)))
+    public TypeValidator(IVocabCollection? knownVocabs = null)
+        : this(TypescriptExporter.GenerateSchema(typeof(T), knownVocabs))
     {
     }
 
