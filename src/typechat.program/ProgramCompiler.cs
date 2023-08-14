@@ -302,7 +302,7 @@ public class ProgramCompiler
         return null;
     }
 
-    LinqExpression CallJsonFunc(FunctionCall call)
+    UnaryExpression CallJsonFunc(FunctionCall call)
     {
         ApiMethod method = _apiTypeInfo[call.Name];
         var callExpr = Compile(call, method);
