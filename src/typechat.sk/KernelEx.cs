@@ -6,6 +6,20 @@ namespace Microsoft.TypeChat;
 
 public static class KernelEx
 {
+    public static IKernel CreateKernel(this OpenAIConfig config, string? modelName = null)
+    {
+        modelName ??= config.Model;
+        ArgumentException.ThrowIfNullOrEmpty(modelName, nameof(modelName));
+
+        // Create kernel
+        KernelBuilder kb = new KernelBuilder();
+        kb.WithChatModel(modelName, config)
+          .WithRetry(config);
+
+        IKernel kernel = kb.Build();
+        return kernel;
+    }
+
     public static KernelBuilder WithChatModels(this KernelBuilder builder, OpenAIConfig config, params string[] modelNames)
     {
         ArgumentNullException.ThrowIfNull(config, nameof(config));
@@ -56,4 +70,15 @@ public static class KernelEx
 
         return new CompletionService(kernel.GetService<ITextCompletion>(model.Name), model);
     }
+
+    public static JsonTranslator<T> JsonTranslator<T>(this IKernel kernel, ModelInfo model, IVocabCollection? vocabs = null)
+    {
+        TypescriptSchema schema = TypescriptExporter.GenerateSchema(typeof(T), vocabs);
+        JsonTranslator<T> translator = new JsonTranslator<T>(
+            kernel.CompletionService(model),
+            new TypeValidator<T>(schema)
+        );
+        return translator;
+    }
+
 }
