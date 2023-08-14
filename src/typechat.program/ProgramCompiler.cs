@@ -1,4 +1,4 @@
-﻿  // Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Linq.Expressions;
 using LinqExpression = System.Linq.Expressions.Expression;
@@ -91,7 +91,7 @@ public class ProgramCompiler
 
     MethodCallExpression Compile(FunctionCall call, ApiMethod method)
     {
-        LinqExpression[]? args = CompileArgs(call.Args, method.Params);
+        LinqExpression[]? args = CompileArgs(call, method.Params);
         return LinqExpression.Call(_apiImpl, method.Method, args);
     }
 
@@ -121,12 +121,19 @@ public class ProgramCompiler
         return null;
     }
 
-    LinqExpression[]? CompileArgs(Expression[] expressions, ParameterInfo[] paramsInfo)
+    LinqExpression[]? CompileArgs(FunctionCall call, ParameterInfo[] paramsInfo)
     {
+        Expression[] expressions = call.Args;
+        if (paramsInfo.Length != expressions.Length)
+        {
+            return CompileArrayArg(call, expressions, paramsInfo);
+        }
+
         LinqExpression[] args = new LinqExpression[expressions.Length];
         for (int i = 0; i < expressions.Length; ++i)
         {
-            switch(expressions[i])
+            ParameterInfo param = paramsInfo[i];
+            switch (expressions[i])
             {
                 default:
                     args[i] = Compile(expressions[i]);
@@ -134,41 +141,57 @@ public class ProgramCompiler
 
                 case ValueExpr valueExpr:
                     LinqExpression value = Compile(valueExpr);
-                    if (valueExpr.Type != paramsInfo[i].ParameterType)
+                    if (param.ParameterType != valueExpr.Type)
                     {
-                        value = LinqExpression.Convert(value, paramsInfo[i].ParameterType);
+                        value = LinqExpression.Convert(value, param.ParameterType);
                     }
                     args[i] = value;
                     break;
 
+                case ArrayExpr arrayExpr:
+                    args[i] = Compile(arrayExpr, param.ParameterType.IsArray ? param.ParameterType : null);
+                    break;
+
                 case ObjectExpr objExpr:
-                    var jsonObj = Compile(objExpr);
-                    if (paramsInfo[i].ParameterType != typeof(JsonObject))
-                    {
-                        args[i] = DeserializeJson(jsonObj, paramsInfo[i].ParameterType);
-                    }
-                    else
-                    {
-                        args[i] = jsonObj;
-                    }
+                    var jsonObjExpr = Compile(objExpr);
+                    args[i] = CastFromJsonObject(jsonObjExpr, param.ParameterType);
                     break;
             }
         }
         return args;
     }
 
-    LinqExpression[]? Compile(Expression[] expressions)
+    LinqExpression[]? CompileArrayArg(FunctionCall call, Expression[] expressions, ParameterInfo[] paramsInfo)
+    {
+        if (paramsInfo.Length != 1)
+        {
+            ProgramException.ThrowArgCountMismatch(call.Name, paramsInfo.Length, expressions.Length);
+        }
+        Debug.Assert(paramsInfo[0].ParameterType.IsArray);
+        Type itemType = paramsInfo[0].ParameterType.GetElementType();
+        LinqExpression[]? items = Compile(expressions, itemType);
+        return new LinqExpression[]
+        {
+            LinqExpression.NewArrayInit(itemType, items)
+        };
+    }
+
+    LinqExpression[]? Compile(Expression[] expressions, Type? itemType = null)
     {
         if (expressions.Length == 0)
         {
             return null;
         }
-        LinqExpression[] linqExpressions = new LinqExpression[expressions.Length];
+        LinqExpression[] items = new LinqExpression[expressions.Length];
         for (int i = 0; i < expressions.Length; ++i)
         {
-            linqExpressions[i] = Compile(expressions[i]);
+            items[i] = Compile(expressions[i]);
+            if (itemType != null)
+            {
+                items[i] = CastFromJsonObject(items[i], itemType);
+            }
         }
-        return linqExpressions;
+        return items;
     }
 
     ConstantExpression Compile(ValueExpr expr)
@@ -205,10 +228,10 @@ public class ProgramCompiler
         }
     }
 
-    NewArrayExpression Compile(ArrayExpr expr)
+    NewArrayExpression Compile(ArrayExpr expr, Type? itemType = null)
     {
-        LinqExpression[] elements = Compile(expr.Value);
-        return LinqExpression.NewArrayInit(typeof(object), elements);
+        LinqExpression[] items = Compile(expr.Value, itemType);
+        return LinqExpression.NewArrayInit(typeof(object), items);
     }
 
     ParameterExpression Compile(ResultReference refExpr)
@@ -244,7 +267,8 @@ public class ProgramCompiler
                         break;
 
                     case ResultReference result:
-                        addJsonPropertyExpr = AddJsonProperty(jsonObjExpr, property.Key, CastToJson(Compile(result)));
+                        var resultExpr = Compile(result);
+                        addJsonPropertyExpr = AddJsonProperty(jsonObjExpr, property.Key, CastToJsonNode(resultExpr, resultExpr.Type));
                         block.Add(addJsonPropertyExpr);
                         break;
 
@@ -282,12 +306,8 @@ public class ProgramCompiler
     {
         ApiMethod method = _apiTypeInfo[call.Name];
         var callExpr = Compile(call, method);
-        if (method.ReturnType.ParameterType != typeof(JsonNode))
-        {
-            // Convert whatever the function returned to a JsonNode
-            return CastToJson(callExpr);
-        }
-        return callExpr;
+        // Convert whatever the function returned to a JsonNode
+        return CastToJsonNode(callExpr, method.ReturnType.ParameterType);
     }
 
     MethodCallExpression AddJsonProperty(ConstantExpression jsonObj, string name, LinqExpression value)
@@ -300,19 +320,33 @@ public class ProgramCompiler
         );
     }
 
-    UnaryExpression CastToJson(LinqExpression expr)
+    UnaryExpression CastToJsonNode(LinqExpression srcExpr, Type srcType)
     {
-        return LinqExpression.Convert(expr, typeof(JsonNode));
+        if (!(srcType.IsValueType || srcType.IsString()))
+        {
+            //
+            // Direct cast not available. Serialize to JsonNode
+            //
+            srcExpr = LinqExpression.Call(CompilerApi.SerializeMethod.Method, srcExpr);
+        }
+        return LinqExpression.Convert(srcExpr, typeof(JsonNode));
     }
 
-    UnaryExpression DeserializeJson(LinqExpression jsonObj, Type type)
+    LinqExpression CastFromJsonObject(LinqExpression srcExpr, Type type)
     {
-        var callExpr = LinqExpression.Call(
-            CompilerApi.DeserializeMethod.Method,
-            jsonObj,
-            LinqExpression.Constant(type)
-            );
-        return LinqExpression.Convert(callExpr, type);
+        if (srcExpr.Type == type)
+        {
+            return srcExpr;
+        }
+        if (!type.IsAssignableFrom(typeof(JsonObject)))
+        {
+            srcExpr = LinqExpression.Call(
+                CompilerApi.DeserializeMethod.Method,
+                srcExpr,
+                LinqExpression.Constant(type)
+                );
+        }
+        return LinqExpression.Convert(srcExpr, type);
     }
 
     string ResultVarName(int resultRef)
@@ -338,14 +372,21 @@ public class ProgramCompiler
             var typeInfo = new ApiTypeInfo(typeof(CompilerApi).GetMethods(BindingFlags.Public | BindingFlags.Static));
             AddNodeMethod = typeInfo["AddNode"];
             DeserializeMethod = typeInfo["Deserialize"];
+            SerializeMethod = typeInfo["Serialize"];
         }
 
         public static readonly ApiMethod AddNodeMethod;
         public static readonly ApiMethod DeserializeMethod;
+        public static readonly ApiMethod SerializeMethod;
 
         public static object? Deserialize(JsonObject obj, Type type)
         {
             return JsonSerializer.Deserialize(obj, type);
+        }
+
+        public static JsonObject Serialize(object obj)
+        {
+            return (JsonObject)JsonSerializer.Serialize(obj);
         }
 
         public static JsonObject AddNode(JsonObject obj, string name, JsonNode node)

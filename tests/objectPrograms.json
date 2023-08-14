@@ -75,5 +75,41 @@
         }
       ]
     }
+  },
+  "program4": {
+    "result": "",
+    "comment": "Test array args",
+    "source": {
+      "@steps": [
+        {
+          "@func": "makePerson",
+          "@args": [
+            {
+              "FirstName": "Mario",
+              "LastName": "Minderbinder"
+            },
+            34
+          ]
+        },
+        {
+          "@func": "makePerson",
+          "@args": [
+            {
+              "FirstName": "John",
+              "LastName": "Yossarian"
+            },
+            28 
+          ]
+        },
+        {
+          "@func": "toJsonArray",
+          "@args": [
+            { "@ref": 0 },
+            { "@ref": 1 }
+          ]
+        }
+      ]
+    }
   }
+
 }

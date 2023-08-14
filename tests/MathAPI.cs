@@ -82,4 +82,8 @@ public class PersonAPI : IPersonApi
     {
         return Json.Stringify(person);
     }
+    public string toJsonArray(Person[] person)
+    {
+        return Json.Stringify(person);
+    }
 }
