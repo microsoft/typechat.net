@@ -66,5 +66,6 @@ public interface IPersonApi
 {
     Person makePerson(Name name, int age);
     string toJson(Person person);
+    string toJsonArray(Person[] persons);
     bool isPerson(Person person, Name name, int age);
 }
