@@ -1,17 +1,4 @@
-﻿# Sentiment
+﻿# Skills
+(Work in progress)
 
-The Sentiment example shows how to match user intent to a set of nouns, in this case categorizing user sentiment of the input as negative, neutral, or positive with the [`SentimentResponse`](SentimentSchema.cs) type.
-
-# Try Sentiment
-To run the Sentiment example, follow the instructions in the [examples README](../README.md#step-1-configure-your-development-environment).
-
-# Usage
-Example prompts can be found in [`input.txt`](input.txt).
-
-For example, given the following input statement:
-
-**Input**:
-```
-TypeChat is awesome!
-```
-
+How to use TypeChat.Programs to generate programs that target Semantic Kernel Skills
