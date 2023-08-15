@@ -7,23 +7,26 @@ namespace Microsoft.TypeChat;
 public class ProgramWriter
 {
     CodeWriter _writer;
-    string _apiVarName;
 
     public ProgramWriter(TextWriter writer)
     {
         _writer = new CodeWriter(writer);
     }
 
+    public string ProgramName { get; set; } = "program";
+    public string ApiVarName { get; set; } = "api";
+    public string ResultVarPrefix { get; set; } = "step";
+
     public CodeWriter Writer => _writer;
 
     public void Clear()
     {
         _writer.Clear();
-        _apiVarName = null;
     }
 
     public ProgramWriter Call(string functionName, dynamic[] args, bool inline = false)
     {
+        _writer.SOL();
         BeginCall(functionName);
         for (int i = 0; i < args.Length; ++i)
         {
@@ -38,11 +41,9 @@ public class ProgramWriter
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
 
-        _apiVarName = "api";
-
-        BeginMethodDeclare("program");
+        BeginMethodDeclare(ProgramName);
         {
-            DeclareVariable(_apiVarName, apiType.Name);
+            DeclareVariable(ApiVarName, apiType.Name);
         }
         EndMethodDeclare();
         Write(program.Steps);
@@ -52,9 +53,16 @@ public class ProgramWriter
 
     public ProgramWriter Write(Steps steps)
     {
-        foreach (var step in steps.Calls)
+        FunctionCall[] calls = steps.Calls;
+        for (int i = 0; i < calls.Length; ++i)
         {
-            Write(step);
+            _writer.SOL();
+            DeclareVariable(ResultVarName(i)).Assign();
+            Write(calls[i]);
+        }
+        if (calls.Length > 0)
+        {
+            _writer.SOL().Write($"return {ResultVarName(calls.Length - 1)}").EOL();
         }
         return this;
     }
@@ -63,7 +71,7 @@ public class ProgramWriter
     {
         ArgumentNullException.ThrowIfNull(call, nameof(call));
 
-        BeginCall(call.Name, _apiVarName);
+        BeginCall(call.Name, ApiVarName);
         if (call.Args != null)
         {
             WriteArgs(call.Args);
@@ -103,7 +111,11 @@ public class ProgramWriter
                 break;
 
             case FunctionCall call:
-                Write(call);
+                Write(call, true);
+                break;
+
+            case ResultReference resultRef:
+                _writer.Append(ResultVarName(resultRef.Ref));
                 break;
 
             case ValueExpr valueExpr:
@@ -112,6 +124,13 @@ public class ProgramWriter
         }
         return this;
     }
+
+    string ResultVarName(int resultNumber)
+    {
+        return (ResultVarPrefix + resultNumber);
+    }
+
+    ProgramWriter Assign() { _writer.Space().Append(CSharp.Operators.Assign).Space(); return this; }
 
     ProgramWriter Comment(string text)
     {
@@ -133,7 +152,7 @@ public class ProgramWriter
 
     ProgramWriter BeginMethodDeclare(string name, string? returnType = null)
     {
-        returnType ??= CSharp.Types.Void;
+        returnType ??= CSharp.Types.Dynamic;
         _writer.SOL().Append(returnType).Space();
         _writer.Append(name).LParan();
         return this;
@@ -141,7 +160,7 @@ public class ProgramWriter
 
     ProgramWriter DeclareVariable(string name, bool isArray = false, bool nullable = false)
     {
-        return DeclareVariable(name, CSharp.Types.Dynamic, isArray, nullable);
+        return DeclareVariable(name, CSharp.Types.Var, isArray, nullable);
     }
 
     ProgramWriter DeclareVariable(string name, string dataType, bool isArray = false, bool nullable = false)
@@ -168,14 +187,13 @@ public class ProgramWriter
 
     ProgramWriter EndMethod()
     {
-        _writer.RBrace().Semicolon().EOL();
+        _writer.RBrace().EOL();
         _writer.PopIndent();
         return this;
     }
 
     ProgramWriter BeginCall(string name, string instanceVar = null)
     {
-        _writer.SOL();
         if (instanceVar != null)
         {
             _writer.Append(instanceVar).Period();
@@ -201,10 +219,15 @@ public class ProgramWriter
             public const string Array = "[]";
         }
 
+        public static class Operators
+        {
+            public const string Assign = "=";
+        }
         public static class Types
         {
             public const string Void = "void";
             public const string Dynamic = "dynamic";
+            public const string Var = "var";
         }
     }
 }

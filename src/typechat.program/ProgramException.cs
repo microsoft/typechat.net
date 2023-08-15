@@ -57,8 +57,10 @@ public class ProgramException : Exception
     {
         throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, $"Function {name} Arg Count: Expected {expectedCount}, Got {actualCount}");
     }
-    internal static void ThrowUnsupported(Type type)
+    internal static void ThrowArgCountMismatch(FunctionCall call, int expectedCount, int actualCount)
     {
-        throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"Unsupported Type {type.Name}");
+        string json = call.Source.ToString();
+        string message = $"Function {call.Name} Arg Count: Expected {expectedCount}, Got {actualCount}\n\n{json}";
+        throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, message);
     }
 }

@@ -10,7 +10,6 @@ public class Api
 
     ApiTypeInfo _typeInfo;
     object _apiImpl;
-    ProgramInterpreter _interpreter;
 
     public Api(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
@@ -23,10 +22,10 @@ public class Api
         ArgumentNullException.ThrowIfNull(apiImpl, nameof(apiImpl));
         _typeInfo = typeInfo;
         _apiImpl = apiImpl;
-        _interpreter = new ProgramInterpreter();
     }
 
     public ApiTypeInfo TypeInfo => _typeInfo;
+    public object Implementation => _apiImpl;
 
     public event Action<string, dynamic[], dynamic> CallCompleted;
 
@@ -127,10 +126,7 @@ public class Api
     }
 
 }
-/// <summary>
-/// Runs programs against an API
-/// Relies on the DLR for type checking etc. 
-/// </summary>
+
 public class Api<T> : Api
 {
     public Api(object apiImpl)
@@ -139,4 +135,14 @@ public class Api<T> : Api
     }
 
     public Type Type => typeof(T);
+
+    public TypeSchema GenerateSchema()
+    {
+        return TypescriptExporter.GenerateAPI(Type);
+    }
+
+    public static implicit operator Api<T>(T apiImpl)
+    {
+        return new Api<T>(apiImpl);
+    }
 }

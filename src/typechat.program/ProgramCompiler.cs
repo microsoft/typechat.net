@@ -165,7 +165,7 @@ public class ProgramCompiler
     {
         if (paramsInfo.Length != 1)
         {
-            ProgramException.ThrowArgCountMismatch(call.Name, paramsInfo.Length, expressions.Length);
+            ProgramException.ThrowArgCountMismatch(call, paramsInfo.Length, expressions.Length);
         }
         Debug.Assert(paramsInfo[0].ParameterType.IsArray);
         Type itemType = paramsInfo[0].ParameterType.GetElementType();

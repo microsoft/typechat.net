@@ -11,11 +11,15 @@ public class Math : ConsoleApp
 
     Math()
     {
-        _api = new Api<IMathAPI>(new MathAPI());
-        _translator = new ProgramTranslator(new CompletionService(Config.LoadOpenAI()), _api.Type);
+        _api = new MathAPI();
+        _translator = new ProgramTranslator<IMathAPI>(
+            new CompletionService(Config.LoadOpenAI()),
+            _api
+        );
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
-        // _translator.CompletionReceived += base.OnCompletionReceived;
+        base.SubscribeAllEvents(_translator);
+        //_translator.CompletionReceived += base.OnCompletionReceived;
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -47,7 +51,8 @@ public class Math : ConsoleApp
         {
             Math app = new Math();
             // Un-comment to print auto-generated schema at start:
-            //Console.WriteLine(app.Schema.Schema);
+            Console.WriteLine(app.Schema.Schema);
+            Console.WriteLine(app._translator.ApiDef);
             await app.RunAsync("➕➖✖️➗🟰> ", args.GetOrNull(0));
         }
         catch (Exception ex)

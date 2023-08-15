@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Linq.Expressions;
+
 namespace Microsoft.TypeChat;
 
 public partial class Program : IDisposable
@@ -13,7 +15,10 @@ public partial class Program : IDisposable
         Steps = steps;
     }
 
+    [JsonIgnore]
     public JsonDocument Source => _programSource;
+    [JsonIgnore]
+    public LambdaExpression Lambda { get; internal set; }
 
     public void Dispose()
     {
@@ -54,6 +59,7 @@ public abstract partial class Expression
         Source = source;
     }
 
+    [JsonIgnore]
     public JsonElement Source
     {
         get;
@@ -89,6 +95,7 @@ public partial class FunctionCall : Expression
     }
 
     // Undefined for now. Until we walk the expression tree
+    [JsonIgnore]
     public override JsonValueKind ValueType => JsonValueKind.Undefined;
 
     public override string ToString()
