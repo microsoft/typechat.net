@@ -66,19 +66,6 @@ public class Api
         return result;
     }
 
-    public static string CallToString(string functionName, dynamic[] args)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.Append($"{functionName}(");
-        for (int i = 0; i < args.Length; ++i)
-        {
-            if (i > 0) { sb.Append(", "); }
-            sb.Append(args[i]);
-        }
-        sb.Append(")");
-        return sb.ToString();
-    }
-
     dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
         if (jsonArgs.Length != paramsInfo.Length)

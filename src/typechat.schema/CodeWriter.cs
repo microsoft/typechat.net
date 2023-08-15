@@ -55,7 +55,14 @@ public class CodeWriter
         return this;
     }
 
-    public CodeWriter Append(string token) => Write(token);
+    public CodeWriter Append(string token)
+    {
+        if (!string.IsNullOrEmpty(token))
+        {
+            Write(token);
+        }
+        return this;
+    }
 
     public CodeWriter Clear()
     {
@@ -69,9 +76,13 @@ public class CodeWriter
     public CodeWriter RParan() => Write(CodeLanguage.Punctuation.RParan);
     public CodeWriter Semicolon() => Write(CodeLanguage.Punctuation.Semicolon);
     public CodeWriter Comma() => Write(CodeLanguage.Punctuation.Comma);
+    public CodeWriter Period() => Write(CodeLanguage.Punctuation.Period);
     public CodeWriter Colon() => Write(CodeLanguage.Punctuation.Colon);
     public CodeWriter SQuote() => Write(CodeLanguage.Punctuation.SingleQuote);
     public CodeWriter Question() => Write(CodeLanguage.Punctuation.Question);
+    public CodeWriter Space() => Write(Typescript.Punctuation.Space);
+    public CodeWriter SOL() { WriteIndent(); return this; } // Start a line
+    public CodeWriter EOL() => Write(Typescript.Punctuation.EOL);
 
     public void Flush()
     {

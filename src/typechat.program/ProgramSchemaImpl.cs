@@ -13,6 +13,8 @@ public partial class Program : IDisposable
         Steps = steps;
     }
 
+    public JsonDocument Source => _programSource;
+
     public void Dispose()
     {
         Dispose(true);
@@ -50,6 +52,12 @@ public abstract partial class Expression
     public Expression(JsonElement source)
     {
         Source = source;
+    }
+
+    public JsonElement Source
+    {
+        get;
+        private set;
     }
 
     [JsonIgnore]

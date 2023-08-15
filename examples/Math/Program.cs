@@ -23,15 +23,22 @@ public class Math : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Program program = await _translator.TranslateAsync(input);
+        DisplayProgram(program);
+
+        Console.WriteLine("Running program");
         double result = program.Run(_api);
         Console.WriteLine($"Result: {result}");
     }
 
+    private void DisplayProgram(Program program)
+    {
+        new ProgramWriter(Console.Out).Write(program, typeof(IMathAPI));
+    }
+
     private void DisplayCall(string functionName, dynamic[] args, dynamic result)
     {
-        Console.Write(Api.CallToString(functionName, args));
-        Console.Write(" => ");
-        Console.WriteLine(result);
+        new ProgramWriter(Console.Out).Call(functionName, args);
+        Console.WriteLine($"==> {result}");
     }
 
     public static async Task<int> Main(string[] args)

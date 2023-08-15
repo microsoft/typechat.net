@@ -14,16 +14,22 @@ namespace Skills;
 public class SkillsApp : ConsoleApp
 {
     IKernel _kernel;
+    ProgramTranslator _translator;
+    ProgramInterpreter _interpreter;
 
     public SkillsApp()
     {
         InitKernel();
+        _translator = new ProgramTranslator(new CompletionService(Config.LoadOpenAI()), ExportSkillMetadata());
     }
 
     public IKernel Kernel => _kernel;
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
+        Program program = await _translator.TranslateAsync(input);
+        string json = Json.Stringify(program);
+        Console.WriteLine(json);
     }
 
     void InitKernel()
