@@ -36,33 +36,11 @@ public class TypescriptWriter
         return this;
     }
 
-    public TypescriptWriter Append(string token)
-    {
-        if (!string.IsNullOrEmpty(token))
-        {
-            _writer.Write(token);
-        }
-        return this;
-    }
+    public TypescriptWriter Append(string token) { _writer.Append(token); return this; }
 
-    public TypescriptWriter Space()
-    {
-        _writer.Write(Typescript.Punctuation.Space);
-        return this;
-    }
-
-    // Start a line
-    public TypescriptWriter SOL()
-    {
-        _writer.WriteIndent();
-        return this;
-    }
-
-    public TypescriptWriter EOL()
-    {
-        _writer.Write(Typescript.Punctuation.EOL);
-        return this;
-    }
+    public TypescriptWriter Space() { _writer.Space(); return this; }
+    public TypescriptWriter SOL() { _writer.SOL(); return this; } // Start a line
+    public TypescriptWriter EOL() { _writer.EOL(); return this; } // End of line
 
     public TypescriptWriter LBrace() { _writer.LBrace(); return this; }
     public TypescriptWriter RBrace() { _writer.RBrace(); return this; }
@@ -207,9 +185,8 @@ public class TypescriptWriter
         return this;
     }
 
-    public TypescriptWriter EndInterface(string name)
+    public TypescriptWriter EndInterface()
     {
-        // TODO: validation here to verify Begin & End match
         return SOL().EndBlock();
     }
 

@@ -14,7 +14,11 @@ public class CodeLanguage
         public const string Question = "?";
         public const string Semicolon = ";";
         public const string Comma = ",";
+        public const string Period = ".";
         public const string Comment = "//";
+        public const string LComment = "/*";
+        public const string RComment = "*/";
+        public const string Hash = "#";
         public const string Space = " ";
         public const string SingleQuote = "'";
         public const string EOL = "\n";

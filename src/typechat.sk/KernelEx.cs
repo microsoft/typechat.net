@@ -81,4 +81,12 @@ public static class KernelEx
         return translator;
     }
 
+    internal static bool IsGlobal(this FunctionView fview)
+    {
+        return ("_GLOBAL_FUNCTIONS_" == fview.SkillName);
+    }
+    internal static bool HasDescription(this ParameterView param)
+    {
+        return !string.IsNullOrEmpty(param.Description);
+    }
 }

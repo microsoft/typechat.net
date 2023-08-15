@@ -7,37 +7,55 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramTranslator : JsonTranslator<Program>
 {
-    public ProgramTranslator(ILanguageModel model, Type type)
-        : this(model, TypescriptExporter.GenerateAPI(type))
+    internal static readonly TypescriptSchema ProgramSchema;
+
+    static ProgramTranslator()
     {
+        ProgramSchema = GetProgramSchema();
     }
 
-    public ProgramTranslator(ILanguageModel model, TypeSchema schema)
-        : this(model, schema.Schema)
+    public static TypescriptSchema GetProgramSchema()
+    {
+        return TypescriptSchema.Load(typeof(Program), "ProgramSchema.ts");
+    }
+
+    string _apiDef;
+
+    public ProgramTranslator(ILanguageModel model, TypeSchema apiSchema)
+        : this(model, apiSchema.Schema)
     {
     }
 
     public ProgramTranslator(ILanguageModel model, string apiDef)
         : this(
               model,
-              TypescriptSchema.Load(typeof(Program), "ProgramSchema.ts"),
+              new TypeValidator<Program>(ProgramSchema),
               apiDef
               )
     {
     }
 
-    public ProgramTranslator(ILanguageModel model, TypescriptSchema schema, string apiDef)
+    public ProgramTranslator(ILanguageModel model, IJsonTypeValidator<Program> validator, string apiDef)
         : base(
             model,
-            new TypeValidator<Program>(schema),
+            validator,
             new ProgramTranslatorPrompts(apiDef)
             )
     {
+        _apiDef = apiDef;
     }
 
-    public static ProgramTranslator Create(ILanguageModel model, string apiDef)
+    public string ApiDef => _apiDef;
+}
+
+public class ProgramTranslator<TApi> : ProgramTranslator
+{
+    public ProgramTranslator(ILanguageModel model, Api<TApi> api)
+        : base(
+            model,
+            new ProgramValidator<TApi>(api),
+            api.GenerateSchema().Schema
+        )
     {
-        TypescriptSchema schema = TypescriptExporter.GenerateSchema(typeof(Program));
-        return new ProgramTranslator(model, schema, apiDef);
     }
 }

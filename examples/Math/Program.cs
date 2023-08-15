@@ -11,11 +11,14 @@ public class Math : ConsoleApp
 
     Math()
     {
-        _api = new Api<IMathAPI>(new MathAPI());
-        _translator = new ProgramTranslator(new CompletionService(Config.LoadOpenAI()), _api.Type);
+        _api = new MathAPI();
+        _translator = new ProgramTranslator<IMathAPI>(
+            new CompletionService(Config.LoadOpenAI()),
+            _api
+        );
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
-        // _translator.CompletionReceived += base.OnCompletionReceived;
+        //base.SubscribeAllEvents(_translator);
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -23,15 +26,22 @@ public class Math : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Program program = await _translator.TranslateAsync(input);
+        DisplayProgram(program);
+
+        Console.WriteLine("Running program");
         double result = program.Run(_api);
         Console.WriteLine($"Result: {result}");
     }
 
+    private void DisplayProgram(Program program)
+    {
+        new ProgramWriter(Console.Out).Write(program, typeof(IMathAPI));
+    }
+
     private void DisplayCall(string functionName, dynamic[] args, dynamic result)
     {
-        Console.Write(Api.CallToString(functionName, args));
-        Console.Write(" => ");
-        Console.WriteLine(result);
+        new ProgramWriter(Console.Out).Call(functionName, args);
+        Console.WriteLine($"==> {result}");
     }
 
     public static async Task<int> Main(string[] args)
@@ -40,7 +50,7 @@ public class Math : ConsoleApp
         {
             Math app = new Math();
             // Un-comment to print auto-generated schema at start:
-            //Console.WriteLine(app.Schema.Schema);
+            // Console.WriteLine(app._translator.ApiDef);
             await app.RunAsync("➕➖✖️➗🟰> ", args.GetOrNull(0));
         }
         catch (Exception ex)

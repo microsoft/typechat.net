@@ -14,6 +14,6 @@ public class JsonProgramConvertor : JsonConverter<Program>
 
     public override void Write(Utf8JsonWriter writer, Program value, JsonSerializerOptions options)
     {
-        throw new NotImplementedException();
+        JsonSerializer.Serialize(writer, value.Source);
     }
 }
