@@ -207,9 +207,8 @@ public class TypescriptWriter
         return this;
     }
 
-    public TypescriptWriter EndInterface(string name)
+    public TypescriptWriter EndInterface()
     {
-        // TODO: validation here to verify Begin & End match
         return SOL().EndBlock();
     }
 
