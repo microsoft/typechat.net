@@ -15,7 +15,7 @@ public class SkillsApp : ConsoleApp
 {
     IKernel _kernel;
     ProgramTranslator _translator;
-    ProgramInterpreter _interpreter;
+    //ProgramInterpreter _interpreter;
 
     public SkillsApp()
     {
