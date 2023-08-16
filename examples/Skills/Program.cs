@@ -20,7 +20,10 @@ public class SkillsApp : ConsoleApp
     public SkillsApp()
     {
         InitKernel();
-        _translator = new ProgramTranslator(new CompletionService(Config.LoadOpenAI()), ExportSkillMetadata());
+        _translator = new ProgramTranslator(
+            new CompletionService(Config.LoadOpenAI()),
+            ExportSkillMetadata()
+        );
     }
 
     public IKernel Kernel => _kernel;
@@ -28,8 +31,9 @@ public class SkillsApp : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Program program = await _translator.TranslateAsync(input);
-        string json = Json.Stringify(program);
-        Console.WriteLine(json);
+        new ProgramWriter(Console.Out).Write(program, typeof(object));
+        //string json = Json.Stringify(program);
+        //Console.WriteLine(json);
     }
 
     void InitKernel()

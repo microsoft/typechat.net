@@ -55,12 +55,11 @@ public class CodeWriter
         return this;
     }
 
-    public CodeWriter Append(string token)
+    public CodeWriter Append(string token) => Write(token);
+
+    public CodeWriter Append(char ch)
     {
-        if (!string.IsNullOrEmpty(token))
-        {
-            Write(token);
-        }
+        _writer.Write(ch);
         return this;
     }
 
