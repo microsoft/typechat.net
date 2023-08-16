@@ -5,6 +5,8 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TextApis : IStringAPI, ITimeAPI
 {
+    public static readonly TextApis Default = new TextApis();
+
     public string concat(dynamic[] args)
     {
         StringBuilder sb = new StringBuilder();

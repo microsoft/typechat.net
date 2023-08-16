@@ -111,7 +111,7 @@ public class JsonTranslator<T>
         }
     }
 
-    public async Task<string> RepairJsonAsync(
+    protected async Task<string> RepairJsonAsync(
         string json,
         string validationError,
         RequestSettings? settings = null,
@@ -132,12 +132,12 @@ public class JsonTranslator<T>
         return completion;
     }
 
-    public virtual string CreateRequestPrompt(string request)
+    protected virtual string CreateRequestPrompt(string request)
     {
         return JsonTranslatorPrompts.RequestPrompt(Validator.Schema.TypeName, Validator.Schema.Schema, request);
     }
 
-    public virtual string CreateRepairPrompt(string validationError)
+    protected virtual string CreateRepairPrompt(string validationError)
     {
         return JsonTranslatorPrompts.RepairPrompt(validationError);
     }

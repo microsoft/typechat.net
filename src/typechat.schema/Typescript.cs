@@ -28,6 +28,7 @@ public class Typescript : CodeLanguage
     {
         public const string String = "string";
         public const string Number = "number";
+        public const string Boolean = "boolean";
         public const string Void = "void";
         public const string Any = "any";
 
@@ -44,6 +45,10 @@ public class Typescript : CodeLanguage
             else if (type.IsNumber())
             {
                 return Types.Number;
+            }
+            else if (type.IsBoolean())
+            {
+                return Types.Boolean;
             }
             else if (type.IsObject())
             {

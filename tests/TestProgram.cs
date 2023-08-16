@@ -113,7 +113,7 @@ public class TestProgram : ProgramTest
     public void TestProgramValidator_String(string source, string expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        ProgramValidator validator = new ProgramValidator(typeof(IStringAPI));
+        var validator = new ProgramValidator<IStringAPI>(TextApis.Default);
         validator.Validate(program);
     }
 
@@ -122,7 +122,7 @@ public class TestProgram : ProgramTest
     public void TestProgramValidator_Math(string source, string expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        ProgramValidator validator = new ProgramValidator(typeof(IMathAPI));
+        var validator = new ProgramValidator<IMathAPI>(MathAPI.Default);
         validator.Validate(program);
     }
 

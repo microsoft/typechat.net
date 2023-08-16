@@ -14,11 +14,6 @@ public partial class Program
 
 public abstract partial class Expression
 {
-    public JsonElement Source
-    {
-        get;
-        private set;
-    }
 }
 
 public partial class Steps : Expression

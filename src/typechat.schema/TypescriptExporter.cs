@@ -155,7 +155,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
             _writer.PopIndent();
         }
-        _writer.EndInterface(typeName);
+        _writer.EndInterface();
 
         AddExported(type);
 
@@ -218,7 +218,7 @@ public class TypescriptExporter : TypeExporter<Type>
             ExportMethods(type);
             _writer.PopIndent();
         }
-        _writer.EndInterface(typeName);
+        _writer.EndInterface();
 
         AddExported(type);
 

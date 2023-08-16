@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Schema;
 
 public static class ConstraintValidationEx
 {
-    public static void ValidateConstraints(this object obj, ConstraintCheckContext context)
+    internal static void ValidateConstraints(this object obj, ConstraintCheckContext context)
     {
         if (obj != null &&
             obj is IConstraintValidatable validator)
@@ -13,7 +13,7 @@ public static class ConstraintValidationEx
         }
     }
 
-    public static void ValidateConstraints(this IEnumerable<object> objects, ConstraintCheckContext context)
+    internal static void ValidateConstraints(this IEnumerable<object> objects, ConstraintCheckContext context)
     {
         if (objects != null)
         {
