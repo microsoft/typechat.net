@@ -16,7 +16,7 @@ public class ProgramWriter
         _writer = new CodeWriter(writer);
     }
 
-    public string ProgramName { get; set; } = "program";
+    public string ProgramName { get; set; } = "Program";
     public string ApiVarName { get; set; } = "api";
     public string ResultVarPrefix { get; set; } = "step";
 
@@ -27,7 +27,10 @@ public class ProgramWriter
         _writer.Clear();
     }
 
-    public ProgramWriter Call(string functionName, dynamic[] args, bool inline = false)
+    /// <summary>
+    /// Write the given function call...
+    /// </summary>
+    public ProgramWriter Write(string functionName, dynamic[] args, bool isCallInline = false)
     {
         _writer.SOL();
         BeginCall(functionName);
@@ -36,7 +39,7 @@ public class ProgramWriter
             if (i > 0) { _writer.Append($", "); }
             _writer.Append(Convert.ToString(args[i]));
         }
-        EndCall(inline);
+        EndCall(isCallInline);
         return this;
     }
 
@@ -93,7 +96,7 @@ public class ProgramWriter
         switch (expr)
         {
             default:
-                Write($"/* {Json.Stringify(expr.Source)} */");
+                Write($"/* {JsonProgramConvertor.Serialize(expr.Source)} */");
                 break;
             case FunctionCall call:
                 Write(call, true);
@@ -129,23 +132,4 @@ public class ProgramWriter
     ProgramWriter EOL() { _writer.EOL(); return this; }
     ProgramWriter Write(char ch) { _writer.Append(ch); return this; }
     ProgramWriter Write(string value) { _writer.Append(value); return this; }
-
-    class CSharp : CodeLanguage
-    {
-        public new class Punctuation : CodeLanguage.Punctuation
-        {
-            public const string Array = "[]";
-        }
-
-        public static class Operators
-        {
-            public const string Assign = "=";
-        }
-        public static class Types
-        {
-            public const string Void = "void";
-            public const string Dynamic = "dynamic";
-            public const string Var = "var";
-        }
-    }
 }

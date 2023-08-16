@@ -85,8 +85,19 @@ public static class KernelEx
     {
         return ("_GLOBAL_FUNCTIONS_" == fview.SkillName);
     }
+
     internal static bool HasDescription(this ParameterView param)
     {
         return !string.IsNullOrEmpty(param.Description);
+    }
+
+    internal static PluginFunctionName ToPlugin(this FunctionView fview)
+    {
+        // Temporary hack to make pretty printing possible
+        if (fview.IsGlobal())
+        {
+            return new PluginFunctionName(fview.Name);
+        }
+        return new PluginFunctionName(fview.SkillName, fview.Name);
     }
 }

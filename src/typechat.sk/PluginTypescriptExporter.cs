@@ -2,13 +2,13 @@
 
 using Microsoft.SemanticKernel.SkillDefinition;
 
-namespace Microsoft.TypeChat.SemanticKernel;
+namespace Microsoft.TypeChat;
 
-public class SkillTypescriptExporter
+public class PluginTypescriptExporter
 {
     TypescriptWriter _tsWriter;
 
-    public SkillTypescriptExporter(TextWriter writer)
+    public PluginTypescriptExporter(TextWriter writer)
     {
         _tsWriter = new TypescriptWriter(writer);
     }
@@ -38,18 +38,21 @@ public class SkillTypescriptExporter
         }
     }
 
+    /// <summary>
+    /// Export an SKFunction
+    /// </summary>
+    /// <param name="fview"></param>
     void Export(FunctionView fview)
     {
-        string methodname = fview.IsGlobal() ?
-                            fview.Name :
-                            $"{fview.SkillName}_{fview.Name}";
+        var plugin = fview.ToPlugin();
+        string methodname = plugin.ToString();
 
         _tsWriter.SOL().Comment(fview.Description);
         _tsWriter.BeginMethodDeclare(methodname);
         {
             Export(fview.Parameters);
         }
-        _tsWriter.EndMethodDeclare();
+        _tsWriter.EndMethodDeclare(Typescript.Types.String);
     }
 
     void Export(IList<ParameterView> parameters)
@@ -126,5 +129,21 @@ public class SkillTypescriptExporter
             }
         }
         return type;
+    }
+
+    PluginTypescriptExporter SOL() { _tsWriter.SOL(); return this; }
+    PluginTypescriptExporter EOL() { _tsWriter.EOL(); return this; }
+
+    public static string ExportRegistered(IKernel kernel)
+    {
+        ArgumentNullException.ThrowIfNull(kernel, nameof(kernel));
+
+        using StringWriter writer = new StringWriter();
+        PluginTypescriptExporter exporter = new PluginTypescriptExporter(writer);
+
+        var skills = kernel.Skills.GetFunctionsView();
+        exporter.Export("IPlugins", skills.NativeFunctions.Values);
+
+        return writer.ToString();
     }
 }

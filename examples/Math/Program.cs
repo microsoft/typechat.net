@@ -40,7 +40,7 @@ public class Math : ConsoleApp
 
     private void DisplayCall(string functionName, dynamic[] args, dynamic result)
     {
-        new ProgramWriter(Console.Out).Call(functionName, args);
+        new ProgramWriter(Console.Out).Write(functionName, args);
         Console.WriteLine($"==> {result}");
     }
 

@@ -54,7 +54,11 @@ public class TypescriptWriter
     public TypescriptWriter Or() => Append(Typescript.Operators.Or);
     public TypescriptWriter Comment(string text)
     {
-        return Append(Typescript.Punctuation.Comment).Space().Append(text).EOL();
+        if (!string.IsNullOrEmpty(text))
+        {
+            Append(Typescript.Punctuation.Comment).Space().Append(text).EOL();
+        }
+        return this;
     }
 
     public TypescriptWriter StartBlock() => LBrace().EOL();
@@ -195,12 +199,16 @@ public class TypescriptWriter
         return SOL().Name(name).LParan();
     }
 
-    public TypescriptWriter EndMethodDeclare(string? returnType = null)
+    public TypescriptWriter EndMethodDeclare(string? returnType = null, bool nullable = false)
     {
         RParan();
         if (!string.IsNullOrEmpty(returnType))
         {
             Colon().Space().Name(returnType);
+            if (nullable)
+            {
+                _writer.Question();
+            }
         }
         return EOS();
     }

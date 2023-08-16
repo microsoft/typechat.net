@@ -4,6 +4,8 @@ namespace Microsoft.TypeChat;
 
 public class JsonProgramConvertor : JsonConverter<Program>
 {
+    internal static readonly JsonSerializerOptions Options = JsonSerializerTypeValidator.DefaultOptions();
+
     static ProgramParser DefaultParser = new ProgramParser();
 
     public override Program? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -16,4 +18,6 @@ public class JsonProgramConvertor : JsonConverter<Program>
     {
         JsonSerializer.Serialize(writer, value.Source);
     }
+
+    internal static string Serialize(JsonElement json) => JsonSerializer.Serialize(json, Options);
 }

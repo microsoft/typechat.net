@@ -5,61 +5,51 @@ using System.Text.Json.Serialization;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.SkillDefinition;
 using Microsoft.SemanticKernel.Skills.Core;
-using Microsoft.TypeChat.SemanticKernel;
+using Microsoft.SemanticKernel.Orchestration;
 
-namespace Skills;
+namespace Plugins;
 
-public class SkillsApp : ConsoleApp
+public class PluginApp : ConsoleApp
 {
     IKernel _kernel;
     ProgramTranslator _translator;
+    string _pluginSchema;
     //ProgramInterpreter _interpreter;
 
-    public SkillsApp()
+    public PluginApp()
     {
-        InitKernel();
+        InitSkills();
         _translator = new ProgramTranslator(
             new CompletionService(Config.LoadOpenAI()),
-            ExportSkillMetadata()
+            _pluginSchema
         );
     }
 
     public IKernel Kernel => _kernel;
+    public string Schema => _pluginSchema;
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Program program = await _translator.TranslateAsync(input);
         new ProgramWriter(Console.Out).Write(program, typeof(object));
-        //string json = Json.Stringify(program);
-        //Console.WriteLine(json);
     }
 
-    void InitKernel()
+    void InitSkills()
     {
         _kernel = Config.LoadOpenAI().CreateKernel();
         _kernel.ImportSkill(new HttpSkill());
         _kernel.ImportSkill(new FileIOSkill());
-    }
-
-    public string ExportSkillMetadata()
-    {
-        using StringWriter writer = new StringWriter();
-        SkillTypescriptExporter exporter = new SkillTypescriptExporter(writer);
-
-        var skills = _kernel.Skills.GetFunctionsView();
-        exporter.Export("ISkills", skills.NativeFunctions.Values);
-
-        return writer.ToString();
+        _kernel.ImportSkill(new TimeSkill());
+        _pluginSchema = PluginTypescriptExporter.ExportRegistered(_kernel);
     }
 
     public static async Task<int> Main(string[] args)
     {
         try
         {
-            SkillsApp app = new SkillsApp();
-            Console.WriteLine(app.ExportSkillMetadata());
+            PluginApp app = new PluginApp();
+            Console.WriteLine(app.Schema);
 
             await app.RunAsync("🤖> ", args.GetOrNull(0));
         }
@@ -72,4 +62,3 @@ public class SkillsApp : ConsoleApp
         return 0;
     }
 }
-

@@ -379,6 +379,11 @@ public class ProgramCompiler
         public static readonly ApiMethod DeserializeMethod;
         public static readonly ApiMethod SerializeMethod;
 
+        /*
+         * These methods are called dynamically through code gen
+         * Do NOT delete or alter them without testing
+         */
+
         public static object? Deserialize(JsonObject obj, Type type)
         {
             return JsonSerializer.Deserialize(obj, type);
