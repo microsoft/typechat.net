@@ -19,7 +19,7 @@ public class PluginApp : ConsoleApp
 
     public PluginApp()
     {
-        InitSkills();
+        InitPlugins();
         _translator = new ProgramTranslator(
             new CompletionService(Config.LoadOpenAI()),
             _pluginSchema
@@ -35,7 +35,7 @@ public class PluginApp : ConsoleApp
         new ProgramWriter(Console.Out).Write(program, typeof(object));
     }
 
-    void InitSkills()
+    void InitPlugins()
     {
         _kernel = Config.LoadOpenAI().CreateKernel();
         _kernel.ImportSkill(new HttpSkill());

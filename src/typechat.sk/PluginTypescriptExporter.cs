@@ -15,14 +15,14 @@ public class PluginTypescriptExporter
 
     public bool IncludeParamDescriptions { get; set; } = false;
 
-    public void Export(string interfaceName, IEnumerable<IEnumerable<FunctionView>> skills)
+    public void Export(string interfaceName, PluginApiTypeInfo typeInfo)
     {
         _tsWriter.BeginInterface(interfaceName);
         {
             _tsWriter.PushIndent();
-            foreach (var skill in skills)
+            foreach (var plugin in typeInfo)
             {
-                Export(skill);
+                Export(plugin.Key, plugin.Value);
             }
             _tsWriter.PopIndent();
         }
@@ -30,27 +30,14 @@ public class PluginTypescriptExporter
         _tsWriter.Writer.Flush();
     }
 
-    void Export(IEnumerable<FunctionView> functions)
+    void Export(PluginFunctionName pluginName, FunctionView function)
     {
-        foreach (var fview in functions)
-        {
-            Export(fview);
-        }
-    }
+        ArgumentNullException.ThrowIfNull(function, nameof(function));
 
-    /// <summary>
-    /// Export an SKFunction
-    /// </summary>
-    /// <param name="fview"></param>
-    void Export(FunctionView fview)
-    {
-        var plugin = fview.ToPlugin();
-        string methodname = plugin.ToString();
-
-        _tsWriter.SOL().Comment(fview.Description);
-        _tsWriter.BeginMethodDeclare(methodname);
+        _tsWriter.SOL().Comment(function.Description);
+        _tsWriter.BeginMethodDeclare(pluginName.ToString());
         {
-            Export(fview.Parameters);
+            Export(function.Parameters);
         }
         _tsWriter.EndMethodDeclare(Typescript.Types.String);
     }
@@ -139,11 +126,9 @@ public class PluginTypescriptExporter
         ArgumentNullException.ThrowIfNull(kernel, nameof(kernel));
 
         using StringWriter writer = new StringWriter();
+        PluginApiTypeInfo typeInfo = new PluginApiTypeInfo(kernel);
         PluginTypescriptExporter exporter = new PluginTypescriptExporter(writer);
-
-        var skills = kernel.Skills.GetFunctionsView();
-        exporter.Export("IPlugins", skills.NativeFunctions.Values);
-
+        exporter.Export("IPlugins", typeInfo);
         return writer.ToString();
     }
 }

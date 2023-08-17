@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-internal struct PluginFunctionName
+public struct PluginFunctionName : IEquatable<PluginFunctionName>
 {
     public const string DefaultSeparator = "__";
 
@@ -57,4 +57,29 @@ internal struct PluginFunctionName
         return new PluginFunctionName(pluginName, functionName);
     }
 
+    public override bool Equals(object? obj)
+    {
+        return obj is PluginFunctionName name && this.Equals(name);
+    }
+
+    public bool Equals(PluginFunctionName other)
+    {
+        return this.PluginName == other.PluginName &&
+               this.FunctionName == other.FunctionName;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(this.PluginName, this.FunctionName);
+    }
+
+    public static bool operator ==(PluginFunctionName left, PluginFunctionName right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(PluginFunctionName left, PluginFunctionName right)
+    {
+        return !(left == right);
+    }
 }

@@ -114,7 +114,7 @@ public class TestProgram : ProgramTest
     {
         Program program = Json.Parse<Program>(source);
         var validator = new ProgramValidator<IStringAPI>(TextApis.Default);
-        validator.Validate(program);
+        validator.Compile(program);
     }
 
     [Theory]
@@ -123,7 +123,7 @@ public class TestProgram : ProgramTest
     {
         Program program = Json.Parse<Program>(source);
         var validator = new ProgramValidator<IMathAPI>(MathAPI.Default);
-        validator.Validate(program);
+        validator.Compile(program);
     }
 
     // TODO: more validation.. actually inspect the AST and compare against

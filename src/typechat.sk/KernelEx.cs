@@ -91,7 +91,21 @@ public static class KernelEx
         return !string.IsNullOrEmpty(param.Description);
     }
 
-    internal static PluginFunctionName ToPlugin(this FunctionView fview)
+    internal static ISKFunction GetFunction(this IKernel kernel, PluginFunctionName plugin)
+    {
+        ISKFunction function;
+        if (plugin.IsGlobal)
+        {
+            function = kernel.Skills.GetFunction(plugin.FunctionName);
+        }
+        else
+        {
+            function = kernel.Skills.GetFunction(plugin.PluginName, plugin.FunctionName);
+        }
+        return function;
+    }
+
+    internal static PluginFunctionName ToPluginName(this FunctionView fview)
     {
         // Temporary hack to make pretty printing possible
         if (fview.IsGlobal())
