@@ -81,12 +81,16 @@ public class ProgramCompiler
         return EndBlock(block);
     }
 
-    BinaryExpression CompileStep(FunctionCall call, int stepNumber)
+    LinqExpression CompileStep(FunctionCall call, int stepNumber)
     {
         ApiMethod method = _apiTypeInfo[call.Name];
         LinqExpression callExpr = Compile(call, method);
-        LinqExpression resultVar = AddVariable(callExpr.Type, ResultVarName(stepNumber));
-        return LinqExpression.Assign(resultVar, callExpr);
+        if (callExpr.Type != typeof(void))
+        {
+            LinqExpression resultVar = AddVariable(callExpr.Type, ResultVarName(stepNumber));
+            return LinqExpression.Assign(resultVar, callExpr);
+        }
+        return callExpr;
     }
 
     LinqExpression Compile(FunctionCall call)

@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
@@ -28,8 +29,15 @@ public class Math : ConsoleApp
         using Program program = await _translator.TranslateAsync(input);
         DisplayProgram(program);
         Console.WriteLine("Running program");
-        double result = program.Run(_api);
-        Console.WriteLine($"Result: {result}");
+        dynamic result = program.Run(_api);
+        if (result != null && result is double)
+        {
+            Console.WriteLine($"Result: {result}");
+        }
+        else
+        {
+            Console.WriteLine("No result");
+        }
     }
 
     private void DisplayProgram(Program program)
