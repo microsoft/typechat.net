@@ -73,4 +73,9 @@ public partial class ObjectExpr : Expression
     }
 }
 
+public partial class NotTranslatedExpr : Expression
+{
+    public string Text { get; set; }
+}
+
 public partial class UnknownExpr : Expression { }

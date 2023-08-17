@@ -172,6 +172,15 @@ public partial class ObjectExpr : Expression
     }
 }
 
+public partial class NotTranslatedExpr : Expression
+{
+    public NotTranslatedExpr(JsonElement source, string text)
+        : base(source)
+    {
+        Text = text;
+    }
+}
+
 public partial class UnknownExpr : Expression
 {
     public UnknownExpr(JsonElement source)

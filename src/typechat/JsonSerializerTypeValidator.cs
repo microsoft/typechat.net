@@ -56,7 +56,7 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
         int iEndAt = json.LastIndexOf('}');
         if (iStartAt < 0 || iEndAt < 0 || iStartAt >= iEndAt)
         {
-            throw new JsonException("JSON parse error");
+            throw new JsonException();
         }
         return json.AsSpan(iStartAt, iEndAt - iStartAt + 1);
     }
@@ -64,7 +64,8 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
     string ToErrorString(string json, JsonException error)
     {
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine(error.Message);
+        sb.AppendLine("### JSON ERROR:");
+        sb.AppendLineNotEmpty(error.Message);
         if (error.Path != null)
         {
             sb.Append("Property with error: ");
@@ -72,8 +73,8 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
         }
         if (error.LineNumber != null)
         {
-            sb.AppendLine("Line with error:");
-            sb.AppendLine(json.GetLine((long)error.LineNumber));
+            sb.AppendLine("### Errors here:");
+            json.ExtractLine((long)error.LineNumber, sb);
         }
         return sb.ToString();
     }

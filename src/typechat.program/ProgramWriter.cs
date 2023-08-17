@@ -134,7 +134,19 @@ public class ProgramWriter
     }
     string ResultVar(int resultNumber) => (ResultVarPrefix + (resultNumber + 1));
 
-    ProgramWriter EndCall(bool inline = false) => Write(inline ? ")" : ");").EOL();
+    ProgramWriter EndCall(bool inline = false)
+    {
+        if (inline)
+        {
+            Write(")");
+        }
+        else
+        {
+            Write(");").EOL();
+        }
+        return this;
+    }
+
     ProgramWriter SOL() { _writer.SOL(); return this; }
     ProgramWriter EOL() { _writer.EOL(); return this; }
     ProgramWriter Write(char ch) { _writer.Append(ch); return this; }

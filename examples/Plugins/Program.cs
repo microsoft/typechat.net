@@ -44,12 +44,9 @@ public class PluginApp : ConsoleApp
         _kernel.ImportSkill(new HttpSkill());
         _kernel.ImportSkill(new FileIOSkill());
         _kernel.ImportSkill(new TimeSkill());
-        _kernel.ImportSkill(new FallbackSkill());
+        //_kernel.ImportSkill(new FallbackSkill());
         _typeInfo = new PluginApiTypeInfo(_kernel);
-        _pluginSchema = _typeInfo.ExportSchema(
-            "IPlugins",
-            "If you cannot translate user intent using these functions, use the CannotDo function"
-        );
+        _pluginSchema = _typeInfo.ExportSchema("IPlugins", "Use only this api in translating requests");
     }
 
     public static async Task<int> Main(string[] args)

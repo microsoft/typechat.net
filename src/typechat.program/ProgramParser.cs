@@ -23,11 +23,14 @@ public class ProgramParser
     {
         JsonElement root = programSource.RootElement;
         root.EnsureIsType(JsonValueKind.Object);
-        Expression expr = ParseObject(root);
-        if (expr is Steps steps)
+
+        if (root.TryGetProperty(ExprNames.Steps, out JsonElement stepsElt))
         {
+            stepsElt.EnsureIsType(JsonValueKind.Array, ExprNames.Steps);
+            Steps steps = ParseSteps(stepsElt);
             return new Program(programSource, steps);
         }
+
         throw new ProgramException(ProgramException.ErrorCode.InvalidProgram, root.ToString());
     }
 
@@ -40,6 +43,17 @@ public class ProgramParser
             steps[i] = ParseCall(source[i]);
         }
         return new Steps(source, steps);
+    }
+
+    string[] ParseNotTranslated(JsonElement source)
+    {
+        Debug.Assert(source.ValueKind == JsonValueKind.Array);
+        string[] items = new string[source.GetArrayLength()];
+        for (int i = 0; i < items.Length; ++i)
+        {
+            items[i] = source[i].GetString();
+        }
+        return items;
     }
 
     FunctionCall ParseCall(JsonElement elt)
@@ -88,11 +102,6 @@ public class ProgramParser
         {
             refValue.EnsureIsType(JsonValueKind.Number, ExprNames.Ref);
             return new ResultReference(elt, refValue);
-        }
-        else if (elt.TryGetProperty(ExprNames.Steps, out JsonElement steps))
-        {
-            steps.EnsureIsType(JsonValueKind.Array, ExprNames.Steps);
-            return ParseSteps(steps);
         }
         else
         {
