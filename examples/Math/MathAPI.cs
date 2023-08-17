@@ -21,7 +21,7 @@ public interface IMathAPI
     [Comment("Negate a number")]
     double neg(double x);
     [Comment("Unknown request")]
-    double unknown(string text);
+    void unknown(string text);
 }
 
 /// <summary>
@@ -43,5 +43,5 @@ public class MathAPI : IMathAPI
 
     public double neg(double x) => -x;
 
-    public double unknown(string text) => double.NaN;
+    public void unknown(string text) { }
 }

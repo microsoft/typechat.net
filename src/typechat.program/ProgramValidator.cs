@@ -45,7 +45,8 @@ public class ProgramValidator<TApi> : IJsonTypeValidator<Program>
         ProgramCompiler compiler = new ProgramCompiler(_api.TypeInfo);
         try
         {
-            program.Lambda = compiler.CompileToExpressionTree(program, _api.Implementation);
+            var lambdaExpr = compiler.CompileToExpressionTree(program, _api.Implementation);
+            program.Delegate = lambdaExpr.Compile();
             return new ValidationResult<Program>(program);
         }
         catch (Exception ex)

@@ -70,7 +70,12 @@ public class TestProgram : ProgramTest
         ValidateProgram(program);
 
         Api api = new Api(MathAPIAsync.Default);
-        double result = (double)await program.RunAsync(api);
+        ProgramCompiler compiler = new ProgramCompiler(api.TypeInfo);
+        Delegate d = compiler.Compile(program, api);
+        double result = (double)d.DynamicInvoke();
+        Assert.Equal(expectedResult, result);
+
+        result = (double)await program.RunAsync(api);
         Assert.Equal(expectedResult, result);
     }
 

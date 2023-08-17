@@ -12,4 +12,9 @@ internal static class Extensions
     {
         return JsonSerializer.Serialize<T>(value, JsonProgramConvertor.Options);
     }
+
+    internal static bool IsNullOrEmpty(this Array array)
+    {
+        return (array == null || array.Length == 0);
+    }
 }

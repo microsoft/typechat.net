@@ -27,39 +27,45 @@ public class MathAPIAsync : IMathAPIAsync
 
     public MathAPIAsync() { }
 
-    public Task<double> add(double x, double y)
+    public async Task<double> add(double x, double y)
     {
-        return Task.FromResult(x + y);
+        return await SlowResult(x + y);
     }
 
-    public Task<double> mul(double x, double y)
+    public async Task<double> mul(double x, double y)
     {
-        return Task.FromResult(x * y);
+        return await SlowResult(x * y);
     }
 
     public Task<double> div(double x, double y)
     {
-        return Task.FromResult(x / y);
+        return SlowResult(x * y);
     }
 
     public Task<double> id(double x)
     {
-        return Task.FromResult(x);
+        return SlowResult(x);
     }
 
     public Task<double> neg(double x)
     {
-        return Task.FromResult(-x);
+        return SlowResult(-x);
     }
 
     public Task<double> sub(double x, double y)
     {
-        return Task.FromResult(x - y);
+        return SlowResult(x - y);
     }
 
     public Task<double> unknown(string text)
     {
-        return Task.FromResult(double.NaN);
+        return SlowResult(double.NaN);
+    }
+
+    async Task<double> SlowResult(double result)
+    {
+        await Task.Delay(500).ConfigureAwait(false);
+        return result;
     }
 }
 
