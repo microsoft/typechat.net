@@ -96,7 +96,7 @@ public class ProgramWriter
         switch (expr)
         {
             default:
-                Write($"/* {JsonProgramConvertor.Serialize(expr.Source)} */");
+                Write($"/* {expr.Source.Stringify()} */");
                 break;
             case FunctionCall call:
                 Write(call, true);
@@ -105,17 +105,24 @@ public class ProgramWriter
                 Write(ResultVar(resultRef.Ref));
                 break;
             case ValueExpr valueExpr:
-                if (valueExpr.ValueType == JsonValueKind.String)
-                {
-                    Write('"').Write(valueExpr.Value.ToString()).Write('"');
-                }
-                else
-                {
-                    Write(valueExpr.Value.ToString());
-                }
+                Write(valueExpr.Value.Stringify());
                 break;
             case ArrayExpr arrayExpr:
                 Write("[").Write(arrayExpr.Value).Write("]");
+                break;
+            case ObjectExpr objectExpr:
+                Write("/*");
+                Write("{");
+                int i = 0;
+                foreach (var property in objectExpr.Value)
+                {
+                    Write(property.Key.Stringify()).Write(": ");
+                    Write(property.Value);
+                    if (i > 0) { Write(", "); }
+                    ++i;
+                }
+                Write("}");
+                Write("*/");
                 break;
         }
         return this;

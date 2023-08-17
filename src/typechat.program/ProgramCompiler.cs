@@ -252,7 +252,7 @@ public class ProgramCompiler
                 switch (property.Value)
                 {
                     default:
-                        break;
+                        throw new InvalidOperationException();
 
                     case ValueExpr value:
                         // Constants we can just preinject
@@ -276,6 +276,9 @@ public class ProgramCompiler
                         addJsonPropertyExpr = AddJsonProperty(jsonObjExpr, property.Key, Compile(obj));
                         block.Add(addJsonPropertyExpr);
                         break;
+
+                    case UnknownExpr unknown:
+                        throw new ProgramException(ProgramException.ErrorCode.UnknownExpression, unknown.Source.Stringify());
                 }
             }
             block.Add(jsonObjExpr);

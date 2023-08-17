@@ -55,4 +55,13 @@ public class PluginApiTypeInfo : Dictionary<PluginFunctionName, FunctionView>
     {
         Add(function.ToPluginName(), function);
     }
+
+    public string ExportSchema(string apiName, string apiDescription = null)
+    {
+        using StringWriter writer = new StringWriter();
+        PluginTypescriptExporter exporter = new PluginTypescriptExporter(writer);
+        exporter.Comment(apiDescription);
+        exporter.Export(apiName, this);
+        return writer.ToString();
+    }
 }

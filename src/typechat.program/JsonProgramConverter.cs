@@ -18,6 +18,4 @@ public class JsonProgramConvertor : JsonConverter<Program>
     {
         JsonSerializer.Serialize(writer, value.Source);
     }
-
-    internal static string Serialize(JsonElement json) => JsonSerializer.Serialize(json, Options);
 }

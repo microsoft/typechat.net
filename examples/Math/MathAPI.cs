@@ -6,7 +6,6 @@ using Microsoft.TypeChat.Schema;
 namespace Math;
 
 [Comment("This is a schema for writing programs that evaluate Math expressions")]
-[Comment("You must use right number of arguments")]
 public interface IMathAPI
 {
     [Comment("Add two numbers")]

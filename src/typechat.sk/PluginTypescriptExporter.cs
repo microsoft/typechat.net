@@ -15,9 +15,11 @@ public class PluginTypescriptExporter
 
     public bool IncludeParamDescriptions { get; set; } = false;
 
-    public void Export(string interfaceName, PluginApiTypeInfo typeInfo)
+    public void Comment(string descr) => _tsWriter.Comment(descr);
+
+    public void Export(string apiName, PluginApiTypeInfo typeInfo)
     {
-        _tsWriter.BeginInterface(interfaceName);
+        _tsWriter.BeginInterface(apiName);
         {
             _tsWriter.PushIndent();
             foreach (var plugin in typeInfo)
@@ -120,15 +122,4 @@ public class PluginTypescriptExporter
 
     PluginTypescriptExporter SOL() { _tsWriter.SOL(); return this; }
     PluginTypescriptExporter EOL() { _tsWriter.EOL(); return this; }
-
-    public static string ExportRegistered(IKernel kernel)
-    {
-        ArgumentNullException.ThrowIfNull(kernel, nameof(kernel));
-
-        using StringWriter writer = new StringWriter();
-        PluginApiTypeInfo typeInfo = new PluginApiTypeInfo(kernel);
-        PluginTypescriptExporter exporter = new PluginTypescriptExporter(writer);
-        exporter.Export("IPlugins", typeInfo);
-        return writer.ToString();
-    }
 }

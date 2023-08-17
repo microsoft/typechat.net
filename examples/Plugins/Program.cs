@@ -7,6 +7,8 @@ using Microsoft.TypeChat.Schema;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Skills.Core;
 using Microsoft.SemanticKernel.Orchestration;
+using Microsoft.SemanticKernel.SkillDefinition;
+using System.ComponentModel;
 
 namespace Plugins;
 
@@ -14,6 +16,7 @@ public class PluginApp : ConsoleApp
 {
     IKernel _kernel;
     ProgramTranslator _translator;
+    PluginApiTypeInfo _typeInfo;
     string _pluginSchema;
     //ProgramInterpreter _interpreter;
 
@@ -41,7 +44,12 @@ public class PluginApp : ConsoleApp
         _kernel.ImportSkill(new HttpSkill());
         _kernel.ImportSkill(new FileIOSkill());
         _kernel.ImportSkill(new TimeSkill());
-        _pluginSchema = PluginTypescriptExporter.ExportRegistered(_kernel);
+        _kernel.ImportSkill(new FallbackSkill());
+        _typeInfo = new PluginApiTypeInfo(_kernel);
+        _pluginSchema = _typeInfo.ExportSchema(
+            "IPlugins",
+            "If you cannot translate user intent using these functions, use the CannotDo function"
+        );
     }
 
     public static async Task<int> Main(string[] args)
@@ -61,4 +69,15 @@ public class PluginApp : ConsoleApp
 
         return 0;
     }
+}
+
+public class FallbackSkill
+{
+    [SKFunction]
+    [Description("Cannot do what user asked")]
+    public void CannotDo(string intent) { }
+
+    [SKFunction]
+    [Description("Did not understood")]
+    public void NotUnderstood(string intent) { }
 }

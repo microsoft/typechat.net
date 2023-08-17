@@ -7,4 +7,9 @@ internal static class Extensions
     {
         return (returnType.ParameterType.IsAssignableTo(typeof(Task)));
     }
+
+    internal static string Stringify<T>(this T value)
+    {
+        return JsonSerializer.Serialize<T>(value, JsonProgramConvertor.Options);
+    }
 }
