@@ -9,6 +9,7 @@ public class Math : ConsoleApp
 {
     ProgramTranslator _translator;
     Api<IMathAPI> _api;
+    CSharpProgramCompiler _compiler;
 
     Math()
     {
@@ -17,6 +18,7 @@ public class Math : ConsoleApp
             new CompletionService(Config.LoadOpenAI()),
             _api
         );
+        _compiler = new CSharpProgramCompiler("math");
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
         base.SubscribeAllEvents(_translator);
@@ -42,7 +44,15 @@ public class Math : ConsoleApp
 
     private void DisplayProgram(Program program)
     {
-        new ProgramWriter(Console.Out).Write(program, typeof(IMathAPI));
+        using StringWriter writer = new StringWriter();
+        new ProgramWriter(writer).Write(program, typeof(IMathAPI));
+
+        string code = writer.ToString();
+
+        Console.WriteLine(code);
+
+        string diagnostics = _compiler.GetDiagnostics(code, "./MathApi.cs");
+        Console.WriteLine(diagnostics);
     }
 
     private void DisplayCall(string functionName, dynamic[] args, dynamic result)
