@@ -49,7 +49,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             base.VisitFunction(functionCall);
             return;
         }
-        catch(ProgramException)
+        catch (ProgramException)
         {
             throw;
         }

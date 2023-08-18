@@ -19,7 +19,11 @@ public class TestProgramCSharp : ProgramTest
     void Compile(string code, Type apiType)
     {
         CSharpProgramCompiler compiler = new CSharpProgramCompiler();
-        compiler.AddReferences(apiType);
+        AssemblyReferences refs = new AssemblyReferences();
+        refs.AddStandard();
+        refs.Add(apiType);
+        compiler.AddReferences(refs);
+
         var result = compiler.Compile(code);
         Assert.True(result.Success);
     }

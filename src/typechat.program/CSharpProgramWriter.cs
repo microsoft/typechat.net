@@ -28,6 +28,8 @@ public class CSharpProgramWriter : ProgramVisitor
             _className = value;
         }
     }
+    public string ApiVarName { get; set; } = "api";
+    public string ResultVarPrefix { get; set; } = "step";
 
     public IList<string> Namespaces => _namespaces;
 
@@ -36,30 +38,84 @@ public class CSharpProgramWriter : ProgramVisitor
         ArgumentNullException.ThrowIfNull(program, nameof(program));
 
         _writer.Using(_namespaces);
+        _writer.Using(apiType.Namespace);
         _writer.BeginClass(_className);
         {
-            _writer.PushIndent();
-            _writer.BeginDeclareMethod("Run", CSharpLang.Types.Dynamic);
-            {
-                _writer.Parameter("api", apiType);
-            }
-            _writer.EndDeclareMethod();
-            _writer.BeginMethodBody();
-            {
-                Visit(program);
-                _writer.Return();
-            }
-            _writer.EndMethodBody();
-
-            _writer.PopIndent();
+            WriteMethod(program, apiType);
         }
         _writer.EndClass();
     }
 
-    protected override void VisitFunction(FunctionCall functionCall)
+    void WriteMethod(Program program, Type apiType)
     {
-        base.VisitFunction(functionCall);
+        _writer.BeginDeclareMethod("Run", CSharpLang.Types.Dynamic);
+        {
+            _writer.Variable(ApiVarName, apiType);
+        }
+        _writer.EndDeclareMethod();
+        _writer.BeginMethodBody();
+        {
+            Visit(program);
+        }
+        _writer.EndMethodBody();
     }
+
+    protected override void VisitSteps(Steps steps)
+    {
+        base.VisitSteps(steps);
+        if (!steps.Calls.IsNullOrEmpty())
+        {
+            _writer.Return(ResultVar(steps.Calls.Length - 1));
+        }
+    }
+
+    protected override void VisitStep(FunctionCall function, int stepNumber)
+    {
+        _writer.SOL();
+        _writer.Local(ResultVar(stepNumber), CSharpLang.Types.Var, isArray: false, assign: true);
+        VisitFunction(function, false);
+    }
+
+    protected override void VisitFunction(FunctionCall function)
+    {
+        VisitFunction(function, true);
+    }
+
+    void VisitFunction(FunctionCall function, bool inline)
+    {
+        _writer.BeginCall(ApiVarName, function.Name);
+        {
+            VisitArgs(function);
+        }
+        _writer.EndCall(inline);
+    }
+
+    void VisitArgs(FunctionCall function)
+    {
+        var args = function.Args;
+        if (args.IsNullOrEmpty())
+        {
+            return;
+        }
+        for (int i = 0; i < args.Length; ++i)
+        {
+            if (i > 0) { _writer.ArgSep(); }
+            Visit(args[i]);
+        }
+    }
+
+    protected override void VisitValue(ValueExpr valueExpr)
+    {
+        _writer.Append(valueExpr.Value.Stringify());
+    }
+
+    protected override void VisitResult(ResultReference resultRef)
+    {
+        _writer.Append(ResultVar(resultRef.Ref));
+    }
+
+    string ResultVar(int resultNumber) => (ResultVarPrefix + (resultNumber + 1));
+
 
     public static string GenerateCode(Program program, Type apiType)
     {
@@ -68,3 +124,4 @@ public class CSharpProgramWriter : ProgramVisitor
         return sw.ToString();
     }
 }
+

@@ -4,10 +4,11 @@ namespace Microsoft.TypeChat;
 
 public class Result<T>
 {
-    public Result(T value)
+    public Result(T value, string? message = null)
     {
         Success = true;
         Value = value;
+        Message = message;
     }
 
     public Result(Result<object?> value)

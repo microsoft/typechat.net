@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-internal class CSharpLang
+internal class CSharpLang : CodeLanguage
 {
     public static class Keywords
     {
@@ -12,10 +12,21 @@ internal class CSharpLang
         public const string Return = "return";
     }
 
+    public new class Punctuation : CodeLanguage.Punctuation
+    {
+        public const string Array = "[]";
+    }
+
+    public static class Operators
+    {
+        public const string Assign = "=";
+    }
+
     public static class Types
     {
         public const string Void = "void";
         public const string Dynamic = "dynamic";
+        public const string Var = "var";
     }
 
     public static class Modifiers
@@ -64,11 +75,13 @@ internal class CSharpWriter : CodeWriter
         }
         EOL();
         SOL().LBrace().EOL();
+        PushIndent();
         return this;
     }
 
     public CSharpWriter EndClass()
     {
+        PopIndent();
         SOL().RBrace().EOL();
         return this;
     }
@@ -84,21 +97,6 @@ internal class CSharpWriter : CodeWriter
         return this;
     }
 
-    public CSharpWriter Parameter(string name, Type type, int number = 0)
-    {
-        return Parameter(name, type.Name, number);
-    }
-
-    public CSharpWriter Parameter(string name, string type, int number = 0)
-    {
-        if (number > 0)
-        {
-            Comma().Space();
-        }
-        Append(type).Space().Append(name);
-        return this;
-    }
-
     public CSharpWriter EndDeclareMethod()
     {
         RParan().EOL();
@@ -107,19 +105,87 @@ internal class CSharpWriter : CodeWriter
 
     public CSharpWriter BeginMethodBody()
     {
-        SOL().LBrace().EOL().SOL();
+        SOL().LBrace().EOL();
+        PushIndent();
         return this;
     }
 
     public CSharpWriter EndMethodBody()
     {
+        PopIndent();
         SOL().RBrace().EOL();
         return this;
     }
 
-    public CSharpWriter Return()
+    public CSharpWriter Variable(string name, Type type, int number = 0)
     {
-        SOL().Append(CSharpLang.Keywords.Return).Semicolon().EOL();
+        if (type.IsArray)
+        {
+            return Variable(name, type.GetElementType().Name, true, number);
+
+        }
+        return Variable(name, type.Name, false, number);
+    }
+
+    public CSharpWriter Variable(string name, string type, bool isArray, int number = 0)
+    {
+        if (number > 0)
+        {
+            Comma().Space();
+        }
+        Append(type);
+        if (isArray)
+        {
+            Append(CSharpLang.Punctuation.Array);
+        }
+        Space().Append(name);
+        return this;
+    }
+
+    public CSharpWriter Local(string name, string type, bool isArray, bool assign = false)
+    {
+        Variable(name, type, isArray, 0);
+        if (assign)
+        {
+            Space().Append(CSharpLang.Operators.Assign).Space();
+        }
+        else
+        {
+            Semicolon().EOL();
+        }
+        return this;
+    }
+
+    public CSharpWriter Return(string? varName = null)
+    {
+        SOL().Append(CSharpLang.Keywords.Return);
+        if (!string.IsNullOrEmpty(varName))
+        {
+            Space().Append(varName);
+        }
+        Semicolon().EOL();
+        return this;
+    }
+
+    public CSharpWriter BeginCall(string variable, string methodName)
+    {
+        Append(variable).Period().Append(methodName).LParan();
+        return this;
+    }
+
+    public CSharpWriter EndCall(bool inline = false)
+    {
+        RParan();
+        if (!inline)
+        {
+            Semicolon().EOL();
+        }
+        return this;
+    }
+
+    public CSharpWriter ArgSep()
+    {
+        Append(", ");
         return this;
     }
 
