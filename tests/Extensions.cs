@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Tests;
 
 internal static class Extensions
 {
-    public static IEnumerable<string> Lines(this string text)
+    public static IEnumerable<string> ReadLines(this string text)
     {
         using var reader = new StringReader(text);
         string line;
@@ -14,7 +14,12 @@ internal static class Extensions
         }
     }
 
-    public static bool Contains(this IEnumerable<string> lines, params string[] subStrings)
+    public static List<string> Lines(this string text)
+    {
+        return text.ReadLines().ToList();
+    }
+
+    public static bool ContainsSubstring(this IEnumerable<string> lines, params string[] subStrings)
     {
         foreach (var line in lines)
         {
@@ -37,5 +42,4 @@ internal static class Extensions
         }
         return true;
     }
-
 }

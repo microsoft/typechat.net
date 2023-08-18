@@ -43,11 +43,13 @@ public class ProgramWriter
         return this;
     }
 
-    public ProgramWriter Write(Program program, Type apiType)
+    public ProgramWriter Write(Program program, Type apiType) => Write(program, apiType.Name);
+
+    public ProgramWriter Write(Program program, string apiName)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
 
-        SOL().Write($"dynamic {ProgramName}({apiType.Name} {ApiVarName}) {{").EOL();
+        SOL().Write($"dynamic {ProgramName}({apiName} {ApiVarName}) {{").EOL();
 
         _writer.PushIndent();
         Write(program.Steps).Write("}").EOL();

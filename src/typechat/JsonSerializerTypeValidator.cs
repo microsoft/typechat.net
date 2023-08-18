@@ -34,7 +34,7 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
 
     public JsonSerializerOptions Options => _options;
 
-    public ValidationResult<object?> Validate(TypeSchema schema, string json)
+    public Result<object?> Validate(TypeSchema schema, string json)
     {
         try
         {
@@ -42,11 +42,11 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
         }
         catch (JsonException jex)
         {
-            return ValidationResult<object?>.Error(ToErrorString(json, jex));
+            return Result<object?>.Error(ToErrorString(json, jex));
         }
         catch (Exception ex)
         {
-            return ValidationResult<object?>.Error(ex.Message);
+            return Result<object?>.Error(ex.Message);
         }
     }
 
@@ -118,9 +118,9 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
     public TypeSchema Schema => _schema;
     public JsonSerializerOptions Options => _validator.Options;
 
-    public ValidationResult<T> Validate(string json)
+    public Result<T> Validate(string json)
     {
-        ValidationResult<object?> result = _validator.Validate(_schema, json);
-        return new ValidationResult<T>(result);
+        Result<object?> result = _validator.Validate(_schema, json);
+        return new Result<T>(result);
     }
 }

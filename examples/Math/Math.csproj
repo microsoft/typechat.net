@@ -31,7 +31,7 @@
 
   <ItemGroup>
     <Compile Update="MathAPI.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Compile>
   </ItemGroup>
 

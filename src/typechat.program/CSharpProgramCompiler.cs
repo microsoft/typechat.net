@@ -7,23 +7,62 @@ namespace Microsoft.TypeChat;
 
 public class CSharpProgramCompiler
 {
-    string _assemblyName;
+    public const string DefaultProgramName = "Program";
 
-    public CSharpProgramCompiler(string assemblyName)
+    public static CSharpCompilationOptions DefaultOptions()
     {
-        _assemblyName = assemblyName;
+        return new CSharpCompilationOptions(
+            OutputKind.DynamicallyLinkedLibrary,
+            optimizationLevel: OptimizationLevel.Release
+            );
     }
 
-    public string GetDiagnostics(string code, string apiFilePath)
-    {
-        var apiTree = CSharpSyntaxTree.ParseText(apiFilePath);
-        var codeTree = CSharpSyntaxTree.ParseText(code);
-        var compilation = CSharpCompilation.Create(_assemblyName).WithOptions(
-            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-        );
-        compilation.AddSyntaxTrees(apiTree, codeTree);
+    static CSharpCompilationOptions s_defaultOptions = DefaultOptions();
 
-        var diagnostics = compilation.GetDiagnostics();
+    string _programName;
+    string _assemblyName;
+    CSharpCompilation _compilation;
+
+    public CSharpProgramCompiler(string programName = DefaultProgramName)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(programName, nameof(programName));
+        _programName = programName;
+        _compilation = CSharpCompilation.Create(_programName).WithOptions(s_defaultOptions);
+    }
+
+    public void AddCode(string code)
+    {
+        var apiTree = CSharpSyntaxTree.ParseText(code);
+        _compilation.AddSyntaxTrees(apiTree);
+    }
+
+    public string? GetDiagnostics()
+    {
+        var diagnostics = _compilation.GetDiagnostics();
+        if (diagnostics.Length > 0)
+        {
+            return CollectDiagnostics(diagnostics);
+        }
+        return null;
+    }
+
+    public Result<MemoryStream> Compile(string? code = null)
+    {
+        if (!string.IsNullOrEmpty(code))
+        {
+            AddCode(code);
+        }
+        MemoryStream stream = new MemoryStream();
+        var result = _compilation.Emit(stream);
+        if (result.Success)
+        {
+            return stream;
+        }
+        return Result<MemoryStream>.Error(CollectDiagnostics(result.Diagnostics));
+    }
+
+    string CollectDiagnostics(IEnumerable<Diagnostic> diagnostics)
+    {
         StringBuilder sb = new StringBuilder();
         foreach (var diagnostic in diagnostics)
         {

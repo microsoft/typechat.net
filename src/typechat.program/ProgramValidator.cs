@@ -6,7 +6,7 @@ namespace Microsoft.TypeChat;
 
 public interface IProgramValidator
 {
-    ValidationResult<Program> ValidateProgram(Program program);
+    Result<Program> ValidateProgram(Program program);
 }
 
 public class ProgramValidator : IJsonTypeValidator<Program>
@@ -22,10 +22,10 @@ public class ProgramValidator : IJsonTypeValidator<Program>
 
     public TypeSchema Schema => _typeValidator.Schema;
 
-    public ValidationResult<Program> Validate(string json)
+    public Result<Program> Validate(string json)
     {
         // First, validate the program json
-        ValidationResult<Program> result = _typeValidator.Validate(json);
+        Result<Program> result = _typeValidator.Validate(json);
         if (result.Success)
         {
             // Now validate the actual parsed program
@@ -34,7 +34,7 @@ public class ProgramValidator : IJsonTypeValidator<Program>
         return result;
     }
 
-    public virtual ValidationResult<Program> ValidateProgram(Program program)
+    public virtual Result<Program> ValidateProgram(Program program)
     {
         // Now validate the actual parsed program
         if (_programValidator != null)
@@ -63,18 +63,18 @@ public class ProgramValidator<TApi> : ProgramValidator, IProgramValidator
     /// <summary>
     /// Default Compiler: Compiles into a Linq Expression Tree, type checking in the process
     /// </summary>
-    public override ValidationResult<Program> ValidateProgram(Program program)
+    public override Result<Program> ValidateProgram(Program program)
     {
         ProgramCompiler compiler = new ProgramCompiler(_api.TypeInfo);
         try
         {
             var lambdaExpr = compiler.CompileToExpressionTree(program, _api.Implementation);
             program.Delegate = lambdaExpr.Compile();
-            return new ValidationResult<Program>(program);
+            return new Result<Program>(program);
         }
         catch (Exception ex)
         {
-            return ValidationResult<Program>.Error(ex.Message);
+            return Result<Program>.Error(ex.Message);
         }
     }
 }

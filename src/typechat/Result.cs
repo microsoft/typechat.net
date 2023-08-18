@@ -2,22 +2,22 @@
 
 namespace Microsoft.TypeChat;
 
-public class ValidationResult<T>
+public class Result<T>
 {
-    public ValidationResult(T value)
+    public Result(T value)
     {
         Success = true;
         Value = value;
     }
 
-    public ValidationResult(ValidationResult<object?> value)
+    public Result(Result<object?> value)
     {
         Success = value.Success;
         Value = (T)value.Value;
         Message = value.Message;
     }
 
-    internal ValidationResult(bool success, string? message)
+    internal Result(bool success, string? message)
     {
         Success = success;
         Message = message;
@@ -28,11 +28,11 @@ public class ValidationResult<T>
     public bool Success { get; private set; }
     public string? Message { get; set; }
 
-    public static implicit operator ValidationResult<T>(T value)
+    public static implicit operator Result<T>(T value)
     {
-        return new ValidationResult<T>(value);
+        return new Result<T>(value);
     }
-    public static implicit operator T(ValidationResult<T> result)
+    public static implicit operator T(Result<T> result)
     {
         if (!result.Success)
         {
@@ -40,8 +40,8 @@ public class ValidationResult<T>
         }
         return result.Value;
     }
-    public static ValidationResult<T> Error(string message)
+    public static Result<T> Error(string message)
     {
-        return new ValidationResult<T>(false, message);
+        return new Result<T>(false, message);
     }
 }

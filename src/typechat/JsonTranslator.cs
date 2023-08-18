@@ -94,7 +94,7 @@ public class JsonTranslator<T>
         {
             string responseText = await CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
             string jsonText = GetJson(responseText);
-            ValidationResult<T> validation = Validator.Validate(responseText);
+            Result<T> validation = Validator.Validate(responseText);
             if (validation.Success)
             {
                 return validation.Value;

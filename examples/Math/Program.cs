@@ -44,15 +44,7 @@ public class Math : ConsoleApp
 
     private void DisplayProgram(Program program)
     {
-        using StringWriter writer = new StringWriter();
-        new ProgramWriter(writer).Write(program, typeof(IMathAPI));
-
-        string code = writer.ToString();
-
-        Console.WriteLine(code);
-
-        string diagnostics = _compiler.GetDiagnostics(code, "./MathApi.cs");
-        Console.WriteLine(diagnostics);
+        new ProgramWriter(Console.Out).Write(program, typeof(IMathAPI));
     }
 
     private void DisplayCall(string functionName, dynamic[] args, dynamic result)

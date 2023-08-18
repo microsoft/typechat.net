@@ -14,7 +14,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         _typeInfo = typeInfo;
     }
 
-    public ValidationResult<Program> ValidateProgram(Program program)
+    public Result<Program> ValidateProgram(Program program)
     {
         try
         {
@@ -23,8 +23,17 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         }
         catch (Exception ex)
         {
-            return ValidationResult<Program>.Error(ex.Message);
+            return Result<Program>.Error(ex.Message);
         }
+    }
+
+    void CSharpValidate(Program program)
+    {
+        using StringWriter sw = new StringWriter();
+        new ProgramWriter(sw).Write(program, "IPlugin");
+        CSharpProgramCompiler compiler = new CSharpProgramCompiler();
+        compiler.AddCode(sw.ToString());
+        string diagnostics = compiler.GetDiagnostics();
     }
 
     protected override void VisitFunction(FunctionCall functionCall)
