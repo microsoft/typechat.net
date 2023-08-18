@@ -2,6 +2,11 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Transpile Json Programs into C#
+/// ClassName: Program (Default)
+/// MethodName: Run
+/// </summary>
 public class CSharpProgramWriter : ProgramVisitor
 {
     const string DefaultClassName = "Program";
@@ -30,6 +35,7 @@ public class CSharpProgramWriter : ProgramVisitor
     }
     public string ApiVarName { get; set; } = "api";
     public string ResultVarPrefix { get; set; } = "step";
+    public string MethodName { get; set; } = "Run";
 
     public IList<string> Namespaces => _namespaces;
 
@@ -48,7 +54,7 @@ public class CSharpProgramWriter : ProgramVisitor
 
     void WriteMethod(Program program, Type apiType)
     {
-        _writer.BeginDeclareMethod("Run", CSharpLang.Types.Dynamic);
+        _writer.BeginDeclareMethod(MethodName, CSharpLang.Types.Dynamic);
         {
             _writer.Variable(ApiVarName, apiType);
         }

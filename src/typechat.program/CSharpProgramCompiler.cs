@@ -7,6 +7,10 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Compile Json Programs that were transpiled into C#
+///  - Class Name 
+/// </summary>
 public class CSharpProgramCompiler
 {
     public const string DefaultProgramName = "Program";
@@ -27,14 +31,14 @@ public class CSharpProgramCompiler
 
     static CSharpCompilationOptions s_defaultOptions = DefaultOptions();
 
-    string _programName;
+    string _assemblyName;
     CSharpCompilation _compilation;
 
     public CSharpProgramCompiler(string programName = DefaultProgramName)
     {
         ArgumentException.ThrowIfNullOrEmpty(programName, nameof(programName));
-        _programName = programName;
-        _compilation = CSharpCompilation.Create(_programName).WithOptions(s_defaultOptions);
+        _assemblyName = programName;
+        _compilation = CSharpCompilation.Create(_assemblyName).WithOptions(s_defaultOptions);
     }
 
     public void AddCode(string code)
@@ -66,21 +70,21 @@ public class CSharpProgramCompiler
         return null;
     }
 
-    public Result<MemoryStream> Compile(string? code = null)
+    public Result<byte[]> Compile(string? code = null)
     {
         if (!string.IsNullOrEmpty(code))
         {
             AddCode(code);
         }
-        MemoryStream stream = new MemoryStream();
+        using MemoryStream stream = new MemoryStream();
         var result = _compilation.Emit(stream);
         string? message = CollectDiagnostics(result.Diagnostics);
         if (result.Success)
         {
-            return new Result<MemoryStream>(stream, message);
+            return new Result<byte[]>(stream.ToArray(), message);
         }
 
-        return Result<MemoryStream>.Error(CollectDiagnostics(result.Diagnostics));
+        return Result<byte[]>.Error(CollectDiagnostics(result.Diagnostics));
     }
 
     string CollectDiagnostics(ImmutableArray<Diagnostic> diagnostics)
@@ -108,6 +112,35 @@ public class CSharpProgramCompiler
         var sourceText = diagnostic.Location.SourceTree.GetText();
         var errorText = sourceText.GetSubText(errorSpan).ToString();
         return errorText;
+    }
+
+    /// <summary>
+    /// Compile the Json program into a .NET aseembly
+    /// </summary>
+    /// <param name="program"></param>
+    /// <returns>In in-memory compiled assembly</returns>
+    public static Result<ProgramAssembly> Compile(Program program, Type apiType)
+    {
+        using StringWriter sw = new StringWriter();
+
+        var codeWriter = new CSharpProgramWriter(sw);
+        codeWriter.Write(program, apiType);
+        string code = sw.ToString();
+
+        CSharpProgramCompiler compiler = new CSharpProgramCompiler();
+        AssemblyReferences refs = new AssemblyReferences();
+        refs.AddStandard();
+        refs.Add(apiType);
+        compiler.AddReferences(refs);
+
+        Result<byte[]> result = compiler.Compile(code);
+        if (result.Success)
+        {
+            ProgramAssembly assembly = new ProgramAssembly(result.Value, codeWriter.ClassName, codeWriter.MethodName);
+            return new Result<ProgramAssembly>(assembly);
+        }
+
+        return Result<ProgramAssembly>.Error(result.Message);
     }
 }
 

@@ -13,18 +13,7 @@ public class TestProgramCSharp : ProgramTest
         var lines = code.Lines();
         ValidateCode(lines);
 
-        Compile(code, typeof(IMathAPI));
-    }
-
-    void Compile(string code, Type apiType)
-    {
-        CSharpProgramCompiler compiler = new CSharpProgramCompiler();
-        AssemblyReferences refs = new AssemblyReferences();
-        refs.AddStandard();
-        refs.Add(apiType);
-        compiler.AddReferences(refs);
-
-        var result = compiler.Compile(code);
+        Result<ProgramAssembly> result = CSharpProgramCompiler.Compile(program, typeof(IMathAPI));
         Assert.True(result.Success);
     }
 
