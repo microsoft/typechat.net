@@ -9,16 +9,17 @@ public class TestProgramCSharp : ProgramTest
     public void Test_Math(string source, double expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        string code = CSharpProgramWriter.GenerateCode(program);
+        string code = CSharpProgramWriter.GenerateCode(program, typeof(IMathAPI));
         var lines = code.Lines();
         ValidateCode(lines);
 
-        Compile(code);
+        Compile(code, typeof(IMathAPI));
     }
 
-    void Compile(string code)
+    void Compile(string code, Type apiType)
     {
         CSharpProgramCompiler compiler = new CSharpProgramCompiler();
+        compiler.AddReferences(apiType);
         var result = compiler.Compile(code);
         Assert.True(result.Success);
     }

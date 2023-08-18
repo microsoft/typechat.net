@@ -31,7 +31,7 @@ public class CSharpProgramWriter : ProgramVisitor
 
     public IList<string> Namespaces => _namespaces;
 
-    public void Write(Program program)
+    public void Write(Program program, Type apiType)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
 
@@ -39,16 +39,32 @@ public class CSharpProgramWriter : ProgramVisitor
         _writer.BeginClass(_className);
         {
             _writer.PushIndent();
-            Visit(program);
+            _writer.BeginDeclareMethod("Run", CSharpLang.Types.Dynamic);
+            {
+                _writer.Parameter("api", apiType);
+            }
+            _writer.EndDeclareMethod();
+            _writer.BeginMethodBody();
+            {
+                Visit(program);
+                _writer.Return();
+            }
+            _writer.EndMethodBody();
+
             _writer.PopIndent();
         }
         _writer.EndClass();
     }
 
-    public static string GenerateCode(Program program)
+    protected override void VisitFunction(FunctionCall functionCall)
+    {
+        base.VisitFunction(functionCall);
+    }
+
+    public static string GenerateCode(Program program, Type apiType)
     {
         using StringWriter sw = new StringWriter();
-        new CSharpProgramWriter(sw).Write(program);
+        new CSharpProgramWriter(sw).Write(program, apiType);
         return sw.ToString();
     }
 }
