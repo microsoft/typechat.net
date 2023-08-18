@@ -21,7 +21,7 @@ public class Math : ConsoleApp
         _compiler = new CSharpProgramCompiler("math");
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
-        base.SubscribeAllEvents(_translator);
+        //base.SubscribeAllEvents(_translator);
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
