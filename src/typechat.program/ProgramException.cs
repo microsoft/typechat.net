@@ -25,6 +25,17 @@ public class ProgramException : Exception
 
     public ErrorCode Code => _errorCode;
 
+    public static void ThrowFunctionNotFound(string name)
+    {
+        throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Function {name} not found");
+    }
+    public static void ThrowArgCountMismatch(FunctionCall call, int expectedCount, int actualCount)
+    {
+        string json = call.Source.ToString();
+        string message = $"Function {call.Name} Arg Count: Expected {expectedCount}, Got {actualCount}\n\n{json}";
+        throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, message);
+    }
+
     internal static void ThrowTypeMismatch(JsonValueKind expected, JsonValueKind actual)
     {
         throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Type mismatch. Expected {expected}, Actual {actual}");
@@ -45,10 +56,6 @@ public class ProgramException : Exception
     {
         throw new ProgramException(ProgramException.ErrorCode.InvalidResultRef, $"Referencing {resultRef} from {maxResults} results");
     }
-    internal static void ThrowFunctionNotFound(string name)
-    {
-        throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Function {name} not found");
-    }
     internal static void ThrowVariableNotFound(string name)
     {
         throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Variable {name} not found");
@@ -56,11 +63,5 @@ public class ProgramException : Exception
     internal static void ThrowArgCountMismatch(string name, int expectedCount, int actualCount)
     {
         throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, $"Function {name} Arg Count: Expected {expectedCount}, Got {actualCount}");
-    }
-    internal static void ThrowArgCountMismatch(FunctionCall call, int expectedCount, int actualCount)
-    {
-        string json = call.Source.ToString();
-        string message = $"Function {call.Name} Arg Count: Expected {expectedCount}, Got {actualCount}\n\n{json}";
-        throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, message);
     }
 }

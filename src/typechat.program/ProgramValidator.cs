@@ -4,23 +4,20 @@ using System.Linq.Expressions;
 
 namespace Microsoft.TypeChat;
 
-/// <summary>
-/// Compiles the program targeting TApi
-/// Any compilation errors can be used for correcting the program.
-/// </summary>
-/// <typeparam name="TApi"></typeparam>
-public class ProgramValidator<TApi> : IJsonTypeValidator<Program>
+public interface IProgramValidator
 {
-    Api<TApi> _api;
-    TypeValidator<Program> _typeValidator;
-    Func<Program, ValidationResult<Program>> _compiler;
+    ValidationResult<Program> ValidateProgram(Program program);
+}
 
-    public ProgramValidator(Api<TApi> api, Func<Program, ValidationResult<Program>> compiler = null)
+public class ProgramValidator : IJsonTypeValidator<Program>
+{
+    TypeValidator<Program> _typeValidator;
+    IProgramValidator? _programValidator;
+
+    public ProgramValidator(IProgramValidator? programValidator = null)
     {
-        _api = api;
         _typeValidator = new TypeValidator<Program>(ProgramTranslator.ProgramSchema);
-        compiler ??= this.Compile;
-        _compiler = compiler;
+        _programValidator = programValidator;
     }
 
     public TypeSchema Schema => _typeValidator.Schema;
@@ -32,15 +29,41 @@ public class ProgramValidator<TApi> : IJsonTypeValidator<Program>
         if (result.Success)
         {
             // Now validate the actual parsed program
-            return _compiler(result);
+            return ValidateProgram(result.Value);
         }
         return result;
+    }
+
+    public virtual ValidationResult<Program> ValidateProgram(Program program)
+    {
+        // Now validate the actual parsed program
+        if (_programValidator != null)
+        {
+            return _programValidator.ValidateProgram(program);
+        }
+        return program;
+    }
+}
+
+/// <summary>
+/// Compiles the program targeting TApi
+/// Any compilation errors can be used for correcting the program.
+/// </summary>
+/// <typeparam name="TApi"></typeparam>
+public class ProgramValidator<TApi> : ProgramValidator, IProgramValidator
+{
+    Api<TApi> _api;
+
+    public ProgramValidator(Api<TApi> api)
+        : base()
+    {
+        _api = api;
     }
 
     /// <summary>
     /// Default Compiler: Compiles into a Linq Expression Tree, type checking in the process
     /// </summary>
-    public ValidationResult<Program> Compile(Program program)
+    public override ValidationResult<Program> ValidateProgram(Program program)
     {
         ProgramCompiler compiler = new ProgramCompiler(_api.TypeInfo);
         try

@@ -5,7 +5,6 @@ using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Microsoft.TypeChat;
 
-
 /// <summary>
 /// Compiles a Json Program into a typesafe .NET lambda using the Dynamic Language Runtime
 /// Does so using System.Linq.Expressions and the DLR

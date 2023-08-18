@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public struct PluginFunctionName : IEquatable<PluginFunctionName>
+public struct PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<PluginFunctionName>
 {
     public const string DefaultSeparator = "__";
 
@@ -39,14 +39,9 @@ public struct PluginFunctionName : IEquatable<PluginFunctionName>
 
     public static PluginFunctionName Parse(string name, string separator = DefaultSeparator)
     {
-        int indexOf = name.LastIndexOf(separator);
-        if (indexOf < 0)
-        {
-            throw new ArgumentException($"Invalid PluginFunctionName {name}");
-        }
-
         string function = null;
-        if (indexOf == 0)
+        int indexOf = name.LastIndexOf(separator);
+        if (indexOf <= 0)
         {
             function = name;
             return new PluginFunctionName(function);
@@ -71,6 +66,16 @@ public struct PluginFunctionName : IEquatable<PluginFunctionName>
     public override int GetHashCode()
     {
         return HashCode.Combine(this.PluginName, this.FunctionName);
+    }
+
+    public int CompareTo(PluginFunctionName other)
+    {
+        int cmp = string.CompareOrdinal(this.PluginName, other.PluginName);
+        if (cmp == 0)
+        {
+            cmp = string.CompareOrdinal(this.FunctionName, other.FunctionName);
+        }
+        return cmp;
     }
 
     public static bool operator ==(PluginFunctionName left, PluginFunctionName right)

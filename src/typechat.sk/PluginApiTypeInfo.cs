@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat
-    ;
-public class PluginApiTypeInfo : Dictionary<PluginFunctionName, FunctionView>
+namespace Microsoft.TypeChat;
+
+public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
 {
     public PluginApiTypeInfo(IKernel kernel)
         : this(kernel.Skills.GetFunctionsView())

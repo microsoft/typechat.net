@@ -25,6 +25,7 @@ public class PluginApp : ConsoleApp
         InitPlugins();
         _translator = new ProgramTranslator(
             new CompletionService(Config.LoadOpenAI()),
+            new ProgramValidator(new PluginProgramValidator(_typeInfo)),
             _pluginSchema
         );
     }
@@ -41,12 +42,13 @@ public class PluginApp : ConsoleApp
     void InitPlugins()
     {
         _kernel = Config.LoadOpenAI().CreateKernel();
-        _kernel.ImportSkill(new HttpSkill());
         _kernel.ImportSkill(new FileIOSkill());
-        _kernel.ImportSkill(new TimeSkill());
-        //_kernel.ImportSkill(new FallbackSkill());
+        _kernel.ImportSkill(new FallbackSkill(), "Fallback");
         _typeInfo = new PluginApiTypeInfo(_kernel);
-        _pluginSchema = _typeInfo.ExportSchema("IPlugins", "Use only this api in translating requests");
+        _pluginSchema = _typeInfo.ExportSchema(
+            "IPluginApi",
+            "When a user request cannot be satisfied, use the Fallback methods"
+            );
     }
 
     public static async Task<int> Main(string[] args)
@@ -71,10 +73,9 @@ public class PluginApp : ConsoleApp
 public class FallbackSkill
 {
     [SKFunction]
-    [Description("Cannot do what user asked")]
-    public void CannotDo(string intent) { }
-
-    [SKFunction]
-    [Description("Did not understood")]
-    public void NotUnderstood(string intent) { }
+    [Description("User requests that you cannot handle")]
+    public Task<string> NotHandledAsync(string text)
+    {
+        return Task.FromResult(string.Empty);
+    }
 }
