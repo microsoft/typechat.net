@@ -27,6 +27,8 @@ internal class CSharpLang : CodeLanguage
         public const string Void = "void";
         public const string Dynamic = "dynamic";
         public const string Var = "var";
+        public const string True = "true";
+        public const string False = "false";
     }
 
     public static class Modifiers
@@ -186,6 +188,19 @@ internal class CSharpWriter : CodeWriter
     public CSharpWriter ArgSep()
     {
         Append(", ");
+        return this;
+    }
+
+    public CSharpWriter True() { Append(CSharpLang.Types.True); return this; }
+    public CSharpWriter False() { Append(CSharpLang.Types.False); return this; }
+    public CSharpWriter Literal(string value)
+    {
+        DoubleQuote().Append(value).DoubleQuote();
+        return this;
+    }
+    public CSharpWriter Literal(double value)
+    {
+        base.Write(value);
         return this;
     }
 

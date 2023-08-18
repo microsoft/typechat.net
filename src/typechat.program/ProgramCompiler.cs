@@ -220,23 +220,6 @@ public class ProgramCompiler
         }
     }
 
-    JsonNode ToJsonNode(ValueExpr expr)
-    {
-        switch (expr.Value.ValueKind)
-        {
-            default:
-                throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{expr.Value.ValueKind}");
-            case JsonValueKind.True:
-                return true;
-            case JsonValueKind.False:
-                return false;
-            case JsonValueKind.String:
-                return expr.Value.GetString();
-            case JsonValueKind.Number:
-                return expr.Value.GetDouble();
-        }
-    }
-
     NewArrayExpression Compile(ArrayExpr expr, Type? itemType = null)
     {
         LinqExpression[] items = Compile(expr.Value, itemType);
@@ -265,7 +248,7 @@ public class ProgramCompiler
 
                     case ValueExpr value:
                         // Constants we can just preinject
-                        JsonNode node = ToJsonNode(value);
+                        JsonNode node = value.ToJsonNode();
                         jsonObj.Add(property.Key, node);
                         break;
 

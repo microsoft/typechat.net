@@ -21,6 +21,7 @@ public class CodeLanguage
         public const string Hash = "#";
         public const string Space = " ";
         public const string SingleQuote = "'";
+        public const string DoubleQuote = "\"";
         public const string EOL = "\n";
     }
 }

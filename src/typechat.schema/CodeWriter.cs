@@ -43,6 +43,12 @@ public class CodeWriter
         return this;
     }
 
+    public CodeWriter Write(double token)
+    {
+        _writer.Write(token);
+        return this;
+    }
+
     public CodeWriter WriteIndent()
     {
         if (_indent.Count > 0)
@@ -78,6 +84,7 @@ public class CodeWriter
     public CodeWriter Period() => Write(CodeLanguage.Punctuation.Period);
     public CodeWriter Colon() => Write(CodeLanguage.Punctuation.Colon);
     public CodeWriter SQuote() => Write(CodeLanguage.Punctuation.SingleQuote);
+    public CodeWriter DoubleQuote() => Write(CodeLanguage.Punctuation.DoubleQuote);
     public CodeWriter Question() => Write(CodeLanguage.Punctuation.Question);
     public CodeWriter Space() => Write(Typescript.Punctuation.Space);
     public CodeWriter SOL() { WriteIndent(); return this; } // Start a line

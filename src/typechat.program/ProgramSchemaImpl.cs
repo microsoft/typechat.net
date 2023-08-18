@@ -167,6 +167,24 @@ public partial class ValueExpr : Expression
             return base.Type;
         }
     }
+
+    internal JsonNode ToJsonNode()
+    {
+        switch (Value.ValueKind)
+        {
+            default:
+                throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{Value.ValueKind}");
+            case JsonValueKind.True:
+                return true;
+            case JsonValueKind.False:
+                return false;
+            case JsonValueKind.String:
+                return Value.GetString();
+            case JsonValueKind.Number:
+                return Value.GetDouble();
+        }
+    }
+
 }
 
 public partial class ArrayExpr : Expression

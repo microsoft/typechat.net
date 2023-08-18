@@ -6,6 +6,8 @@ namespace Microsoft.TypeChat;
 /// Transpile Json Programs into C#
 /// ClassName: Program (Default)
 /// MethodName: Run
+///
+/// Only synchronous implemented. Coming: async, await. 
 /// </summary>
 public class CSharpProgramWriter : ProgramVisitor
 {
@@ -15,6 +17,7 @@ public class CSharpProgramWriter : ProgramVisitor
     CSharpWriter _writer;
     List<string> _namespaces;
     string _className;
+    ApiTypeInfo _typeInfo;
 
     public CSharpProgramWriter(TextWriter writer)
     {
@@ -42,6 +45,8 @@ public class CSharpProgramWriter : ProgramVisitor
     public void Write(Program program, Type apiType)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
+
+        _typeInfo = new ApiTypeInfo(apiType);
 
         _writer.Using(_namespaces);
         _writer.Using(apiType.Namespace);
@@ -106,13 +111,38 @@ public class CSharpProgramWriter : ProgramVisitor
         for (int i = 0; i < args.Length; ++i)
         {
             if (i > 0) { _writer.ArgSep(); }
-            Visit(args[i]);
+            switch (args[i])
+            {
+                default:
+                    Visit(args[i]);
+                    break;
+
+                case ObjectExpr objExpr:
+                    Visit(objExpr);
+                    break;
+            }
         }
     }
 
-    protected override void VisitValue(ValueExpr valueExpr)
+    protected override void VisitValue(ValueExpr expr)
     {
-        _writer.Append(valueExpr.Value.Stringify());
+        switch (expr.Value.ValueKind)
+        {
+            default:
+                throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{expr.Value.ValueKind}");
+            case JsonValueKind.True:
+                _writer.True();
+                break;
+            case JsonValueKind.False:
+                _writer.False();
+                break;
+            case JsonValueKind.String:
+                _writer.Literal(expr.Value.GetString());
+                break;
+            case JsonValueKind.Number:
+                _writer.Literal(expr.Value.GetDouble());
+                break;
+        }
     }
 
     protected override void VisitResult(ResultReference resultRef)
