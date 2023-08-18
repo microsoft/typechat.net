@@ -70,7 +70,12 @@ public class TestProgram : ProgramTest
         ValidateProgram(program);
 
         Api api = new Api(MathAPIAsync.Default);
-        double result = (double)await program.RunAsync(api);
+        ProgramCompiler compiler = new ProgramCompiler(api.TypeInfo);
+        Delegate d = compiler.Compile(program, api);
+        double result = (double)d.DynamicInvoke();
+        Assert.Equal(expectedResult, result);
+
+        result = (double)await program.RunAsync(api);
         Assert.Equal(expectedResult, result);
     }
 
@@ -114,7 +119,7 @@ public class TestProgram : ProgramTest
     {
         Program program = Json.Parse<Program>(source);
         var validator = new ProgramValidator<IStringAPI>(TextApis.Default);
-        validator.Validate(program);
+        validator.ValidateProgram(program);
     }
 
     [Theory]
@@ -123,7 +128,7 @@ public class TestProgram : ProgramTest
     {
         Program program = Json.Parse<Program>(source);
         var validator = new ProgramValidator<IMathAPI>(MathAPI.Default);
-        validator.Validate(program);
+        validator.ValidateProgram(program);
     }
 
     // TODO: more validation.. actually inspect the AST and compare against

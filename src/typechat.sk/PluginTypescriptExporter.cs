@@ -2,27 +2,29 @@
 
 using Microsoft.SemanticKernel.SkillDefinition;
 
-namespace Microsoft.TypeChat.SemanticKernel;
+namespace Microsoft.TypeChat;
 
-public class SkillTypescriptExporter
+public class PluginTypescriptExporter
 {
     TypescriptWriter _tsWriter;
 
-    public SkillTypescriptExporter(TextWriter writer)
+    public PluginTypescriptExporter(TextWriter writer)
     {
         _tsWriter = new TypescriptWriter(writer);
     }
 
     public bool IncludeParamDescriptions { get; set; } = false;
 
-    public void Export(string interfaceName, IEnumerable<IEnumerable<FunctionView>> skills)
+    public void Comment(string descr) => _tsWriter.Comment(descr);
+
+    public void Export(string apiName, PluginApiTypeInfo typeInfo)
     {
-        _tsWriter.BeginInterface(interfaceName);
+        _tsWriter.BeginInterface(apiName);
         {
             _tsWriter.PushIndent();
-            foreach (var skill in skills)
+            foreach (var plugin in typeInfo)
             {
-                Export(skill);
+                Export(plugin.Key, plugin.Value);
             }
             _tsWriter.PopIndent();
         }
@@ -30,26 +32,16 @@ public class SkillTypescriptExporter
         _tsWriter.Writer.Flush();
     }
 
-    void Export(IEnumerable<FunctionView> functions)
+    void Export(PluginFunctionName pluginName, FunctionView function)
     {
-        foreach (var fview in functions)
-        {
-            Export(fview);
-        }
-    }
+        ArgumentNullException.ThrowIfNull(function, nameof(function));
 
-    void Export(FunctionView fview)
-    {
-        string methodname = fview.IsGlobal() ?
-                            fview.Name :
-                            $"{fview.SkillName}_{fview.Name}";
-
-        _tsWriter.SOL().Comment(fview.Description);
-        _tsWriter.BeginMethodDeclare(methodname);
+        _tsWriter.SOL().Comment(function.Description);
+        _tsWriter.BeginMethodDeclare(pluginName.ToString());
         {
-            Export(fview.Parameters);
+            Export(function.Parameters);
         }
-        _tsWriter.EndMethodDeclare();
+        _tsWriter.EndMethodDeclare(Typescript.Types.String);
     }
 
     void Export(IList<ParameterView> parameters)
@@ -127,4 +119,7 @@ public class SkillTypescriptExporter
         }
         return type;
     }
+
+    PluginTypescriptExporter SOL() { _tsWriter.SOL(); return this; }
+    PluginTypescriptExporter EOL() { _tsWriter.EOL(); return this; }
 }

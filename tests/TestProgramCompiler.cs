@@ -21,7 +21,7 @@ public class TestProgramCompiler : ProgramTest
         Assert.True(block.Expressions.Count > 0);
 
         Delegate compiledProgram = lambda.Compile();
-        var result = (double) compiledProgram.DynamicInvoke();
+        var result = (double)compiledProgram.DynamicInvoke();
         Assert.Equal(expectedResult, result);
     }
 

@@ -385,7 +385,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 ExportParameter(parameter, i, parameters.Length);
             }
         }
-        _writer.EndMethodDeclare(DataType(methodInfo.ReturnType));
+        _writer.EndMethodDeclare(DataType(methodInfo.ReturnType), methodInfo.ReturnType.IsNullableValueType());
         return this;
     }
 

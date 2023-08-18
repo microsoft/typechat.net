@@ -4,22 +4,20 @@ using System.Linq.Expressions;
 
 namespace Microsoft.TypeChat;
 
-/// <summary>
-/// Compiles the program targeting TApi into a Linq Expression Tree.
-/// Any compilation errors can be used for correcting the program.
-/// </summary>
-/// <typeparam name="TApi"></typeparam>
-public class ProgramValidator<TApi> : IJsonTypeValidator<Program>
+public interface IProgramValidator
 {
-    Api<TApi> _api;
-    TypeValidator<Program> _typeValidator;
-    ProgramCompiler _compiler;
+    ValidationResult<Program> ValidateProgram(Program program);
+}
 
-    public ProgramValidator(Api<TApi> api)
+public class ProgramValidator : IJsonTypeValidator<Program>
+{
+    TypeValidator<Program> _typeValidator;
+    IProgramValidator? _programValidator;
+
+    public ProgramValidator(IProgramValidator? programValidator = null)
     {
-        _api = api;
         _typeValidator = new TypeValidator<Program>(ProgramTranslator.ProgramSchema);
-        _compiler = new ProgramCompiler(api.TypeInfo);
+        _programValidator = programValidator;
     }
 
     public TypeSchema Schema => _typeValidator.Schema;
@@ -31,16 +29,47 @@ public class ProgramValidator<TApi> : IJsonTypeValidator<Program>
         if (result.Success)
         {
             // Now validate the actual parsed program
-            return Validate(result);
+            return ValidateProgram(result.Value);
         }
         return result;
     }
 
-    public ValidationResult<Program> Validate(Program program)
+    public virtual ValidationResult<Program> ValidateProgram(Program program)
     {
+        // Now validate the actual parsed program
+        if (_programValidator != null)
+        {
+            return _programValidator.ValidateProgram(program);
+        }
+        return program;
+    }
+}
+
+/// <summary>
+/// Compiles the program targeting TApi
+/// Any compilation errors can be used for correcting the program.
+/// </summary>
+/// <typeparam name="TApi"></typeparam>
+public class ProgramValidator<TApi> : ProgramValidator, IProgramValidator
+{
+    Api<TApi> _api;
+
+    public ProgramValidator(Api<TApi> api)
+        : base()
+    {
+        _api = api;
+    }
+
+    /// <summary>
+    /// Default Compiler: Compiles into a Linq Expression Tree, type checking in the process
+    /// </summary>
+    public override ValidationResult<Program> ValidateProgram(Program program)
+    {
+        ProgramCompiler compiler = new ProgramCompiler(_api.TypeInfo);
         try
         {
-            program.Lambda = _compiler.CompileToExpressionTree(program, _api.Implementation);
+            var lambdaExpr = compiler.CompileToExpressionTree(program, _api.Implementation);
+            program.Delegate = lambdaExpr.Compile();
             return new ValidationResult<Program>(program);
         }
         catch (Exception ex)

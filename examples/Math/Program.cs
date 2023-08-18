@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
@@ -18,19 +19,25 @@ public class Math : ConsoleApp
         );
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
-        //base.SubscribeAllEvents(_translator);
+        base.SubscribeAllEvents(_translator);
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        Program program = await _translator.TranslateAsync(input);
+        using Program program = await _translator.TranslateAsync(input);
         DisplayProgram(program);
-
         Console.WriteLine("Running program");
-        double result = program.Run(_api);
-        Console.WriteLine($"Result: {result}");
+        dynamic result = program.Run(_api);
+        if (result != null && result is double)
+        {
+            Console.WriteLine($"Result: {result}");
+        }
+        else
+        {
+            Console.WriteLine("No result");
+        }
     }
 
     private void DisplayProgram(Program program)
@@ -40,7 +47,7 @@ public class Math : ConsoleApp
 
     private void DisplayCall(string functionName, dynamic[] args, dynamic result)
     {
-        new ProgramWriter(Console.Out).Call(functionName, args);
+        new ProgramWriter(Console.Out).Write(functionName, args);
         Console.WriteLine($"==> {result}");
     }
 

@@ -5,8 +5,7 @@ using Microsoft.TypeChat.Schema;
 
 namespace Math;
 
-[Comment("This is a schema for writing programs that evaluate Math expressions")]
-[Comment("You must use right number of arguments")]
+[Comment("Schema for writing programs that evaluate Math expressions")]
 public interface IMathAPI
 {
     [Comment("Add two numbers")]
@@ -22,7 +21,7 @@ public interface IMathAPI
     [Comment("Negate a number")]
     double neg(double x);
     [Comment("Unknown request")]
-    double unknown(string text);
+    void unknown(string text);
 }
 
 /// <summary>
@@ -44,5 +43,5 @@ public class MathAPI : IMathAPI
 
     public double neg(double x) => -x;
 
-    public double unknown(string text) => double.NaN;
+    public void unknown(string text) { }
 }

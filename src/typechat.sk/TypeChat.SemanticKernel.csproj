@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
-    <RootNamespace>Microsoft.TypeChat.SemanticKernel</RootNamespace>
+    <RootNamespace>Microsoft.TypeChat</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

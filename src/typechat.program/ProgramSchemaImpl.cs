@@ -15,10 +15,21 @@ public partial class Program : IDisposable
         Steps = steps;
     }
 
+    ~Program()
+    {
+        Dispose(false);
+    }
+
     [JsonIgnore]
     public JsonDocument Source => _programSource;
+
+    /// <summary>
+    /// Optional:
+    /// A fully compiled and typesafe delegate for this program
+    /// Automatically created if you use the ProgramValidator
+    /// </summary>
     [JsonIgnore]
-    public LambdaExpression Lambda { get; internal set; }
+    public Delegate? Delegate { get; internal set; }
 
     public void Dispose()
     {
@@ -29,6 +40,11 @@ public partial class Program : IDisposable
     public dynamic Run(Api api)
     {
         ArgumentNullException.ThrowIfNull(api, nameof(api));
+        if (Delegate != null)
+        {
+            return Delegate.DynamicInvoke();
+        }
+
         ProgramInterpreter interpreter = new ProgramInterpreter();
         return interpreter.Run(this, api.Call);
     }
@@ -45,8 +61,9 @@ public partial class Program : IDisposable
         if (fromDispose)
         {
             _programSource?.Dispose();
-            _programSource = null;
         }
+        _programSource = null;
+        Delegate = null;
     }
 }
 
@@ -169,6 +186,15 @@ public partial class ObjectExpr : Expression
     {
         ArgumentNullException.ThrowIfNull(obj, nameof(obj));
         Value = obj;
+    }
+}
+
+public partial class NotTranslatedExpr : Expression
+{
+    public NotTranslatedExpr(JsonElement source, string text)
+        : base(source)
+    {
+        Text = text;
     }
 }
 

@@ -13,4 +13,9 @@ public static class Extensions
         }
         return args[index];
     }
+
+    public static bool IsNullOrEmpty(this Array array)
+    {
+        return (array == null || array.Length == 0);
+    }
 }

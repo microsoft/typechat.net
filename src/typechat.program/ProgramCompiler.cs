@@ -5,9 +5,8 @@ using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Microsoft.TypeChat;
 
-
 /// <summary>
-/// Compiles a Json Program into a typesafe .NET lambda
+/// Compiles a Json Program into a typesafe .NET lambda using the Dynamic Language Runtime
 /// Does so using System.Linq.Expressions and the DLR
 /// </summary>
 public class ProgramCompiler
@@ -50,6 +49,11 @@ public class ProgramCompiler
         return LinqExpression.Lambda(lambdaBlock);
     }
 
+    public Delegate Compile(Program program, Api api)
+    {
+        return Compile(program, api.Implementation);
+    }
+
     public Delegate Compile(Program program, object apiImpl)
     {
         LambdaExpression lambda = CompileToExpressionTree(program, apiImpl);
@@ -76,23 +80,28 @@ public class ProgramCompiler
         return EndBlock(block);
     }
 
-    BinaryExpression CompileStep(FunctionCall call, int stepNumber)
+    LinqExpression CompileStep(FunctionCall call, int stepNumber)
     {
         ApiMethod method = _apiTypeInfo[call.Name];
-        LinqExpression resultVar = AddVariable(method.ReturnType.ParameterType, ResultVarName(stepNumber));
         LinqExpression callExpr = Compile(call, method);
-        return LinqExpression.Assign(resultVar, callExpr);
+        if (callExpr.Type != typeof(void))
+        {
+            LinqExpression resultVar = AddVariable(callExpr.Type, ResultVarName(stepNumber));
+            return LinqExpression.Assign(resultVar, callExpr);
+        }
+        return callExpr;
     }
 
-    MethodCallExpression Compile(FunctionCall call)
+    LinqExpression Compile(FunctionCall call)
     {
         return Compile(call, _apiTypeInfo[call.Name]);
     }
 
-    MethodCallExpression Compile(FunctionCall call, ApiMethod method)
+    LinqExpression Compile(FunctionCall call, ApiMethod method)
     {
         LinqExpression[]? args = CompileArgs(call, method.Params);
-        return LinqExpression.Call(_apiImpl, method.Method, args);
+        MethodCallExpression callExpr = LinqExpression.Call(_apiImpl, method.Method, args);
+        return CompileReturnValue(callExpr);
     }
 
     LinqExpression Compile(Expression expr)
@@ -252,7 +261,7 @@ public class ProgramCompiler
                 switch (property.Value)
                 {
                     default:
-                        break;
+                        throw new InvalidOperationException();
 
                     case ValueExpr value:
                         // Constants we can just preinject
@@ -276,6 +285,9 @@ public class ProgramCompiler
                         addJsonPropertyExpr = AddJsonProperty(jsonObjExpr, property.Key, Compile(obj));
                         block.Add(addJsonPropertyExpr);
                         break;
+
+                    case UnknownExpr unknown:
+                        throw new ProgramException(ProgramException.ErrorCode.UnknownExpression, unknown.Source.Stringify());
                 }
             }
             block.Add(jsonObjExpr);
@@ -349,6 +361,25 @@ public class ProgramCompiler
         return LinqExpression.Convert(srcExpr, type);
     }
 
+    LinqExpression CompileReturnValue(LinqExpression retVal)
+    {
+        Type retType = retVal.Type;
+
+        if (retType.IsAssignableTo(typeof(Task)))
+        {
+            if (retType.IsGenericType)
+            {
+                Debug.Assert(!retType.GenericTypeArguments.IsNullOrEmpty());
+                LinqExpression waitResult = LinqExpression.Call(CompilerApi.WaitForResultMethod.Method, retVal);
+                return LinqExpression.Convert(waitResult, retType.GenericTypeArguments[0]);
+            }
+
+            return LinqExpression.Call(CompilerApi.WaitForMethod.Method, retVal);
+        }
+
+        return retVal;
+    }
+
     string ResultVarName(int resultRef)
     {
         return "resultRef_" + resultRef;
@@ -373,11 +404,20 @@ public class ProgramCompiler
             AddNodeMethod = typeInfo["AddNode"];
             DeserializeMethod = typeInfo["Deserialize"];
             SerializeMethod = typeInfo["Serialize"];
+            WaitForResultMethod = typeInfo["WaitForResult"];
+            WaitForMethod = typeInfo["WaitFor"];
         }
 
         public static readonly ApiMethod AddNodeMethod;
         public static readonly ApiMethod DeserializeMethod;
         public static readonly ApiMethod SerializeMethod;
+        public static readonly ApiMethod WaitForResultMethod;
+        public static readonly ApiMethod WaitForMethod;
+
+        /*
+         * These methods are called dynamically through code gen
+         * Do NOT delete or alter them without testing
+         */
 
         public static object? Deserialize(JsonObject obj, Type type)
         {
@@ -393,6 +433,17 @@ public class ProgramCompiler
         {
             obj.Add(name, node);
             return obj;
+        }
+
+        public static void WaitFor(Task task)
+        {
+            task.ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
+        public static dynamic WaitForResult(Task task)
+        {
+            dynamic dtask = task;
+            return dtask.ConfigureAwait(false).GetAwaiter().GetResult();
         }
     }
 }
