@@ -9,7 +9,7 @@ public class TestProgramCSharp : ProgramTest
     public void Test_Math(string source, double expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        string code = CSharpProgramWriter.GenerateCode(program, typeof(IMathAPI));
+        string code = CSharpProgramTranspiler.GenerateCode(program, typeof(IMathAPI));
         var lines = code.Lines();
         ValidateCode(lines);
 

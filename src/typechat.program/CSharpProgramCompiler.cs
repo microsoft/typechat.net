@@ -121,11 +121,8 @@ public class CSharpProgramCompiler
     /// <returns>In in-memory compiled assembly</returns>
     public static Result<ProgramAssembly> Compile(Program program, Type apiType)
     {
-        using StringWriter sw = new StringWriter();
-
-        var codeWriter = new CSharpProgramWriter(sw);
-        codeWriter.Write(program, apiType);
-        string code = sw.ToString();
+        var transpiler = new CSharpProgramTranspiler(apiType);
+        string code = transpiler.Compile(program);
 
         CSharpProgramCompiler compiler = new CSharpProgramCompiler();
         AssemblyReferences refs = new AssemblyReferences();
@@ -136,7 +133,7 @@ public class CSharpProgramCompiler
         Result<byte[]> result = compiler.Compile(code);
         if (result.Success)
         {
-            ProgramAssembly assembly = new ProgramAssembly(result.Value, codeWriter.ClassName, codeWriter.MethodName);
+            ProgramAssembly assembly = new ProgramAssembly(result.Value, transpiler.ClassName, transpiler.MethodName);
             return new Result<ProgramAssembly>(assembly);
         }
 

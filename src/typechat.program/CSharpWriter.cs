@@ -105,6 +105,11 @@ internal class CSharpWriter : CodeWriter
         return this;
     }
 
+    public CSharpWriter DeclareMethod(string name, string? retType)
+    {
+        return BeginDeclareMethod(name, retType).EndDeclareMethod();
+    }
+
     public CSharpWriter BeginMethodBody()
     {
         SOL().LBrace().EOL();
@@ -133,7 +138,7 @@ internal class CSharpWriter : CodeWriter
     {
         if (number > 0)
         {
-            Comma().Space();
+            ArgSep();
         }
         Append(type);
         if (isArray)
@@ -169,13 +174,29 @@ internal class CSharpWriter : CodeWriter
         return this;
     }
 
-    public CSharpWriter BeginCall(string variable, string methodName)
+    public CSharpWriter BeginMethodCall(string objName, string methodName)
     {
-        Append(variable).Period().Append(methodName).LParan();
+        Append(objName).Period().Append(methodName).LParan();
         return this;
     }
 
-    public CSharpWriter EndCall(bool inline = false)
+    public CSharpWriter Args(params string[] values)
+    {
+        if (values != null)
+        {
+            for (int i = 0; i < values.Length; ++i)
+            {
+                if (i > 0)
+                {
+                    ArgSep();
+                }
+                Append(values[i]);
+            }
+        }
+        return this;
+    }
+
+    public CSharpWriter EndMethodCall(bool inline = false)
     {
         RParan();
         if (!inline)
@@ -183,6 +204,11 @@ internal class CSharpWriter : CodeWriter
             Semicolon().EOL();
         }
         return this;
+    }
+
+    public CSharpWriter MethodCall(string objName, string methodName, params string[] args)
+    {
+        return BeginMethodCall(objName, methodName).Args(args).EndMethodCall();
     }
 
     public CSharpWriter ArgSep()

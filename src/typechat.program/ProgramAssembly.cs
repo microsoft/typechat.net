@@ -11,7 +11,7 @@ public class ProgramAssembly
     string _className;
     string _methodName;
 
-    public ProgramAssembly(byte[] bytes, CSharpProgramWriter writer)
+    public ProgramAssembly(byte[] bytes, CSharpProgramTranspiler writer)
         : this(bytes, writer.ClassName, writer.MethodName)
     {
     }

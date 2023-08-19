@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Text;
+
 namespace Microsoft.TypeChat.Schema;
 
 public class CodeWriter
@@ -43,6 +45,15 @@ public class CodeWriter
         return this;
     }
 
+    public CodeWriter Write(StringBuilder sb)
+    {
+        if (sb.Length > 0)
+        {
+            _writer.Write(sb);
+        }
+        return this;
+    }
+
     public CodeWriter Write(double token)
     {
         _writer.Write(token);
@@ -62,6 +73,7 @@ public class CodeWriter
     }
 
     public CodeWriter Append(string token) => Write(token);
+    public CodeWriter Append(StringBuilder tokens) => Write(tokens);
 
     public CodeWriter Append(char ch)
     {
