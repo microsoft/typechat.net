@@ -211,6 +211,12 @@ internal class CSharpWriter : CodeWriter
         return BeginMethodCall(objName, methodName).Args(args).EndMethodCall();
     }
 
+    public CSharpWriter Cast(string type)
+    {
+        LParan().Append(type).RParan();
+        return this;
+    }
+
     public CSharpWriter ArgSep()
     {
         Append(", ");

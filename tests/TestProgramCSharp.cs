@@ -17,6 +17,19 @@ public class TestProgramCSharp : ProgramTest
         Assert.True(result.Success);
     }
 
+    //[Theory]
+    [MemberData(nameof(GetObjectPrograms))]
+    public void Test_Object(string source, string expectedResult)
+    {
+        Program program = Json.Parse<Program>(source);
+        string code = CSharpProgramTranspiler.GenerateCode(program, typeof(IPersonApi));
+        var lines = code.Lines();
+        ValidateCode(lines);
+
+        Result<ProgramAssembly> result = CSharpProgramCompiler.Compile(program, typeof(IPersonApi));
+        Assert.True(result.Success);
+    }
+
     void ValidateCode(IEnumerable<string> lines)
     {
         ValidateStandardUsings(lines);

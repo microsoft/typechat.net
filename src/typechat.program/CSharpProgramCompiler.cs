@@ -110,7 +110,7 @@ public class CSharpProgramCompiler
     {
         var errorSpan = diagnostic.Location.SourceSpan;
         var sourceText = diagnostic.Location.SourceTree.GetText();
-        var errorText = sourceText.GetSubText(errorSpan).ToString();
+        var errorText = sourceText.GetSubText(errorSpan.Start).ToString();
         return errorText;
     }
 

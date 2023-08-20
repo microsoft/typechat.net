@@ -12,7 +12,7 @@ namespace Microsoft.TypeChat;
 public class CSharpProgramTranspiler
 {
     const string DefaultClassName = "Program";
-    static string[] s_standardNamespaces = new[] { "System", "System.Text" };
+    static string[] s_standardNamespaces = new[] { "System", "System.Text", "System.Text.Json", "System.Text.Json.Nodes" };
 
     Type _apiType;
     ApiTypeInfo _apiTypeInfo;
@@ -58,15 +58,19 @@ public class CSharpProgramTranspiler
             writer.Using(_apiType.Namespace);
             writer.BeginClass(_className);
             {
-                Compile(writer, program);
+                writer.Append(CompileProgramMethods(program));
+                //
+                // Emit all blocks generated during compilation
+                //
+                writer.EOL();
+                foreach(string block in _blocks)
+                {
+                    writer.SOL().Append(block).EOL();
+                }
             }
             writer.EndClass();
         }
-        EndBlock(buffer, writer);
-        //
-        // Combine all blocks
-        //
-        return string.Join(Environment.NewLine, _blocks);
+        return EndBlock(buffer, writer, false);
     }
 
     void Clear()
@@ -75,18 +79,22 @@ public class CSharpProgramTranspiler
         _blocks.Clear();
     }
 
-    void Compile(CSharpWriter writer, Program program)
+    string CompileProgramMethods(Program program)
     {
-        writer.BeginDeclareMethod(MethodName, CSharpLang.Types.Dynamic);
+        var (buffer, writer) = BeginBlock();
         {
-            writer.Variable(ApiVarName, _apiType);
+            writer.BeginDeclareMethod(MethodName, CSharpLang.Types.Dynamic);
+            {
+                writer.Variable(ApiVarName, _apiType);
+            }
+            writer.EndDeclareMethod();
+            writer.BeginMethodBody();
+            {
+                Compile(writer, program.Steps);
+            }
+            writer.EndMethodBody();
         }
-        writer.EndDeclareMethod();
-        writer.BeginMethodBody();
-        {
-            Compile(writer, program.Steps);
-        }
-        writer.EndMethodBody();
+        return EndBlock(buffer, writer, false);
     }
 
     void Compile(CSharpWriter writer, Steps steps)
@@ -104,17 +112,32 @@ public class CSharpProgramTranspiler
         }
     }
 
+    string Compile(FunctionCall function, bool inline = true)
+    {
+        var (sw, writer) = BeginBlock();
+        {
+            Compile(writer, function, inline);
+        }
+        return EndBlock(sw, writer, false);
+    }
+
     void Compile(CSharpWriter writer, FunctionCall function, bool inline)
     {
+        var apiInfo = _apiTypeInfo[function.Name];
         writer.BeginMethodCall(ApiVarName, function.Name);
         {
-            Compile(writer, function.Args);
+            CompileArgs(writer, function, apiInfo.Params);
         }
         writer.EndMethodCall(inline);
     }
 
-    void Compile(CSharpWriter writer, Expression[] expressions)
+    void CompileArgs(CSharpWriter writer, FunctionCall function, ParameterInfo[] paramsInfo)
     {
+        Expression[] expressions = function.Args;
+        if (paramsInfo.Length != expressions.Length)
+        {
+            ProgramException.ThrowArgCountMismatch(function, paramsInfo.Length, expressions.Length);
+        }
         if (expressions.IsNullOrEmpty())
         {
             return;
@@ -122,11 +145,20 @@ public class CSharpProgramTranspiler
         for (int i = 0; i < expressions.Length; ++i)
         {
             if (i > 0) { writer.ArgSep(); }
-            Compile(writer, expressions[i]);
+            switch (expressions[i])
+            {
+                default:
+                    writer.Append(Compile(expressions[i]));
+                    break;
+                case ObjectExpr objExpr:
+                    var jsonObjExpr = Compile(objExpr);
+                    CastFromJsonObject(writer, jsonObjExpr, paramsInfo[i].ParameterType);
+                    break;
+            }
         }
     }
 
-    void Compile(CSharpWriter writer, Expression expr)
+    string Compile(Expression expr)
     {
         switch (expr)
         {
@@ -134,16 +166,16 @@ public class CSharpProgramTranspiler
                 throw new NotSupportedException();
 
             case FunctionCall call:
-                Compile(writer, call, true);
-                break;
+                return Compile(call);
 
             case ResultReference result:
-                writer.Append(Compile(result));
-                break;
+                return Compile(result);
 
             case ValueExpr value:
-                writer.Append(Compile(value));
-                break;
+                return Compile(value);
+
+            case ObjectExpr obj:
+                return Compile(obj);
         }
     }
 
@@ -173,18 +205,20 @@ public class CSharpProgramTranspiler
     /// Object Expressions are compiled into a factory method
     /// </summary>
     /// <param name="objectExpr"></param>
-    /// <returns>The name of the factory method</returns>
+    /// <returns>A call to the factory method</returns>
     string Compile(ObjectExpr objectExpr)
     {
         ++_objectId;
         string jsonObj = "jsonObj";
         string methodName = "NewJsonObject_" + _objectId;
-
         var (buffer, writer) = BeginBlock();
         {
             writer.DeclareMethod(methodName, nameof(JsonObject));
             writer.BeginMethodBody();
             {
+                writer.PushIndent();
+                writer.SOL();
+                writer.Local(jsonObj, nameof(JsonObject), false, true).Append("new JsonObject()").Semicolon().EOL();
                 foreach (var property in objectExpr.Value)
                 {
                     switch (property.Value)
@@ -192,15 +226,78 @@ public class CSharpProgramTranspiler
                         default:
                             break;
 
+                        case FunctionCall call:
+                            AddJsonProperty(
+                                writer,
+                                jsonObj,
+                                property.Key,
+                                Compile(call),
+                                _apiTypeInfo[call.Name].ReturnType.ParameterType
+                            );
+                            break;
+
                         case ValueExpr value:
-                            writer.MethodCall(jsonObj, "Add", Compile(value));
+                            AddJsonProperty(writer, jsonObj, property.Key, Compile(value), value.Type);
+                            break;
+
+                        case ObjectExpr obj:
+                            AddJsonProperty(writer, jsonObj, property.Key, Compile(obj));
                             break;
                     }
                 }
+                writer.Return(jsonObj);
+                writer.PopIndent();
             }
             writer.EndMethodBody();
         }
-        return EndBlock(buffer, writer);
+        EndBlock(buffer, writer);
+        //
+        // Emit a call to the method
+        //
+        return methodName + "()";
+    }
+
+    void AddJsonProperty(CSharpWriter writer, string jsonObj, string key, string value, Type? valueType = null)
+    {
+        writer.SOL();
+        writer.BeginMethodCall(jsonObj, "Add");
+        {
+            writer.Literal(key).ArgSep();
+            writer.Cast(nameof(JsonNode));
+            if (valueType != null)
+            {
+                if (valueType.IsString())
+                {
+                    writer.Literal(value);
+                }
+                else if (valueType.IsValueType)
+                {
+                    writer.Append(value);
+                }
+                else
+                {
+                    //
+                    // Direct cast not available. Serialize to JsonNode first
+                    //
+                    writer.Append("JsonSerializer.Serialize(").Append(value).Append($", typeof({valueType.Name}));");
+                }
+            }
+            else
+            {
+                writer.Append(value);
+            }
+        }
+        writer.EndMethodCall();
+    }
+
+    void CastFromJsonObject(CSharpWriter writer, string jsonObj, Type type)
+    {
+        if (!type.IsAssignableFrom(typeof(JsonObject)))
+        {
+            string targetType = type.Name;
+            writer.Cast(targetType);
+            writer.Append("JsonSerializer.Deserialize(").Append(jsonObj).Append($", typeof({targetType}))");
+        }
     }
 
     string ResultVar(int resultNumber) => (ResultVarPrefix + (resultNumber + 1));
@@ -211,10 +308,13 @@ public class CSharpProgramTranspiler
         var writer = new CSharpWriter(sw);
         return (sw, writer);
     }
-    string EndBlock(StringWriter sw, CSharpWriter writer)
+    string EndBlock(StringWriter sw, CSharpWriter writer, bool emit = true)
     {
         string codeBlock = sw.ToString();
-        _blocks.Add(codeBlock);
+        if (emit)
+        {
+            _blocks.Add(codeBlock);
+        }
         return codeBlock;
     }
 
