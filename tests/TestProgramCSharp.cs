@@ -9,12 +9,16 @@ public class TestProgramCSharp : ProgramTest
     public void Test_Math(string source, double expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        string code = CSharpProgramTranspiler.GenerateCode(program, typeof(IMathAPI));
+        Api<IMathAPI> api = new MathAPI();
+        string code = CSharpProgramTranspiler.GenerateCode(program, api.Type);
         var lines = code.Lines();
         ValidateCode(lines);
 
-        Result<ProgramAssembly> result = CSharpProgramCompiler.Compile(program, typeof(IMathAPI));
+        Result<ProgramAssembly> result = CSharpProgramCompiler.Compile(program, api.Type);
         Assert.True(result.Success);
+
+        double mathResult = result.Value.Run(api.Implementation);
+        Assert.Equal(expectedResult, mathResult);
     }
 
     [Theory]
@@ -22,12 +26,15 @@ public class TestProgramCSharp : ProgramTest
     public void Test_Object(string source, string expectedResult)
     {
         Program program = Json.Parse<Program>(source);
-        string code = CSharpProgramTranspiler.GenerateCode(program, typeof(IPersonApi));
+        Api<IPersonApi> api = new PersonAPI();
+        string code = CSharpProgramTranspiler.GenerateCode(program, api.Type);
         var lines = code.Lines();
         ValidateCode(lines);
 
-        Result<ProgramAssembly> result = CSharpProgramCompiler.Compile(program, typeof(IPersonApi));
+        Result<ProgramAssembly> result = CSharpProgramCompiler.Compile(program, api.Type);
         Assert.True(result.Success);
+
+        dynamic objResult = result.Value.Run(api.Implementation);
     }
 
     void ValidateCode(IEnumerable<string> lines)

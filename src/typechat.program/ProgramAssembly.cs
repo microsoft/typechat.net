@@ -27,14 +27,20 @@ public class ProgramAssembly
         _methodName = methodName;
     }
 
-    public dynamic Run()
+    public dynamic Run(object api)
     {
         object instance = _assembly.CreateInstance(_className);
         if (instance == null)
         {
             throw new InvalidOperationException();
         }
-        dynamic retVal = instance.GetType().InvokeMember(_methodName, BindingFlags.InvokeMethod, null, instance, null);
+        dynamic retVal = instance.GetType().InvokeMember(
+            _methodName,
+            BindingFlags.InvokeMethod,
+            null,
+            instance,
+            new object[] { api }
+        );
         return retVal;
     }
 }
