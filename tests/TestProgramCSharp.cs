@@ -17,7 +17,7 @@ public class TestProgramCSharp : ProgramTest
         Assert.True(result.Success);
     }
 
-    //[Theory]
+    [Theory]
     [MemberData(nameof(GetObjectPrograms))]
     public void Test_Object(string source, string expectedResult)
     {

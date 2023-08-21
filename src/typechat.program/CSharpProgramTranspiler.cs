@@ -20,6 +20,7 @@ public class CSharpProgramTranspiler
     string _className;
     List<string> _blocks;
     int _objectId = 0;
+    int _minIndent = 0;
 
     public CSharpProgramTranspiler(Type type, ApiTypeInfo? typeInfo = null)
     {
@@ -54,6 +55,7 @@ public class CSharpProgramTranspiler
 
         var (buffer, writer) = BeginBlock();
         {
+            _minIndent = 1;
             writer.Using(_namespaces);
             writer.Using(_apiType.Namespace);
             writer.BeginClass(_className);
@@ -63,7 +65,7 @@ public class CSharpProgramTranspiler
                 // Emit all blocks generated during compilation
                 //
                 writer.EOL();
-                foreach(string block in _blocks)
+                foreach (string block in _blocks)
                 {
                     writer.SOL().Append(block).EOL();
                 }
@@ -134,22 +136,31 @@ public class CSharpProgramTranspiler
     void CompileArgs(CSharpWriter writer, FunctionCall function, ParameterInfo[] paramsInfo)
     {
         Expression[] expressions = function.Args;
-        if (paramsInfo.Length != expressions.Length)
-        {
-            ProgramException.ThrowArgCountMismatch(function, paramsInfo.Length, expressions.Length);
-        }
         if (expressions.IsNullOrEmpty())
         {
             return;
         }
+        if (paramsInfo.Length != expressions.Length)
+        {
+            writer.Append(CompileArrayArg(function, expressions, paramsInfo));
+            return;
+        }
+
         for (int i = 0; i < expressions.Length; ++i)
         {
+            ParameterInfo param = paramsInfo[i];
+
             if (i > 0) { writer.ArgSep(); }
             switch (expressions[i])
             {
                 default:
                     writer.Append(Compile(expressions[i]));
                     break;
+
+                case ArrayExpr arrayExpr:
+                    writer.Append(Compile(arrayExpr, param.ParameterType.IsArray ? param.ParameterType.Name : null));
+                    break;
+
                 case ObjectExpr objExpr:
                     var jsonObjExpr = Compile(objExpr);
                     CastFromJsonObject(writer, jsonObjExpr, paramsInfo[i].ParameterType);
@@ -173,6 +184,9 @@ public class CSharpProgramTranspiler
 
             case ValueExpr value:
                 return Compile(value);
+
+            case ArrayExpr array:
+                return Compile(array, CSharpLang.Types.Dynamic);
 
             case ObjectExpr obj:
                 return Compile(obj);
@@ -201,6 +215,48 @@ public class CSharpProgramTranspiler
         return ResultVar(resultRef.Ref);
     }
 
+    string Compile(ArrayExpr arrayExpr, string type)
+    {
+        var (sw, writer) = BeginBlock();
+        {
+            Compile(writer, arrayExpr.Value, type);
+        }
+        return EndBlock(sw, writer, false);
+    }
+
+    string Compile(Expression[] expressions, string type = null)
+    {
+        var (sw, writer) = BeginBlock();
+        {
+            Compile(writer, expressions, type);
+        }
+        return EndBlock(sw, writer, false);
+    }
+
+    void Compile(CSharpWriter writer, Expression[] expressions, string type)
+    {
+        writer.BeginArray(type);
+        {
+            for (int i = 0; i < expressions.Length; ++i)
+            {
+                if (i > 0) { writer.ArgSep(); }
+                writer.Append(Compile(expressions[i]));
+            }
+        }
+        writer.EndArray();
+    }
+
+    string CompileArrayArg(FunctionCall call, Expression[] expressions, ParameterInfo[] paramsInfo)
+    {
+        if (paramsInfo.Length != 1)
+        {
+            ProgramException.ThrowArgCountMismatch(call, paramsInfo.Length, expressions.Length);
+        }
+        Debug.Assert(paramsInfo[0].ParameterType.IsArray);
+        Type itemType = paramsInfo[0].ParameterType.GetElementType();
+        return Compile(expressions, itemType.Name);
+    }
+
     /// <summary>
     /// Object Expressions are compiled into a factory method
     /// </summary>
@@ -216,9 +272,8 @@ public class CSharpProgramTranspiler
             writer.DeclareMethod(methodName, nameof(JsonObject));
             writer.BeginMethodBody();
             {
-                writer.PushIndent();
                 writer.SOL();
-                writer.Local(jsonObj, nameof(JsonObject), false, true).Append("new JsonObject()").Semicolon().EOL();
+                writer.Local(jsonObj, nameof(JsonObject), false, true).New(nameof(JsonObject)).Semicolon().EOL();
                 foreach (var property in objectExpr.Value)
                 {
                     switch (property.Value)
@@ -240,13 +295,16 @@ public class CSharpProgramTranspiler
                             AddJsonProperty(writer, jsonObj, property.Key, Compile(value), value.Type);
                             break;
 
+                        case ArrayExpr array:
+                            AddJsonProperty(writer, jsonObj, property.Key, Compile(array));
+                            break;
+
                         case ObjectExpr obj:
                             AddJsonProperty(writer, jsonObj, property.Key, Compile(obj));
                             break;
                     }
                 }
                 writer.Return(jsonObj);
-                writer.PopIndent();
             }
             writer.EndMethodBody();
         }
@@ -263,7 +321,6 @@ public class CSharpProgramTranspiler
         writer.BeginMethodCall(jsonObj, "Add");
         {
             writer.Literal(key).ArgSep();
-            writer.Cast(nameof(JsonNode));
             if (valueType != null)
             {
                 if (valueType.IsString())
@@ -279,7 +336,8 @@ public class CSharpProgramTranspiler
                     //
                     // Direct cast not available. Serialize to JsonNode first
                     //
-                    writer.Append("JsonSerializer.Serialize(").Append(value).Append($", typeof({valueType.Name}));");
+                    writer.Cast(nameof(JsonNode));
+                    writer.StaticCall("JsonSerializer.Serialize", value, CSharpLang.TypeOf(valueType.Name));
                 }
             }
             else
@@ -296,7 +354,7 @@ public class CSharpProgramTranspiler
         {
             string targetType = type.Name;
             writer.Cast(targetType);
-            writer.Append("JsonSerializer.Deserialize(").Append(jsonObj).Append($", typeof({targetType}))");
+            writer.StaticCall("JsonSerializer.Deserialize", jsonObj, CSharpLang.TypeOf(targetType));
         }
     }
 
@@ -306,6 +364,10 @@ public class CSharpProgramTranspiler
     {
         var sw = new StringWriter();
         var writer = new CSharpWriter(sw);
+        for (int i = 0; i < _minIndent; ++i)
+        {
+            writer.PushIndent();
+        }
         return (sw, writer);
     }
     string EndBlock(StringWriter sw, CSharpWriter writer, bool emit = true)

@@ -74,10 +74,14 @@ public class CodeWriter
 
     public CodeWriter Append(string token) => Write(token);
     public CodeWriter Append(StringBuilder tokens) => Write(tokens);
-
     public CodeWriter Append(char ch)
     {
         _writer.Write(ch);
+        return this;
+    }
+    public CodeWriter Append(int value)
+    {
+        _writer.Write(value);
         return this;
     }
 
@@ -91,6 +95,8 @@ public class CodeWriter
     public CodeWriter RBrace() => Write(CodeLanguage.Punctuation.RBrace);
     public CodeWriter LParan() => Write(CodeLanguage.Punctuation.LParan);
     public CodeWriter RParan() => Write(CodeLanguage.Punctuation.RParan);
+    public CodeWriter LSquare() => Write(CodeLanguage.Punctuation.LSquare);
+    public CodeWriter RSquare() => Write(CodeLanguage.Punctuation.RSquare);
     public CodeWriter Semicolon() => Write(CodeLanguage.Punctuation.Semicolon);
     public CodeWriter Comma() => Write(CodeLanguage.Punctuation.Comma);
     public CodeWriter Period() => Write(CodeLanguage.Punctuation.Period);

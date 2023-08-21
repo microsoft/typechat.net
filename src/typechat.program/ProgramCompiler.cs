@@ -264,6 +264,11 @@ public class ProgramCompiler
                         block.Add(addJsonPropertyExpr);
                         break;
 
+                    case ArrayExpr arrayExpr:
+                        addJsonPropertyExpr = AddJsonProperty(jsonObjExpr, property.Key, Compile(arrayExpr));
+                        block.Add(addJsonPropertyExpr);
+                        break;
+
                     case ObjectExpr obj:
                         addJsonPropertyExpr = AddJsonProperty(jsonObjExpr, property.Key, Compile(obj));
                         block.Add(addJsonPropertyExpr);

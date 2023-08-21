@@ -10,11 +10,12 @@ internal class CSharpLang : CodeLanguage
         public const string Namespace = "namespace";
         public const string Class = "class";
         public const string Return = "return";
+        public const string New = "new";
     }
 
-    public new class Punctuation : CodeLanguage.Punctuation
+    public static string TypeOf(string type)
     {
-        public const string Array = "[]";
+        return $"typeof({type})";
     }
 
     public static class Operators
@@ -68,15 +69,13 @@ internal class CSharpWriter : CodeWriter
 
     public CSharpWriter BeginClass(string name, string? baseName = null)
     {
-        EOL();
-        SOL();
+        EOL().SOL();
         Public().Append(CSharpLang.Keywords.Class).Space().Append(name);
         if (!string.IsNullOrEmpty(baseName))
         {
             Space().Colon().Space().Append(baseName);
         }
-        EOL();
-        SOL().LBrace().EOL();
+        EOL().SOL().LBrace().EOL();
         PushIndent();
         return this;
     }
@@ -143,7 +142,7 @@ internal class CSharpWriter : CodeWriter
         Append(type);
         if (isArray)
         {
-            Append(CSharpLang.Punctuation.Array);
+            LSquare().RSquare();
         }
         Space().Append(name);
         return this;
@@ -208,12 +207,62 @@ internal class CSharpWriter : CodeWriter
 
     public CSharpWriter MethodCall(string objName, string methodName, params string[] args)
     {
-        return BeginMethodCall(objName, methodName).Args(args).EndMethodCall();
+        BeginMethodCall(objName, methodName);
+        {
+            Args(args);
+        }
+        EndMethodCall();
+        return this;
+    }
+
+    public CSharpWriter StaticCall(string methodName, params string[] args)
+    {
+        Append(methodName).LParan();
+        {
+            Args(args);
+        }
+        RParan();
+
+        return this;
     }
 
     public CSharpWriter Cast(string type)
     {
         LParan().Append(type).RParan();
+        return this;
+    }
+
+    public CSharpWriter New(string type)
+    {
+        Append(CSharpLang.Keywords.New).Space();
+        StaticCall(type);
+        return this;
+    }
+
+    public CSharpWriter Array()
+    {
+        LSquare().RSquare();
+        return this;
+    }
+
+    public CSharpWriter BeginArray(string type, int length = 0)
+    {
+        Append(CSharpLang.Keywords.New).Space();
+        Append(type);
+        if (length > 0)
+        {
+            LSquare().Append(length).RBrace();
+        }
+        else
+        {
+            Array().LBrace();
+        }
+        return this;
+    }
+
+    public CSharpWriter EndArray()
+    {
+        RBrace();
         return this;
     }
 

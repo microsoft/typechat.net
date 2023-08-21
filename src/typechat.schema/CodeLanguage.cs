@@ -10,6 +10,8 @@ public class CodeLanguage
         public const string RBrace = "}";
         public const string LParan = "(";
         public const string RParan = ")";
+        public const string LSquare = "[";
+        public const string RSquare = "]";
         public const string Colon = ":";
         public const string Question = "?";
         public const string Semicolon = ";";
