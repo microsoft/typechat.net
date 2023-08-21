@@ -67,7 +67,7 @@ public class CSharpProgramTranspiler
                 writer.EOL();
                 foreach (string block in _blocks)
                 {
-                    writer.SOL().Append(block).EOL();
+                    writer.Append(block).EOL();
                 }
             }
             writer.EndClass();
