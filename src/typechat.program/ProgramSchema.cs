@@ -5,11 +5,14 @@ namespace Microsoft.TypeChat;
 [JsonConverter(typeof(JsonProgramConvertor))]
 public partial class Program
 {
-    public Steps Steps
+    public Steps? Steps
     {
         get;
-        private set;
+        internal set;
     }
+
+    // Parts of the user request that could not be translated into a program
+    public string[] NotTranslated { get; set; }
 }
 
 public abstract partial class Expression

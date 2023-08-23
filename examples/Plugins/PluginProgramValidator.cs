@@ -23,7 +23,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         }
         catch (Exception ex)
         {
-            return Result<Program>.Error(ex.Message);
+            return Result<Program>.Error(program, ex.Message);
         }
     }
 

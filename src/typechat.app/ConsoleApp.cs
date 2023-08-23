@@ -151,4 +151,12 @@ public abstract class ConsoleApp
         Console.WriteLine(ex.Message);
         Console.WriteLine("###");
     }
+
+    protected void WriteLines(IEnumerable<string> items)
+    {
+        foreach (string item in items)
+        {
+            Console.WriteLine(item);
+        }
+    }
 }

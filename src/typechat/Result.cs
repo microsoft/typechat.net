@@ -35,14 +35,16 @@ public class Result<T>
     }
     public static implicit operator T(Result<T> result)
     {
-        if (!result.Success)
-        {
-            throw new InvalidOperationException(result.Message);
-        }
         return result.Value;
     }
     public static Result<T> Error(string message)
     {
         return new Result<T>(false, message);
+    }
+    public static Result<T> Error(T value, string message)
+    {
+        var result = new Result<T>(false, message);
+        result.Value = value;
+        return result;
     }
 }

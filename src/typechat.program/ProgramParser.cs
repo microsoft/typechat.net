@@ -10,6 +10,7 @@ public class ProgramParser
         public const string Func = "@func";
         public const string Args = "@args";
         public const string Ref = "@ref";
+        public const string CannotTranslate = "@cannot_translate";
     }
 
     public ProgramParser() { }
@@ -24,11 +25,38 @@ public class ProgramParser
         JsonElement root = programSource.RootElement;
         root.EnsureIsType(JsonValueKind.Object);
 
+        Program program = new Program(programSource);
+
+        if (root.TryGetProperty(ExprNames.CannotTranslate, out JsonElement cannotElt))
+        {
+            cannotElt.EnsureIsType(JsonValueKind.Array, ExprNames.CannotTranslate);
+            program.NotTranslated = ParseNotTranslated(cannotElt);
+        }
         if (root.TryGetProperty(ExprNames.Steps, out JsonElement stepsElt))
         {
             stepsElt.EnsureIsType(JsonValueKind.Array, ExprNames.Steps);
-            Steps steps = ParseSteps(stepsElt);
-            return new Program(programSource, steps);
+            try
+            {
+                program.Steps = ParseSteps(stepsElt);
+            }
+            catch (JsonException)
+            {
+                // If the LLM returned not translated parts, then it cannot translate the user's
+                // request into JSON. Any other parse errors can be ignored
+                if (!program.HasNotTranslated)
+                {
+                    throw;
+                }
+            }
+        }
+
+        if (program.HasSteps ||
+            program.HasNotTranslated ||
+            !string.IsNullOrEmpty(program.TranslationNotes)
+        )
+        {
+            // Something useful to return back to the caller
+            return program;
         }
 
         throw new ProgramException(ProgramException.ErrorCode.InvalidProgram, root.ToString());
@@ -48,12 +76,17 @@ public class ProgramParser
     string[] ParseNotTranslated(JsonElement source)
     {
         Debug.Assert(source.ValueKind == JsonValueKind.Array);
-        string[] items = new string[source.GetArrayLength()];
-        for (int i = 0; i < items.Length; ++i)
+        try
         {
-            items[i] = source[i].GetString();
+            string[] items = new string[source.GetArrayLength()];
+            for (int i = 0; i < items.Length; ++i)
+            {
+                items[i] = source[i].GetString();
+            }
+            return items;
         }
-        return items;
+        catch { }
+        return null;
     }
 
     FunctionCall ParseCall(JsonElement elt)

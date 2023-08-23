@@ -25,8 +25,15 @@ public class CSharpProgramTranspiler
     public CSharpProgramTranspiler(Type type, ApiTypeInfo? typeInfo = null)
     {
         ArgumentNullException.ThrowIfNull(type, nameof(type));
-        _apiType = type;
         typeInfo ??= new ApiTypeInfo(type);
+        //
+        // Currently we don't support async operations
+        //
+        if (typeInfo.HasAsyncMethods())
+        {
+            throw new NotSupportedException("Async methods currently not supported");
+        }
+        _apiType = type;
         _apiTypeInfo = typeInfo;
         _className = DefaultClassName;
         _namespaces = new List<string>();

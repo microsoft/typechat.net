@@ -11,6 +11,8 @@ internal class CSharpLang : CodeLanguage
         public const string Class = "class";
         public const string Return = "return";
         public const string New = "new";
+        public const string Async = "async";
+        public const string Await = "await";
     }
 
     public static string TypeOf(string type)

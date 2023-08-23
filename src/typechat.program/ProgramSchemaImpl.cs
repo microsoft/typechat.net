@@ -15,13 +15,25 @@ public partial class Program : IDisposable
         Steps = steps;
     }
 
+    internal Program(JsonDocument? source = null)
+    {
+        _programSource = source;
+    }
+
     ~Program()
     {
         Dispose(false);
     }
 
     [JsonIgnore]
-    public JsonDocument Source => _programSource;
+    public JsonDocument? Source => _programSource;
+
+    [JsonIgnore]
+    // Optional... notes emitted by the LLM during translation
+    public string? TranslationNotes { get; internal set; }
+
+    [JsonIgnore]
+    public bool HasSteps => (Steps != null && !Steps.Calls.IsNullOrEmpty());
 
     /// <summary>
     /// Optional:
@@ -30,6 +42,12 @@ public partial class Program : IDisposable
     /// </summary>
     [JsonIgnore]
     public Delegate? Delegate { get; internal set; }
+
+    [JsonIgnore]
+    public bool IsValid => (HasSteps && NotTranslated.IsNullOrEmpty());
+
+    [JsonIgnore]
+    public bool HasNotTranslated => !NotTranslated.IsNullOrEmpty();
 
     public void Dispose()
     {
@@ -85,6 +103,7 @@ public abstract partial class Expression
 
     [JsonIgnore]
     public virtual JsonValueKind ValueType => Source.ValueKind;
+
     [JsonIgnore]
     internal virtual Type Type => typeof(object);
 }

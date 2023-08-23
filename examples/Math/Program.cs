@@ -61,7 +61,7 @@ public class Math : ConsoleApp
         {
             Math app = new Math();
             // Un-comment to print auto-generated schema at start:
-            Console.WriteLine(app._translator.ApiDef);
+           // Console.WriteLine(app._translator.ApiDef);
             await app.RunAsync("➕➖✖️➗🟰> ", args.GetOrNull(0));
         }
         catch (Exception ex)
