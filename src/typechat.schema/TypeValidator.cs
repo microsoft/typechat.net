@@ -25,10 +25,10 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
 
     public TypeSchema Schema => _schema;
 
-    public ValidationResult<T> Validate(string json)
+    public Result<T> Validate(string json)
     {
         // Validate the raw json first
-        ValidationResult<T> result = _jsonValidator.Validate(json);
+        Result<T> result = _jsonValidator.Validate(json);
         // Now do some constraints checking
         if (result.Success &&
             result.Value is IConstraintValidatable validatable)
@@ -37,7 +37,7 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
             if (!string.IsNullOrEmpty(constraintsErrors))
             {
                 // Constraints checks failed
-                result = ValidationResult<T>.Error(constraintsErrors);
+                result = Result<T>.Error(constraintsErrors);
             }
         }
         return result;

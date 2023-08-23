@@ -78,6 +78,18 @@ public class ApiTypeInfo
         return null;
     }
 
+    public bool HasAsyncMethods()
+    {
+        foreach (var typeInfo in _typeInfo)
+        {
+            if (typeInfo.ReturnType.IsAsync())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static MethodInfo[] GetPublicMethods(Type type, BindingFlags? flags = null)
     {
         flags ??= BindingFlags.Public | BindingFlags.Instance;

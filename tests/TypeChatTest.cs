@@ -52,7 +52,7 @@ public class TypeChatTest
     public MethodInfo? GetMethod(Type type, string name)
     {
         MethodInfo[] methods = type.GetMethods();
-        foreach(var method in methods)
+        foreach (var method in methods)
         {
             if (method.Name == name)
             {

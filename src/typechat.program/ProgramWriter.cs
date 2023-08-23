@@ -5,7 +5,7 @@ using Microsoft.TypeChat.Schema;
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Simple Program writer: writes out Program as a C# function
+/// Simple Program writer: writes out Program as a psuedo C# like function
 /// </summary>
 public class ProgramWriter
 {
@@ -43,11 +43,18 @@ public class ProgramWriter
         return this;
     }
 
-    public ProgramWriter Write(Program program, Type apiType)
+    public ProgramWriter Write(Program program, Type apiType) => Write(program, apiType.Name);
+
+    public ProgramWriter Write(Program program, string apiName)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
 
-        SOL().Write($"dynamic {ProgramName}({apiType.Name} {ApiVarName}) {{").EOL();
+        if (program.Steps == null || program.Steps.Calls.IsNullOrEmpty())
+        {
+            return this;
+        }
+
+        SOL().Write($"dynamic {ProgramName}({apiName} {ApiVarName}) {{").EOL();
 
         _writer.PushIndent();
         Write(program.Steps).Write("}").EOL();

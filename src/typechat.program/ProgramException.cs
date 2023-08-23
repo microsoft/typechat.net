@@ -27,7 +27,7 @@ public class ProgramException : Exception
 
     public static void ThrowFunctionNotFound(string name)
     {
-        throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Function {name} not found");
+        throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Function {name} not found in API");
     }
     public static void ThrowArgCountMismatch(FunctionCall call, int expectedCount, int actualCount)
     {

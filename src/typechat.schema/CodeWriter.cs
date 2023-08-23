@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Text;
+
 namespace Microsoft.TypeChat.Schema;
 
 public class CodeWriter
@@ -43,6 +45,21 @@ public class CodeWriter
         return this;
     }
 
+    public CodeWriter Write(StringBuilder sb)
+    {
+        if (sb.Length > 0)
+        {
+            _writer.Write(sb);
+        }
+        return this;
+    }
+
+    public CodeWriter Write(double token)
+    {
+        _writer.Write(token);
+        return this;
+    }
+
     public CodeWriter WriteIndent()
     {
         if (_indent.Count > 0)
@@ -56,10 +73,15 @@ public class CodeWriter
     }
 
     public CodeWriter Append(string token) => Write(token);
-
+    public CodeWriter Append(StringBuilder tokens) => Write(tokens);
     public CodeWriter Append(char ch)
     {
         _writer.Write(ch);
+        return this;
+    }
+    public CodeWriter Append(int value)
+    {
+        _writer.Write(value);
         return this;
     }
 
@@ -73,11 +95,14 @@ public class CodeWriter
     public CodeWriter RBrace() => Write(CodeLanguage.Punctuation.RBrace);
     public CodeWriter LParan() => Write(CodeLanguage.Punctuation.LParan);
     public CodeWriter RParan() => Write(CodeLanguage.Punctuation.RParan);
+    public CodeWriter LSquare() => Write(CodeLanguage.Punctuation.LSquare);
+    public CodeWriter RSquare() => Write(CodeLanguage.Punctuation.RSquare);
     public CodeWriter Semicolon() => Write(CodeLanguage.Punctuation.Semicolon);
     public CodeWriter Comma() => Write(CodeLanguage.Punctuation.Comma);
     public CodeWriter Period() => Write(CodeLanguage.Punctuation.Period);
     public CodeWriter Colon() => Write(CodeLanguage.Punctuation.Colon);
     public CodeWriter SQuote() => Write(CodeLanguage.Punctuation.SingleQuote);
+    public CodeWriter DoubleQuote() => Write(CodeLanguage.Punctuation.DoubleQuote);
     public CodeWriter Question() => Write(CodeLanguage.Punctuation.Question);
     public CodeWriter Space() => Write(Typescript.Punctuation.Space);
     public CodeWriter SOL() { WriteIndent(); return this; } // Start a line

@@ -9,6 +9,8 @@ public class Math : ConsoleApp
 {
     ProgramTranslator _translator;
     Api<IMathAPI> _api;
+    //CSharpProgramCompiler _compiler;
+    ProgramCompiler _compiler;
 
     Math()
     {
@@ -17,6 +19,8 @@ public class Math : ConsoleApp
             new CompletionService(Config.LoadOpenAI()),
             _api
         );
+        //_compiler = new CSharpProgramCompiler("math");
+        _compiler = new ProgramCompiler(_api.TypeInfo);
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);
@@ -57,7 +61,7 @@ public class Math : ConsoleApp
         {
             Math app = new Math();
             // Un-comment to print auto-generated schema at start:
-            // Console.WriteLine(app._translator.ApiDef);
+           // Console.WriteLine(app._translator.ApiDef);
             await app.RunAsync("➕➖✖️➗🟰> ", args.GetOrNull(0));
         }
         catch (Exception ex)

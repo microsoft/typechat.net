@@ -35,19 +35,51 @@ public class PluginApp : ConsoleApp
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        Program program = await _translator.TranslateAsync(input);
-        new ProgramWriter(Console.Out).Write(program, typeof(object));
+        Result<Program> program = await _translator.TranslateAsync(input);
+        if (!program.Success)
+        {
+            Console.WriteLine($"## Failed:\n{program.Message}");
+        }
+        if (program != null)
+        {
+            PrintProgram(program, program.Success);
+        }
+    }
+
+    void PrintProgram(Program program, bool success)
+    {
+        if (program.HasNotTranslated)
+        {
+            Console.WriteLine("I could not translate the following:");
+            WriteLines(program.NotTranslated);
+            Console.WriteLine();
+        }
+        else if (!string.IsNullOrEmpty(program.TranslationNotes))
+        {
+            Console.WriteLine("Translation Notes:");
+            Console.WriteLine(program.TranslationNotes);
+            Console.WriteLine();
+        }
+
+        if (program.HasSteps)
+        {
+            if (!program.IsValid || !success)
+            {
+                Console.WriteLine("Possible program with needed APIs:");
+            }
+            new ProgramWriter(Console.Out).Write(program, typeof(object));
+        }
     }
 
     void InitPlugins()
     {
         _kernel = Config.LoadOpenAI().CreateKernel();
         _kernel.ImportSkill(new FileIOSkill());
-        _kernel.ImportSkill(new FallbackSkill(), "Fallback");
+        //_kernel.ImportSkill(new FallbackSkill(), "Fallback");
         _typeInfo = new PluginApiTypeInfo(_kernel);
         _pluginSchema = _typeInfo.ExportSchema(
-            "IPluginApi",
-            "When a user request cannot be satisfied, use the Fallback methods"
+            "IPluginApi"
+            //"When a user request cannot be satisfied, use the Fallback methods"
             );
     }
 

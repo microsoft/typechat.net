@@ -13,10 +13,10 @@ public class TestProgram : ProgramTest
     public void TestSchema()
     {
         TypescriptSchema schema = TypescriptExporter.GenerateSchema(typeof(Program));
-        var lines = schema.Schema.Text.Lines();
-        Assert.True(lines.Contains("steps", "Call"));
-        Assert.True(lines.Contains("func", "string"));
-        Assert.True(lines.Contains("args", "Expr[]"));
+        var lines = schema.Schema.Text.ReadLines();
+        Assert.True(lines.ContainsSubstring("steps", "Call"));
+        Assert.True(lines.ContainsSubstring("func", "string"));
+        Assert.True(lines.ContainsSubstring("args", "Expr[]"));
     }
 
     [Theory]

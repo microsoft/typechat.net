@@ -6,6 +6,10 @@ public class ProgramVisitor
 {
     public ProgramVisitor() { }
 
+    /// <summary>
+    /// Visits the Program Recursively
+    /// </summary>
+    /// <param name="program"></param>
     public void Visit(Program program)
     {
         if (program.Steps != null)
@@ -18,8 +22,13 @@ public class ProgramVisitor
     {
         for (int i = 0; i < steps.Calls.Length; ++i)
         {
-            VisitFunction(steps.Calls[i]);
+            VisitStep(steps.Calls[i], i);
         }
+    }
+
+    protected virtual void VisitStep(FunctionCall function, int stepNumber)
+    {
+        VisitFunction(function);
     }
 
     protected virtual void VisitFunction(FunctionCall functionCall)
@@ -27,7 +36,7 @@ public class ProgramVisitor
         Visit(functionCall.Args);
     }
 
-    protected virtual void VisitResult(ResultReference resultRef) {}
+    protected virtual void VisitResult(ResultReference resultRef) { }
     protected virtual void VisitValue(ValueExpr value) { }
     protected virtual void VisitArray(ArrayExpr array) => Visit(array.Value);
     protected virtual void VisitObject(ObjectExpr obj)

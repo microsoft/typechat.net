@@ -7,6 +7,7 @@ public class TypeChatException : Exception
     public enum ErrorCode
     {
         Unknown,
+        NoJson,
         InvalidJson,
         JsonValidation
     }

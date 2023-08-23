@@ -4,11 +4,11 @@ namespace Microsoft.TypeChat;
 
 public interface IJsonTypeValidator
 {
-    ValidationResult<object?> Validate(TypeSchema schema, string json);
+    Result<object?> Validate(TypeSchema schema, string json);
 }
 
 public interface IJsonTypeValidator<T>
 {
     TypeSchema Schema { get; }
-    ValidationResult<T> Validate(string json);
+    Result<T> Validate(string json);
 }

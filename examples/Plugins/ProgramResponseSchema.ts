@@ -1,9 +1,13 @@
-﻿// A program consists of a sequence of function calls that are evaluated in order.
-// **Only use supplied API** 
+﻿export type ProgramResponse = {
+    // The program you wrote
+    "program": Program;
+    //Parts of the user reqeust that were not understood or could not be handled
+    "notHandled"?: string[];
+}
+
+// A program consists of a sequence of function calls that are evaluated in order.
 export type Program = {
     "@steps": FunctionCall[];
-    // Use this for parts of the user request not tranlated because of API is iadequate.
-    "@cannot_translate"?: string[];
 }
 
 // A function call specifies a function name and a list of argument expressions. Arguments may contain

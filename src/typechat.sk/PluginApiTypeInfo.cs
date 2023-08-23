@@ -56,12 +56,12 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
         Add(function.ToPluginName(), function);
     }
 
-    public string ExportSchema(string apiName, string apiDescription = null)
+    public SchemaText ExportSchema(string apiName, string apiDescription = null)
     {
         using StringWriter writer = new StringWriter();
         PluginTypescriptExporter exporter = new PluginTypescriptExporter(writer);
         exporter.Comment(apiDescription);
         exporter.Export(apiName, this);
-        return writer.ToString();
+        return new SchemaText(writer.ToString());
     }
 }
