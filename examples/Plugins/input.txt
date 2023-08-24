@@ -1,1 +1,4 @@
-download the article about Duran Duran from the public Wikipedia website and save it to disk
+Turn the following into a CSV line: "banana", "apple", "orange", "pear"
+get my current directory and uppercase it
+Turn the following fruits into a CSV line: banana apple orange pear
+Turn the following fruits into a CSV line: banana apple orange pear. Write the line to C:\junk\fruits.txt. Then read the file

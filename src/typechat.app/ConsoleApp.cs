@@ -152,7 +152,7 @@ public abstract class ConsoleApp
         Console.WriteLine("###");
     }
 
-    protected void WriteLines(IEnumerable<string> items)
+    public static void WriteLines(IEnumerable<string> items)
     {
         foreach (string item in items)
         {

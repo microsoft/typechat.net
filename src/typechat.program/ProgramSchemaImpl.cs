@@ -28,12 +28,27 @@ public partial class Program : IDisposable
     [JsonIgnore]
     public JsonDocument? Source => _programSource;
 
-    [JsonIgnore]
-    // Optional... notes emitted by the LLM during translation
-    public string? TranslationNotes { get; internal set; }
-
+    /// <summary>
+    /// Did the LLM actually return steps?
+    /// </summary>
     [JsonIgnore]
     public bool HasSteps => (Steps != null && !Steps.Calls.IsNullOrEmpty());
+
+    /// <summary>
+    /// Optional... notes emitted by the LLM during translation. These are often
+    /// sent as prologue and epilogue of what the AI returned
+    /// </summary>
+    [JsonIgnore]
+    public string? TranslationNotes { get; internal set; }
+
+    /// <summary>
+    /// A Complete Program has Steps and nothing that was not translated. 
+    /// </summary>
+    [JsonIgnore]
+    public bool IsComplete => (HasSteps && NotTranslated.IsNullOrEmpty());
+
+    [JsonIgnore]
+    public bool HasNotTranslated => !NotTranslated.IsNullOrEmpty();
 
     /// <summary>
     /// Optional:
@@ -42,12 +57,6 @@ public partial class Program : IDisposable
     /// </summary>
     [JsonIgnore]
     public Delegate? Delegate { get; internal set; }
-
-    [JsonIgnore]
-    public bool IsValid => (HasSteps && NotTranslated.IsNullOrEmpty());
-
-    [JsonIgnore]
-    public bool HasNotTranslated => !NotTranslated.IsNullOrEmpty();
 
     public void Dispose()
     {

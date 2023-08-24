@@ -5,6 +5,9 @@ using Microsoft.SemanticKernel.SkillDefinition;
 
 namespace Plugins;
 
+/// <summary>
+/// A Semantic Kernel Plugin for "Shell"/Cmd Operations
+/// </summary>
 public class ShellPlugin
 {
     [SKFunction, SKName("getcd")]
@@ -25,20 +28,6 @@ public class ShellPlugin
         {
             Directory.SetCurrentDirectory(path);
         }
-    }
-
-    [SKFunction, SKName("date")]
-    [Description("Get the current date")]
-    public string Date()
-    {
-        return DateTime.Now.ToShortDateString();
-    }
-
-    [SKFunction, SKName("time")]
-    [Description("Get the current date")]
-    public string Time()
-    {
-        return DateTime.Now.ToShortTimeString();
     }
 
     [SKFunction, SKName("output")]
@@ -79,12 +68,5 @@ public class ShellPlugin
     public void WriteFile(string filePath, string text)
     {
         File.WriteAllText(filePath, text);
-    }
-
-    [SKFunction, SKName("concat")]
-    [Description("Concat two strings")]
-    public string Concat(string x, string y)
-    {
-        return x + y;
     }
 }
