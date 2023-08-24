@@ -13,7 +13,7 @@ public class PluginTypescriptExporter
         _tsWriter = new TypescriptWriter(writer);
     }
 
-    public bool IncludeParamDescriptions { get; set; } = false;
+    public bool IncludeParamDescriptions { get; set; } = true;
 
     public void Comment(string descr) => _tsWriter.Comment(descr);
 
@@ -52,35 +52,50 @@ public class PluginTypescriptExporter
         }
         if (IncludeParamDescriptions && HasDescriptions(parameters))
         {
-            _tsWriter.PushIndent();
-            _tsWriter.EOL();
-            for (int i = 0; i < parameters.Count; ++i)
-            {
-                var param = parameters[i];
-                if (param.HasDescription())
-                {
-                    _tsWriter.SOL().Comment(param.Description);
-                }
-                _tsWriter.SOL();
-                Export(param, i, parameters.Count);
-                _tsWriter.EOL();
-            }
-            _tsWriter.PopIndent();
-            _tsWriter.SOL();
+            ExportDetailed(parameters);
         }
         else
         {
-            for (int i = 0; i < parameters.Count; ++i)
+            ExportPlain(parameters);
+        }
+    }
+
+    void ExportDetailed(IList<ParameterView> parameters)
+    {
+        _tsWriter.PushIndent();
+        _tsWriter.EOL();
+        for (int i = 0; i < parameters.Count; ++i)
+        {
+            var param = parameters[i];
+            if (param.HasDescription())
             {
-                Export(parameters[i], i, parameters.Count);
+                _tsWriter.SOL().Comment(param.Description);
             }
+            if (param.IsNullable())
+            {
+                _tsWriter.SOL().Comment($"Default: {param.DefaultValue}");
+            }
+            _tsWriter.SOL();
+            Export(param, i, parameters.Count);
+            _tsWriter.EOL();
+        }
+        _tsWriter.PopIndent();
+        _tsWriter.SOL();
+    }
+
+    void ExportPlain(IList<ParameterView> parameters)
+    {
+        for (int i = 0; i < parameters.Count; ++i)
+        {
+            Export(parameters[i], i, parameters.Count);
         }
     }
 
     void Export(ParameterView param, int argNumber, int argCount)
     {
         bool isArray = (param.Type == ParameterViewType.Array);
-        _tsWriter.Parameter(param.Name, DataType(param.Type), argNumber, argCount, isArray);
+        bool isNullable = param.IsNullable();
+        _tsWriter.Parameter(param.Name, DataType(param.Type), argNumber, argCount, isArray, isNullable);
     }
 
     bool HasDescriptions(IList<ParameterView> parameters)
