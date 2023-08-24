@@ -16,18 +16,19 @@ public class PluginApp : ConsoleApp
 {
     IKernel _kernel;
     ProgramTranslator _translator;
-    PluginApiTypeInfo _typeInfo;
+    PluginApi _pluginApi;
     string _pluginSchema;
-    //ProgramInterpreter _interpreter;
+    ProgramInterpreter _interpreter;
 
     public PluginApp()
     {
         InitPlugins();
         _translator = new ProgramTranslator(
             new CompletionService(Config.LoadOpenAI()),
-            new ProgramValidator(new PluginProgramValidator(_typeInfo)),
+            new ProgramValidator(new PluginProgramValidator(_pluginApi.TypeInfo)),
             _pluginSchema
         );
+        _interpreter = new ProgramInterpreter();
     }
 
     public IKernel Kernel => _kernel;
@@ -40,14 +41,17 @@ public class PluginApp : ConsoleApp
         {
             Console.WriteLine($"## Failed:\n{program.Message}");
         }
-        if (program != null)
+        PrintProgram(program, program.Success);
+        if (program.Success)
         {
-            PrintProgram(program, program.Success);
+            await RunProgram(program);
         }
     }
 
     void PrintProgram(Program program, bool success)
     {
+        if (program == null) { return; }
+
         if (program.HasNotTranslated)
         {
             Console.WriteLine("I could not translate the following:");
@@ -65,22 +69,33 @@ public class PluginApp : ConsoleApp
         {
             if (!program.IsValid || !success)
             {
-                Console.WriteLine("Possible program with needed APIs:");
+                Console.WriteLine("Possible program with possibly needed APIs:");
             }
             new ProgramWriter(Console.Out).Write(program, typeof(object));
+            Console.WriteLine();
+        }
+    }
+
+    async Task RunProgram(Program program)
+    {
+        if (!program.IsValid)
+        {
+            return;
+        }
+        string result = await _interpreter.RunAsync(program, _pluginApi.InvokeAsync);
+        if (!string.IsNullOrEmpty(result))
+        {
+            Console.WriteLine(result);
         }
     }
 
     void InitPlugins()
     {
         _kernel = Config.LoadOpenAI().CreateKernel();
-        _kernel.ImportSkill(new FileIOSkill());
-        //_kernel.ImportSkill(new FallbackSkill(), "Fallback");
-        _typeInfo = new PluginApiTypeInfo(_kernel);
-        _pluginSchema = _typeInfo.ExportSchema(
-            "IPluginApi"
-            //"When a user request cannot be satisfied, use the Fallback methods"
-            );
+        //_kernel.ImportSkill(new FileIOSkill());
+        _kernel.ImportSkill(new ShellPlugin());
+        _pluginApi = new PluginApi(_kernel);
+        _pluginSchema = _pluginApi.TypeInfo.ExportSchema("IPluginApi");
     }
 
     public static async Task<int> Main(string[] args)
@@ -99,15 +114,5 @@ public class PluginApp : ConsoleApp
         }
 
         return 0;
-    }
-}
-
-public class FallbackSkill
-{
-    [SKFunction]
-    [Description("User requests that you cannot handle")]
-    public Task<string> NotHandledAsync(string text)
-    {
-        return Task.FromResult(string.Empty);
     }
 }

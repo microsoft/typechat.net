@@ -4,7 +4,7 @@ using Microsoft.SemanticKernel.Orchestration;
 
 namespace Microsoft.TypeChat;
 
-internal class PluginApi
+public class PluginApi
 {
     IKernel _kernel;
     PluginApiTypeInfo _typeInfo;
@@ -53,6 +53,6 @@ internal class PluginApi
             context.Variables[parameters[i].Name] = args[i].ToString();
         }
         await function.InvokeAsync(context);
-        return context;
+        return context.Variables.Input;
     }
 }
