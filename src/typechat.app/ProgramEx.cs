@@ -29,4 +29,9 @@ public static class ProgramEx
 
         return false;
     }
+
+    public static void Print(this Program program, string apiType)
+    {
+        new ProgramWriter(Console.Out).Write(program, apiType);
+    }
 }

@@ -9,6 +9,7 @@ using Microsoft.SemanticKernel.Skills.Core;
 using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SkillDefinition;
 using System.ComponentModel;
+using Microsoft.SemanticKernel.AI.TextCompletion;
 
 namespace Plugins;
 
@@ -64,7 +65,7 @@ public class PluginApp : ConsoleApp
             {
                 Console.WriteLine("Possible program with possibly needed APIs:");
             }
-            new ProgramWriter(Console.Out).Write(program, typeof(object));
+            program.Print(_pluginApi.TypeName);
             Console.WriteLine();
         }
     }
@@ -90,7 +91,7 @@ public class PluginApp : ConsoleApp
         _kernel.ImportSkill(new TimePlugin());
 
         _pluginApi = new PluginApi(_kernel);
-        _pluginSchema = _pluginApi.TypeInfo.ExportSchema("IPluginApi");
+        _pluginSchema = _pluginApi.TypeInfo.ExportSchema(_pluginApi.TypeName);
     }
 
     public static async Task<int> Main(string[] args)
