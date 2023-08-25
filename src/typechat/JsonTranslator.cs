@@ -88,7 +88,8 @@ public class JsonTranslator<T>
         )
     {
         requestSettings ??= _requestSettings;
-        string prompt = _prompts.CreateRequestPrompt(_validator.Schema, request);
+        string requestPrompt = _prompts.CreateRequestPrompt(_validator.Schema, request);
+        string prompt = requestPrompt;
         int repairAttempts = 0;
         while (true)
         {
@@ -122,7 +123,7 @@ public class JsonTranslator<T>
                 throw new TypeChatException(TypeChatException.ErrorCode.JsonValidation, validationResult.Message);
             }
             NotifyEvent(AttemptingRepair, validationResult.Message);
-            prompt += $"{responseText}\n{_prompts.CreateRepairPrompt(_validator.Schema, responseText, validationResult.Message)}";
+            prompt = requestPrompt + $"{responseText}\n{_prompts.CreateRepairPrompt(_validator.Schema, responseText, validationResult.Message)}";
         }
     }
 

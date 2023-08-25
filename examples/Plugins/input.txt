@@ -1,1 +1,17 @@
-download the article about Duran Duran from the public Wikipedia website and save it to disk
+# Use GPT-4 for best results
+
+What is my user name?
+What is my OS?
+Print my machine name and architecture
+List everything installed on the program x86 folder
+List everything installed on the program x86 folder with Windows in it. But don't recurse.
+Is "VS Code" on my path?
+List all files in my documents folder
+
+# Run these together. 
+Write the files in my documents folder into files.txt
+Find Visual Studio in files.txt
+
+List all files in my documents folder | find Sql
+Turn the following fruits into a CSV line: banana apple orange pear, save to fruits.txt, then read the file
+

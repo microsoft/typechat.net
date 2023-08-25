@@ -9,6 +9,7 @@ using Microsoft.SemanticKernel.Skills.Core;
 using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SkillDefinition;
 using System.ComponentModel;
+using Microsoft.SemanticKernel.AI.TextCompletion;
 
 namespace Plugins;
 
@@ -28,6 +29,7 @@ public class PluginApp : ConsoleApp
             new ProgramValidator(new PluginProgramValidator(_pluginApi.TypeInfo)),
             _pluginSchema
         );
+        _translator.MaxRepairAttempts = 2;
         _interpreter = new ProgramInterpreter();
     }
 
@@ -52,33 +54,25 @@ public class PluginApp : ConsoleApp
     {
         if (program == null) { return; }
 
-        if (program.HasNotTranslated)
+        if (!program.PrintNotTranslated())
         {
-            Console.WriteLine("I could not translate the following:");
-            WriteLines(program.NotTranslated);
-            Console.WriteLine();
-        }
-        else if (!string.IsNullOrEmpty(program.TranslationNotes))
-        {
-            Console.WriteLine("Translation Notes:");
-            Console.WriteLine(program.TranslationNotes);
-            Console.WriteLine();
+            program.PrintTranslationNotes();
         }
 
         if (program.HasSteps)
         {
-            if (!program.IsValid || !success)
+            if (!program.IsComplete || !success)
             {
                 Console.WriteLine("Possible program with possibly needed APIs:");
             }
-            new ProgramWriter(Console.Out).Write(program, typeof(object));
+            program.Print(_pluginApi.TypeName);
             Console.WriteLine();
         }
     }
 
     async Task RunProgram(Program program)
     {
-        if (!program.IsValid)
+        if (!program.IsComplete)
         {
             return;
         }
@@ -92,10 +86,12 @@ public class PluginApp : ConsoleApp
     void InitPlugins()
     {
         _kernel = Config.LoadOpenAI().CreateKernel();
-        //_kernel.ImportSkill(new FileIOSkill());
         _kernel.ImportSkill(new ShellPlugin());
+        _kernel.ImportSkill(new StringPlugin());
+        _kernel.ImportSkill(new TimePlugin());
+
         _pluginApi = new PluginApi(_kernel);
-        _pluginSchema = _pluginApi.TypeInfo.ExportSchema("IPluginApi");
+        _pluginSchema = _pluginApi.TypeInfo.ExportSchema(_pluginApi.TypeName);
     }
 
     public static async Task<int> Main(string[] args)

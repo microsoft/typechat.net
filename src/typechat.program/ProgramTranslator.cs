@@ -62,7 +62,7 @@ public class ProgramTranslator : JsonTranslator<Program>
         if (program != null)
         {
             // We did parse a program, but it may not be valid
-            if (!program.IsValid)
+            if (!program.IsComplete)
             {
                 // Try to gather whatever explanation the LLM returned
                 program.TranslationNotes = response.Message();
