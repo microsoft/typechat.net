@@ -35,18 +35,15 @@ public partial class Program : IDisposable
     public bool HasSteps => (Steps != null && !Steps.Calls.IsNullOrEmpty());
 
     /// <summary>
-    /// Optional... notes emitted by the LLM during translation. These are often
-    /// sent as prologue and epilogue of what the AI returned
-    /// </summary>
-    [JsonIgnore]
-    public string? TranslationNotes { get; internal set; }
-
-    /// <summary>
-    /// A Complete Program has Steps and nothing that was not translated. 
+    /// A program is deemed Complete only if it has Steps and the language model claims to have
+    /// translated all of the user's request and intent into a program. 
     /// </summary>
     [JsonIgnore]
     public bool IsComplete => (HasSteps && NotTranslated.IsNullOrEmpty());
 
+    /// <summary>
+    /// Were parts of the user request not translated?
+    /// </summary>
     [JsonIgnore]
     public bool HasNotTranslated => !NotTranslated.IsNullOrEmpty();
 
@@ -67,6 +64,10 @@ public partial class Program : IDisposable
     public dynamic Run(Api api)
     {
         ArgumentNullException.ThrowIfNull(api, nameof(api));
+        if (!IsComplete)
+        {
+            throw new ProgramException(ProgramException.ErrorCode.InvalidProgram);
+        }
         if (Delegate != null)
         {
             return Delegate.DynamicInvoke();
@@ -79,6 +80,12 @@ public partial class Program : IDisposable
     public Task<dynamic> RunAsync(Api api)
     {
         ArgumentNullException.ThrowIfNull(api, nameof(api));
+
+        if (!IsComplete)
+        {
+            throw new ProgramException(ProgramException.ErrorCode.InvalidProgram);
+        }
+
         ProgramInterpreter interpreter = new ProgramInterpreter();
         return interpreter.RunAsync(this, api.CallAsync);
     }

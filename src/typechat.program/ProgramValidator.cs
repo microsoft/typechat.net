@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
 
 namespace Microsoft.TypeChat;
 
@@ -28,15 +29,18 @@ public class ProgramValidator : IJsonTypeValidator<Program>
         Result<Program> result = _typeValidator.Validate(json);
         if (result.Success)
         {
-            // Now validate the actual parsed program
-            return ValidateProgram(result.Value);
+            // If parts of the user's request could not be translated, stop
+            if (!result.Value.HasNotTranslated)
+            {
+                // Now validate the full program
+                return ValidateProgram(result.Value);
+            }
         }
         return result;
     }
 
     public virtual Result<Program> ValidateProgram(Program program)
     {
-        // Now validate the actual parsed program
         if (_programValidator != null)
         {
             return _programValidator.ValidateProgram(program);

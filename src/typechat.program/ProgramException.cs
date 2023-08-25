@@ -36,18 +36,14 @@ public class ProgramException : Exception
         throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, message);
     }
 
-    internal static void ThrowTypeMismatch(JsonValueKind expected, JsonValueKind actual)
+    internal static void ThrowTypeMismatch(FunctionCall call, ParameterInfo param, Type actual)
     {
-        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Type mismatch. Expected {expected}, Actual {actual}");
+        throw new ProgramException(
+            ProgramException.ErrorCode.TypeMistmatch,
+            $"TypeMismatch: @func {call.Name} @arg {param.Name}: Expected {param.ParameterType.Name}, Got {actual.Name}"
+            );
     }
-    internal static void ThrowTypeMismatch(Type expected, Type actual)
-    {
-        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"Type mismatch. Expected {expected}, Actual {actual}");
-    }
-    internal static void ThrowTypeMismatch(string name, Type expected, Type actual)
-    {
-        throw new ProgramException(ProgramException.ErrorCode.TypeMistmatch, $"@func {name} Type mismatch. Expected {expected}, Actual {actual}");
-    }
+
     internal static void ThrowInvalidResultRef(int refId)
     {
         throw new ProgramException(ProgramException.ErrorCode.InvalidResultRef, $"{refId} is not a valid ResultReference");

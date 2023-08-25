@@ -149,6 +149,11 @@ public class ProgramCompiler
                     break;
 
                 case ValueExpr valueExpr:
+                    Type valueType = valueExpr.Type;
+                    if (!param.IsCompatibleWith(valueType))
+                    {
+                        ProgramException.ThrowTypeMismatch(call, param, valueExpr.Type);
+                    }
                     LinqExpression value = Compile(valueExpr);
                     if (param.ParameterType != valueExpr.Type)
                     {
@@ -162,6 +167,12 @@ public class ProgramCompiler
                     break;
 
                 case ObjectExpr objExpr:
+                    Type objType = objExpr.Type;
+                    if (!param.CanBeDeserialized())
+                    {
+                        // Can't deserialize an object to a primitive type
+                        ProgramException.ThrowTypeMismatch(call, param, objType);
+                    }
                     var jsonObjExpr = Compile(objExpr);
                     args[i] = CastFromJsonObject(jsonObjExpr, param.ParameterType);
                     break;

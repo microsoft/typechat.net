@@ -77,7 +77,7 @@ public abstract class ConsoleApp
         }
         catch (Exception ex)
         {
-            await OnError(input, ex);
+            OnException(input, ex);
         }
     }
 
@@ -117,11 +117,17 @@ public abstract class ConsoleApp
         translator.CompletionReceived += this.OnCompletionReceived;
     }
 
-    protected virtual Task OnError(string input, Exception ex)
+    protected virtual void OnException(string input, Exception ex)
     {
-        Console.WriteLine(ex);
-        Console.WriteLine();
-        return Task.CompletedTask;
+        if (ex is TypeChatException tex)
+        {
+            tex.Print();
+        }
+        else
+        {
+            Console.WriteLine(ex);
+            Console.WriteLine();
+        }
     }
 
     protected void OnSendingPrompt(string value)

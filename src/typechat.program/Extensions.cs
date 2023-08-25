@@ -8,6 +8,18 @@ internal static class Extensions
         return (returnType.ParameterType.IsAssignableTo(typeof(Task)));
     }
 
+    internal static bool IsCompatibleWith(this ParameterInfo param, Type fromType)
+    {
+        return (param.ParameterType == fromType ||
+               param.ParameterType.IsPrimitive && fromType.IsPrimitive);
+    }
+
+    internal static bool CanBeDeserialized(this ParameterInfo param)
+    {
+        return (!param.ParameterType.IsPrimitive &&
+                !param.ParameterType.IsString());
+    }
+
     internal static string Stringify<T>(this T value)
     {
         return JsonSerializer.Serialize<T>(value, JsonProgramConvertor.Options);

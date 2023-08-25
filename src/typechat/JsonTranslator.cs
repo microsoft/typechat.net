@@ -81,7 +81,7 @@ public class JsonTranslator<T>
     /// <param name="cancelToken"></param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
-    public async Task<Result<T>> TranslateAsync(
+    public async Task<T> TranslateAsync(
         string request,
         RequestSettings? requestSettings = null,
         CancellationToken cancelToken = default
@@ -94,33 +94,33 @@ public class JsonTranslator<T>
         while (true)
         {
             string responseText = await CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
-            JsonResponse response = JsonResponse.Parse(responseText);
-            if (!response.HasJson)
+            JsonResponse jsonResponse = JsonResponse.Parse(responseText);
+            if (!jsonResponse.HasJson)
             {
-                return OnEmptyResponse(response);
+                TypeChatException.ThrowNoJson(request, jsonResponse);
             }
 
             Result<T> validationResult;
-            if (response.HasCompleteJson)
+            if (jsonResponse.HasCompleteJson)
             {
-                validationResult = Validator.Validate(response.Json);
+                validationResult = Validator.Validate(jsonResponse.Json);
+                if (!OnValidationComplete(jsonResponse, validationResult) ||
+                    validationResult.Success)
+                {
+                    return validationResult.Value;
+                }
             }
             else
             {
                 // Partial json
-                validationResult = Result<T>.Error("Json Parse Error:\n" + response.Json);
-            }
-            if (!OnValidationComplete(response, validationResult) ||
-                validationResult.Success)
-            {
-                return validationResult.Value;
+                validationResult = Result<T>.Error(TypeChatException.IncompleteJson(jsonResponse));
             }
 
             // Attempt to repair the Json that was sent
             ++repairAttempts;
             if (repairAttempts > _maxRepairAttempts)
             {
-                throw new TypeChatException(TypeChatException.ErrorCode.JsonValidation, validationResult.Message);
+                TypeChatException.ThrowJsonValidation(request, jsonResponse, validationResult.Message);
             }
             NotifyEvent(AttemptingRepair, validationResult.Message);
             prompt = requestPrompt + $"{responseText}\n{_prompts.CreateRepairPrompt(_validator.Schema, responseText, validationResult.Message)}";
@@ -158,15 +158,8 @@ public class JsonTranslator<T>
         return JsonTranslatorPrompts.RepairPrompt(validationError);
     }
 
-    protected virtual Result<T> OnEmptyResponse(JsonResponse response)
-    {
-        throw new TypeChatException(TypeChatException.ErrorCode.NoJson, response.Message());
-    }
     // Return false if translation loop should stop
-    protected virtual bool OnValidationComplete(JsonResponse response, Result<T> validationResult)
-    {
-        return true;
-    }
+    protected virtual bool OnValidationComplete(JsonResponse response, Result<T> validationResult) { return true; }
 
     protected void NotifyEvent(Action<string> evt, string value)
     {

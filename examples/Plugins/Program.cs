@@ -5,10 +5,7 @@ using System.Text.Json.Serialization;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Skills.Core;
 using Microsoft.SemanticKernel.Orchestration;
-using Microsoft.SemanticKernel.SkillDefinition;
-using System.ComponentModel;
 using Microsoft.SemanticKernel.AI.TextCompletion;
 
 namespace Plugins;
@@ -38,35 +35,13 @@ public class PluginApp : ConsoleApp
 
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        Result<Program> program = await _translator.TranslateAsync(input);
-        if (!program.Success)
-        {
-            Console.WriteLine($"## Failed:\n{program.Message}");
-        }
-        PrintProgram(program, program.Success);
-        if (program.Success)
+        using Program program = await _translator.TranslateAsync(input);
+        program.Print(_pluginApi.TypeName);
+        Console.WriteLine();
+
+        if (program.IsComplete)
         {
             await RunProgram(program);
-        }
-    }
-
-    void PrintProgram(Program program, bool success)
-    {
-        if (program == null) { return; }
-
-        if (!program.PrintNotTranslated())
-        {
-            program.PrintTranslationNotes();
-        }
-
-        if (program.HasSteps)
-        {
-            if (!program.IsComplete || !success)
-            {
-                Console.WriteLine("Possible program with possibly needed APIs:");
-            }
-            program.Print(_pluginApi.TypeName);
-            Console.WriteLine();
         }
     }
 
@@ -76,6 +51,7 @@ public class PluginApp : ConsoleApp
         {
             return;
         }
+        Console.WriteLine("Running program");
         string result = await _interpreter.RunAsync(program, _pluginApi.InvokeAsync);
         if (!string.IsNullOrEmpty(result))
         {

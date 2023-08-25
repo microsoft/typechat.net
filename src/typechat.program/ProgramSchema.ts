@@ -1,8 +1,8 @@
 ﻿// A program consists of a sequence of function calls that are evaluated in order.
-// **Only use supplied API** 
 export type Program = {
     "@steps": FunctionCall[];
-    // Use this for parts of the user request not tranlated because of API is iadequate.
+    // Collect parts of the user request that could not translated.
+    // Including if NO suitable API provided
     "@cannot_translate"?: string[];
 }
 

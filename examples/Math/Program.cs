@@ -9,7 +9,6 @@ public class Math : ConsoleApp
 {
     ProgramTranslator _translator;
     Api<IMathAPI> _api;
-    //CSharpProgramCompiler _compiler;
     ProgramCompiler _compiler;
 
     Math()
@@ -19,7 +18,6 @@ public class Math : ConsoleApp
             new CompletionService(Config.LoadOpenAI()),
             _api
         );
-        //_compiler = new CSharpProgramCompiler("math");
         _compiler = new ProgramCompiler(_api.TypeInfo);
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
@@ -31,12 +29,25 @@ public class Math : ConsoleApp
     protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         using Program program = await _translator.TranslateAsync(input);
-        DisplayProgram(program);
-        Console.WriteLine("Running program");
-        dynamic result = program.Run(_api);
-        if (result != null && result is double)
+
+        // Print whatever program was returned
+        program.Print(_api.Type.Name);
+        Console.WriteLine();
+
+        if (program.IsComplete)
         {
-            Console.WriteLine($"Result: {result}");
+            // IsComplete: If program has steps and program.HasNotTranslated is false
+            RunProgram(program);
+        }
+    }
+
+    void RunProgram(Program program)
+    {
+        Console.WriteLine("Running program");
+        dynamic retval = program.Run(_api);
+        if (retval != null && retval is double)
+        {
+            Console.WriteLine($"Result: {retval}");
         }
         else
         {
@@ -44,12 +55,7 @@ public class Math : ConsoleApp
         }
     }
 
-    private void DisplayProgram(Program program)
-    {
-        new ProgramWriter(Console.Out).Write(program, typeof(IMathAPI));
-    }
-
-    private void DisplayCall(string functionName, dynamic[] args, dynamic result)
+    void DisplayCall(string functionName, dynamic[] args, dynamic result)
     {
         new ProgramWriter(Console.Out).Write(functionName, args);
         Console.WriteLine($"==> {result}");
