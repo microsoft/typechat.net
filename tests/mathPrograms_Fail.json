@@ -70,14 +70,44 @@
             },
             {
               "@func": "mul",
-              "@args": [
-                5,
-                6
-              ]
+              "@args": [ 5, 6 ]
             }
           ]
         }
       ]
     }
+  },
+  "program3": {
+    "result": 15,
+    "source": {
+      "@steps": [
+        {
+          "@func": "mul",
+          "@args": [ 3, 5 ]
+        },
+        {
+          "@func": "add",
+          "@args": [
+            { "@ref": 0 },
+            { "@foo": "coffee" }
+          ]
+        }
+      ]
+    }
+  },
+  "program5": {
+    "result": 0,
+    "source": {
+      "@steps": [
+        {
+          "@func": "add",
+          "@args": [
+            3,
+            "foo"
+          ]
+        }
+      ]
+    }
   }
+
 }

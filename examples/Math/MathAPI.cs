@@ -20,8 +20,8 @@ public interface IMathAPI
     double id(double x);
     [Comment("Negate a number")]
     double neg(double x);
-    [Comment("Unknown request")]
-    void unknown(string text);
+    //[Comment("Unknown request")]
+    //void unknown(string text);
 }
 
 /// <summary>
