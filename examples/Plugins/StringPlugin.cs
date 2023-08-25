@@ -7,15 +7,15 @@ namespace Plugins;
 public class StringPlugin
 {
     [SKFunction, SKName("concat")]
-    [Description("Concat TWO strings")]
+    [Description("Concat two strings")]
     public string Concat(string x, string y)
     {
         return x + y;
     }
 
-    [SKFunction, SKName("concat_sep")]
-    [Description("Concat TWO strings with the given separator")]
-    public string ConcatSep(string separator, string x, string y)
+    [SKFunction, SKName("concatWithSep")]
+    [Description("Concat two strings using the separator")]
+    public string ConcatWithSep(string separator, string x, string y)
     {
         if (!string.IsNullOrEmpty(separator))
         {
@@ -24,18 +24,19 @@ public class StringPlugin
         return x + y;
     }
 
-    [SKFunction, SKName("uppercase")]
-    [Description("Convert string to uppercase")]
-    public string Uppercase(string input)
+    [SKFunction, SKName("find")]
+    [Description("Returns the lines that contain the given search pattern")]
+    public string Find(string lines, string searchPattern)
     {
-        return input.ToUpper();
-    }
-
-
-    [SKFunction, SKName("lowercase")]
-    [Description("Convert string to lowercase")]
-    public string Lowercase(string input)
-    {
-        return input.ToLower();
+        List<string> matches = new List<string>();
+        string[] splitLines = lines.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        foreach (string line in splitLines)
+        {
+            if (line.Contains(searchPattern, StringComparison.OrdinalIgnoreCase))
+            {
+                matches.Add(line);
+            }
+        }
+        return string.Join('\n', matches);
     }
 }

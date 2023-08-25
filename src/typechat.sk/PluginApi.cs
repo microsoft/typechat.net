@@ -7,22 +7,26 @@ namespace Microsoft.TypeChat;
 public class PluginApi
 {
     IKernel _kernel;
+    string _typeName;
     PluginApiTypeInfo _typeInfo;
 
     public PluginApi(IKernel kernel)
-        : this(kernel, new PluginApiTypeInfo(kernel))
+        : this(kernel, "IPluginApi", new PluginApiTypeInfo(kernel))
     {
 
     }
-    public PluginApi(IKernel kernel, PluginApiTypeInfo typeInfo)
+    public PluginApi(IKernel kernel, string typeName, PluginApiTypeInfo typeInfo)
     {
         ArgumentNullException.ThrowIfNull(kernel, nameof(kernel));
+        ArgumentNullException.ThrowIfNullOrEmpty(typeName, nameof(typeName));
         ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
 
         _kernel = kernel;
+        _typeName = typeName;
         _typeInfo = typeInfo;
     }
 
+    public string TypeName => _typeName;
     public PluginApiTypeInfo TypeInfo => _typeInfo;
 
     public (PluginFunctionName, FunctionView) BindFunction(string name, dynamic[] args)
