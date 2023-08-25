@@ -50,10 +50,7 @@ public class ProgramParser
             }
         }
 
-        if (program.HasSteps ||
-            program.HasNotTranslated ||
-            !string.IsNullOrEmpty(program.TranslationNotes)
-        )
+        if (program.HasSteps || program.HasNotTranslated)
         {
             // Something useful to return back to the caller
             return program;

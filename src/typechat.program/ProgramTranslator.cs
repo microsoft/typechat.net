@@ -47,30 +47,12 @@ public class ProgramTranslator : JsonTranslator<Program>
 
     public string ApiDef => _apiDef;
 
-    protected override Result<Program> OnEmptyResponse(JsonResponse response)
-    {
-        string message = response.Message();
-        Program emptyProgram = new Program();
-        emptyProgram.TranslationNotes = message;
-        return Result<Program>.Error(emptyProgram, message);
-    }
-
-    // Return true if validation loop should continue
+    // return true if validation loop should continue
     protected override bool OnValidationComplete(JsonResponse response, Result<Program> validationResult)
     {
+        // If LLM could not translate the user request to begin with, then we can't continue
         Program? program = validationResult.Value;
-        if (program != null)
-        {
-            // We did parse a program, but it may not be valid
-            if (!program.IsComplete)
-            {
-                // Try to gather whatever explanation the LLM returned
-                program.TranslationNotes = response.Message();
-                // If the AI returned elements it could not translate  to begin with, just stop
-                return !program.HasNotTranslated;
-            }
-        }
-        return true;
+        return (program != null) ? program.HasNotTranslated : true;
     }
 }
 
