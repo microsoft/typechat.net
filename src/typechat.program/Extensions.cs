@@ -8,7 +8,15 @@ internal static class Extensions
         return (returnType.ParameterType.IsAssignableTo(typeof(Task)));
     }
 
-    internal static bool IsCompatibleWith(this ParameterInfo param, Type fromType)
+    internal static bool IsJsonObject(this Type type)
+    {
+        return type.IsAssignableFrom(typeof(JsonObject));
+    }
+
+    /// <summary>
+    /// Two types can be implicitly the same due to (a) equality (b) casting
+    /// </summary>
+    internal static bool IsConvertibleFrom(this ParameterInfo param, Type fromType)
     {
         return (param.ParameterType == fromType ||
                param.ParameterType.IsPrimitive && fromType.IsPrimitive);
@@ -18,6 +26,20 @@ internal static class Extensions
     {
         return (!param.ParameterType.IsPrimitive &&
                 !param.ParameterType.IsString());
+    }
+
+    internal static bool IsMatchingType(this ParameterInfo param, Type otherType)
+    {
+        Type expectedType = param.ParameterType;
+        if (expectedType.IsArray)
+        {
+            if (!otherType.IsArray)
+            {
+                return false;
+            }
+            return (expectedType.GetElementType() == otherType.GetElementType());
+        }
+        return (otherType.IsAssignableTo(expectedType));
     }
 
     internal static string Stringify<T>(this T value)

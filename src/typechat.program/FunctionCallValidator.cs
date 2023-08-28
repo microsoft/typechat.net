@@ -59,13 +59,11 @@ public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
         }
         for (int i = 0; i < args.Length; ++i)
         {
-            Type expectedType = methodInfo.Params[i].ParameterType;
             Type actualType = args[i].Type;
-            if (!actualType.IsAssignableTo(expectedType))
+            if (!methodInfo.Params[i].IsMatchingType(actualType))
             {
                 ProgramException.ThrowTypeMismatch(call, methodInfo.Params[i], actualType);
             }
         }
     }
-
 }
