@@ -45,7 +45,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             FunctionView typeInfo = _typeInfo[name];
             // Verify that parameter counts etc match
             ValidateArgCounts(functionCall, typeInfo, functionCall.Args);
-            // Continue visiting
+            // Continue visiting to handle any nested function calls
             base.VisitFunction(functionCall);
             return;
         }
