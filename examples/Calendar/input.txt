@@ -8,3 +8,9 @@ I need to add a meeting with my boss on Monday at 10am. Also make sure to schedu
 Add meeting with team today at 2
 can you record lunch with Luis at 12pm on Friday and also add Isobel to the Wednesday ping pong game at 4pm
 I said I'd meet with Jenny this afternoon at 2pm and after that I need to go to the dry cleaner and then the soccer game.  Leave an hour for each of those starting at 3:30
+
+# GPT4: Date time ranges work well
+What is my schedule next week?
+Book a meeting with Sonali and Marc next Friday at 8.30 am about GPU performance
+Book me lunch at Spicy Hot Pot for Sunday next week with Tien and Piali.
+

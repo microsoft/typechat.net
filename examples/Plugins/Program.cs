@@ -28,14 +28,16 @@ public class PluginApp : ConsoleApp
         );
         _translator.MaxRepairAttempts = 2;
         _interpreter = new ProgramInterpreter();
+        // Uncomment to see ALL raw messages to and from the AI
+        base.SubscribeAllEvents(_translator);
     }
 
     public IKernel Kernel => _kernel;
     public string Schema => _pluginSchema;
 
-    protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        using Program program = await _translator.TranslateAsync(input);
+        using Program program = await _translator.TranslateAsync(input, cancelToken);
         program.Print(_pluginApi.TypeName);
         Console.WriteLine();
 

@@ -8,11 +8,11 @@ using Microsoft.TypeChat.Schema;
 
 namespace CoffeeShop;
 
-public class CoffeeShop : ConsoleApp
+public class CoffeeShopApp : ConsoleApp
 {
     JsonTranslator<Cart> _translator;
 
-    CoffeeShop()
+    public CoffeeShopApp()
     {
         _translator = new JsonTranslator<Cart>(new CompletionService(Config.LoadOpenAI()), new TypeValidator<Cart>());
         _translator.MaxRepairAttempts = 3;
@@ -22,7 +22,7 @@ public class CoffeeShop : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         Cart cart = await _translator.TranslateAsync(input);
 
@@ -55,7 +55,7 @@ public class CoffeeShop : ConsoleApp
     {
         try
         {
-            CoffeeShop app = new CoffeeShop();
+            CoffeeShopApp app = new CoffeeShopApp();
             // Un-comment to print auto-generated schema at start:
             //Console.WriteLine(app.Schema.Schema.Text);
 

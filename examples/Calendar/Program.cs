@@ -12,7 +12,7 @@ public class CalendarApp : ConsoleApp
 {
     JsonTranslator<CalendarActions> _translator;
 
-    CalendarApp()
+    public CalendarApp()
     {
         _translator = new JsonTranslator<CalendarActions>(
             new CompletionService(Config.LoadOpenAI()),
@@ -25,13 +25,21 @@ public class CalendarApp : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        CalendarActions actions = await _translator.TranslateAsync(input);
+        DateTime now = DateTime.Now;
+        string request = $"{input}\n{Now()}";
+        CalendarActions actions = await _translator.TranslateAsync(request, cancelToken);
         Console.WriteLine(Json.Stringify(actions));
         PrintUnknown(actions);
     }
 
+    string Now()
+    {
+        DateTime now = DateTime.Now;
+        return $"##Use precise date and times RELATIVE TO CURRENT DATE: {now.ToLongDateString()} CURRENT TIME: {now.ToLongTimeString()}" +
+            "Also turn ranges like next week and next month into precise dates";
+    }
     bool PrintUnknown(CalendarActions calendarActions)
     {
         int countUnknown = 0;

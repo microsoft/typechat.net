@@ -19,7 +19,7 @@ public class SentimentApp : ConsoleApp
         );
     }
 
-    protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         SentimentResponse response = await _translator.TranslateAsync(input);
         Console.WriteLine($"The sentiment is {response.Sentiment}");

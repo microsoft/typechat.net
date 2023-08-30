@@ -23,7 +23,7 @@ public class TypeChatException : Exception
     ErrorCode _errorCode;
     JsonResponse? _response;
 
-    public TypeChatException(ErrorCode code, string request, JsonResponse response, string? message)
+    public TypeChatException(ErrorCode code, string request, JsonResponse? response = null, string? message = null)
         : base(message)
     {
         _errorCode = code;
@@ -33,7 +33,7 @@ public class TypeChatException : Exception
 
     public ErrorCode Code => _errorCode;
     public string Request => _request;
-    public JsonResponse Response => _response;
+    public JsonResponse? Response => _response;
 
     public override string ToString()
     {

@@ -34,9 +34,9 @@ public class CoffeeShop : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        Cart cart = await _translator.TranslateAsync(input);
+        Cart cart = await _translator.TranslateAsync(input, cancelToken);
 
         string json = Json.Stringify(cart);
         Console.WriteLine(json);

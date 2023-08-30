@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-public interface IStringType
+internal interface IStringType
 {
 }
 

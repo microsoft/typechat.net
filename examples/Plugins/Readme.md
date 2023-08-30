@@ -8,3 +8,7 @@ Sample plugins:
 * ShellPlugin (file system operations)
 * StringPlugin (Simple string manipulation)
 * TimePlugin (Time operations)
+
+# Usage
+
+Example prompts can be found in [`input.txt`](input.txt).
