@@ -5,12 +5,19 @@ using System.Runtime.Serialization;
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Given a structurally valid Program, this ensures that the Program can
+/// correctly bind to its target API: e.g calls are being made to functions that exist..
+/// </summary>
 public interface IProgramValidator
 {
     Result<Program> ValidateProgram(Program program);
 }
 
-public class ProgramValidator : IJsonTypeValidator<Program>
+/// <summary>
+/// Transforms a raw JSON object into a validated, typed, Program
+/// </summary>
+public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
 {
     TypeValidator<Program> _typeValidator;
     IProgramValidator? _programValidator;
@@ -21,6 +28,9 @@ public class ProgramValidator : IJsonTypeValidator<Program>
         _programValidator = programValidator;
     }
 
+    /// <summary>
+    /// Program Schema
+    /// </summary>
     public TypeSchema Schema => _typeValidator.Schema;
 
     public Result<Program> Validate(string json)
@@ -50,11 +60,11 @@ public class ProgramValidator : IJsonTypeValidator<Program>
 }
 
 /// <summary>
-/// Compiles the program targeting TApi
-/// Any compilation errors can be used for correcting the program.
+/// Compiles the program targeting an Api of type TApi
+/// Any compilation errors are sent to the LLM for correcting the program.
 /// </summary>
 /// <typeparam name="TApi"></typeparam>
-public class ProgramValidator<TApi> : ProgramValidator, IProgramValidator
+public class ProgramValidator<TApi> : ProgramValidator
 {
     Api<TApi> _api;
 

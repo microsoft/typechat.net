@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <RollForward>LatestMajor</RollForward>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>annotations</Nullable>
+    <StartupObject>MultiSchema.MultiSchemaApp</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\CoffeeShop\CoffeeShopSchema.cs" Link="CoffeeShop\CoffeeShopSchema.cs" />
+    <Compile Include="..\CoffeeShop\CoffeeShopImpl.cs" Link="CoffeeShop\CoffeeShopImpl.cs" />
+    <Compile Include="..\CoffeeShop\Program.cs" Link="CoffeeShop\Program.cs" />
+    <Compile Include="..\Calendar\CalendarActionsSchema.cs" Link="Calendar\CalendarActionsSchema.cs" />
+    <Compile Include="..\Calendar\Program.cs" Link="Calendar\Program.cs" />
+    <Compile Include="..\Restaurant\RestaurantSchema.cs" Link="Restaurant\RestaurantSchema.cs" />
+    <Compile Include="..\Restaurant\RestaurantImpl.cs" Link="Restaurant\RestaurantImpl.cs" />
+    <Compile Include="..\Restaurant\Program.cs" Link="Restaurant\Program.cs" />
+    <Compile Include="..\Math\Program.cs" Link="Math\Program.cs" />
+    <Compile Include="..\Math\MathAPI.cs" Link="Math\MathAPI.cs" />
+    <Compile Include="..\Sentiment\Program.cs" Link="Sentiment\Program.cs" />
+    <Compile Include="..\Sentiment\SentimentSchema.cs" Link="Sentiment\SentimentSchema.cs" />
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <Content Include="..\appSettings.json" Link="appSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('..\appSettings.Development.json')">
+    <Content Include="..\appSettings.Development.json" Link="appSettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\typechat.app\TypeChat.App.csproj" />
+    <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
+    <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+</Project>

@@ -77,18 +77,30 @@ public class JsonTranslator<T>
     /// Translate a natural language request into an object of type 'T'
     /// </summary>
     /// <param name="request"></param>
+    /// <param name="cancelToken"></param>
+    /// <returns>Result containing object of type T</returns>
+    /// <exception cref="TypeChatException"></exception>
+    public Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
+    {
+        return TranslateAsync(request, null, cancelToken);
+    }
+
+    /// <summary>
+    /// Translate a natural language request into an object of type 'T'
+    /// </summary>
+    /// <param name="request"></param>
     /// <param name="requestSettings"></param>
     /// <param name="cancelToken"></param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
         string request,
-        RequestSettings? requestSettings = null,
+        RequestSettings? requestSettings,
         CancellationToken cancelToken = default
         )
     {
         requestSettings ??= _requestSettings;
-        string requestPrompt = _prompts.CreateRequestPrompt(_validator.Schema, request);
+        string requestPrompt = CreateRequestPrompt(request);
         string prompt = requestPrompt;
         int repairAttempts = 0;
         while (true)
@@ -150,12 +162,7 @@ public class JsonTranslator<T>
 
     protected virtual string CreateRequestPrompt(string request)
     {
-        return JsonTranslatorPrompts.RequestPrompt(Validator.Schema.TypeName, Validator.Schema.Schema, request);
-    }
-
-    protected virtual string CreateRepairPrompt(string validationError)
-    {
-        return JsonTranslatorPrompts.RepairPrompt(validationError);
+        return _prompts.CreateRequestPrompt(_validator.Schema, request);
     }
 
     // Return false if translation loop should stop

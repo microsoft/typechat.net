@@ -230,6 +230,8 @@ public partial class ArrayExpr : Expression
         ArgumentNullException.ThrowIfNull(exprs, nameof(exprs));
         Value = exprs;
     }
+
+    internal override Type Type => typeof(object[]);
 }
 
 public partial class ObjectExpr : Expression
@@ -240,6 +242,8 @@ public partial class ObjectExpr : Expression
         ArgumentNullException.ThrowIfNull(obj, nameof(obj));
         Value = obj;
     }
+
+    internal override Type Type => typeof(JsonObject);
 }
 
 public partial class NotTranslatedExpr : Expression

@@ -5,20 +5,18 @@ using Microsoft.TypeChat.Schema;
 
 namespace Math;
 
-public class Math : ConsoleApp
+public class MathApp : ConsoleApp
 {
     ProgramTranslator _translator;
     Api<IMathAPI> _api;
-    ProgramCompiler _compiler;
 
-    Math()
+    public MathApp()
     {
         _api = new MathAPI();
         _translator = new ProgramTranslator<IMathAPI>(
             new CompletionService(Config.LoadOpenAI()),
             _api
         );
-        _compiler = new ProgramCompiler(_api.TypeInfo);
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);
@@ -26,9 +24,9 @@ public class Math : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        using Program program = await _translator.TranslateAsync(input);
+        using Program program = await _translator.TranslateAsync(input, cancelToken);
 
         // Print whatever program was returned
         program.Print(_api.Type.Name);
@@ -65,9 +63,9 @@ public class Math : ConsoleApp
     {
         try
         {
-            Math app = new Math();
+            MathApp app = new MathApp();
             // Un-comment to print auto-generated schema at start:
-           // Console.WriteLine(app._translator.ApiDef);
+            // Console.WriteLine(app._translator.ApiDef);
             await app.RunAsync("➕➖✖️➗🟰> ", args.GetOrNull(0));
         }
         catch (Exception ex)

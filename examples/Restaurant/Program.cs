@@ -8,11 +8,11 @@ using Microsoft.TypeChat.Schema;
 
 namespace Restaurant;
 
-public class Restaurant : ConsoleApp
+public class RestaurantApp : ConsoleApp
 {
     JsonTranslator<Order> _translator;
 
-    Restaurant()
+    public RestaurantApp()
     {
         _translator = new JsonTranslator<Order>(new CompletionService(Config.LoadOpenAI()), new TypeValidator<Order>());
         _translator.MaxRepairAttempts = 3;
@@ -22,9 +22,9 @@ public class Restaurant : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    protected override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        Order order = await _translator.TranslateAsync(input);
+        Order order = await _translator.TranslateAsync(input, null, cancelToken);
         PrintOrder(order);
     }
 
@@ -44,7 +44,7 @@ public class Restaurant : ConsoleApp
     {
         try
         {
-            Restaurant app = new Restaurant();
+            RestaurantApp app = new RestaurantApp();
             // Un-comment to print auto-generated schema at start:
             // Console.WriteLine(app.Schema.Schema.Text);
 
