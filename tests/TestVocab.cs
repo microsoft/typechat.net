@@ -23,18 +23,18 @@ public class TestVocab : TypeChatTest
     }
 
     [Fact]
-    public void ExportLocal()
+    public void ExportHardcoded()
     {
-        JsonVocabAttribute? vattr = typeof(LocalVocabObj).GetProperties()[0].JsonVocabAttribute();
+        JsonVocabAttribute? vattr = typeof(HardcodedVocabObj).GetProperties()[0].JsonVocabAttribute();
         Assert.NotNull(vattr);
         Vocab vocab = vattr.ToVocab();
 
         using StringWriter writer = new StringWriter();
         TypescriptExporter exporter = new TypescriptExporter(writer);
-        exporter.Export(typeof(LocalVocabObj));
+        exporter.Export(typeof(HardcodedVocabObj));
         Assert.NotNull(exporter.UsedVocabs);
         Assert.True(exporter.UsedVocabs.Count == 1);
-        IVocab localVocab = exporter.UsedVocabs.Get(LocalVocabObj.VocabName).Vocab;
+        IVocab localVocab = exporter.UsedVocabs.Get(HardcodedVocabObj.VocabName).Vocab;
         Assert.Equal(vocab, localVocab);
     }
 

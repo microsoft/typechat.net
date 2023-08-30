@@ -60,6 +60,11 @@ public class Vocab : List<VocabEntry>, IVocab
 
     public bool Contains(VocabEntry entry, StringComparison comparison)
     {
+        if (string.IsNullOrEmpty(entry.Text))
+        {
+            return false;
+        }
+
         for (int i = 0; i < Count; ++i)
         {
             if (this[i].CompareTo(entry, comparison) == 0)

@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public abstract class ConsoleApp
+public abstract class ConsoleApp : IIntentProcessor
 {
     List<string> _stopStrings;
 
@@ -108,7 +108,7 @@ public abstract class ConsoleApp
         }
     }
 
-    protected abstract Task ProcessRequestAsync(string input, CancellationToken cancelToken);
+    public abstract Task ProcessRequestAsync(string input, CancellationToken cancelToken);
 
     protected void SubscribeAllEvents<T>(JsonTranslator<T> translator)
     {

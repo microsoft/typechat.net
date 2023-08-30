@@ -38,7 +38,7 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
     {
         try
         {
-            return JsonSerializer.Deserialize(GetJson(json), schema.Type, _options);
+            return JsonSerializer.Deserialize(json, schema.Type, _options);
         }
         catch (JsonException jex)
         {
@@ -48,17 +48,6 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
         {
             return Result<object?>.Error(ex.Message);
         }
-    }
-
-    ReadOnlySpan<char> GetJson(string json)
-    {
-        int iStartAt = json.IndexOf('{');
-        int iEndAt = json.LastIndexOf('}');
-        if (iStartAt < 0 || iEndAt < 0 || iStartAt >= iEndAt)
-        {
-            throw new JsonException();
-        }
-        return json.AsSpan(iStartAt, iEndAt - iStartAt + 1);
     }
 
     string ToErrorString(string json, JsonException error)

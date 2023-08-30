@@ -146,6 +146,7 @@ public partial class Beer : LineItem
 {
     public override void Print(StringBuilder order, StringBuilder log)
     {
-        order.Append($"{Quantity} {Kind}");
+        string kind = Kind ?? "Unknown";
+        order.Append($"{Quantity} Beer, Type: {kind}");
     }
 }

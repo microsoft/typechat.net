@@ -111,7 +111,7 @@ public class ConverterTestObj
     public string Milk { get; set; }
 }
 
-public class LocalVocabObj
+public class HardcodedVocabObj
 {
     public const string VocabName = "Local";
 

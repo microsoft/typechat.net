@@ -150,7 +150,7 @@ public class ProgramCompiler
 
                 case ValueExpr valueExpr:
                     Type valueType = valueExpr.Type;
-                    if (!param.IsCompatibleWith(valueType))
+                    if (!param.IsConvertibleFrom(valueType))
                     {
                         ProgramException.ThrowTypeMismatch(call, param, valueExpr.Type);
                     }
@@ -349,7 +349,7 @@ public class ProgramCompiler
         {
             return srcExpr;
         }
-        if (!type.IsAssignableFrom(typeof(JsonObject)))
+        if (!type.IsJsonObject())
         {
             srcExpr = LinqExpression.Call(
                 CompilerApi.DeserializeMethod.Method,
