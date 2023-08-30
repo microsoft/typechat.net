@@ -6,6 +6,32 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TypeChatTest
 {
+    ITestOutputHelper? _output;
+
+    public TypeChatTest(ITestOutputHelper? output = null)
+    {
+        _output = output;
+    }
+
+    public ITestOutputHelper? Output => _output;
+
+    public void WriteLine(string message)
+    {
+        if (_output != null)
+        {
+            _output.WriteLine(message);
+        }
+        else
+        {
+            Trace.WriteLine(message);
+        }
+    }
+
+    public void WriteSkipped(string testName, string reason)
+    {
+        WriteLine($"SKIPPED: {testName}. {reason}");
+    }
+
     public string? GetEnv(string name)
     {
         return Environment.GetEnvironmentVariable(name);
@@ -47,6 +73,16 @@ public class TypeChatTest
         return (config.HasOpenAI &&
                 !string.IsNullOrEmpty(config.OpenAI.ApiKey) &&
                 config.OpenAI.ApiKey != "?");
+    }
+
+    public bool CanRunEndToEndTest(Config config, string testName)
+    {
+        if (CanRunEndToEndTest(config))
+        {
+            return true;
+        }
+        WriteSkipped(testName, "NO OpenAI Configured");
+        return false;
     }
 
     public MethodInfo? GetMethod(Type type, string name)

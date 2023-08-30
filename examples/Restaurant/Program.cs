@@ -14,7 +14,7 @@ public class RestaurantApp : ConsoleApp
 
     public RestaurantApp()
     {
-        _translator = new JsonTranslator<Order>(new CompletionService(Config.LoadOpenAI()), new TypeValidator<Order>());
+        _translator = new JsonTranslator<Order>(new LanguageModel(Config.LoadOpenAI()), new TypeValidator<Order>());
         _translator.MaxRepairAttempts = 3;
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);

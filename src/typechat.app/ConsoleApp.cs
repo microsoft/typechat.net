@@ -119,13 +119,14 @@ public abstract class ConsoleApp : IIntentProcessor
 
     protected virtual void OnException(string input, Exception ex)
     {
+        Console.WriteLine("## Could not process request");
         if (ex is TypeChatException tex)
         {
             tex.Print();
         }
         else
         {
-            Console.WriteLine(ex);
+            Console.WriteLine(ex.Message);
             Console.WriteLine();
         }
     }

@@ -48,7 +48,7 @@ public class ProgramTranslator : JsonTranslator<Program>
     public string ApiDef => _apiDef;
 
     // return true if validation loop should continue
-    protected override bool OnValidationComplete(JsonResponse response, Result<Program> validationResult)
+    protected override bool OnValidationComplete(Result<Program> validationResult)
     {
         // If LLM could not translate the user request to begin with, then we can't continue
         Program? program = validationResult.Value;

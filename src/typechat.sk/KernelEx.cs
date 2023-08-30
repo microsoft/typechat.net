@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
+
 using Microsoft.SemanticKernel.AI.TextCompletion;
 using Microsoft.SemanticKernel.Reliability;
 
@@ -6,14 +7,17 @@ namespace Microsoft.TypeChat;
 
 public static class KernelEx
 {
-    public static IKernel CreateKernel(this OpenAIConfig config, string? modelName = null)
+    /// <summary>
+    /// Create a Semantic Kernel using the given Open AI configuration
+    /// Automatically sets up retries
+    /// </summary>
+    /// <param name="config">OpenAI configuration</param>
+    /// <returns>A kernel object</returns>
+    public static IKernel CreateKernel(this OpenAIConfig config)
     {
-        modelName ??= config.Model;
-        ArgumentException.ThrowIfNullOrEmpty(modelName, nameof(modelName));
-
         // Create kernel
         KernelBuilder kb = new KernelBuilder();
-        kb.WithChatModel(modelName, config)
+        kb.WithChatModel(config.Model, config)
           .WithRetry(config);
 
         IKernel kernel = kb.Build();
@@ -64,20 +68,10 @@ public static class KernelEx
         return builder.WithRetryHandlerFactory(new DefaultHttpRetryHandlerFactory(retryConfig));
     }
 
-    public static CompletionService CompletionService(this IKernel kernel, ModelInfo model)
+    public static LanguageModel LanguageModel(this IKernel kernel, ModelInfo model)
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
 
-        return new CompletionService(kernel.GetService<ITextCompletion>(model.Name), model);
-    }
-
-    public static JsonTranslator<T> JsonTranslator<T>(this IKernel kernel, ModelInfo model, IVocabCollection? vocabs = null)
-    {
-        TypescriptSchema schema = TypescriptExporter.GenerateSchema(typeof(T), vocabs);
-        JsonTranslator<T> translator = new JsonTranslator<T>(
-            kernel.CompletionService(model),
-            new TypeValidator<T>(schema)
-        );
-        return translator;
+        return new LanguageModel(kernel.GetService<ITextCompletion>(model.Name), model);
     }
 }

@@ -4,10 +4,12 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
-    <AssemblyName>TypeChat</AssemblyName>
+    <AssemblyName>TypeChat.Dialog</AssemblyName>
     <RootNamespace>Microsoft.TypeChat</RootNamespace>
   </PropertyGroup>
 
-  <Import Project="Package/nuget.props" />
+  <ItemGroup>
+    <ProjectReference Include="..\typechat\TypeChat.csproj" />
+  </ItemGroup>
 
 </Project>

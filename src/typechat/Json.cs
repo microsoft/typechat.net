@@ -2,6 +2,10 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Json makes the idiomatic Json.Stringify and Json.Parse APIs available to .NET by
+/// wrapping the .NET System.Text.Json serialization
+/// </summary>
 public class Json
 {
     public static JsonSerializerOptions DefaultOptions()

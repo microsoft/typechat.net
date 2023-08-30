@@ -9,4 +9,5 @@ global using Microsoft.TypeChat;
 global using Microsoft.TypeChat.Schema;
 global using Microsoft.SemanticKernel;
 global using Microsoft.SemanticKernel.AI.TextCompletion;
+global using Microsoft.SemanticKernel.AI.ChatCompletion;
 global using Microsoft.SemanticKernel.SkillDefinition;

@@ -2,6 +2,10 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Models can return Json responses that contain (possibly) valid Json surrounded by
+/// both prologue and epilogue text. 
+/// </summary>
 public class JsonResponse
 {
     public JsonResponse(string responseText)
@@ -11,23 +15,24 @@ public class JsonResponse
     }
 
     /// <summary>
-    /// Full response text
+    /// Raw response text
     /// </summary>
     public string ResponseText { get; private set; }
     /// <summary>
-    /// Json included in response: any text contained within braces: {}
+    /// Any text contained within outer-most braces only: {} and can be passed to a Json
+    /// parser or serializer for further validation
     /// </summary>
     public string? Json { get; private set; }
     /// <summary>
-    /// Anything that came before the json, if any
+    /// Anything the model returned before the Json
     /// </summary>
     public string? Prologue { get; private set; }
     /// <summary>
-    /// Anything that came after the json, if any
+    /// Anything the model returned after the Json
     /// </summary>
     public string? Epilogue { get; private set; }
     /// <summary>
-    /// Was the json enclosed in braces? {} 
+    /// Was the json at least enclosed in outer braces? {} 
     /// </summary>
     public bool HasCompleteJson { get; private set; }
 

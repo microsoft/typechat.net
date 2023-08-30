@@ -116,7 +116,7 @@ public class JsonTranslator<T>
             if (jsonResponse.HasCompleteJson)
             {
                 validationResult = Validator.Validate(jsonResponse.Json);
-                if (!OnValidationComplete(jsonResponse, validationResult) ||
+                if (!OnValidationComplete(validationResult) ||
                     validationResult.Success)
                 {
                     return validationResult.Value;
@@ -166,7 +166,7 @@ public class JsonTranslator<T>
     }
 
     // Return false if translation loop should stop
-    protected virtual bool OnValidationComplete(JsonResponse response, Result<T> validationResult) { return true; }
+    protected virtual bool OnValidationComplete(Result<T> validationResult) { return true; }
 
     protected void NotifyEvent(Action<string> evt, string value)
     {

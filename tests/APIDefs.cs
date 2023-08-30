@@ -13,12 +13,8 @@ public interface IMathAPI
     double mul(double x, double y);
     [Comment("Divide two numbers")]
     double div(double x, double y);
-    [Comment("Identity function")]
-    double id(double x);
     [Comment("Negate a number")]
     double neg(double x);
-    [Comment("Unknown request")]
-    double unknown(string text);
 }
 
 public interface IMathAPIAsync
@@ -31,12 +27,8 @@ public interface IMathAPIAsync
     Task<double> mul(double x, double y);
     [Comment("Divide two numbers")]
     Task<double> div(double x, double y);
-    [Comment("Identity function")]
-    Task<double> id(double x);
     [Comment("Negate a number")]
     Task<double> neg(double x);
-    [Comment("Unknown request")]
-    Task<double> unknown(string text);
 }
 
 [Comment("This is an API for String Operations")]
