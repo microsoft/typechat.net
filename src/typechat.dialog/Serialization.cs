@@ -9,7 +9,7 @@ public interface ITextSerializable
 
 public static class SerializationEx
 {
-    public static string AsText(this object obj)
+    public static string Stringify(this object obj)
     {
         if (obj is string str)
         {
@@ -19,10 +19,10 @@ public static class SerializationEx
         {
             return textSerializable.AsText();
         }
-        return obj.ToString();
+        return Json.Stringify(obj);
     }
 
-    public static string AsText<T>(this T obj)
+    public static string Stringify<T>(this T obj)
     {
         if (obj is ITextSerializable textSerializable)
         {

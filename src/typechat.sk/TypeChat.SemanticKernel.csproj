@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\typechat.dialog\TypeChat.Dialog.csproj" />
     <ProjectReference Include="..\typechat.schema\TypeChat.Schema.csproj" />
     <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>

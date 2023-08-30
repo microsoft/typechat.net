@@ -9,7 +9,7 @@ public static class ChatEx
         return role.Label.Equals(label, StringComparison.OrdinalIgnoreCase);
     }
 
-    public static AuthorRole GetRole(this ChatMessage message)
+    public static AuthorRole GetRole(this Message message)
     {
         string? from = message.From;
         if (string.IsNullOrEmpty(from))
@@ -31,7 +31,7 @@ public static class ChatEx
         return AuthorRole.User;
     }
 
-    public static void Append(this ChatHistory history, IEnumerable<ChatMessage> messages)
+    public static void Append(this ChatHistory history, IEnumerable<Message> messages)
     {
         ArgumentNullException.ThrowIfNull(messages, nameof(messages));
 
@@ -41,8 +41,8 @@ public static class ChatEx
         }
     }
 
-    public static void Append(this ChatHistory history, ChatMessage message)
+    public static void Append(this ChatHistory history, Message message)
     {
-        history.AddMessage(message.GetRole(), message.Text);
+        history.AddMessage(message.GetRole(), message.Body);
     }
 }

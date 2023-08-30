@@ -59,13 +59,13 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
             return;
         }
 
-        List<ChatMessage> history = new List<ChatMessage>();
+        List<Message> history = new List<Message>();
         ChatModel cm = new ChatModel(_config.OpenAI);
 
-        ChatMessage userMessage = "Is Venus a planet?";
+        Message userMessage = "Is Venus a planet?";
         Assert.Equal(userMessage.GetRole(), AuthorRole.User);
 
-        ChatMessage response = await cm.GetResponseAsync(userMessage);
+        Message response = await cm.GetResponseAsync(userMessage);
         Validate(response, AuthorRole.Assistant, "Yes");
         history.Add(userMessage);
         history.Add(response);
@@ -79,13 +79,13 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
         Assert.Equal(history.Count, 4);
     }
 
-    void Validate(ChatMessage message, AuthorRole role, string? contents = null)
+    void Validate(Message message, AuthorRole role, string? contents = null)
     {
-        Assert.False(string.IsNullOrEmpty(message.Text));
+        Assert.False(string.IsNullOrEmpty(message.Body));
         Assert.Equal(message.From, role.Label);
         if (!string.IsNullOrEmpty(contents))
         {
-            Assert.True(message.Text.Contains(contents, StringComparison.OrdinalIgnoreCase));
+            Assert.True(message.Body.Contains(contents, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
