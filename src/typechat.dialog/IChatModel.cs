@@ -4,5 +4,5 @@ namespace Microsoft.TypeChat;
 
 public interface IChatModel
 {
-    Task<Message> GetResponseAsync(Message message, IEnumerable<Message>? context, RequestSettings? settings, CancellationToken cancelToken);
+    Task<string> GetResponseAsync(IMessage message, IEnumerable<IMessage>? context, RequestSettings? settings, CancellationToken cancelToken);
 }

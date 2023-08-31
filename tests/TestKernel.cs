@@ -65,27 +65,26 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
         Message userMessage = "Is Venus a planet?";
         Assert.Equal(userMessage.GetRole(), AuthorRole.User);
 
-        Message response = await cm.GetResponseAsync(userMessage);
-        Validate(response, AuthorRole.Assistant, "Yes");
+        string response = await cm.GetResponseAsync(userMessage);
+        Validate(response, "Yes");
         history.Add(userMessage);
         history.Add(response);
 
         userMessage = "What about Pluto?";
         response = await cm.GetResponseAsync(userMessage, history);
-        Validate(response, AuthorRole.Assistant, "No");
+        Validate(response, "No");
         history.Add(userMessage);
         history.Add(response);
 
         Assert.Equal(history.Count, 4);
     }
 
-    void Validate(Message message, AuthorRole role, string? contents = null)
+    void Validate(Message message, string? contents = null)
     {
-        Assert.False(string.IsNullOrEmpty(message.Body));
-        Assert.Equal(message.From, role.Label);
+        Assert.NotNull(message.Body);
         if (!string.IsNullOrEmpty(contents))
         {
-            Assert.True(message.Body.Contains(contents, StringComparison.OrdinalIgnoreCase));
+            Assert.True(message.GetText().Contains(contents, StringComparison.OrdinalIgnoreCase));
         }
     }
 }

@@ -2,31 +2,19 @@
 
 namespace Microsoft.TypeChat;
 
-public class JsonTranslator<T>
+public abstract class JsonTranslator<T, TMessage>
 {
     public const int DefaultMaxRepairAttempts = 1;
 
-    ILanguageModel _model;
-    IJsonTranslatorPrompts _prompts;
     IJsonTypeValidator<T> _validator;
+    IJsonTranslatorPrompts _prompts;
     RequestSettings _requestSettings;
     int _maxRepairAttempts;
 
-    public JsonTranslator(ILanguageModel model, SchemaText schema)
-        : this(model, new JsonSerializerTypeValidator<T>(schema))
+    public JsonTranslator(IJsonTypeValidator<T> validator, IJsonTranslatorPrompts? prompts = null)
     {
-    }
-
-    public JsonTranslator(
-        ILanguageModel model,
-        IJsonTypeValidator<T> validator,
-        IJsonTranslatorPrompts? prompts = null
-        )
-    {
-        ArgumentNullException.ThrowIfNull(model, nameof(model));
         ArgumentNullException.ThrowIfNull(validator, nameof(validator));
 
-        _model = model;
         _validator = validator;
         prompts ??= JsonTranslatorPrompts.Default;
         _prompts = prompts;
@@ -34,7 +22,6 @@ public class JsonTranslator<T>
         _maxRepairAttempts = DefaultMaxRepairAttempts;
     }
 
-    public ILanguageModel Model => _model;
     public IJsonTypeValidator<T> Validator
     {
         get => _validator;
@@ -82,7 +69,7 @@ public class JsonTranslator<T>
     /// <exception cref="TypeChatException"></exception>
     public Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
-        return TranslateAsync(request, null, cancelToken);
+        return TranslateAsync(request, null, null, cancelToken);
     }
 
     /// <summary>
@@ -90,12 +77,14 @@ public class JsonTranslator<T>
     /// </summary>
     /// <param name="request"></param>
     /// <param name="requestSettings"></param>
+    /// <param name="context"></param>
     /// <param name="cancelToken"></param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
         string request,
-        RequestSettings? requestSettings,
+        IEnumerable<TMessage>? context,
+        RequestSettings? requestSettings = null,
         CancellationToken cancelToken = default
         )
     {
@@ -105,7 +94,10 @@ public class JsonTranslator<T>
         int repairAttempts = 0;
         while (true)
         {
-            string responseText = await CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+            NotifyEvent(SendingPrompt, prompt);
+            string responseText = await GetResponseAsync(prompt, context, requestSettings, cancelToken).ConfigureAwait(false);
+            NotifyEvent(CompletionReceived, responseText);
+
             JsonResponse jsonResponse = JsonResponse.Parse(responseText);
             if (!jsonResponse.HasJson)
             {
@@ -139,26 +131,7 @@ public class JsonTranslator<T>
         }
     }
 
-    protected async Task<string> RepairJsonAsync(
-        string json,
-        string validationError,
-        RequestSettings? settings = null,
-        CancellationToken cancelToken = default
-        )
-    {
-        ArgumentException.ThrowIfNullOrEmpty(json, nameof(json));
-
-        string prompt = JsonTranslatorPrompts.RepairPrompt(json, _validator.Schema, validationError);
-        return await CompleteAsync(prompt, settings, cancelToken).ConfigureAwait(false);
-    }
-
-    protected async virtual Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken)
-    {
-        NotifyEvent(SendingPrompt, prompt);
-        string completion = await Model.CompleteAsync(prompt, settings, cancelToken).ConfigureAwait(false);
-        NotifyEvent(CompletionReceived, completion);
-        return completion;
-    }
+    protected abstract Task<string> GetResponseAsync(string prompt, IEnumerable<TMessage>? context, RequestSettings? settings, CancellationToken cancelToken);
 
     protected virtual string CreateRequestPrompt(string request)
     {
@@ -178,5 +151,44 @@ public class JsonTranslator<T>
             }
             catch { }
         }
+    }
+}
+
+public class JsonTranslator<T> : JsonTranslator<T, string>
+{
+    ILanguageModel _model;
+
+    public JsonTranslator(ILanguageModel model, SchemaText schema)
+        : this(model, new JsonSerializerTypeValidator<T>(schema))
+    {
+    }
+
+    public JsonTranslator(ILanguageModel model, IJsonTypeValidator<T> validator, IJsonTranslatorPrompts? prompts = null)
+        : base(validator, prompts)
+    {
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        _model = model;
+    }
+
+    public ILanguageModel Model => _model;
+
+    protected override Task<string> GetResponseAsync(string prompt, IEnumerable<string>? context, RequestSettings? settings, CancellationToken cancelToken)
+    {
+        return _model.CompleteAsync(BuildRequest(prompt, context), settings, cancelToken);
+    }
+
+    string BuildRequest(string prompt, IEnumerable<string>? context)
+    {
+        if (context == null)
+        {
+            return prompt;
+        }
+        StringBuilder sb = new StringBuilder();
+        foreach (var item in context)
+        {
+            sb.AppendLine(item);
+        }
+        sb.AppendLine(prompt);
+        return sb.ToString();
     }
 }

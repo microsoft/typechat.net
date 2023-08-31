@@ -24,15 +24,15 @@ public class ChatModel : IChatModel
         _model = model;
     }
 
-    public async Task<Message> GetResponseAsync(Message message, IEnumerable<Message>? context = null, RequestSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<string> GetResponseAsync(IMessage message, IEnumerable<IMessage>? context = null, RequestSettings? settings = null, CancellationToken cancelToken = default)
     {
         ChatHistory history = ToHistory(message, context);
         ChatRequestSettings? requestSettings = ToRequestSettings(settings);
         string textResponse = await _service.GenerateMessageAsync(history, requestSettings, cancelToken).ConfigureAwait(false);
-        return new Message(textResponse, AuthorRole.Assistant.Label);
+        return textResponse;
     }
 
-    ChatHistory ToHistory(Message message, IEnumerable<Message>? contextMessages)
+    ChatHistory ToHistory(IMessage message, IEnumerable<IMessage>? contextMessages)
     {
         ChatHistory history = new ChatHistory();
         if (contextMessages != null)

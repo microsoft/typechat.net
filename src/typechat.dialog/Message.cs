@@ -2,7 +2,13 @@
 
 namespace Microsoft.TypeChat;
 
-public class Message<T>
+public interface IMessage
+{
+    string From { get; }
+    string GetText();
+}
+
+public class Message<T> : IMessage
 {
     public const string DefaultFrom = "User";
 
@@ -29,7 +35,7 @@ public class Message<T>
     [JsonIgnore]
     public Type BodyType => _body.GetType();
 
-    public virtual string BodyAsText()
+    public virtual string GetText()
     {
         if (_body == null)
         {
@@ -39,18 +45,12 @@ public class Message<T>
     }
 }
 
-public class Message : Message<string>
+public class Message : Message<object>
 {
-    public Message(string body, string? from = null)
+    public Message(object body, string? from = null)
         : base(body, from)
     {
     }
 
-    public override string BodyAsText()
-    {
-        return Body;
-    }
-
-    public static implicit operator string(Message message) => message.Body;
     public static implicit operator Message(string text) => new Message(text);
 }
