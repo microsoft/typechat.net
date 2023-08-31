@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public class ChatTranslator<T, TBody> : JsonTranslator<T, Message<TBody>>
+public class ChatTranslator<T> : JsonTranslator<T, Message<T>>
 {
     IChatModel _model;
 
@@ -18,7 +18,7 @@ public class ChatTranslator<T, TBody> : JsonTranslator<T, Message<TBody>>
         _model = model;
     }
 
-    protected override Task<string> GetResponseAsync(string prompt, IEnumerable<Message<TBody>>? context, RequestSettings? settings, CancellationToken cancelToken)
+    protected override Task<string> GetResponseAsync(string prompt, IEnumerable<Message<T>>? context, RequestSettings? settings, CancellationToken cancelToken)
     {
         Message message = prompt;
         return _model.GetResponseAsync(message, context, settings, cancelToken);

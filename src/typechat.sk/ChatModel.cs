@@ -24,7 +24,7 @@ public class ChatModel : IChatModel
         _model = model;
     }
 
-    public async Task<string> GetResponseAsync(IMessage message, IEnumerable<IMessage>? context = null, RequestSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<string> GetResponseAsync(IChatMessage message, IEnumerable<IChatMessage>? context = null, RequestSettings? settings = null, CancellationToken cancelToken = default)
     {
         ChatHistory history = ToHistory(message, context);
         ChatRequestSettings? requestSettings = ToRequestSettings(settings);
@@ -32,7 +32,7 @@ public class ChatModel : IChatModel
         return textResponse;
     }
 
-    ChatHistory ToHistory(IMessage message, IEnumerable<IMessage>? contextMessages)
+    ChatHistory ToHistory(IChatMessage message, IEnumerable<IChatMessage>? contextMessages)
     {
         ChatHistory history = new ChatHistory();
         if (contextMessages != null)

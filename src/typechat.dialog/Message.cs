@@ -2,37 +2,32 @@
 
 namespace Microsoft.TypeChat;
 
-public interface IMessage
+public class Message<T> : IChatMessage
 {
-    string From { get; }
-    string GetText();
-}
-
-public class Message<T> : IMessage
-{
-    public const string DefaultFrom = "User";
+    public const string FromUser = "User";
 
     string _from;
     T _body;
 
-    [JsonConstructor]
-    public Message(T body, string? from = null)
+    public Message(T body)
+        : this(null, body)
+    {
+    }
+
+    public Message(string from, T body)
     {
         if (string.IsNullOrEmpty(from))
         {
-            from = DefaultFrom;
+            from = FromUser;
         }
         _body = body;
         _from = from;
     }
 
-    [JsonPropertyName("from")]
     public string From => _from;
 
-    [JsonPropertyName("body")]
     public T Body => _body;
 
-    [JsonIgnore]
     public Type BodyType => _body.GetType();
 
     public virtual string GetText()
@@ -45,12 +40,33 @@ public class Message<T> : IMessage
     }
 }
 
-public class Message : Message<object>
+public class MessageHeaders : Dictionary<string, string>
 {
-    public Message(object body, string? from = null)
-        : base(body, from)
+    public MessageHeaders()
+        : base(StringComparer.OrdinalIgnoreCase)
     {
     }
+}
+
+/// <summary>
+/// General message
+/// </summary>
+public class Message : Message<object>
+{
+    public Message(object body)
+        : this(Message.FromUser, body)
+    {
+    }
+
+    public Message(string source, object body)
+        : base(source, body)
+    {
+    }
+
+
+    public MessageHeaders? Headers { get; set; }
+
+    public object Attachments { get; set; }
 
     public static implicit operator Message(string text) => new Message(text);
 }
