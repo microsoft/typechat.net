@@ -81,12 +81,12 @@ public class MessageContext
         return true;
     }
 
-    public void EndContext()
+    public void Reverse()
     {
-        EndContext(0, _messages.Count);
+        Reverse(0, _messages.Count);
     }
 
-    public void EndContext(int startAt, int count)
+    public void Reverse(int startAt, int count)
     {
         _messages.Reverse(startAt, count);
     }
