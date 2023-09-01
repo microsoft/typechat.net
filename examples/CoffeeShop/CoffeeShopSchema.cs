@@ -263,7 +263,7 @@ public static class CoffeeShopVocabs
 
     public const string CoffeeDrinks = "americano | coffee";
 
-    public const string LatteDrinks = "cappuccino | flat white | latte | mocha | chai latte";
+    public const string LatteDrinks = "cappuccino | flat white | latte | latte macchiato| mocha | chai latte";
 
     public const string Creamers =
         "whole milk creamer | two percent milk creamer | one percent milk creamer | " +

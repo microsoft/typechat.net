@@ -25,7 +25,7 @@ public class MultiSchemaApp : ConsoleApp
 
     public MultiSchemaApp()
     {
-        _model = new LanguageModel(Config.LoadOpenAI());
+        _model = new TextCompletionModel(Config.LoadOpenAI());
         InitApps();
     }
 

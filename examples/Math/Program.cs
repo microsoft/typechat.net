@@ -14,7 +14,7 @@ public class MathApp : ConsoleApp
     {
         _api = new MathAPI();
         _translator = new ProgramTranslator<IMathAPI>(
-            new LanguageModel(Config.LoadOpenAI()),
+            new TextCompletionModel(Config.LoadOpenAI()),
             _api
         );
         _api.CallCompleted += this.DisplayCall;

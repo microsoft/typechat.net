@@ -45,7 +45,7 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
             return;
         }
 
-        LanguageModel lm = new LanguageModel(_config.OpenAI);
+        TextCompletionModel lm = new TextCompletionModel(_config.OpenAI);
         string response = await lm.CompleteAsync("Is Venus a planet?");
         Assert.NotNull(response);
         Assert.NotEmpty(response);
@@ -59,7 +59,7 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
             return;
         }
 
-        ChatModel cm = new ChatModel(_config.OpenAI);
+        LanguageModel cm = new LanguageModel(_config.OpenAI);
         Prompt prompt = "Is Venus a planet?";
         Assert.Equal(prompt.Last().Source, PromptSection.Sources.User);
 

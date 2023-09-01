@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat;
 
 public class LanguageModel : ILanguageModel
 {
-    ITextCompletion _service;
+    IChatCompletion _service;
     ModelInfo _model;
 
     public LanguageModel(OpenAIConfig config, ModelInfo? model = null)
@@ -13,34 +13,39 @@ public class LanguageModel : ILanguageModel
 
         model ??= config.Model;
         IKernel kernel = config.CreateKernel();
-        _service = kernel.GetService<ITextCompletion>(model.Name);
+        _service = kernel.GetService<IChatCompletion>(model.Name);
         _model = model;
     }
 
-    public LanguageModel(ITextCompletion service, ModelInfo model)
+    public LanguageModel(IChatCompletion service, ModelInfo model)
     {
         ArgumentNullException.ThrowIfNull(service, nameof(service));
         _service = service;
         _model = model;
     }
 
-    public ModelInfo Model => _model;
-
     public async Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
     {
-        CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
-        string request = prompt.ToString(false);
-        string response = await _service.CompleteAsync(request, requestSettings, cancelToken).ConfigureAwait(false);
-        return response;
+        ChatHistory history = ToHistory(prompt);
+        ChatRequestSettings? requestSettings = ToRequestSettings(settings);
+        string textResponse = await _service.GenerateMessageAsync(history, requestSettings, cancelToken).ConfigureAwait(false);
+        return textResponse;
     }
 
-    CompleteRequestSettings? ToRequestSettings(RequestSettings? settings)
+    ChatHistory ToHistory(Prompt prompt)
+    {
+        ChatHistory history = new ChatHistory();
+        history.Append(prompt);
+        return history;
+    }
+
+    ChatRequestSettings? ToRequestSettings(RequestSettings? settings)
     {
         if (settings == null)
         {
             return null;
         }
-        var requestSettings = new CompleteRequestSettings();
+        var requestSettings = new ChatRequestSettings();
         if (settings.Temperature >= 0)
         {
             requestSettings.Temperature = settings.Temperature;
