@@ -1,11 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Dialog;
 
 public class Message<T> : IPromptSection
 {
-    public const string FromUser = "User";
-
     string _source;
     T _body;
 
@@ -18,7 +16,7 @@ public class Message<T> : IPromptSection
     {
         if (string.IsNullOrEmpty(from))
         {
-            from = FromUser;
+            from = PromptSection.Sources.User;
         }
         _body = body;
         _source = from;
@@ -54,7 +52,7 @@ public class MessageHeaders : Dictionary<string, string>
 public class Message : Message<object>
 {
     public Message(object body)
-        : this(Message.FromUser, body)
+        : base(body)
     {
     }
 
@@ -66,7 +64,7 @@ public class Message : Message<object>
 
     public MessageHeaders? Headers { get; set; }
 
-    public object Attachments { get; set; }
+    public object Attachment { get; set; }
 
     public static implicit operator Message(string text) => new Message(text);
 }

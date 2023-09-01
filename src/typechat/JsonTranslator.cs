@@ -94,7 +94,7 @@ public class JsonTranslator<T>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
         string request,
-        IList<IPromptSection>? preamble,
+        IEnumerable<IPromptSection>? preamble,
         RequestSettings? requestSettings = null,
         CancellationToken cancelToken = default
         )

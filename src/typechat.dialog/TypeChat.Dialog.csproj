@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
     <AssemblyName>TypeChat.Dialog</AssemblyName>
-    <RootNamespace>Microsoft.TypeChat</RootNamespace>
+    <RootNamespace>Microsoft.TypeChat.Dialog</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

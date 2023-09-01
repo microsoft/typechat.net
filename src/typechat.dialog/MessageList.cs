@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Dialog;
 
 public class MessageList : List<Message>, IMessageStream
 {
@@ -23,16 +23,4 @@ public class MessageList : List<Message>, IMessageStream
     }
 
     public void Close() { }
-
-    public void Trim(int trimCount)
-    {
-        if (trimCount > Count)
-        {
-            Clear();
-        }
-        else
-        {
-            RemoveRange(Count - trimCount, trimCount);
-        }
-    }
 }

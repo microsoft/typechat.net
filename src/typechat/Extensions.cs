@@ -16,6 +16,19 @@ public static class Extensions
         return (list == null || list.Count == 0);
     }
 
+    public static void Trim<T>(this List<T> list, int trimCount)
+        where T : IPromptSection
+    {
+        if (trimCount > list.Count)
+        {
+            list.Clear();
+        }
+        else
+        {
+            list.RemoveRange(list.Count - trimCount, trimCount);
+        }
+    }
+
     internal static void ExtractLine(this string text, long lineNumber, StringBuilder sb)
     {
         string line;

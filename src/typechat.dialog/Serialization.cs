@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Dialog;
 
 public interface ITextSerializable
 {
-    string AsText();
+    string Stringify();
 }
 
 public static class SerializationEx
@@ -17,17 +17,8 @@ public static class SerializationEx
         }
         if (obj is ITextSerializable textSerializable)
         {
-            return textSerializable.AsText();
+            return textSerializable.Stringify();
         }
         return Json.Stringify(obj);
-    }
-
-    public static string Stringify<T>(this T obj)
-    {
-        if (obj is ITextSerializable textSerializable)
-        {
-            return textSerializable.AsText();
-        }
-        return obj.ToString();
     }
 }

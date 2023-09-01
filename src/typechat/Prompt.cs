@@ -9,11 +9,10 @@ public class Prompt : List<IPromptSection>
     {
     }
 
-    public Prompt(IList<IPromptSection>? preamble, PromptSection? text = null)
+    public Prompt(IEnumerable<IPromptSection>? preamble, PromptSection? text = null)
     {
         if (preamble != null)
         {
-            EnsureCapacity(preamble.Count);
             AddRange(preamble);
         }
         if (text != null)
@@ -28,9 +27,12 @@ public class Prompt : List<IPromptSection>
         base.Add(section);
     }
 
-    public void Push(string section) => Push(PromptSection.FromUser(section));
-    public void PushResponse(string section) => Push(PromptSection.FromAssistant(section));
-
+    public void Push(string source, string section)
+    {
+        Add(new PromptSection(source, section));
+    }
+    public void Push(string section) => Push(PromptSection.Sources.User, section);
+    public void PushResponse(string section) => Push(PromptSection.Sources.Assistant, section);
     public void Push(IPromptSection section) => Add(section);
 
     public IPromptSection? Last()
@@ -55,18 +57,6 @@ public class Prompt : List<IPromptSection>
         }
 
         return null;
-    }
-
-    public void Trim(int trimCount)
-    {
-        if (trimCount > Count)
-        {
-            Clear();
-        }
-        else
-        {
-            RemoveRange(Count - trimCount, trimCount);
-        }
     }
 
     public void JoinSections(string sectionSep, bool includeSource, StringBuilder sb)
