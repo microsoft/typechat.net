@@ -8,7 +8,7 @@ using Microsoft.TypeChat.Schema;
 namespace Restaurant;
 
 [Comment("an order from a restaurant that serves pizza, beer, and salad")]
-[Comment("Do correct spelling mistakes")]
+[Comment("Correct common spelling mistakes like peperoni")]
 public partial class Order
 {
     [JsonPropertyName("items")]
@@ -29,7 +29,7 @@ public abstract class LineItem : OrderItem
     public int Quantity { get; set; } = 1;
 }
 
-[Comment("Use this type for products with names that match NO listed PRODUCT NAME")]
+[Comment("Use this type for order items that match nothing else")]
 public partial class UnknownItem : OrderItem
 {
     [Comment("The text that wasn't understood")]
@@ -42,7 +42,7 @@ public partial class Pizza : LineItem
     [Comment("default: large")]
     [JsonVocab(RestaurantVocabs.PizzaSize)]
     [JsonPropertyName("size")]
-    public string Size { get; set; }
+    public string? Size { get; set; }
 
     [Comment("toppings requested (examples: pepperoni, arugula)")]
     [JsonPropertyName("addedToppings")]
