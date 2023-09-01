@@ -15,7 +15,7 @@ public class CalendarApp : ConsoleApp
     public CalendarApp()
     {
         _translator = new JsonTranslator<CalendarActions>(
-            new TextCompletionModel(Config.LoadOpenAI()),
+            new LanguageModel(Config.LoadOpenAI()),
             new TypeValidator<CalendarActions>()
         );
 

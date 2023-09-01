@@ -28,13 +28,13 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
         kb.WithChatModels(_config.OpenAI, Config.ModelNames.Gpt35Turbo, Config.ModelNames.Gpt4);
         IKernel kernel = kb.Build();
 
-        var service = kernel.LanguageModel(Config.ModelNames.Gpt35Turbo);
-        Assert.NotNull(service);
-        Assert.Equal(service.Model.Name, Config.ModelNames.Gpt35Turbo);
+        var model = kernel.TextCompletionModel(Config.ModelNames.Gpt35Turbo);
+        Assert.NotNull(model);
+        Assert.Equal(model.Model.Name, Config.ModelNames.Gpt35Turbo);
 
-        service = kernel.LanguageModel(Config.ModelNames.Gpt4);
-        Assert.NotNull(service);
-        Assert.Equal(service.Model.Name, Config.ModelNames.Gpt4);
+        var languageModel = kernel.LanguageModel(Config.ModelNames.Gpt4);
+        Assert.NotNull(languageModel);
+        Assert.Equal(languageModel.Model.Name, Config.ModelNames.Gpt4);
     }
 
     [Fact]

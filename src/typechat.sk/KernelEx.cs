@@ -68,7 +68,14 @@ public static class KernelEx
         return builder.WithRetryHandlerFactory(new DefaultHttpRetryHandlerFactory(retryConfig));
     }
 
-    public static TextCompletionModel LanguageModel(this IKernel kernel, ModelInfo model)
+    public static LanguageModel LanguageModel(this IKernel kernel, ModelInfo model)
+    {
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+
+        return new LanguageModel(kernel.GetService<IChatCompletion>(model.Name), model);
+    }
+
+    public static TextCompletionModel TextCompletionModel(this IKernel kernel, ModelInfo model)
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
 

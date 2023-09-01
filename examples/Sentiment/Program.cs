@@ -14,7 +14,7 @@ public class SentimentApp : ConsoleApp
     public SentimentApp()
     {
         _translator = new JsonTranslator<SentimentResponse>(
-            new TextCompletionModel(Config.LoadOpenAI()),
+            new LanguageModel(Config.LoadOpenAI()),
             new TypeValidator<SentimentResponse>()
         );
     }

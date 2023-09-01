@@ -24,6 +24,8 @@ public class LanguageModel : ILanguageModel
         _model = model;
     }
 
+    public ModelInfo Model => _model;
+
     public async Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
     {
         ChatHistory history = ToHistory(prompt);
