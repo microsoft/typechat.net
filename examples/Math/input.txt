@@ -10,3 +10,4 @@ multiply two by three, then multiply four by five, then sum the results
 I have 100 dollars. I spent 10 bucks on a book and 35 bucks each on 2 pairs of shoes. How much money do I have left?
 I have 100 dollars. I spent 10 bucks on a book, 35 bucks each on 2 pairs of shoes. Then I won 36 bucks in the lottery. How much money do I have?
 I have 100 dollars. I spent 10 bucks on a book, 35 bucks each on 2 pairs of shoes. Then I won 36 bucks in the lottery and my mom gave me 45. If I get 10% interest per month, how much interest will I earn this month?
+Tax is 5% for income below 10K and 10% for everything else. If Yossarian makes 20K, what is his tax bill?

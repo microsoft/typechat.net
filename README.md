@@ -15,6 +15,7 @@ TypeChat.NET consists of the following assemblies:
 - TypeChat.Schema: Classes for exporting .NET types as Typescript schema. 
 - TypeChat.Program: Classes to generate, validate and execute ***JSON programs*** 
 - TypeChat.SemanticKernel: Integration with Microsoft Semantic Kernel. 
+- TypeChat.App: Classes and extensions used by Typechat examples; may be useful for all apps built using Typechat
 
 TypeChat.NET is in **active and rapid development** with very frequent updates and refactoring. 
 - **Goal**: learn how to strong typing programming with AI, particulary generative LLMs. 

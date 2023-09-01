@@ -1,9 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Text.Json;
-
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// A Json Validator that uses the .NET Json Serializer to validate that the given json
+/// conforms to the target schema
+/// </summary>
 public class JsonSerializerTypeValidator : IJsonTypeValidator
 {
     public static JsonSerializerOptions DefaultOptions()

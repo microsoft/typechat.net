@@ -19,7 +19,6 @@ can i have an cappuccino no foam
 can i have an espresso with no nutmeg
 we want a light whipped no foam mocha with extra hazelnut and cinnamon
 i'd like a latte cut in half
-i'd like a strawberry latte
 i want a five pump caramel flat white
 i want a flat white with five pumps of caramel syrup
 i want a two pump peppermint three squirt raspberry skinny vanilla latte with a pump of caramel and two sugars
@@ -43,8 +42,6 @@ en lille kaffe
 a raspberry latte
 a strawberry latte
 I would love a vanilla latte with my muffin. Oh, and some nutmeg on the latte please.
-roses are red
-two lawnmowers, a grande latte and a tall tree
 
 # =============================
 # Other test strings
@@ -60,10 +57,13 @@ A coffee with sugar and almond milk AND a doppio espresso with foam
 a large coffee, a bagel with jam and a second bagel with cream, cut in half
 a large coffee, a bagel with jam, and one bagel with cream. Only cut the *second* bagel in half
 a coffee with low fat milk, a machiato with foam, almond milk and raw sugar
+a venti cinnamon latte and a bagel, cut in half, with cream cheese and strawberry
 
 # =============================
 # These should give an unknown
 # =============================
+roses are red
+two lawnmowers, a grande latte and a tall tree
 i want a banana, a bran muffin and 2 tall coffees
 i want a banana, a bran muffin and 2 tall coffees, and a tiramisu.
 2 chocolate cakes, a t-shirt and a coffee

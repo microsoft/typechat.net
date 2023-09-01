@@ -2,39 +2,35 @@
 
 namespace Microsoft.TypeChat;
 
-public class CompletionService : ILanguageModel
+public class TextCompletionModel : ILanguageModel
 {
     ITextCompletion _service;
     ModelInfo _model;
 
-    public CompletionService(OpenAIConfig config, ModelInfo? model = null)
+    public TextCompletionModel(OpenAIConfig config, ModelInfo? model = null)
     {
         ArgumentNullException.ThrowIfNull(config, nameof(config));
 
         model ??= config.Model;
-        // Create kernel
-        KernelBuilder kb = new KernelBuilder();
-        kb.WithChatModel(config.Model, config)
-          .WithRetry(config);
-
-        IKernel kernel = kb.Build();
+        IKernel kernel = config.CreateKernel();
         _service = kernel.GetService<ITextCompletion>(model.Name);
         _model = model;
     }
 
-    public CompletionService(ITextCompletion service, ModelInfo model)
+    public TextCompletionModel(ITextCompletion service, ModelInfo model)
     {
         ArgumentNullException.ThrowIfNull(service, nameof(service));
         _service = service;
         _model = model;
     }
 
-    public ModelInfo Model => _model;
+    public ModelInfo ModelInfo => _model;
 
-    public async Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken)
+    public async Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
     {
         CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
-        string response = await _service.CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+        string request = prompt.ToString(false);
+        string response = await _service.CompleteAsync(request, requestSettings, cancelToken).ConfigureAwait(false);
         return response;
     }
 

@@ -49,11 +49,23 @@ public class Milk
 
 public class DessertOrder
 {
+    public DessertOrder() { }
+    public DessertOrder(string name, int quantity)
+    {
+        Name = name;
+        Quantity = quantity;
+    }
+
     [JsonVocab(Name = TestVocabs.Names.Desserts)]
     [JsonPropertyName("dessert")]
     public string Name { get; set; }
     [JsonPropertyName("quantity")]
-    public int Quantity { get; set; }
+    public int Quantity { get; set; } = 1;
+
+    public static implicit operator DessertOrder(string name)
+    {
+        return new DessertOrder(name, 1);
+    }
 }
 
 public class FruitOrder
@@ -65,6 +77,14 @@ public class FruitOrder
     public int Quantity { get; set; }
 }
 
+public class UnknownItem
+{
+    [Comment("The text that wasn't understood")]
+    [JsonPropertyName("text")]
+    public string Text { get; set; }
+}
+
+
 public class Order
 {
     [JsonPropertyName("coffee")]
@@ -73,6 +93,8 @@ public class Order
     public DessertOrder[] Desserts { get; set; }
     [JsonPropertyName("fruits")]
     public FruitOrder[] Fruits { get; set; }
+    [JsonPropertyName("unknown")]
+    public UnknownItem[] Unknown { get; set; }
 }
 
 public class SentimentResponse

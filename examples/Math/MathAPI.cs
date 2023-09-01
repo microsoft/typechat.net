@@ -16,12 +16,8 @@ public interface IMathAPI
     double mul(double x, double y);
     [Comment("Divide two numbers")]
     double div(double x, double y);
-    [Comment("Identity function")]
-    double id(double x);
     [Comment("Negate a number")]
     double neg(double x);
-    //[Comment("Unknown request")]
-    //void unknown(string text);
 }
 
 /// <summary>

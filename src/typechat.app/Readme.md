@@ -1,2 +1,6 @@
 ﻿# Typechat.App
-A simple library with utility classes used by Typechat examples.
+Classes and extension methods used by Typechat examples. May also be generally useful for apps built on top of Typechat. 
+- TextClassifier: Simple but powerful text classifier
+- ConsoleApp: Base class used by all command line examples
+- Json serialization
+- Extension methods

@@ -7,14 +7,14 @@ namespace Math;
 
 public class MathApp : ConsoleApp
 {
-    ProgramTranslator _translator;
+    ProgramTranslator<IMathAPI> _translator;
     Api<IMathAPI> _api;
 
     public MathApp()
     {
         _api = new MathAPI();
         _translator = new ProgramTranslator<IMathAPI>(
-            new CompletionService(Config.LoadOpenAI()),
+            new LanguageModel(Config.LoadOpenAI()),
             _api
         );
         _api.CallCompleted += this.DisplayCall;

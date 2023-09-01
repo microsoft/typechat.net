@@ -12,6 +12,7 @@ namespace Plugins;
 
 public class PluginApp : ConsoleApp
 {
+    OpenAIConfig _config;
     IKernel _kernel;
     ProgramTranslator _translator;
     PluginApi _pluginApi;
@@ -22,14 +23,14 @@ public class PluginApp : ConsoleApp
     {
         InitPlugins();
         _translator = new ProgramTranslator(
-            new CompletionService(Config.LoadOpenAI()),
+            _kernel.LanguageModel(_config.Model),
             new ProgramValidator(new PluginProgramValidator(_pluginApi.TypeInfo)),
             _pluginSchema
         );
         _translator.MaxRepairAttempts = 2;
         _interpreter = new ProgramInterpreter();
         // Uncomment to see ALL raw messages to and from the AI
-        base.SubscribeAllEvents(_translator);
+        //base.SubscribeAllEvents(_translator);
     }
 
     public IKernel Kernel => _kernel;
@@ -63,7 +64,8 @@ public class PluginApp : ConsoleApp
 
     void InitPlugins()
     {
-        _kernel = Config.LoadOpenAI().CreateKernel();
+        _config = Config.LoadOpenAI();
+        _kernel = _config.CreateKernel();
         _kernel.ImportSkill(new ShellPlugin());
         _kernel.ImportSkill(new StringPlugin());
         _kernel.ImportSkill(new TimePlugin());
@@ -77,7 +79,8 @@ public class PluginApp : ConsoleApp
         try
         {
             PluginApp app = new PluginApp();
-            Console.WriteLine(app.Schema);
+            // Uncomment to view auto-generated schema
+            //Console.WriteLine(app.Schema);
 
             await app.RunAsync("🤖> ", args.GetOrNull(0));
         }

@@ -55,7 +55,8 @@ public static class ConstraintValidationEx
             return null;
         }
 
-        return $"REMAP {value} to one of: {vocab}";
+        //return $"{value} does not exist. REMAP {value} to the closest value from this list: {vocab}";
+        return $"'{value}' does not exist. Permitted values are: {vocab}";
     }
 
     public static string? ValidateConstraints(this IVocab vocab, string propertyName, string value)
@@ -65,7 +66,8 @@ public static class ConstraintValidationEx
             return null;
         }
 
-        return $"{propertyName}: REMAP '{value}' to one of: {vocab}";
+        //return $"{propertyName} {value} does not exist. REMAP '{value}' to the closest value from this list: {vocab}";
+        return $"{propertyName} '{value}' does not exist. Permitted values are: {vocab}";
     }
 
     public static void ThrowIfNotInVocab(this IVocabCollection vocabs, string vocabName, string? propertyName, string? value)

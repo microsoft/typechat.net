@@ -4,5 +4,7 @@ namespace Microsoft.TypeChat;
 
 public interface ILanguageModel
 {
-    Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken);
+    ModelInfo ModelInfo { get; }
+
+    Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings, CancellationToken cancelToken);
 }

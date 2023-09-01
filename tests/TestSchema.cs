@@ -45,7 +45,6 @@ public class TestSchema : TypeChatTest
         var lines = schema.Schema.Text.Lines();
         Assert.True(lines.ContainsSubstring("interface", "IMathAPI"));
         Assert.True(lines.ContainsSubstring("number", "add", "x", "y"));
-        Assert.True(lines.ContainsSubstring("number", "unknown", "string", "text"));
 
         schema = TypescriptExporter.GenerateAPI(typeof(IStringAPI));
         // Need better verifier
