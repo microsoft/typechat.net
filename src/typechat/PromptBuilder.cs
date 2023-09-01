@@ -23,7 +23,18 @@ public class PromptBuilder
 
     public Prompt Prompt => _prompt;
     public int Length => _currentLength;
-    public int MaxLength => _maxLength;
+    public int MaxLength
+    {
+        get => _maxLength;
+        set
+        {
+            if (value < _currentLength)
+            {
+                throw new ArgumentException($"CurrentLength: {_currentLength} exceeds {value}");
+            }
+            _maxLength = value;
+        }
+    }
 
     public bool Add(string text)
     {
@@ -56,7 +67,17 @@ public class PromptBuilder
         return false;
     }
 
-    public bool Add(IEnumerable<IPromptSection> sections)
+    public bool AddRange(IList<IPromptSection> sections)
+    {
+        ArgumentNullException.ThrowIfNull(sections, nameof(sections));
+        if (sections.Count > 0)
+        {
+            return AddRange(sections);
+        }
+        return true;
+    }
+
+    public bool AddRange(IEnumerable<IPromptSection> sections)
     {
         ArgumentNullException.ThrowIfNull(sections, nameof(sections));
         foreach (var section in sections)
@@ -73,6 +94,11 @@ public class PromptBuilder
     {
         _prompt.Clear();
         _currentLength = 0;
+    }
+
+    public void Reverse(int startAt, int count)
+    {
+        Reverse(startAt, count);
     }
 
     static string Substring(string text, int length)

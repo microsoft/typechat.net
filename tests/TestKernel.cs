@@ -30,11 +30,11 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
 
         var model = kernel.TextCompletionModel(Config.ModelNames.Gpt35Turbo);
         Assert.NotNull(model);
-        Assert.Equal(model.Model.Name, Config.ModelNames.Gpt35Turbo);
+        Assert.Equal(model.ModelInfo.Name, Config.ModelNames.Gpt35Turbo);
 
         var languageModel = kernel.LanguageModel(Config.ModelNames.Gpt4);
         Assert.NotNull(languageModel);
-        Assert.Equal(languageModel.Model.Name, Config.ModelNames.Gpt4);
+        Assert.Equal(languageModel.ModelInfo.Name, Config.ModelNames.Gpt4);
     }
 
     [Fact]

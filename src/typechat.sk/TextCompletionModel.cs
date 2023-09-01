@@ -24,7 +24,7 @@ public class TextCompletionModel : ILanguageModel
         _model = model;
     }
 
-    public ModelInfo Model => _model;
+    public ModelInfo ModelInfo => _model;
 
     public async Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
     {

@@ -4,6 +4,11 @@ namespace Microsoft.TypeChat;
 
 public class Prompt : List<IPromptSection>
 {
+    public Prompt(int capacity)
+        : base(capacity)
+    {
+    }
+
     public Prompt(PromptSection? text = null)
         : this(null, text)
     {
@@ -33,6 +38,7 @@ public class Prompt : List<IPromptSection>
     }
     public void Push(string section) => Push(PromptSection.Sources.User, section);
     public void PushResponse(string section) => Push(PromptSection.Sources.Assistant, section);
+    public void PushInstruction(string section) => Push(PromptSection.Sources.System, section);
     public void Push(IPromptSection section) => Add(section);
 
     public IPromptSection? Last()
@@ -71,11 +77,6 @@ public class Prompt : List<IPromptSection>
         }
     }
 
-    int IndexOfLast()
-    {
-        return Count > 0 ? Count - 1 : -1;
-    }
-
     public override string ToString() => ToString(true);
 
     public string ToString(bool includeSource)
@@ -83,6 +84,21 @@ public class Prompt : List<IPromptSection>
         StringBuilder sb = new StringBuilder();
         JoinSections("\n\n", includeSource, sb);
         return sb.ToString();
+    }
+
+    public int GetLength()
+    {
+        int total = 0;
+        foreach (var section in this)
+        {
+            total += section.GetText().Length;
+        }
+        return total;
+    }
+
+    int IndexOfLast()
+    {
+        return Count > 0 ? Count - 1 : -1;
     }
 
     public static implicit operator Prompt(string text) => new Prompt(text);

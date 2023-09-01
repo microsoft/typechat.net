@@ -4,6 +4,9 @@ namespace Microsoft.TypeChat.Dialog;
 
 public class MessageList : List<Message>, IMessageStream
 {
+    public MessageList() { }
+
+    public int GetCount() => Count;
     public IEnumerable<Message> All() => this;
 
     public new void Add(Message message)
