@@ -77,12 +77,12 @@ public class Prompt : List<IPromptSection>
         }
     }
 
-    public override string ToString() => ToString(true);
+    public override string ToString() => ToString(false);
 
     public string ToString(bool includeSource)
     {
         StringBuilder sb = new StringBuilder();
-        JoinSections("\n\n", includeSource, sb);
+        JoinSections("\n", includeSource, sb);
         return sb.ToString();
     }
 

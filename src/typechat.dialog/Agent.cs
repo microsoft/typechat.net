@@ -25,7 +25,7 @@ public class Agent<T>
     public Prompt Preamble => _preamble;
     public IMessageStream History => _history;
     public RequestSettings RequestSettings { get; set; }
-    public bool RetainResponse { get; set; } = true;
+    public bool RetainResponse { get; set; } = false;
 
     public int MaxPromptLength
     {
@@ -36,7 +36,8 @@ public class Agent<T>
     public async Task<T> ProcessRequest(string request, CancellationToken cancelToken = default)
     {
         Prompt context = BuildContext();
-        T response = await _translator.TranslateAsync(request, context, RequestSettings, cancelToken);
+        context.Push(request);
+        T response = await _translator.TranslateAsync(context, null, RequestSettings, cancelToken);
         _history.Append(new Message(request));
         if (RetainResponse)
         {

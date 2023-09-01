@@ -21,7 +21,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         }
 
         var translator = new JsonTranslator<SentimentResponse>(
-            new TextCompletionModel(_config.OpenAI),
+            new LanguageModel(_config.OpenAI),
             new TypeValidator<SentimentResponse>()
         );
         SentimentResponse response = await translator.TranslateAsync("Tonights gonna be a good night! A good good night!");
@@ -46,7 +46,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
 
         SchemaText schema = SchemaText.Load("./SentimentSchema.ts");
         var translator = new JsonTranslator<SentimentResponse>(
-            new TextCompletionModel(_config.OpenAI),
+            new LanguageModel(_config.OpenAI),
             schema
         );
         SentimentResponse response = await translator.TranslateAsync("Tonights gonna be a good night! A good good night!");
@@ -71,7 +71,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         double expectedResult = 29.0;
 
         Api<IMathAPI> api = MathAPI.Default;
-        var translator = new ProgramTranslator<IMathAPI>(new TextCompletionModel(_config.OpenAI), api);
+        var translator = new ProgramTranslator<IMathAPI>(new LanguageModel(_config.OpenAI), api);
         var program = await translator.TranslateAsync(request);
         Assert.NotNull(program);
         Assert.True(program.IsComplete);
