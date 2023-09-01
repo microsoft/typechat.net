@@ -26,10 +26,11 @@ public class LanguageModel : ILanguageModel
 
     public ModelInfo Model => _model;
 
-    public async Task<string> CompleteAsync(string prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
     {
         CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
-        string response = await _service.CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+        string request = prompt.ToString(false);
+        string response = await _service.CompleteAsync(request, requestSettings, cancelToken).ConfigureAwait(false);
         return response;
     }
 

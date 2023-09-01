@@ -36,17 +36,17 @@ public partial class UnknownItem : CartItem
     }
 }
 
-public partial class EspressoDrink : LineItem
+public partial class EspressoDrinks : LineItem
 {
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
 }
 
-public partial class CoffeeDrink : LineItem
+public partial class CoffeeDrinks : LineItem
 {
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
 }
 
-public partial class LatteDrink : LineItem
+public partial class LatteDrinks : LineItem
 {
     public override void GetUnknown(StringBuilder sb) => Options.GetUnknown(sb);
 }
@@ -78,8 +78,8 @@ internal static class CartEx
         {
             Items = new CartItem[]
             {
-                new EspressoDrink {Name = "espresso", Quantity = 1 },
-                new CoffeeDrink {Name = "coffee", Size = CoffeeSize.Tall, Quantity = 2},
+                new EspressoDrinks {Name = "espresso", Quantity = 1 },
+                new CoffeeDrinks {Name = "coffee", Size = CoffeeSize.Tall, Quantity = 2},
             }
         };
         return cart;

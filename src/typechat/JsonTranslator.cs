@@ -2,18 +2,27 @@
 
 namespace Microsoft.TypeChat;
 
-public abstract class JsonTranslator<T, TMessage>
+public class JsonTranslator<T>
 {
     public const int DefaultMaxRepairAttempts = 1;
 
+    ILanguageModel _model;
     IJsonTypeValidator<T> _validator;
     IJsonTranslatorPrompts _prompts;
     RequestSettings _requestSettings;
     int _maxRepairAttempts;
 
-    public JsonTranslator(IJsonTypeValidator<T> validator, IJsonTranslatorPrompts? prompts = null)
+    public JsonTranslator(ILanguageModel model, SchemaText schema)
+        : this(model, new JsonSerializerTypeValidator<T>(schema))
     {
+    }
+
+    public JsonTranslator(ILanguageModel model, IJsonTypeValidator<T> validator, IJsonTranslatorPrompts? prompts = null)
+    {
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
         ArgumentNullException.ThrowIfNull(validator, nameof(validator));
+
+        _model = model;
 
         _validator = validator;
         prompts ??= JsonTranslatorPrompts.Default;
@@ -31,6 +40,8 @@ public abstract class JsonTranslator<T, TMessage>
             _validator = value;
         }
     }
+
+    public ILanguageModel Model => _model;
 
     public RequestSettings RequestSettings => _requestSettings;
 
@@ -56,7 +67,7 @@ public abstract class JsonTranslator<T, TMessage>
         }
     }
 
-    public event Action<string> SendingPrompt;
+    public event Action<Prompt> SendingPrompt;
     public event Action<string> CompletionReceived;
     public event Action<string> AttemptingRepair;
 
@@ -67,7 +78,7 @@ public abstract class JsonTranslator<T, TMessage>
     /// <param name="cancelToken"></param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
-    public Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
+    public virtual Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
         return TranslateAsync(request, null, null, cancelToken);
     }
@@ -76,26 +87,29 @@ public abstract class JsonTranslator<T, TMessage>
     /// Translate a natural language request into an object of type 'T'
     /// </summary>
     /// <param name="request"></param>
+    /// <param name="preamble"></param>
     /// <param name="requestSettings"></param>
-    /// <param name="context"></param>
     /// <param name="cancelToken"></param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
         string request,
-        IEnumerable<TMessage>? context,
+        IList<IPromptSection>? preamble,
         RequestSettings? requestSettings = null,
         CancellationToken cancelToken = default
         )
     {
+        ArgumentNullException.ThrowIfNull(request);
+
         requestSettings ??= _requestSettings;
-        string requestPrompt = CreateRequestPrompt(request);
-        string prompt = requestPrompt;
+        PromptSection requestPrompt = CreateRequestPrompt(request);
+        Prompt prompt = new Prompt(preamble, requestPrompt);
+
         int repairAttempts = 0;
         while (true)
         {
             NotifyEvent(SendingPrompt, prompt);
-            string responseText = await GetResponseAsync(prompt, context, requestSettings, cancelToken).ConfigureAwait(false);
+            string responseText = await _model.CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
             NotifyEvent(CompletionReceived, responseText);
 
             JsonResponse jsonResponse = JsonResponse.Parse(responseText);
@@ -120,18 +134,24 @@ public abstract class JsonTranslator<T, TMessage>
                 validationResult = Result<T>.Error(TypeChatException.IncompleteJson(jsonResponse));
             }
 
-            // Attempt to repair the Json that was sent
+            // Attempt to repair the Json that was returned
             ++repairAttempts;
             if (repairAttempts > _maxRepairAttempts)
             {
                 TypeChatException.ThrowJsonValidation(request, jsonResponse, validationResult.Message);
             }
             NotifyEvent(AttemptingRepair, validationResult.Message);
-            prompt = requestPrompt + $"{responseText}\n{_prompts.CreateRepairPrompt(_validator.Schema, responseText, validationResult.Message)}";
+
+            PromptSection repairPrompt = _prompts.CreateRepairPrompt(_validator.Schema, responseText, validationResult.Message);
+            if (repairAttempts > 1)
+            {
+                // Remove the previous attempts
+                prompt.Trim(2);
+            }
+            prompt.PushResponse(responseText);
+            prompt.Push(repairPrompt);
         }
     }
-
-    protected abstract Task<string> GetResponseAsync(string prompt, IEnumerable<TMessage>? context, RequestSettings? settings, CancellationToken cancelToken);
 
     protected virtual string CreateRequestPrompt(string request)
     {
@@ -140,6 +160,18 @@ public abstract class JsonTranslator<T, TMessage>
 
     // Return false if translation loop should stop
     protected virtual bool OnValidationComplete(Result<T> validationResult) { return true; }
+
+    protected void NotifyEvent(Action<Prompt> evt, Prompt prompt)
+    {
+        if (evt != null)
+        {
+            try
+            {
+                evt(prompt);
+            }
+            catch { }
+        }
+    }
 
     protected void NotifyEvent(Action<string> evt, string value)
     {
@@ -151,44 +183,5 @@ public abstract class JsonTranslator<T, TMessage>
             }
             catch { }
         }
-    }
-}
-
-public class JsonTranslator<T> : JsonTranslator<T, string>
-{
-    ILanguageModel _model;
-
-    public JsonTranslator(ILanguageModel model, SchemaText schema)
-        : this(model, new JsonSerializerTypeValidator<T>(schema))
-    {
-    }
-
-    public JsonTranslator(ILanguageModel model, IJsonTypeValidator<T> validator, IJsonTranslatorPrompts? prompts = null)
-        : base(validator, prompts)
-    {
-        ArgumentNullException.ThrowIfNull(model, nameof(model));
-        _model = model;
-    }
-
-    public ILanguageModel Model => _model;
-
-    protected override Task<string> GetResponseAsync(string prompt, IEnumerable<string>? context, RequestSettings? settings, CancellationToken cancelToken)
-    {
-        return _model.CompleteAsync(BuildRequest(prompt, context), settings, cancelToken);
-    }
-
-    string BuildRequest(string prompt, IEnumerable<string>? context)
-    {
-        if (context == null)
-        {
-            return prompt;
-        }
-        StringBuilder sb = new StringBuilder();
-        foreach (var item in context)
-        {
-            sb.AppendLine(item);
-        }
-        sb.AppendLine(prompt);
-        return sb.ToString();
     }
 }

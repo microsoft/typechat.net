@@ -2,8 +2,20 @@
 
 namespace Microsoft.TypeChat;
 
-internal static class Extensions
+public static class Extensions
 {
+    public static Task<string> CompleteAsync(this ILanguageModel model, PromptSection request)
+    {
+        Prompt prompt = new Prompt();
+        prompt.Push(request);
+        return model.CompleteAsync(prompt, null, CancellationToken.None);
+    }
+
+    public static bool IsNullOrEmpty<T>(this IList<T> list)
+    {
+        return (list == null || list.Count == 0);
+    }
+
     internal static void ExtractLine(this string text, long lineNumber, StringBuilder sb)
     {
         string line;

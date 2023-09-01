@@ -51,7 +51,7 @@ public abstract class LineItem : CartItem
 
 public partial class EspressoDrink : LineItem
 {
-    [JsonVocab(Name = CoffeeShopVocabs.EspressoDrinks)]
+    [JsonVocab(Name = CoffeeShopVocabs.EspressoDrinks, PropertyName = "productName")]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -68,7 +68,7 @@ public partial class EspressoDrink : LineItem
 
 public partial class CoffeeDrink : LineItem
 {
-    [JsonVocab(Name = CoffeeShopVocabs.CoffeeDrinks)]
+    [JsonVocab(Name = CoffeeShopVocabs.CoffeeDrinks, PropertyName = "productName")]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 

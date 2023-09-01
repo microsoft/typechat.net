@@ -59,24 +59,20 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
             return;
         }
 
-        List<Message> history = new List<Message>();
         ChatModel cm = new ChatModel(_config.OpenAI);
+        Prompt prompt = "Is Venus a planet?";
+        Assert.Equal(prompt.Last().Source, PromptSection.Sources.User);
 
-        Message userMessage = "Is Venus a planet?";
-        Assert.Equal(userMessage.GetRole(), AuthorRole.User);
-
-        string response = await cm.GetResponseAsync(userMessage);
+        string response = await cm.CompleteAsync(prompt);
         Validate(response, "Yes");
-        history.Add(userMessage);
-        history.Add(response);
+        prompt.PushResponse(response);
 
-        userMessage = "What about Pluto?";
-        response = await cm.GetResponseAsync(userMessage, history);
+        prompt.Push("What about Pluto?");
+        response = await cm.CompleteAsync(prompt);
         Validate(response, "No");
-        history.Add(userMessage);
-        history.Add(response);
+        prompt.Push(response);
 
-        Assert.Equal(history.Count, 4);
+        Assert.Equal(prompt.Count, 4);
     }
 
     void Validate(Message message, string? contents = null)

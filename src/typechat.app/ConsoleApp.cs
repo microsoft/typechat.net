@@ -131,10 +131,10 @@ public abstract class ConsoleApp : IIntentProcessor
         }
     }
 
-    protected void OnSendingPrompt(string value)
+    protected void OnSendingPrompt(Prompt prompt)
     {
         Console.WriteLine("### PROMPT ");
-        Console.WriteLine(value);
+        Console.WriteLine(prompt);
         Console.WriteLine("###");
     }
 

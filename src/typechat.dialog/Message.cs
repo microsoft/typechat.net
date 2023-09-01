@@ -2,11 +2,11 @@
 
 namespace Microsoft.TypeChat;
 
-public class Message<T> : IChatMessage
+public class Message<T> : IPromptSection
 {
     public const string FromUser = "User";
 
-    string _from;
+    string _source;
     T _body;
 
     public Message(T body)
@@ -21,10 +21,10 @@ public class Message<T> : IChatMessage
             from = FromUser;
         }
         _body = body;
-        _from = from;
+        _source = from;
     }
 
-    public string From => _from;
+    public string Source => _source;
 
     public T Body => _body;
 

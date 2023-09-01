@@ -25,15 +25,15 @@ public partial class Cart
 
 [JsonPolymorphic]
 [JsonDerivedType(typeof(UnknownItem), typeDiscriminator: nameof(UnknownItem))]
-[JsonDerivedType(typeof(EspressoDrink), typeDiscriminator: nameof(EspressoDrink))]
-[JsonDerivedType(typeof(CoffeeDrink), typeDiscriminator: nameof(CoffeeDrink))]
-[JsonDerivedType(typeof(LatteDrink), typeDiscriminator: nameof(LatteDrink))]
-[JsonDerivedType(typeof(BakeryItem), typeDiscriminator: nameof(BakeryItem))]
+[JsonDerivedType(typeof(EspressoDrinks), typeDiscriminator: nameof(EspressoDrinks))]
+[JsonDerivedType(typeof(CoffeeDrinks), typeDiscriminator: nameof(CoffeeDrinks))]
+[JsonDerivedType(typeof(LatteDrinks), typeDiscriminator: nameof(LatteDrinks))]
+[JsonDerivedType(typeof(BakeryProducts), typeDiscriminator: nameof(BakeryProducts))]
 public abstract partial class CartItem
 {
 }
 
-[Comment("Use this type for products with names that match NO listed PRODUCT NAME")]
+[Comment("Use this type for things that match nothing else or requests you could nnot translate")]
 public partial class UnknownItem : CartItem
 {
     [Comment("The text that wasn't understood")]
@@ -47,9 +47,9 @@ public abstract class LineItem : CartItem
     public int Quantity { get; set; } = 1;
 }
 
-public partial class EspressoDrink : LineItem
+public partial class EspressoDrinks : LineItem
 {
-    [JsonVocab(CoffeeShopVocabs.EspressoDrinks)]
+    [JsonVocab(CoffeeShopVocabs.EspressoDrinks, PropertyName = "productName")]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -64,9 +64,9 @@ public partial class EspressoDrink : LineItem
     public DrinkOption[]? Options { get; set; }
 }
 
-public partial class CoffeeDrink : LineItem
+public partial class CoffeeDrinks : LineItem
 {
-    [JsonVocab(CoffeeShopVocabs.CoffeeDrinks)]
+    [JsonVocab(CoffeeShopVocabs.CoffeeDrinks, PropertyName = "productName")]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
@@ -81,7 +81,7 @@ public partial class CoffeeDrink : LineItem
     public DrinkOption[]? Options { get; set; }
 }
 
-public partial class LatteDrink : LineItem
+public partial class LatteDrinks : LineItem
 {
     [JsonVocab(CoffeeShopVocabs.LatteDrinks, PropertyName = "productName")]
     [JsonPropertyName("productName")]
@@ -98,14 +98,14 @@ public partial class LatteDrink : LineItem
     public DrinkOption[]? Options { get; set; }
 }
 
-public class BakeryItem : LineItem
+public class BakeryProducts : LineItem
 {
     [JsonVocab(CoffeeShopVocabs.BakeryProducts, PropertyName = "productName")]
     [JsonPropertyName("productName")]
     public string Name { get; set; }
 
     [JsonPropertyName("options")]
-    public BakeryOption[]? Options { get; set; }
+    public BakeryOptions[]? Options { get; set; }
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -137,13 +137,13 @@ public enum EspressoSize
 
 [JsonPolymorphic]
 [JsonDerivedType(typeof(UnknownDrinkOption), typeDiscriminator: nameof(UnknownDrinkOption))]
-[JsonDerivedType(typeof(Creamer), typeDiscriminator: nameof(Creamer))]
-[JsonDerivedType(typeof(Milk), typeDiscriminator: nameof(Milk))]
-[JsonDerivedType(typeof(Caffeine), typeDiscriminator: nameof(Caffeine))]
-[JsonDerivedType(typeof(Sweetner), typeDiscriminator: nameof(Sweetner))]
-[JsonDerivedType(typeof(Syrup), typeDiscriminator: nameof(Syrup))]
-[JsonDerivedType(typeof(Topping), typeDiscriminator: nameof(Topping))]
-[JsonDerivedType(typeof(LattePreparation), typeDiscriminator: nameof(LattePreparation))]
+[JsonDerivedType(typeof(Creamers), typeDiscriminator: nameof(Creamers))]
+[JsonDerivedType(typeof(Milks), typeDiscriminator: nameof(Milks))]
+[JsonDerivedType(typeof(Caffeines), typeDiscriminator: nameof(Caffeines))]
+[JsonDerivedType(typeof(Sweetners), typeDiscriminator: nameof(Sweetners))]
+[JsonDerivedType(typeof(Syrups), typeDiscriminator: nameof(Syrups))]
+[JsonDerivedType(typeof(Toppings), typeDiscriminator: nameof(Toppings))]
+[JsonDerivedType(typeof(LattePreparations), typeDiscriminator: nameof(LattePreparations))]
 public abstract partial class DrinkOption { }
 
 [Comment("Use this type for DrinkOptions that match nothing else OR if you are NOT SURE.")]
@@ -154,28 +154,28 @@ public class UnknownDrinkOption : DrinkOption
     public string Text { get; set; }
 }
 
-public class Creamer : DrinkOption
+public class Creamers : DrinkOption
 {
     [JsonVocab(CoffeeShopVocabs.Creamers)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
-public class Milk : DrinkOption
+public class Milks : DrinkOption
 {
     [JsonVocab(CoffeeShopVocabs.Milks)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
-public class Caffeine : DrinkOption
+public class Caffeines : DrinkOption
 {
     [JsonVocab(CoffeeShopVocabs.Caffeines)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
-public class Sweetner : DrinkOption
+public class Sweetners : DrinkOption
 {
     [JsonVocab(CoffeeShopVocabs.Sweetners)]
     [JsonPropertyName("optionName")]
@@ -185,7 +185,7 @@ public class Sweetner : DrinkOption
     public OptionQuantity? Quantity { get; set; }
 }
 
-public class Syrup : DrinkOption
+public class Syrups : DrinkOption
 {
     [JsonVocab(CoffeeShopVocabs.Syrups)]
     [JsonPropertyName("optionName")]
@@ -195,7 +195,7 @@ public class Syrup : DrinkOption
     public OptionQuantity? Quantity { get; set; }
 }
 
-public class Topping : DrinkOption
+public class Toppings : DrinkOption
 {
     [JsonVocab(CoffeeShopVocabs.Toppings)]
     [JsonPropertyName("optionName")]
@@ -205,25 +205,25 @@ public class Topping : DrinkOption
     public OptionQuantity? Quantity { get; set; }
 }
 
-public class LattePreparation : DrinkOption
+public class LattePreparations : DrinkOption
 {
     [JsonVocab(CoffeeShopVocabs.LattePreparations)]
     [JsonPropertyName("optionName")]
     public string Name { get; set; }
 }
 
-[JsonDerivedType(typeof(BakeryTopping), typeDiscriminator: nameof(BakeryTopping))]
-[JsonDerivedType(typeof(BakeryPreparation), typeDiscriminator: nameof(BakeryPreparation))]
-public abstract class BakeryOption { }
+[JsonDerivedType(typeof(BakeryToppings), typeDiscriminator: nameof(BakeryToppings))]
+[JsonDerivedType(typeof(BakeryPreparations), typeDiscriminator: nameof(BakeryPreparations))]
+public abstract class BakeryOptions { }
 
-public class BakeryTopping : BakeryOption
+public class BakeryToppings : BakeryOptions
 {
     [JsonVocab(CoffeeShopVocabs.BakeryToppings)]
     [JsonPropertyName("name")]
     public string Name { get; set; }
 }
 
-public class BakeryPreparation : BakeryOption
+public class BakeryPreparations : BakeryOptions
 {
     [JsonVocab(CoffeeShopVocabs.BakeryPreparations)]
     [JsonPropertyName("name")]
@@ -263,7 +263,7 @@ public static class CoffeeShopVocabs
 
     public const string CoffeeDrinks = "americano | coffee";
 
-    public const string LatteDrinks = "cappuccino | flat white | latte | latte macchiato | mocha | chai latte";
+    public const string LatteDrinks = "cappuccino | flat white | latte | mocha | chai latte";
 
     public const string Creamers =
         "whole milk creamer | two percent milk creamer | one percent milk creamer | " +

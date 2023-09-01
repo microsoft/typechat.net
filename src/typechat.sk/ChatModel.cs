@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public class ChatModel : IChatModel
+public class ChatModel : ILanguageModel
 {
     IChatCompletion _service;
     ModelInfo _model;
@@ -24,22 +24,18 @@ public class ChatModel : IChatModel
         _model = model;
     }
 
-    public async Task<string> GetResponseAsync(IChatMessage message, IEnumerable<IChatMessage>? context = null, RequestSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
     {
-        ChatHistory history = ToHistory(message, context);
+        ChatHistory history = ToHistory(prompt);
         ChatRequestSettings? requestSettings = ToRequestSettings(settings);
         string textResponse = await _service.GenerateMessageAsync(history, requestSettings, cancelToken).ConfigureAwait(false);
         return textResponse;
     }
 
-    ChatHistory ToHistory(IChatMessage message, IEnumerable<IChatMessage>? contextMessages)
+    ChatHistory ToHistory(Prompt prompt)
     {
         ChatHistory history = new ChatHistory();
-        if (contextMessages != null)
-        {
-            history.Append(contextMessages);
-        }
-        history.Append(message);
+        history.Append(prompt);
         return history;
     }
 
@@ -60,5 +56,4 @@ public class ChatModel : IChatModel
         }
         return requestSettings;
     }
-
 }
