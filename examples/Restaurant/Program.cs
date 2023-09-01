@@ -14,7 +14,10 @@ public class RestaurantApp : ConsoleApp
 
     public RestaurantApp()
     {
-        _translator = new JsonTranslator<Order>(new CompletionService(Config.LoadOpenAI()), new TypeValidator<Order>());
+        _translator = new JsonTranslator<Order>(
+            new LanguageModel(Config.LoadOpenAI()),
+            new TypeValidator<Order>()
+        );
         _translator.MaxRepairAttempts = 3;
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);
@@ -24,7 +27,7 @@ public class RestaurantApp : ConsoleApp
 
     public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        Order order = await _translator.TranslateAsync(input, null, cancelToken);
+        Order order = await _translator.TranslateAsync(input, cancelToken);
         PrintOrder(order);
     }
 

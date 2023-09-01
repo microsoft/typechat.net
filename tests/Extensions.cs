@@ -42,4 +42,11 @@ internal static class Extensions
         }
         return true;
     }
+
+    public static JsonTranslator<T> CreateTranslator<T>(this Config config)
+    {
+        return new JsonTranslator<T>(
+            new LanguageModel(config.OpenAI),
+            new TypeValidator<T>(TestVocabs.All()));
+    }
 }

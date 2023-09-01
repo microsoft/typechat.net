@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
+    <AssemblyName>TypeChat.SemanticKernel</AssemblyName>
     <RootNamespace>Microsoft.TypeChat</RootNamespace>
   </PropertyGroup>
 
@@ -12,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\typechat.dialog\TypeChat.Dialog.csproj" />
     <ProjectReference Include="..\typechat.schema\TypeChat.Schema.csproj" />
     <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>

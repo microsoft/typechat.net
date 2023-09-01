@@ -119,7 +119,6 @@ public class TestVocab : TypeChatTest
         obj2 = Json.Parse<ConverterTestObj>(json);
     }
 
-
     public void ValidateVocab(TypeSchema schema, VocabType vocab)
     {
         ValidateVocab(schema.Schema.Text, vocab.Vocab);
@@ -132,6 +131,8 @@ public class TestVocab : TypeChatTest
         ValidateVocab(schema.Schema.Text, vocab.Vocab);
     }
 
+    public void ValidateVocab(string text, VocabType vocabType) => ValidateVocab(text, vocabType.Vocab);
+
     public void ValidateVocab(string text, IVocab vocab)
     {
         // Kludgy for now
@@ -140,4 +141,5 @@ public class TestVocab : TypeChatTest
             Assert.True(text.Contains($"'{entry}'"));
         }
     }
+
 }

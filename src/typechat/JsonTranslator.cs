@@ -7,8 +7,8 @@ public class JsonTranslator<T>
     public const int DefaultMaxRepairAttempts = 1;
 
     ILanguageModel _model;
-    IJsonTranslatorPrompts _prompts;
     IJsonTypeValidator<T> _validator;
+    IJsonTranslatorPrompts _prompts;
     RequestSettings _requestSettings;
     int _maxRepairAttempts;
 
@@ -17,16 +17,13 @@ public class JsonTranslator<T>
     {
     }
 
-    public JsonTranslator(
-        ILanguageModel model,
-        IJsonTypeValidator<T> validator,
-        IJsonTranslatorPrompts? prompts = null
-        )
+    public JsonTranslator(ILanguageModel model, IJsonTypeValidator<T> validator, IJsonTranslatorPrompts? prompts = null)
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
         ArgumentNullException.ThrowIfNull(validator, nameof(validator));
 
         _model = model;
+
         _validator = validator;
         prompts ??= JsonTranslatorPrompts.Default;
         _prompts = prompts;
@@ -34,7 +31,6 @@ public class JsonTranslator<T>
         _maxRepairAttempts = DefaultMaxRepairAttempts;
     }
 
-    public ILanguageModel Model => _model;
     public IJsonTypeValidator<T> Validator
     {
         get => _validator;
@@ -44,6 +40,8 @@ public class JsonTranslator<T>
             _validator = value;
         }
     }
+
+    public ILanguageModel Model => _model;
 
     public RequestSettings RequestSettings => _requestSettings;
 
@@ -69,7 +67,7 @@ public class JsonTranslator<T>
         }
     }
 
-    public event Action<string> SendingPrompt;
+    public event Action<Prompt> SendingPrompt;
     public event Action<string> CompletionReceived;
     public event Action<string> AttemptingRepair;
 
@@ -80,32 +78,40 @@ public class JsonTranslator<T>
     /// <param name="cancelToken"></param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
-    public Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
+    public virtual Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
-        return TranslateAsync(request, null, cancelToken);
+        return TranslateAsync(request, null, null, cancelToken);
     }
 
     /// <summary>
     /// Translate a natural language request into an object of type 'T'
     /// </summary>
     /// <param name="request"></param>
+    /// <param name="preamble"></param>
     /// <param name="requestSettings"></param>
     /// <param name="cancelToken"></param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
         string request,
-        RequestSettings? requestSettings,
+        IEnumerable<IPromptSection>? preamble,
+        RequestSettings? requestSettings = null,
         CancellationToken cancelToken = default
         )
     {
+        ArgumentNullException.ThrowIfNull(request);
+
         requestSettings ??= _requestSettings;
-        string requestPrompt = CreateRequestPrompt(request);
-        string prompt = requestPrompt;
+        PromptSection requestPrompt = CreateRequestPrompt(request);
+        Prompt prompt = new Prompt(preamble, requestPrompt);
+
         int repairAttempts = 0;
         while (true)
         {
-            string responseText = await CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+            NotifyEvent(SendingPrompt, prompt);
+            string responseText = await _model.CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+            NotifyEvent(CompletionReceived, responseText);
+
             JsonResponse jsonResponse = JsonResponse.Parse(responseText);
             if (!jsonResponse.HasJson)
             {
@@ -116,7 +122,7 @@ public class JsonTranslator<T>
             if (jsonResponse.HasCompleteJson)
             {
                 validationResult = Validator.Validate(jsonResponse.Json);
-                if (!OnValidationComplete(jsonResponse, validationResult) ||
+                if (!OnValidationComplete(validationResult) ||
                     validationResult.Success)
                 {
                     return validationResult.Value;
@@ -128,36 +134,23 @@ public class JsonTranslator<T>
                 validationResult = Result<T>.Error(TypeChatException.IncompleteJson(jsonResponse));
             }
 
-            // Attempt to repair the Json that was sent
+            // Attempt to repair the Json that was returned
             ++repairAttempts;
             if (repairAttempts > _maxRepairAttempts)
             {
                 TypeChatException.ThrowJsonValidation(request, jsonResponse, validationResult.Message);
             }
             NotifyEvent(AttemptingRepair, validationResult.Message);
-            prompt = requestPrompt + $"{responseText}\n{_prompts.CreateRepairPrompt(_validator.Schema, responseText, validationResult.Message)}";
+
+            PromptSection repairPrompt = _prompts.CreateRepairPrompt(_validator.Schema, responseText, validationResult.Message);
+            if (repairAttempts > 1)
+            {
+                // Remove the previous attempts
+                prompt.Trim(2);
+            }
+            prompt.PushResponse(responseText);
+            prompt.Push(repairPrompt);
         }
-    }
-
-    protected async Task<string> RepairJsonAsync(
-        string json,
-        string validationError,
-        RequestSettings? settings = null,
-        CancellationToken cancelToken = default
-        )
-    {
-        ArgumentException.ThrowIfNullOrEmpty(json, nameof(json));
-
-        string prompt = JsonTranslatorPrompts.RepairPrompt(json, _validator.Schema, validationError);
-        return await CompleteAsync(prompt, settings, cancelToken).ConfigureAwait(false);
-    }
-
-    protected async virtual Task<string> CompleteAsync(string prompt, RequestSettings? settings, CancellationToken cancelToken)
-    {
-        NotifyEvent(SendingPrompt, prompt);
-        string completion = await Model.CompleteAsync(prompt, settings, cancelToken).ConfigureAwait(false);
-        NotifyEvent(CompletionReceived, completion);
-        return completion;
     }
 
     protected virtual string CreateRequestPrompt(string request)
@@ -166,7 +159,19 @@ public class JsonTranslator<T>
     }
 
     // Return false if translation loop should stop
-    protected virtual bool OnValidationComplete(JsonResponse response, Result<T> validationResult) { return true; }
+    protected virtual bool OnValidationComplete(Result<T> validationResult) { return true; }
+
+    protected void NotifyEvent(Action<Prompt> evt, Prompt prompt)
+    {
+        if (evt != null)
+        {
+            try
+            {
+                evt(prompt);
+            }
+            catch { }
+        }
+    }
 
     protected void NotifyEvent(Action<string> evt, string value)
     {
