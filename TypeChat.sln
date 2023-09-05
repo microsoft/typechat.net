@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiSchema", "examples\Mul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeChat.Dialog", "src\typechat.dialog\TypeChat.Dialog.csproj", "{DDE39125-BE33-41DC-B536-7185CD374797}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookstore", "examples\Bookstore\Bookstore.csproj", "{19288695-45EF-4A29-B2A7-33DCE40F9393}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,10 @@ Global
 		{DDE39125-BE33-41DC-B536-7185CD374797}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDE39125-BE33-41DC-B536-7185CD374797}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDE39125-BE33-41DC-B536-7185CD374797}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19288695-45EF-4A29-B2A7-33DCE40F9393}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19288695-45EF-4A29-B2A7-33DCE40F9393}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19288695-45EF-4A29-B2A7-33DCE40F9393}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19288695-45EF-4A29-B2A7-33DCE40F9393}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -124,6 +130,7 @@ Global
 		{A6E4FA5A-116E-4770-8BD2-31185FA13632} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 		{5F8B1030-2D87-4942-BCB3-271B4541BAF3} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 		{9598D98A-3688-45E5-9C51-1C4F385BD693} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
+		{19288695-45EF-4A29-B2A7-33DCE40F9393} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A9AF678-E669-4AF2-9644-7EBB970DAC41}
