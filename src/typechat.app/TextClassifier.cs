@@ -47,7 +47,8 @@ public class TextClasses : List<TextClass>
 }
 
 /// <summary>
-/// A simple but generic text classifier that uses the LLM.
+/// A simple text classifier
+/// Translates user requests into the closest applicable class
 /// </summary>
 public class TextClassifier : JsonTranslator<TextClassification>
 {
@@ -68,10 +69,10 @@ public class TextClassifier : JsonTranslator<TextClassification>
 
     public TextClasses Classes => _classes;
 
-    protected override string CreateRequestPrompt(string request)
+    protected override Prompt CreateRequestPrompt(string request, IEnumerable<IPromptSection> preamble)
     {
         string classes = Json.Stringify(_classes);
         string fullRequest = $"Classify \"{request}\" using the following classification table:\n{classes}\n";
-        return base.CreateRequestPrompt(fullRequest);
+        return base.CreateRequestPrompt(fullRequest, preamble);
     }
 }

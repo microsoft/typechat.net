@@ -14,11 +14,19 @@ internal static class SerializationEx
         {
             return textSerializable.Stringify();
         }
-        return Json.Stringify(obj);
+        return Json.Stringify(obj, false);
     }
 
+    /// <summary>
+    /// Add the newest messages in the history to the prompt
+    /// </summary>
+    /// <param name="builder">builder used to build prompt</param>
+    /// <param name="history">message history to add</param>
+    /// <returns></returns>
     public static bool AddHistory(this PromptBuilder builder, IMessageStream history)
     {
+        ArgumentNullException.ThrowIfNull(history, nameof(history));
+
         int historyStartAt = builder.Prompt.Count;
         bool retVal = builder.AddRange(history.Newest());
         int historyEndAt = builder.Prompt.Count;

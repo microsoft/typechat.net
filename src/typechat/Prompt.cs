@@ -10,11 +10,11 @@ public class Prompt : List<IPromptSection>
     }
 
     public Prompt(PromptSection? text = null)
-        : this(null, text)
+        : this(null, text, null)
     {
     }
 
-    public Prompt(IEnumerable<IPromptSection>? preamble, PromptSection? text = null)
+    public Prompt(IEnumerable<IPromptSection>? preamble, PromptSection? text = null, IEnumerable<IPromptSection>? postamble = null)
     {
         if (preamble != null)
         {
@@ -23,6 +23,10 @@ public class Prompt : List<IPromptSection>
         if (text != null)
         {
             Add(text);
+        }
+        if (postamble != null)
+        {
+            AddRange(postamble);
         }
     }
 
@@ -40,7 +44,7 @@ public class Prompt : List<IPromptSection>
     public void PushResponse(string section) => Push(PromptSection.Sources.Assistant, section);
     public void PushInstruction(string section) => Push(PromptSection.Sources.System, section);
     public void Push(IPromptSection section) => Add(section);
-
+    public void PushRange(IEnumerable<IPromptSection> prompts) => base.AddRange(prompts);
     public IPromptSection? Last()
     {
         int position = IndexOfLast();
