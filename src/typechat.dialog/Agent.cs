@@ -18,14 +18,25 @@ public class Agent<T>
         _translator = translator;
         _preamble = new Prompt();
         _builder = new PromptBuilder(translator.Model.ModelInfo.MaxCharCount / 2);
-        history ??= new MessageList();
-        _history = history;
+        _history = history ?? new MessageList();
     }
 
     public Prompt Preamble => _preamble;
-    public IMessageStream History => _history;
     public RequestSettings RequestSettings { get; set; }
-    public bool RetainResponse { get; set; } = false;
+    public IMessageStream InteractionHistory => _history;
+
+    /// <summary>
+    /// Save user requests
+    /// </summary>
+    public bool SaveRequest { get; set; } = true;
+    /// <summary>
+    /// Place JSON responses in history
+    /// </summary>
+    public bool SaveResponse { get; set; } = true;
+    /// <summary>
+    /// Flatten history into a single prompt before sending to the model
+    /// </summary>
+    public bool InlineContext { get; set; } = true;
 
     public int MaxPromptLength
     {
@@ -36,10 +47,21 @@ public class Agent<T>
     public async Task<T> ProcessRequest(string request, CancellationToken cancelToken = default)
     {
         Prompt context = BuildContext();
-        context.Push(request);
-        T response = await _translator.TranslateAsync(context, null, RequestSettings, cancelToken);
-        _history.Append(new Message(request));
-        if (RetainResponse)
+        T response;
+        if (InlineContext)
+        {
+            context.Push(request);
+            response = await _translator.TranslateAsync(context, null, RequestSettings, cancelToken).ConfigureAwait(false);
+        }
+        else
+        {
+            response = await _translator.TranslateAsync(request, context, RequestSettings, cancelToken).ConfigureAwait(false);
+        }
+        if (SaveRequest)
+        {
+            _history.Append(request);
+        }
+        if (SaveResponse)
         {
             _history.Append(new Message(response));
         }
@@ -49,10 +71,11 @@ public class Agent<T>
     Prompt BuildContext()
     {
         _builder.Clear();
-        if (_builder.AddRange(_preamble))
+        if (_preamble.Count > 0)
         {
-            _builder.AddHistory(_history);
+            _builder.AddRange(_preamble);
         }
+        _builder.AddHistory(_history);
         return _builder.Prompt;
     }
 }
