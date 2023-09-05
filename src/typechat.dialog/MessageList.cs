@@ -25,5 +25,15 @@ public class MessageList : List<Message>, IMessageStream
         }
     }
 
+    /// <summary>
+    /// By default, just returns the newest messages
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public virtual IEnumerable<Message> Nearest(string request)
+    {
+        return Newest();
+    }
+
     public void Close() { }
 }
