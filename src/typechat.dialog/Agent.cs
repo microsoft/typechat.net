@@ -44,7 +44,7 @@ public class Agent<T>
         set => _builder.MaxLength = value;
     }
 
-    public async Task<T> ProcessRequest(string request, CancellationToken cancelToken = default)
+    public async Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
         Prompt context = BuildContext();
         T response;

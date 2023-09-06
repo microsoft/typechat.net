@@ -43,7 +43,7 @@ public class MultiSchemaApp : ConsoleApp
         }
         else
         {
-            Console.WriteLine("No suitable app found to handle your request");
+            Console.WriteLine("No suitable app found to handle your request.");
             PrintApps();
         }
     }
@@ -77,7 +77,10 @@ public class MultiSchemaApp : ConsoleApp
     {
         foreach (var app in _appClassifier.Classes)
         {
-            Console.WriteLine(app);
+            if (_childApps.ContainsKey(app.Name))
+            {
+                Console.WriteLine(app);
+            }
         }
     }
 

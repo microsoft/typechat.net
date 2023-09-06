@@ -1,0 +1,14 @@
+﻿{
+  "doseForm": [
+    "power",
+    "capsule",
+    "tablet",
+    "drops",
+    "ointment",
+    "cream",
+    "spray",
+    "gel",
+    "solution",
+    "suspension"
+  ]
+}
