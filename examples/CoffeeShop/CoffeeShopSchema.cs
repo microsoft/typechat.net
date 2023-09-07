@@ -33,7 +33,7 @@ public abstract partial class CartItem
 {
 }
 
-[Comment("Use this type for things that match nothing else or requests you could nnot translate")]
+[Comment("Use this type for Cart Items that match nothing else")]
 public partial class UnknownItem : CartItem
 {
     [Comment("The text that wasn't understood")]

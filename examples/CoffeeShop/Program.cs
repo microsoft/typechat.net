@@ -29,6 +29,7 @@ public class CoffeeShopApp : ConsoleApp
     {
         Cart cart = await _translator.TranslateAsync(input);
 
+        Console.WriteLine("##YOUR ORDER");
         string json = Json.Stringify(cart);
         Console.WriteLine(json);
 
@@ -46,6 +47,7 @@ public class CoffeeShopApp : ConsoleApp
             cart.GetUnknown(sb);
             if (sb.Length > 0)
             {
+                Console.WriteLine();
                 Console.WriteLine("I didn't understand the following:");
                 Console.WriteLine(sb.ToString());
                 return true;
@@ -60,7 +62,7 @@ public class CoffeeShopApp : ConsoleApp
         {
             CoffeeShopApp app = new CoffeeShopApp();
             // Un-comment to print auto-generated schema at start:
-            Console.WriteLine(app.Schema.Schema.Text);
+            // Console.WriteLine(app.Schema.Schema.Text);
 
             await app.RunAsync("☕> ", args.GetOrNull(0));
         }

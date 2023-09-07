@@ -134,7 +134,7 @@ public abstract class ConsoleApp : IIntentProcessor
     protected void OnSendingPrompt(Prompt prompt)
     {
         Console.WriteLine("### PROMPT ");
-        Console.WriteLine(prompt);
+        Console.WriteLine(prompt.ToString(true));
         Console.WriteLine("###");
     }
 

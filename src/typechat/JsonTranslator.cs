@@ -92,7 +92,7 @@ public class JsonTranslator<T>
     /// <exception cref="TypeChatException"></exception>
     public Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
-        return TranslateAsync(request, null, null, cancelToken);
+          return TranslateAsync(request, null, null, cancelToken);
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public class JsonTranslator<T>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
         string request,
-        IEnumerable<IPromptSection>? preamble,
+        IList<IPromptSection>? preamble,
         RequestSettings? requestSettings = null,
         CancellationToken cancelToken = default
         )
@@ -160,10 +160,9 @@ public class JsonTranslator<T>
         }
     }
 
-    protected virtual Prompt CreateRequestPrompt(string request, IEnumerable<IPromptSection> preamble)
+    protected virtual Prompt CreateRequestPrompt(string request, IList<IPromptSection> preamble)
     {
-        PromptSection requestSection = _prompts.CreateRequestPrompt(_validator.Schema, request);
-        return new Prompt(preamble, requestSection);
+        return _prompts.CreateRequestPrompt(_validator.Schema, request, preamble);
     }
 
     protected virtual async Task<string> GetResponseAsync(Prompt prompt, RequestSettings requestSettings, CancellationToken cancelToken)

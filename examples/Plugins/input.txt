@@ -1,4 +1,4 @@
-# Use GPT-4 for results
+# Use GPT-4 class models for best results
 
 What is my user name? 
 What is my OS?
@@ -9,6 +9,11 @@ List everything installed on the program x86 folder
 List everything installed on the program x86 folder with Windows in it. But don't recurse.
 Is "VS Code" on my path?
 List all files in my documents folder
+
+What Microsoft components are installed in my program x86 folder? Give me a flat list, not recursive.
+What Visual Studio components are installed in my program folder? Give me a flat list, not recursive.
+What Visual Studio components are installed in my program x86 folder? Give me a flat list, not recursive.
+find me all directories in my program folder that contain the word Edge
 
 # Run these two together. 
 Write the files in my documents folder into files.txt
