@@ -25,11 +25,17 @@ public class TextCompletionModel : ILanguageModel
     }
 
     public ModelInfo ModelInfo => _model;
+    /// <summary>
+    /// If true, will include the source of the prompt section
+    /// user:\n Hello
+    /// assistant:\n Goodbye
+    /// </summary>
+    public bool IncludeSectionSource { get; set; } = true;
 
     public async Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
     {
         CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
-        string request = prompt.ToString(false);
+        string request = prompt.ToString(IncludeSectionSource);
         string response = await _service.CompleteAsync(request, requestSettings, cancelToken).ConfigureAwait(false);
         return response;
     }

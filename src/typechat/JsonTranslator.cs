@@ -92,7 +92,7 @@ public class JsonTranslator<T>
     /// <exception cref="TypeChatException"></exception>
     public Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
-          return TranslateAsync(request, null, null, cancelToken);
+        return TranslateAsync(request, null, null, cancelToken);
     }
 
     /// <summary>
