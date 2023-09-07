@@ -20,7 +20,7 @@ public class CoffeeShopApp : ConsoleApp
         );
         _translator.MaxRepairAttempts = 3;
         // Uncomment to see ALL raw messages to and from the AI
-        //base.SubscribeAllEvents(_translator);
+        base.SubscribeAllEvents(_translator);
     }
 
     public TypeSchema Schema => _translator.Validator.Schema;
@@ -60,7 +60,7 @@ public class CoffeeShopApp : ConsoleApp
         {
             CoffeeShopApp app = new CoffeeShopApp();
             // Un-comment to print auto-generated schema at start:
-            //Console.WriteLine(app.Schema.Schema.Text);
+            Console.WriteLine(app.Schema.Schema.Text);
 
             await app.RunAsync("☕> ", args.GetOrNull(0));
         }

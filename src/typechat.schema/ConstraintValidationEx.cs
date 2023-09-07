@@ -4,29 +4,6 @@ namespace Microsoft.TypeChat.Schema;
 
 public static class ConstraintValidationEx
 {
-    internal static void ValidateConstraints(this object obj, ConstraintCheckContext context)
-    {
-        if (obj != null &&
-            obj is IConstraintValidatable validator)
-        {
-            validator.ValidateConstraints(context);
-        }
-    }
-
-    internal static void ValidateConstraints(this IEnumerable<object> objects, ConstraintCheckContext context)
-    {
-        if (objects != null)
-        {
-            foreach (var obj in objects)
-            {
-                if (obj is IConstraintValidatable validator)
-                {
-                    validator.ValidateConstraints(context);
-                }
-            }
-        }
-    }
-
     public static void ThrowIfNotInVocab(this IVocab vocab, string? propertyName, string? value)
     {
         if (vocab == null)

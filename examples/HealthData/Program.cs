@@ -11,29 +11,39 @@ namespace HealthData;
 public class HealthDataApp : ConsoleApp
 {
     IVocabCollection _vocabs;
-    JsonTranslator<HealthResponse> _translator;
-    Agent<HealthResponse> _agent;
+    JsonTranslator<HealthDataResponse> _translator;
+    Agent<HealthDataResponse> _agent;
 
     public HealthDataApp()
     {
         _vocabs = VocabFile.Load("Vocabs.json");
-        _translator = new JsonTranslator<HealthResponse>(
+        _translator = new JsonTranslator<HealthDataResponse>(
             new LanguageModel(Config.LoadOpenAI()),
-            new TypeValidator<HealthResponse>()
+            new TypeValidator<HealthDataResponse>(_vocabs)
         );
-        _agent = new Agent<HealthResponse>(_translator);
+        _agent = new Agent<HealthDataResponse>(_translator);
         _agent.SaveResponse = false;
+        _agent.Preamble.PushInstruction($"Ask questions you have ALL information required for {nameof(Medication)}");
     }
 
     public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         var response = await _agent.TranslateAsync(input, cancelToken);
+        if (response.HasQuestion)
+        {
+            _agent.InteractionHistory.Append(Message.FromAssistant(response.Question.Text));
+        }
+        PrintResponse(response);
+    }
+
+    void PrintResponse(HealthDataResponse response)
+    {
+        Console.WriteLine($"IsDone: {response.IsDone}");
         if (response.Value != null)
         {
             Console.WriteLine(Json.Stringify(response.Value));
         }
-        if (response.Question != null &&
-            !string.IsNullOrEmpty(response.Question.Text))
+        if (response.HasQuestion)
         {
             Console.WriteLine($"📝: {response.Question.Text}");
         }

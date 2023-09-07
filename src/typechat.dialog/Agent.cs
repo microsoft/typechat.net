@@ -46,12 +46,12 @@ public class Agent<T>
 
     public async Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
-        Prompt context = BuildContext();
+        Prompt context = BuildContext(request);
         T response;
         if (InlineContext)
         {
             context.Push(request);
-            response = await _translator.TranslateAsync(context, null, RequestSettings, cancelToken).ConfigureAwait(false);
+            response = await _translator.TranslateAsync(context.ToString(true), null, RequestSettings, cancelToken).ConfigureAwait(false);
         }
         else
         {
@@ -63,19 +63,19 @@ public class Agent<T>
         }
         if (SaveResponse)
         {
-            _history.Append(new Message(response));
+            _history.Append(Message.FromAssistant(response));
         }
         return response;
     }
 
-    Prompt BuildContext()
+    Prompt BuildContext(string request)
     {
         _builder.Clear();
         if (_preamble.Count > 0)
         {
             _builder.AddRange(_preamble);
         }
-        _builder.AddHistory(_history);
+        _builder.AddContext(_history.Nearest(request));
         return _builder.Prompt;
     }
 }
