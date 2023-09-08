@@ -87,11 +87,11 @@ public class ShellPlugin
     [Description("Get user input")]
     public string Input(string? userPrompt)
     {
-        if (string.IsNullOrEmpty(userPrompt))
+        if (!string.IsNullOrEmpty(userPrompt))
         {
-            userPrompt = ">>";
+            Console.Write(userPrompt);
         }
-        Console.Write(userPrompt);
+        Console.Write(">>");
         return Console.ReadLine();
     }
 
