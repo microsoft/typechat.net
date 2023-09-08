@@ -1,8 +1,9 @@
 # TypeChat.NET
 
-TypeChat.NET is an **experimental project** from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET helps you build natural language interfaces with LLMs using strong types and type-safe programs. 
+TypeChat.NET is a project from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
-TypeChat.NET applies the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
+TypeChat.NET helps you build natural language interfaces with LLMs using strong types and type-safe programs. 
+
 
         // Translates user intent into strongly typed Calendar Actions
         var translator = new JsonTranslator<CalendarActions>(
@@ -10,8 +11,7 @@ TypeChat.NET applies the ideas of [TypeChat](https://github.com/microsoft/TypeCh
             new TypeValidator<CalendarActions>()
         );
 
-**Goal**: develop frameworks that enable strongly typed programming with AI. Currently supported scenarios are shown in the examples. 
-TypeChat.NET is in **active and rapid development** with frequent updates and refactoring. When in doubt, look at the code. Comments and documentation will improve as the code settles. 
+**Project Goal**: develop frameworks that enable strongly typed programming with AI. Currently supported scenarios are shown in the examples. TypeChat.NET is in **active and rapid development** with frequent updates and refactoring. When in doubt, look at the code. Comments and documentation will improve as the code settles. 
 
 
 # Assemblies
