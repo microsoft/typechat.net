@@ -1,10 +1,7 @@
 ﻿# HealthData
-Interactively enter health data. 
+Demonstrates a ***strongly typed*** chat. Work with an Agent to interactively enter health data. 
 
-This example demonstrates:
-* How to use **Agents (Chat) with history** to ***interactively fill forms***. 
-* Additional constraints checking
-* Route between agents using a simple classifier
+Demonstrates how to use **Agents (Chat) with history** to ***interactively fill forms***. 
 
 # Usage
 Example prompts can be found in [`input.txt`](input.txt).
