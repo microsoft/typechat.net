@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="Exists('appSettings.Development.json')">
-    <Content Include="appSettings.Development.json" Link="appSettings.DevelopmentFoo.json">
+    <Content Include="appSettings.Development.json" Link="appSettings.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
