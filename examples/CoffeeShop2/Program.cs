@@ -38,6 +38,7 @@ public class CoffeeShop : ConsoleApp
     {
         Cart cart = await _translator.TranslateAsync(input, cancelToken);
 
+        Console.WriteLine("##YOUR ORDER");
         string json = Json.Stringify(cart);
         Console.WriteLine(json);
 
@@ -55,6 +56,7 @@ public class CoffeeShop : ConsoleApp
             cart.GetUnknown(sb);
             if (sb.Length > 0)
             {
+                Console.WriteLine();
                 Console.WriteLine("I didn't understand the following:");
                 Console.WriteLine(sb.ToString());
                 return true;
@@ -75,6 +77,8 @@ public class CoffeeShop : ConsoleApp
         catch (Exception ex)
         {
             WriteError(ex);
+            Console.ReadLine();
+            return -1;
         }
 
         return 0;

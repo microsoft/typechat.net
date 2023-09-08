@@ -4,6 +4,6 @@ namespace Microsoft.TypeChat;
 
 public interface IJsonTranslatorPrompts
 {
-    string CreateRequestPrompt(TypeSchema schema, string request);
+    Prompt CreateRequestPrompt(TypeSchema schema, Prompt request, IList<IPromptSection> preamble);
     string CreateRepairPrompt(TypeSchema schema, string json, string validationError);
 }

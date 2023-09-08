@@ -1,6 +1,6 @@
 # TypeChat.NET
 
-TypeChat.NET is an experimental project that makes it easy to build natural language interfaces using strong Types. 
+TypeChat.NET is an **experimental project** that makes it easy to build natural language interfaces using strong Types. 
 
 TypeChat.NET applies the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
@@ -11,11 +11,12 @@ TypeChat.NET applies the ideas of [TypeChat](https://github.com/microsoft/TypeCh
         );
 
 TypeChat.NET consists of the following assemblies:
-- TypeChat
-- TypeChat.Schema: Classes for exporting .NET types as Typescript schema. 
-- TypeChat.Program: Classes to generate, validate and execute ***JSON programs*** 
-- TypeChat.SemanticKernel: Integration with Microsoft Semantic Kernel. 
-- TypeChat.App: Classes and extensions used by Typechat examples; may be useful for all apps built using Typechat
+* TypeChat: Translate user intent into strongly typed and validated objects
+* TypeChat.Schema: Classes for exporting .NET types as Typescript schema. 
+* TypeChat.Program: Classes to synthesize, validate and execute ***JSON programs*** 
+* TypeChat.SemanticKernel: Integration with Microsoft Semantic Kernel. 
+* TypeChat.Dialog: Classes for working with interactive Agents
+* TypeChat.App: Classes and extensions used by Typechat examples; may also be useful for other apps built using Typechat
 
 TypeChat.NET is in **active and rapid development** with very frequent updates and refactoring. 
 - **Goal**: learn how to strong typing programming with AI, particulary generative LLMs. 
@@ -50,19 +51,22 @@ With auto-generation of Typescript schema:
 
         // Translates user input into a typed responses classifying sentiment
         var translator = new JsonTranslator<SentimentResponse>(
-            new CompletionService(Config.LoadOpenAI()),
+            new LanguageModel(Config.LoadOpenAI()),
             new TypeValidator<SentimentResponse>()
         );
 
-The library provides:
-- LLM bindings for TypeChat using the Semantic Kernel.
+TypeChat.SemanticKernel also contains experimental support to dynamically synthesize and execute **programs** that call Semantic Kernel plugins. 
+
+The library contains classes for:
+* LLM bindings for TypeChat using the Semantic Kernel. All TypeChat examples use the Semantic Kernel to call LLMs
+* Program synthesis with Plugins: Automatically turns registered plugins into a PluginAPI that programs synthesized by the LLM can call. [Plugins Example](examples/Plugins/Program.cs)
 
 # Getting Started 
 ## Building
 You will need Visual Studio 2022. VS Code is not tested. 
-- Load **typechat.sln** from the root directory of your . 
-- Restore packages
-- Build
+* Load **typechat.sln** from the root directory of your . 
+* Restore packages
+* Build
 
 ## Examples
 

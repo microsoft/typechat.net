@@ -32,15 +32,15 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
         Agent<Order> agent = new Agent<Order>(_config.CreateTranslator<Order>());
         agent.SaveResponse = false;
 
-        Order order = await agent.ProcessRequest("I would like 1 strawberry shortcake");
+        Order order = await agent.TranslateAsync("I would like 1 strawberry shortcake");
         Validate(order.Desserts, "Strawberry Shortcake");
 
         agent.Preamble.Push("The following are PAST requests from the user. Use them during translation.");
 
-        order = await agent.ProcessRequest("Actually, no shortcake. Make it 2 tiramisu instead");
+        order = await agent.TranslateAsync("Actually, no shortcake. Make it 2 tiramisu instead");
         Validate(order.Desserts, new DessertOrder("Tiramisu", 2));
 
-        order = await agent.ProcessRequest("And you know, how about adding a strawbery cake");
+        order = await agent.TranslateAsync("And you know, how about adding a strawbery cake");
         Validate(order.Desserts, new DessertOrder("Tiramisu", 2), "Strawberry Cake");
     }
 

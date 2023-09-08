@@ -27,19 +27,12 @@ public class CalendarApp : ConsoleApp
 
     public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        DateTime now = DateTime.Now;
-        string request = $"{input}\n{Now()}";
+        string request = $"{input}\n{PromptLibrary.Now()}";
         CalendarActions actions = await _translator.TranslateAsync(request, cancelToken);
         Console.WriteLine(Json.Stringify(actions));
         PrintUnknown(actions);
     }
 
-    string Now()
-    {
-        DateTime now = DateTime.Now;
-        return $"##Use precise date and times RELATIVE TO CURRENT DATE: {now.ToLongDateString()} CURRENT TIME: {now.ToLongTimeString()}" +
-            "Also turn ranges like next week and next month into precise dates";
-    }
     bool PrintUnknown(CalendarActions calendarActions)
     {
         int countUnknown = 0;
@@ -70,6 +63,7 @@ public class CalendarApp : ConsoleApp
         catch (Exception ex)
         {
             WriteError(ex);
+            Console.ReadLine();
             return -1;
         }
 

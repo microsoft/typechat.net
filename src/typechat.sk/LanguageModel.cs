@@ -10,6 +10,7 @@ public class LanguageModel : ILanguageModel
     public LanguageModel(OpenAIConfig config, ModelInfo? model = null)
     {
         ArgumentNullException.ThrowIfNull(config, nameof(config));
+        config.Validate();
 
         model ??= config.Model;
         IKernel kernel = config.CreateKernel();

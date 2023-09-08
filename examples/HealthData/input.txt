@@ -1,0 +1,31 @@
+# ================
+# USE GPT4
+# ================
+
+# Conversation 2: YOU type this:
+klaritin
+2 tablets 3 times a day
+300 mg
+actually that is 1 tablet
+@clear
+
+# Conversation 2: YOU type this:
+Robotussin
+1 cup
+Daily, as needed
+Robotussin with Codeine
+Put down strength as I don't know
+@clear
+
+# Conversation 3: 
+Hey
+Melatonin
+1 3mg tablet every night
+@clear
+
+#Conversation 4:
+I got the flu
+2 weeks ago
+no, its gone. Ended last week
+I did have to take some sudafed though
+I took 2 sudafed twice a day. Regular strength
