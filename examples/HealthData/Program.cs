@@ -10,19 +10,18 @@ namespace HealthData;
 
 public class HealthDataApp : ConsoleApp
 {
-    IVocabCollection _vocabs;
-    Agent<MedicationResponse> _agent;
+    Agent<HealthDataResponse> _agent;
 
     public HealthDataApp()
     {
-        _vocabs = VocabFile.Load("Vocabs.json");
-        _agent = new Agent<MedicationResponse>(new LanguageModel(Config.LoadOpenAI()), _vocabs);
+        _agent = new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
         _agent.SaveResponse = false;
 
         PromptSection preamble = "Ask the user questions until you have all data required by the JSON object. ";
         preamble += "Until then, return a null object. ";
-        preamble += "Fix spelling mistakes; phonetic misspellings are common";
+        preamble += "Always fix spelling mistakes; phonetic misspellings are common";
         _agent.Preamble.Push(preamble);
+        _agent.Preamble.Push(PromptLibrary.Now());
         // Uncomment to observe prompts
         //base.SubscribeAllEvents(_agent.Translator);
     }
@@ -54,7 +53,7 @@ public class HealthDataApp : ConsoleApp
         return Task.CompletedTask;
     }
 
-    void PrintResponse(MedicationResponse response)
+    void PrintResponse(HealthDataResponse response)
     {
         Console.WriteLine($"IsDone: {response.IsDone}");
         if (response.Value != null)

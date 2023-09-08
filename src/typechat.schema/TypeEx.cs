@@ -42,6 +42,11 @@ public static class TypeEx
         return type == typeof(bool);
     }
 
+    public static bool IsDateTime(this Type type)
+    {
+        return (type == typeof(DateTime) || type == typeof(TimeSpan));
+    }
+
     public static bool IsNumber(this Type type)
     {
         switch (Type.GetTypeCode(type))

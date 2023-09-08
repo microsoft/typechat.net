@@ -2,9 +2,13 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Given a user intent, will pick the best route for the intent
+/// Simple routing using the LLM. Other implementations may use Embeddings
+/// </summary>
+/// <typeparam name="T">Intent target type</typeparam>
 public class IntentRouter<T>
 {
-    ILanguageModel _model;
     TextClassifier _classifier;
     Dictionary<string, T> _routes;
 

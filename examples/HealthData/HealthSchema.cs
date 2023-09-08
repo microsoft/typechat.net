@@ -21,19 +21,21 @@ public class Quantity
 public class ApproxQuantity
 {
     [JsonRequired]
+    [Comment("Use if no precise quantity")]
     public string DisplayText { get; set; }
 
-    [Comment("If precise quantity can be set")]
+    [Comment("Optional: only if precise quantities are available")]
     public Quantity? Quantity { get; set; }
 }
 
 public class ApproxDateTime
 {
     [JsonRequired]
+    [Comment("Use if no precise date")]
     public string DisplayText { get; set; }
 
     [Comment("If precise timestamp can be set")]
-    public DateTime Timestamp { get; set; }
+    public DateTime? Timestamp { get; set; }
 }
 
 public class Medication
@@ -53,6 +55,7 @@ public class Medication
     public ApproxQuantity Strength { get; set; }
 }
 
+[Comment("Disease, ailment, injury etc")]
 public class Condition
 {
     public string Name { get; set; }
@@ -64,13 +67,14 @@ public class Condition
     public ApproxDateTime StartDate { get; set; }
 
     [Required]
+    [Comment("If the disease ended")]
     public ApproxDateTime? EndDate { get; set; }
 }
 
-public class MedicationResponse : AgentResponse<Medication> { }
-public class ConditionResponse : AgentResponse<Condition> { }
-
-public static class HealthVocabs
+public class HealthData
 {
-    public const string DoseForm = "doseForm";
+    public Medication? Medication { get; set; }
+    public Condition? Condition { get; set; }
 }
+
+public class HealthDataResponse : AgentResponse<HealthData> { }
