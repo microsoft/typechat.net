@@ -15,7 +15,8 @@ public abstract class ConsoleApp : IIntentProcessor
 
     public string? ConsolePrompt { get; set; } = ">";
     public IList<string> StopStrings => _stopStrings;
-    public string CommentPrefix = "#";
+    public string CommentPrefix { get; set; } = "#";
+    public string CommandPrefix { get; set; } = "@";
 
     public Task RunAsync(string consolePrompt, string? inputFilePath = null)
     {
@@ -37,15 +38,11 @@ public abstract class ConsoleApp : IIntentProcessor
             Console.Write(ConsolePrompt);
             string? input = await ReadLineAsync(cancelToken).ConfigureAwait(false);
             input = input.Trim();
-            if (string.IsNullOrEmpty(input))
-            {
-                continue;
-            }
-            if (IsStop(input))
+            if (!string.IsNullOrEmpty(input) &&
+                !await EvalInput(input, cancelToken).ConfigureAwait(false))
             {
                 break;
             }
-            await EvalInput(input, cancelToken).ConfigureAwait(false);
         }
     }
 
@@ -69,16 +66,56 @@ public abstract class ConsoleApp : IIntentProcessor
         }
     }
 
-    async Task EvalInput(string input, CancellationToken cancelToken)
+    /// <summary>
+    /// Return false if should exit
+    /// </summary>
+    async Task<bool> EvalInput(string input, CancellationToken cancelToken)
     {
         try
         {
-            await ProcessRequestAsync(input, cancelToken).ConfigureAwait(false);
+            if (input.StartsWith(CommandPrefix))
+            {
+                return await EvalCommand(input, cancelToken);
+            }
+            return await EvalLine(input, cancelToken);
         }
         catch (Exception ex)
         {
             OnException(input, ex);
         }
+        return true;
+    }
+
+    async Task<bool> EvalLine(string input, CancellationToken cancelToken)
+    {
+        if (IsStop(input))
+        {
+            return false;
+        }
+        await ProcessRequestAsync(input, cancelToken).ConfigureAwait(false);
+        return true;
+    }
+
+    async Task<bool> EvalCommand(string input, CancellationToken cancelToken)
+    {
+        // Process a command
+        List<string> parts = CommandLineStringSplitter.Instance.Split(input).ToList();
+        if (parts.IsNullOrEmpty())
+        {
+            return true;
+        }
+
+        string cmd = parts[0].Substring(CommandPrefix.Length);
+        if (!string.IsNullOrEmpty(cmd))
+        {
+            if (IsStop(cmd))
+            {
+                return false;
+            }
+            parts.RemoveAt(0);
+            await ProcessCommandAsync(cmd, parts).ConfigureAwait(false);
+        }
+        return true;
     }
 
     bool IsStop(string? line)
@@ -109,7 +146,11 @@ public abstract class ConsoleApp : IIntentProcessor
     }
 
     public abstract Task ProcessRequestAsync(string input, CancellationToken cancelToken);
-
+    public virtual Task ProcessCommandAsync(string cmd, IList<string> args)
+    {
+        Console.WriteLine($"Command {cmd} not handled");
+        return Task.CompletedTask;
+    }
     protected void SubscribeAllEvents<T>(JsonTranslator<T> translator)
     {
         translator.SendingPrompt += this.OnSendingPrompt;
@@ -133,28 +174,28 @@ public abstract class ConsoleApp : IIntentProcessor
 
     protected void OnSendingPrompt(Prompt prompt)
     {
-        Console.WriteLine("### PROMPT ");
-        Console.WriteLine(prompt);
+        Console.WriteLine("### PROMPT");
+        Console.WriteLine(prompt.ToString(true));
         Console.WriteLine("###");
     }
 
     protected void OnCompletionReceived(string value)
     {
-        Console.WriteLine("### COMPLETION ");
+        Console.WriteLine("### COMPLETION");
         Console.WriteLine(value);
         Console.WriteLine("###");
     }
 
     protected void OnAttemptingRepairs(string value)
     {
-        Console.WriteLine("### REPAIRING ERROR: ");
+        Console.WriteLine("### REPAIRING ERROR:");
         Console.WriteLine(value);
         Console.WriteLine("###");
     }
 
     protected static void WriteError(Exception ex)
     {
-        Console.WriteLine("### EXCEPTION: ");
+        Console.WriteLine("### EXCEPTION:");
         Console.WriteLine(ex.Message);
         Console.WriteLine("###");
     }

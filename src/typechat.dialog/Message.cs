@@ -67,4 +67,7 @@ public class Message : Message<object>
     public object Attachment { get; set; }
 
     public static implicit operator Message(string text) => new Message(text);
+
+    public static Message FromUser(object body) => new Message(body);
+    public static Message FromAssistant(object body) => new Message(PromptSection.Sources.Assistant, body);
 }

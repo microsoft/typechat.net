@@ -20,30 +20,29 @@ namespace MultiSchema;
 public class MultiSchemaApp : ConsoleApp
 {
     ILanguageModel _model;
-    TextClassifier _appClassifier;
-    Dictionary<string, IIntentProcessor> _childApps;
+    IntentRouter<IIntentProcessor> _childApps;
 
     public MultiSchemaApp()
     {
         _model = new LanguageModel(Config.LoadOpenAI());
+        _childApps = new IntentRouter<IIntentProcessor>(_model);
         InitApps();
     }
 
     public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        TextClassification appToUse = await _appClassifier.TranslateAsync(input, cancelToken);
-        // Route input to the target app
-        IIntentProcessor? processor = (appToUse.Class != null) ?
-                                    _childApps.GetValueOrDefault(appToUse.Class) :
-                                    null;
+        var match = await _childApps.RouteAsync(input, cancelToken);
+        var processor = match.Value;
         if (processor != null)
         {
-            Console.WriteLine($"App Selected: {appToUse.Class}");
+            Console.WriteLine($"App Selected: {match.Key}");
             await processor.ProcessRequestAsync(input, cancelToken);
         }
         else
         {
-            Console.WriteLine("No suitable app found to handle your request");
+            Console.WriteLine("No suitable app found to handle your request.");
+            Console.WriteLine();
+            Console.WriteLine("Available apps:");
             PrintApps();
         }
     }
@@ -52,32 +51,23 @@ public class MultiSchemaApp : ConsoleApp
     {
         // While this is hardcoded here, you can also do this dynamically
         // targets dynamically
-        _appClassifier = new TextClassifier(_model);
-        _childApps = new Dictionary<string, IIntentProcessor>(StringComparer.OrdinalIgnoreCase);
-
-        _childApps.Add("CoffeeShop", new CoffeeShopApp());
-        _appClassifier.Classes.Add("CoffeeShop", "Order Coffee Drinks (Italian names included) and Baked Goods");
-
-        _childApps.Add("Calendar", new CalendarApp());
-        _appClassifier.Classes.Add("Calendar", "Actions related to calendars, appointments, meetings, schedules");
-
-        _childApps.Add("Restaurant", new RestaurantApp());
-        _appClassifier.Classes.Add("Restaurant", "Order pizza, beer and salads");
-
-        _childApps.Add("Math", new MathApp());
-        _appClassifier.Classes.Add("Math", "Calculations using the four basic math operations");
-
-        _childApps.Add("Sentiment", new SentimentApp());
-        _appClassifier.Classes.Add("Sentiment", "Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings");
-
-        _appClassifier.Classes.Add("No Match", "None of the others matched");
+        _childApps.Add("CoffeeShop", new CoffeeShopApp(), "Order Coffee Drinks (Italian names included) and Baked Goods");
+        _childApps.Add("Calendar", new CalendarApp(), "Actions related to calendars, appointments, meetings, schedules");
+        _childApps.Add("Restaurant", new RestaurantApp(), "Order pizza, beer and salads");
+        _childApps.Add("Math", new MathApp(), "Calculations using the four basic math operations");
+        _childApps.Add("Sentiment", new SentimentApp(), "Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings");
+        _childApps.Add("No Match", null, "None of the others matched");
     }
 
     void PrintApps()
     {
-        foreach (var app in _appClassifier.Classes)
+        int i = 0;
+        foreach (var app in _childApps.Routes)
         {
-            Console.WriteLine(app);
+            if (app.Value != null)
+            {
+                Console.WriteLine($"{++i}, {app.Key}");
+            }
         }
     }
 
@@ -91,6 +81,7 @@ public class MultiSchemaApp : ConsoleApp
         catch (Exception ex)
         {
             WriteError(ex);
+            Console.ReadLine();
             return -1;
         }
 

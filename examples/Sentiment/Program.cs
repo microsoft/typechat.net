@@ -35,6 +35,7 @@ public class SentimentApp : ConsoleApp
         catch (Exception ex)
         {
             WriteError(ex);
+            Console.ReadLine();
             return -1;
         }
 

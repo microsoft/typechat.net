@@ -42,6 +42,11 @@ public static class TypeEx
         return type == typeof(bool);
     }
 
+    public static bool IsDateTime(this Type type)
+    {
+        return (type == typeof(DateTime) || type == typeof(TimeSpan));
+    }
+
     public static bool IsNumber(this Type type)
     {
         switch (Type.GetTypeCode(type))
@@ -100,6 +105,17 @@ public static class TypeEx
             }
         }
         return false;
+    }
+
+    internal static bool IsRequired(this MemberInfo property)
+    {
+        var attrib = property.GetCustomAttribute(typeof(JsonRequiredAttribute));
+        if (attrib != null)
+        {
+            return true;
+        }
+        attrib = property.GetCustomAttribute(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute));
+        return (attrib != null);
     }
 
     internal static bool IsNullableValueType(this Type type)

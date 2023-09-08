@@ -4,29 +4,6 @@ namespace Microsoft.TypeChat.Schema;
 
 public static class ConstraintValidationEx
 {
-    internal static void ValidateConstraints(this object obj, ConstraintCheckContext context)
-    {
-        if (obj != null &&
-            obj is IConstraintValidatable validator)
-        {
-            validator.ValidateConstraints(context);
-        }
-    }
-
-    internal static void ValidateConstraints(this IEnumerable<object> objects, ConstraintCheckContext context)
-    {
-        if (objects != null)
-        {
-            foreach (var obj in objects)
-            {
-                if (obj is IConstraintValidatable validator)
-                {
-                    validator.ValidateConstraints(context);
-                }
-            }
-        }
-    }
-
     public static void ThrowIfNotInVocab(this IVocab vocab, string? propertyName, string? value)
     {
         if (vocab == null)
@@ -55,8 +32,7 @@ public static class ConstraintValidationEx
             return null;
         }
 
-        //return $"{value} does not exist. REMAP {value} to the closest value from this list: {vocab}";
-        return $"'{value}' does not exist. Permitted values are: {vocab}";
+        return $"'{value}' does not exist. Permitted values: {vocab}";
     }
 
     public static string? ValidateConstraints(this IVocab vocab, string propertyName, string value)
@@ -66,8 +42,7 @@ public static class ConstraintValidationEx
             return null;
         }
 
-        //return $"{propertyName} {value} does not exist. REMAP '{value}' to the closest value from this list: {vocab}";
-        return $"{propertyName} '{value}' does not exist. Permitted values are: {vocab}";
+        return $"{propertyName} '{value}' does not exist. Permitted {propertyName} values: {vocab}";
     }
 
     public static void ThrowIfNotInVocab(this IVocabCollection vocabs, string vocabName, string? propertyName, string? value)

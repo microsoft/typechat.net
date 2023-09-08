@@ -19,9 +19,24 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
             Trace.WriteLine("No Open AI. Skipping");
             return;
         }
+        await Translate(new LanguageModel(_config.OpenAI));
+    }
 
+    [Fact]
+    public async Task TranslateCompletionModel()
+    {
+        if (!CanRunEndToEndTest(_config))
+        {
+            Trace.WriteLine("No Open AI. Skipping");
+            return;
+        }
+        await Translate(new TextCompletionModel(_config.OpenAI));
+    }
+
+    async Task Translate(ILanguageModel model)
+    {
         var translator = new JsonTranslator<SentimentResponse>(
-            new LanguageModel(_config.OpenAI),
+            model,
             new TypeValidator<SentimentResponse>()
         );
         SentimentResponse response = await translator.TranslateAsync("Tonights gonna be a good night! A good good night!");
@@ -66,12 +81,27 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
             Trace.WriteLine("No Open AI. Skipping");
             return;
         }
+        await ProgramMath(new LanguageModel(_config.OpenAI));
+    }
 
+    [Fact]
+    public async Task ProgramMath_Completion()
+    {
+        if (!CanRunEndToEndTest(_config))
+        {
+            Trace.WriteLine("No Open AI. Skipping");
+            return;
+        }
+        await ProgramMath(new TextCompletionModel(_config.OpenAI));
+    }
+
+    async Task ProgramMath(ILanguageModel model)
+    {
         string request = "3 * 5 + 2 * 7";
         double expectedResult = 29.0;
 
         Api<IMathAPI> api = MathAPI.Default;
-        var translator = new ProgramTranslator<IMathAPI>(new LanguageModel(_config.OpenAI), api);
+        var translator = new ProgramTranslator<IMathAPI>(model, api);
         var program = await translator.TranslateAsync(request);
         Assert.NotNull(program);
         Assert.True(program.IsComplete);

@@ -6,9 +6,9 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
 {
     public static readonly JsonTranslatorPrompts Default = new JsonTranslatorPrompts();
 
-    public virtual string CreateRequestPrompt(TypeSchema schema, string request)
+    public virtual Prompt CreateRequestPrompt(TypeSchema schema, Prompt request, IList<IPromptSection> preamble = null)
     {
-        return RequestPrompt(schema, request);
+        return RequestPrompt(schema.TypeFullName, schema.Schema, request, preamble);
     }
 
     public virtual string CreateRepairPrompt(TypeSchema schema, string json, string validationError)
@@ -16,28 +16,51 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         return RepairPrompt(validationError);
     }
 
-    public static string RequestPrompt(TypeSchema schema, string request)
+    public static Prompt RequestPrompt(string typeName, string schema, Prompt request, IList<IPromptSection>? context = null)
     {
-        ArgumentNullException.ThrowIfNull(schema, nameof(schema));
-        return RequestPrompt(schema.TypeName, schema.Schema, request);
+        ArgumentNullException.ThrowIfNull(request, nameof(request));
+        Prompt prompt = new Prompt();
+
+        prompt += IntroSection(typeName, schema);
+        AddContextAndRequest(prompt, request, context);
+
+        return prompt;
     }
 
-    public static string RequestPrompt(string typeName, string schema, string request)
+    public static Prompt AddContextAndRequest(Prompt prompt, Prompt request, IList<IPromptSection> preamble)
     {
-        return $"You are a service that translates user requests into JSON objects of type \"{typeName}\" according to the following TypeScript definitions:\n" +
-               $"###\n{schema}###\n" +
-               "The following is a user request:\n" +
-               $"\"\"\"\n{request}\n\"\"\"\n" +
-               "The following is the user request translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n";
+        if (!preamble.IsNullOrEmpty())
+        {
+            prompt.Push(preamble);
+        }
+
+        if (request.Count == 1)
+        {
+            prompt += RequestSection(request[0].GetText());
+            return prompt;
+        }
+
+        prompt += "USER REQUEST:";
+        prompt.Push(request);
+        prompt += "The following is USER REQUEST translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n";
+        return prompt;
     }
 
-    public static string RepairPrompt(string json, TypeSchema schema, string validationError)
+    static PromptSection IntroSection(string typeName, string schema)
     {
-        return $"The following is an INVALID JSON object of type \"{schema.TypeName}\"\n" +
-                $"###\n{json}###\n" +
-                "The JSON should match this Typescript definition:" +
-                $"###\n{schema.Schema.Text}###\n" +
-                RepairPrompt(validationError);
+        PromptSection introSection = new PromptSection();
+        introSection += $"You are a service that translates user requests into JSON objects of type \"{typeName}\" according to the following TypeScript definitions:\n";
+        introSection += $"###\n{schema}###\n";
+        return introSection;
+    }
+
+    public static PromptSection RequestSection(string request)
+    {
+        PromptSection requestSection = new PromptSection();
+        requestSection += "The following is a user request:\n";
+        requestSection += $"\"\"\"\n{request}\n\"\"\"\n";
+        requestSection += "The following is the user request translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n";
+        return requestSection;
     }
 
     public static string RepairPrompt(string validationError)

@@ -397,6 +397,10 @@ public class TypescriptExporter : TypeExporter<Type>
             {
                 _writer.SOL().Comment(comment);
             }
+            if (member.IsRequired())
+            {
+                _writer.SOL().Comment("Required");
+            }
         }
         return this;
     }
