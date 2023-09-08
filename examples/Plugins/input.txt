@@ -1,14 +1,19 @@
-# Use GPT-4 class models for best results
-
+# GPT 3.5 Turbo
 What is my user name? 
 What is my OS?
+Which processor am I running on? How many cores?
+Print my machine name. Then print the architecture
+What is my user name? What is this machine's OS? What is the CPU architecture? Print each
+Is "VS Code" on my path?
+What is in my pictures folder?
+List all my documents
+
+# GPT-4 class for best results
+
 What is my user name? What is this machine's OS and CPU architecture?
-Which processor am I running on?
 Print my machine name and architecture
 List everything installed on the program x86 folder
 List everything installed on the program x86 folder with Windows in it. But don't recurse.
-Is "VS Code" on my path?
-List all files in my documents folder
 
 What Microsoft components are installed in my program x86 folder? Give me a flat list, not recursive.
 What Visual Studio components are installed in my program folder? Give me a flat list, not recursive.

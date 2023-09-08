@@ -67,6 +67,7 @@ public class PluginApp : ConsoleApp
         _config = Config.LoadOpenAI();
         _kernel = _config.CreateKernel();
         _kernel.ImportSkill(new ShellPlugin());
+        _kernel.ImportSkill(new FoldersPlugin());
         _kernel.ImportSkill(new StringPlugin());
         _kernel.ImportSkill(new TimePlugin());
 
