@@ -6,5 +6,5 @@ public interface ILanguageModel
 {
     ModelInfo ModelInfo { get; }
 
-    Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings, CancellationToken cancelToken);
+    Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings, CancellationToken cancelToken);
 }

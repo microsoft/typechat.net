@@ -1,9 +1,15 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.ComponentModel;
 using System.Text;
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Represents an API.
+/// - Type information for the Api.
+/// - Ability to call the API in a late bound dynamic fashion
+/// </summary>
 public class Api
 {
     public static readonly object?[] EmptyArgs = Array.Empty<object?>();
@@ -31,6 +37,7 @@ public class Api
 
     /// <summary>
     /// Call a method with name using the given args
+    /// A ProgramInterpreter can use this method to call APIs
     /// </summary>
     /// <param name="name">method name</param>
     /// <param name="args">arguments for method</param>
@@ -46,6 +53,7 @@ public class Api
 
     /// <summary>
     /// Call a method with name using the given args
+    /// A ProgramInterpreter can use this method to call APIs
     /// </summary>
     /// <param name="name"></param>
     /// <param name="args"></param>
@@ -69,43 +77,82 @@ public class Api
     {
         if (jsonArgs.Length != paramsInfo.Length)
         {
-            return CreateCallArgsArray(name, jsonArgs, paramsInfo);
+            ProgramException.ThrowArgCountMismatch(name, jsonArgs.Length, paramsInfo.Length);
         }
         if (paramsInfo.Length == 0)
         {
             return EmptyArgs;
         }
         // If any of input paramters are JsonObjects, deserialize them
-        ConvertJsonObjects(jsonArgs, paramsInfo);
+        ConvertObjects(jsonArgs, paramsInfo);
         return jsonArgs;
     }
 
-    dynamic[] CreateCallArgsArray(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
+    /// <summary>
+    /// Dynamically type cast/convert args to the expected type
+    /// </summary>
+    dynamic[] ConvertObjects(dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
-        Debug.Assert(paramsInfo.Length == 1);
-        if (!paramsInfo[0].ParameterType.IsArray)
-        {
-            ProgramException.ThrowArgCountMismatch(name, paramsInfo.Length, jsonArgs.Length);
-        }
-        // Future: Pool these
-        dynamic[] args = new dynamic[1];
-        args[0] = jsonArgs;
-        return args;
-    }
-
-    dynamic[] ConvertJsonObjects(dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
-    {
-        Type jsonObjType = typeof(JsonObject);
         for (int i = 0; i < jsonArgs.Length; ++i)
         {
-            JsonObject jsonObj = jsonArgs[i] as JsonObject;
-            if (jsonObj != null && paramsInfo[i].ParameterType != jsonObjType)
-            {
-                object typedObj = JsonSerializer.Deserialize(jsonObj, paramsInfo[i].ParameterType);
-                jsonArgs[i] = typedObj;
-            }
+            jsonArgs[i] = ConvertObject(jsonArgs[i], paramsInfo[i].ParameterType);
         }
         return jsonArgs;
+    }
+
+    dynamic[] ConvertObjects(dynamic[] jsonArgs, Type expectedType)
+    {
+        for (int i = 0; i < jsonArgs.Length; ++i)
+        {
+            jsonArgs[i] = ConvertObject(jsonArgs[i], expectedType);
+        }
+        return jsonArgs;
+    }
+
+    dynamic ConvertObject(dynamic arg, Type expectedType)
+    {
+        Type argType = arg.GetType();
+        if (argType == expectedType)
+        {
+            return arg;
+        }
+        if (arg is JsonObject jsonObj)
+        {
+            if (expectedType != typeof(JsonObject))
+            {
+                return JsonSerializer.Deserialize(jsonObj, expectedType);
+            }
+            return arg;
+        }
+        if (expectedType.IsArray != argType.IsArray)
+        {
+            // Won't try to convert arrays to scalars and vice versa. Let Reflection throw an error
+            return arg;
+        }
+        if (!expectedType.IsArray)
+        {
+            // Convert plain old scalar if we need to
+            return Convert.ChangeType(arg, expectedType);
+        }
+
+        expectedType = expectedType.GetElementType();
+        if (argType.GetElementType() == expectedType)
+        {
+            // No conversion needed
+            return arg;
+        }
+        return ConvertArray(arg as Array, expectedType);
+    }
+
+    Array ConvertArray(Array array, Type expectedType)
+    {
+        Array convertedArray = Array.CreateInstance(expectedType, array.Length);
+        for (int i = 0; i < array.Length; ++i)
+        {
+            dynamic value = ConvertObject(array.GetValue(i), expectedType);
+            convertedArray.SetValue(value, i);
+        }
+        return convertedArray;
     }
 
     void NotifyCall(string name, dynamic[] args, dynamic result)

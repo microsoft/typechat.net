@@ -64,28 +64,3 @@ public class MathAPIAsync : IMathAPIAsync
         return result;
     }
 }
-
-public class PersonAPI : IPersonApi
-{
-    public static PersonAPI Default = new PersonAPI();
-    public static Api Caller = new Api(Default);
-
-    public Person makePerson(Name name, int age)
-    {
-        return new Person { Name = name, Age = age };
-    }
-    public bool isPerson(Person person, Name name, int age)
-    {
-        return (person.Name.FirstName == name.FirstName &&
-               person.Name.LastName == name.LastName &&
-               person.Age == age);
-    }
-    public string toJson(Person person)
-    {
-        return Json.Stringify(person);
-    }
-    public string toJsonArray(Person[] person)
-    {
-        return Json.Stringify(person);
-    }
-}

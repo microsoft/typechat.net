@@ -27,7 +27,7 @@ public class LanguageModel : ILanguageModel
 
     public ModelInfo ModelInfo => _model;
 
-    public async Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ChatHistory history = ToHistory(prompt);
         ChatRequestSettings? requestSettings = ToRequestSettings(settings);
@@ -42,7 +42,7 @@ public class LanguageModel : ILanguageModel
         return history;
     }
 
-    ChatRequestSettings? ToRequestSettings(RequestSettings? settings)
+    ChatRequestSettings? ToRequestSettings(TranslationSettings? settings)
     {
         if (settings == null)
         {
