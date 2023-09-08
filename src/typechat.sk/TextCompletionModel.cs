@@ -11,6 +11,8 @@ public class TextCompletionModel : ILanguageModel
     {
         ArgumentNullException.ThrowIfNull(config, nameof(config));
 
+        config.Validate();
+
         model ??= config.Model;
         IKernel kernel = config.CreateKernel();
         _service = kernel.GetService<ITextCompletion>(model.Name);

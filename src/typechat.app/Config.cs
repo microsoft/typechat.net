@@ -39,7 +39,6 @@ public class Config
     {
         sectionName ??= "OpenAI";
         OpenAIConfig config = LoadConfig<OpenAIConfig>(DefaultConfigFile, DefaultConfigFile_Dev, sectionName);
-        config.Validate(DefaultConfigFile_Dev);
         return config;
     }
 
