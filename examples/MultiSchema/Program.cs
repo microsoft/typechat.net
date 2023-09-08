@@ -10,6 +10,7 @@ using CoffeeShop;
 using Calendar;
 using Restaurant;
 using Math;
+using Plugins;
 
 namespace MultiSchema;
 
@@ -56,6 +57,7 @@ public class MultiSchemaApp : ConsoleApp
         _childApps.Add("Restaurant", new RestaurantApp(), "Order pizza, beer and salads");
         _childApps.Add("Math", new MathApp(), "Calculations using the four basic math operations");
         _childApps.Add("Sentiment", new SentimentApp(), "Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings");
+        _childApps.Add("Plugins", new PluginApp(), "Command shell operations: list and search for files, machine information");
         _childApps.Add("No Match", null, "None of the others matched");
     }
 
@@ -66,7 +68,7 @@ public class MultiSchemaApp : ConsoleApp
         {
             if (app.Value != null)
             {
-                Console.WriteLine($"{++i}, {app.Key}");
+                Console.WriteLine($"{++i}: {app.Key}");
             }
         }
     }

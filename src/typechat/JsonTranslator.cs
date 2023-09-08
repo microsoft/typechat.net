@@ -2,6 +2,24 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// JsonTranslator translates natural language requests into objects of type T.
+/// Translation works as follows:
+/// - Each T has an associated schema that describes its structure in JSON. This schema is typically expressed using the
+/// Typescript language, which was designed to define schema consisely. JsonTranslator will automatically generate
+/// Typescript schema for T by default. But you can also use other mechanisms.
+/// 
+/// - Language models use this schema to translate natural language requests into JSON objects.
+///
+/// - JsonTranslator uses Validators to validate and transform the returned JSON into a valid object of type T
+///
+/// - Optional ConstraintsValidators can also run
+///
+/// - Since language models are stochastic, the returned JSON can have errors or fail type checks.
+/// JsonTranslator tries to repair the JSON by sending translation errors back to the language model.
+/// 
+/// </summary>
+/// <typeparam name="T">Type to translate requests into</typeparam>
 public class JsonTranslator<T>
 {
     public const int DefaultMaxRepairAttempts = 1;
@@ -10,14 +28,25 @@ public class JsonTranslator<T>
     IJsonTypeValidator<T> _validator;
     IConstraintsValidator<T>? _constraintsValidator;
     IJsonTranslatorPrompts _prompts;
-    RequestSettings _requestSettings;
+    TranslationSettings _translationSettings;
     int _maxRepairAttempts;
 
+    /// <summary>
+    /// Creates a new JsonTranslator that translates natural language requests into objects of type T
+    /// </summary>
+    /// <param name="model">The language model to use for translation</param>
+    /// <param name="schema">Text schema for type T</param>
     public JsonTranslator(ILanguageModel model, SchemaText schema)
         : this(model, new JsonSerializerTypeValidator<T>(schema))
     {
     }
 
+    /// <summary>
+    /// Creates a new JsonTranslator that translates natural language requests into objects of type T
+    /// </summary>
+    /// <param name="model">The language model to use for translation</param>
+    /// <param name="validator">Type validator to use to ensure that JSON returned by LLM can be transformed into T</param>
+    /// <param name="prompts">(Optional) Customize Typechat prompts</param>
     public JsonTranslator(
         ILanguageModel model,
         IJsonTypeValidator<T> validator,
@@ -37,12 +66,18 @@ public class JsonTranslator<T>
         _validator = validator;
         prompts ??= JsonTranslatorPrompts.Default;
         _prompts = prompts;
-        _requestSettings = new RequestSettings(); // Default settings
+        _translationSettings = new TranslationSettings(); // Default settings
         _maxRepairAttempts = DefaultMaxRepairAttempts;
     }
 
-    public IJsonTranslatorPrompts Prompts => _prompts;
+    /// <summary>
+    /// The language model doing the translation
+    /// </summary>
+    public ILanguageModel Model => _model;
 
+    /// <summary>
+    /// The associated Json validator
+    /// </summary>
     public IJsonTypeValidator<T> Validator
     {
         get => _validator;
@@ -56,16 +91,29 @@ public class JsonTranslator<T>
         }
     }
 
+    /// <summary>
+    /// Optional constraints validation, once a valid object of type T is available
+    /// </summary>
     public IConstraintsValidator<T>? ConstraintsValidator
     {
         get => _constraintsValidator;
         set => _constraintsValidator = value;
     }
 
-    public ILanguageModel Model => _model;
+    /// <summary>
+    /// Prompts used during translation
+    /// </summary>
+    public IJsonTranslatorPrompts Prompts => _prompts;
 
-    public RequestSettings RequestSettings => _requestSettings;
+    /// <summary>
+    /// Translation settings
+    /// </summary>
+    public TranslationSettings TranslationSettings => _translationSettings;
 
+    /// <summary>
+    /// When > 0, JsonValidator will attempt to repair Json objects that fail to validate.
+    /// By default, will make at least 1 attempt
+    /// </summary>
     public int MaxRepairAttempts
     {
         get => _maxRepairAttempts;
@@ -79,17 +127,21 @@ public class JsonTranslator<T>
         }
     }
 
-    public bool AttemptRepair
-    {
-        get => (_maxRepairAttempts > 0);
-        set
-        {
-            MaxRepairAttempts = value ? DefaultMaxRepairAttempts : 0;
-        }
-    }
+    // 
+    // Subscribe to diagnostic and progress Events
+    //
 
+    /// <summary>
+    /// Sending a prompt to the model
+    /// </summary>
     public event Action<Prompt> SendingPrompt;
+    /// <summary>
+    /// Raw response from the model
+    /// </summary>
     public event Action<string> CompletionReceived;
+    /// <summary>
+    /// Attempting repair with the given validation errors
+    /// </summary>
     public event Action<string> AttemptingRepair;
 
     /// <summary>
@@ -116,7 +168,7 @@ public class JsonTranslator<T>
     public async Task<T> TranslateAsync(
         Prompt request,
         IList<IPromptSection>? preamble,
-        RequestSettings? requestSettings = null,
+        TranslationSettings? requestSettings = null,
         CancellationToken cancelToken = default
         )
     {
@@ -125,7 +177,7 @@ public class JsonTranslator<T>
             throw new ArgumentNullException(nameof(request));
         }
 
-        requestSettings ??= _requestSettings;
+        requestSettings ??= _translationSettings;
         Prompt prompt = CreateRequestPrompt(request, preamble);
         int repairAttempts = 0;
         while (true)
@@ -177,7 +229,7 @@ public class JsonTranslator<T>
         return _prompts.CreateRequestPrompt(_validator.Schema, request, preamble);
     }
 
-    protected virtual async Task<string> GetResponseAsync(Prompt prompt, RequestSettings requestSettings, CancellationToken cancelToken)
+    protected virtual async Task<string> GetResponseAsync(Prompt prompt, TranslationSettings requestSettings, CancellationToken cancelToken)
     {
         NotifyEvent(SendingPrompt, prompt);
         string responseText = await _model.CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);

@@ -243,12 +243,48 @@ public class Person
     public int Age { get; set; }
 
     public Location Location { get; set; }
+
+    public bool HasSameName(Person other)
+    {
+        return (this.Name.CompareTo(other.Name) == 0);
+    }
+
+    public void ChangeCase(bool upper)
+    {
+        Name.ChangeCase(upper);
+        Location.ChangeCase(upper);
+    }
 }
 
-public class Name
+public class Name : IComparable<Name>
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }
+
+
+    public void ChangeCase(bool upper)
+    {
+        if (upper)
+        {
+            FirstName = FirstName.ToUpper();
+            LastName = LastName.ToUpper();
+        }
+        else
+        {
+            FirstName = FirstName.ToLower();
+            LastName = LastName.ToLower();
+        }
+    }
+
+    public int CompareTo(Name other)
+    {
+        int cmp = string.Compare(FirstName, other.FirstName, StringComparison.OrdinalIgnoreCase);
+        if (cmp == 0)
+        {
+            cmp = string.Compare(LastName, other.LastName, StringComparison.OrdinalIgnoreCase);
+        }
+        return cmp;
+    }
 }
 
 public class Location
@@ -256,4 +292,20 @@ public class Location
     public string City { get; set; }
     public string State { get; set; }
     public string Country { get; set; }
+
+    public void ChangeCase(bool upper)
+    {
+        if (upper)
+        {
+            City = City.ToUpper();
+            State = State.ToUpper();
+            Country = Country.ToUpper();
+        }
+        else
+        {
+            City = City.ToLower();
+            State = State.ToLower();
+            Country = Country.ToLower();
+        }
+    }
 }

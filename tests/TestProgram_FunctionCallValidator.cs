@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Tests;
 
-public class TestFunctionProgramValidator : ProgramTest
+public class TestProgram_FunctionCallValidator : ProgramTest
 {
     [Theory]
     [MemberData(nameof(GetMathPrograms))]

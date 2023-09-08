@@ -16,7 +16,7 @@ public class JsonSerializerTypeValidator : IJsonTypeValidator
             IgnoreReadOnlyFields = true,
             AllowTrailingCommas = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
 
         options.Converters.Add(new JsonStringEnumConverter());

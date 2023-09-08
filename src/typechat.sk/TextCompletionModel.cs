@@ -34,7 +34,7 @@ public class TextCompletionModel : ILanguageModel
     /// </summary>
     public bool IncludeSectionSource { get; set; } = true;
 
-    public async Task<string> CompleteAsync(Prompt prompt, RequestSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
         string request = prompt.ToString(IncludeSectionSource);
@@ -42,7 +42,7 @@ public class TextCompletionModel : ILanguageModel
         return response;
     }
 
-    CompleteRequestSettings? ToRequestSettings(RequestSettings? settings)
+    CompleteRequestSettings? ToRequestSettings(TranslationSettings? settings)
     {
         if (settings == null)
         {
