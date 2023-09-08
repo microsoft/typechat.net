@@ -21,21 +21,20 @@ TypeChat.NET consists of the following assemblies:
 TypeChat.NET is in **active and rapid development** with very frequent updates and refactoring. 
 - **Goal**: learn how to strong typing programming with AI, particulary generative LLMs. 
 - Supported scenarios are shown in the examples. Complicated schemas with generics may not work (yet). 
-- Local performance may not be optimal (yet). Fortunately, most code will spend almost all of its time calling the AI.
 - When in doubt, look at the code. Comments and documentation will improve as the code settles. 
 
 
 ## TypeChat ##
-Brings TypeChat to .NET.
+Brings TypeChat to .NET with .NET idiom introduced as appropriate.
 - Json Translators
 - Json Validators
 
-The library is a port of the TypeChat Typescript library with .NET idiom introduced as needed. 
-
 ## TypeChat.Schema ##
-The library provides exporters for .NET Types to Typescript schema. 
+The library provides exporters for .NET Types to schema expressed using Typescript. 
 
-Includes support for dynamic export at runtime, including with ***each request*** to the AI. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team.
+Includes support for:
+* Dynamic export at runtime, including with ***each request*** to the AI. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team.
+* Vocabularies: easy unions of string tables, like in Typescript, but with dynamic loading also supported. See CoffeeShop examples.
 
 ## TypeChat.Program ##
 TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. TypeChat.Program includes:
