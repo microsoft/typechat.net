@@ -35,6 +35,26 @@ public class TestProgramCompiler : ProgramTest
     }
 
     [Theory]
+    [MemberData(nameof(GetStringPrograms))]
+    public void Test_String(string source, string expectedResult)
+    {
+        Program program = Json.Parse<Program>(source);
+
+        ProgramCompiler compiler = new ProgramCompiler(typeof(IStringAPI));
+        LambdaExpression lambda = compiler.CompileToExpressionTree(program, TextApis.Default);
+        Assert.NotNull(lambda.Body);
+
+        Delegate compiledProgram = lambda.Compile();
+        var result = compiledProgram.DynamicInvoke();
+        Assert.Equal(result, expectedResult);
+    }
+
+    /// <summary>
+    /// Test object programs
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="expectedResults"></param>
+    [Theory]
     [MemberData(nameof(GetObjectPrograms))]
     public void Test_Object(string source, string expectedResults)
     {

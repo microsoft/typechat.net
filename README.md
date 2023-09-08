@@ -1,8 +1,9 @@
 # TypeChat.NET
 
-TypeChat.NET is an **experimental project** that makes it easy to build natural language interfaces using strong Types. 
+TypeChat.NET is a project from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
-TypeChat.NET applies the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
+TypeChat.NET helps you build natural language interfaces with LLMs using strong types and type-safe programs. 
+
 
         // Translates user intent into strongly typed Calendar Actions
         var translator = new JsonTranslator<CalendarActions>(
@@ -10,32 +11,35 @@ TypeChat.NET applies the ideas of [TypeChat](https://github.com/microsoft/TypeCh
             new TypeValidator<CalendarActions>()
         );
 
-TypeChat.NET consists of the following assemblies:
-* TypeChat: Translate user intent into strongly typed and validated objects
-* TypeChat.Schema: Classes for exporting .NET types as Typescript schema. 
-* TypeChat.Program: Classes to synthesize, validate and execute ***JSON programs*** 
-* TypeChat.SemanticKernel: Integration with Microsoft Semantic Kernel. 
-* TypeChat.Dialog: Classes for working with interactive Agents
-* TypeChat.App: Classes and extensions used by Typechat examples; may also be useful for other apps built using Typechat
+**Project Goal**: develop frameworks that enable strongly typed programming with AI. Currently supported scenarios are shown in the examples. TypeChat.NET is in **active and rapid development** with frequent updates and refactoring. When in doubt, look at the code. Comments and documentation will improve as the code settles. 
 
-TypeChat.NET is in **active and rapid development** with very frequent updates and refactoring. 
-- **Goal**: learn how to strong typing programming with AI, particulary generative LLMs. 
-- Supported scenarios are shown in the examples. Complicated schemas with generics may not work (yet). 
-- Local performance may not be optimal (yet). Fortunately, most code will spend almost all of its time calling the AI.
-- When in doubt, look at the code. Comments and documentation will improve as the code settles. 
+
+# Assemblies
+TypeChat.NET consists of the following assemblies:
+* **TypeChat**: Translate user intent into strongly typed and validated objects
+ 
+* **TypeChat.Schema**: Classes for automatic exporting .NET types as Typescript schema. This schema is then sent to the AI. Also includes additional support for validating the returned JSON. 
+
+* **TypeChat.Program**: Classes to synthesize, validate and execute ***JSON programs*** 
+
+* **TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel - access to language models, support for Semantic Kernel Plugins, Embeddings and Semantic Memory
+
+* **TypeChat.Dialog** (Early): Classes for working with interactive Agents
+
+* **TypeChat.App**: Useful support classes and extensions used by Typechat examples; may also be useful for other apps built using Typechat
 
 
 ## TypeChat ##
-Brings TypeChat to .NET.
+Brings TypeChat to .NET with .NET idiom introduced as appropriate.
 - Json Translators
 - Json Validators
 
-The library is a port of the TypeChat Typescript library with .NET idiom introduced as needed. 
-
 ## TypeChat.Schema ##
-The library provides exporters for .NET Types to Typescript schema. 
+The library provides exporters for .NET Types to schema expressed using Typescript. 
 
-Includes support for dynamic export at runtime, including with ***each request*** to the AI. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team.
+Includes support for:
+* Dynamic export at runtime, including with ***each request*** to the AI. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team.
+* Vocabularies: easy unions of string tables, like in Typescript, along with support for dynamic loading. See examples: CoffeeShop and CoffeeShop2.
 
 ## TypeChat.Program ##
 TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. TypeChat.Program includes:

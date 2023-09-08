@@ -71,4 +71,27 @@ public class ProgramTest : TypeChatTest
             }
         }
     }
+
+    // TODO: more validation.. actually inspect the AST and compare against
+    // the JSON DOM
+    public void ValidateProgram(Program program)
+    {
+        Assert.NotNull(program.Steps);
+
+        var calls = program.Steps.Calls;
+        Assert.NotNull(calls);
+        Assert.True(calls.Length > 0);
+        foreach (var call in calls)
+        {
+            ValidateCall(call);
+        }
+    }
+
+    public void ValidateCall(FunctionCall call)
+    {
+        Assert.NotNull(call.Name);
+        Assert.NotEmpty(call.Name);
+    }
+
+
 }

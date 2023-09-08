@@ -135,7 +135,7 @@ public class ProgramCompiler
         Expression[] expressions = call.Args;
         if (paramsInfo.Length != expressions.Length)
         {
-            return CompileArrayArg(call, expressions, paramsInfo);
+            ProgramException.ThrowArgCountMismatch(call, paramsInfo.Length, expressions.Length);
         }
 
         LinqExpression[] args = new LinqExpression[expressions.Length];
@@ -163,7 +163,11 @@ public class ProgramCompiler
                     break;
 
                 case ArrayExpr arrayExpr:
-                    args[i] = Compile(arrayExpr, param.ParameterType.IsArray ? param.ParameterType : null);
+                    args[i] = Compile(
+                        arrayExpr,
+                        param.ParameterType.IsArray ?
+                        param.ParameterType.GetElementType() :
+                        null);
                     break;
 
                 case ObjectExpr objExpr:
@@ -179,21 +183,6 @@ public class ProgramCompiler
             }
         }
         return args;
-    }
-
-    LinqExpression[]? CompileArrayArg(FunctionCall call, Expression[] expressions, ParameterInfo[] paramsInfo)
-    {
-        if (paramsInfo.Length != 1)
-        {
-            ProgramException.ThrowArgCountMismatch(call, paramsInfo.Length, expressions.Length);
-        }
-        Debug.Assert(paramsInfo[0].ParameterType.IsArray);
-        Type itemType = paramsInfo[0].ParameterType.GetElementType();
-        LinqExpression[]? items = Compile(expressions, itemType);
-        return new LinqExpression[]
-        {
-            LinqExpression.NewArrayInit(itemType, items)
-        };
     }
 
     LinqExpression[]? Compile(Expression[] expressions, Type? itemType = null)
@@ -234,7 +223,8 @@ public class ProgramCompiler
     NewArrayExpression Compile(ArrayExpr expr, Type? itemType = null)
     {
         LinqExpression[] items = Compile(expr.Value, itemType);
-        return LinqExpression.NewArrayInit(typeof(object), items);
+        itemType ??= typeof(object);
+        return LinqExpression.NewArrayInit(itemType, items);
     }
 
     ParameterExpression Compile(ResultReference refExpr)
