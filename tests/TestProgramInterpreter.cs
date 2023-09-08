@@ -56,17 +56,13 @@ public class TestProgramInterpreter : ProgramTest
 
         Api api = new Api(new PersonAPI());
         dynamic result = program.Run(api);
-        string resultstring;
-        if (result is string)
-        {
-            resultstring = (string)result;
-        }
-        else
-        {
-            resultstring = Json.Stringify(result);
-        }
+        string resultstring = Json.Stringify(result);
         if (!string.IsNullOrEmpty(expectedResult))
         {
+            if (result is string)
+            {
+                expectedResult = Json.Stringify(expectedResult);
+            }
             Assert.Equal(expectedResult, resultstring);
         }
     }
