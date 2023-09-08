@@ -6,13 +6,15 @@
         {
           "@func": "concat",
           "@args": [
-            99,
-            88,
-            "77",
-            {
-              "One": 66,
-              "Two": 55
-            }
+            [
+              99,
+              88,
+              "77",
+              {
+                "One": 66,
+                "Two": 55
+              }
+            ]
           ]
         }
       ]
@@ -25,10 +27,12 @@
         {
           "@func": "concat",
           "@args": [
-            3,
-            5,
-            "Hello",
-            "Goodbye"
+            [
+              3,
+              5,
+              "Hello",
+              "Goodbye"
+            ]
           ]
         }
       ]
@@ -41,10 +45,12 @@
         {
           "@func": "concat",
           "@args": [
-            3,
-            5,
-            "Hello",
-            "Goodbye"
+            [
+              3,
+              5,
+              "Hello",
+              "Goodbye"
+            ]
           ]
         },
         {
@@ -63,10 +69,12 @@
         {
           "@func": "concat",
           "@args": [
-            3,
-            5,
-            "Hello",
-            "Goodbye"
+            [
+              3,
+              5,
+              "Hello",
+              "Goodbye"
+            ]
           ]
         },
         {

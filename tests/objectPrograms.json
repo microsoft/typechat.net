@@ -1,6 +1,6 @@
 ﻿{
   "program1": {
-    "result": "",
+    "result": "{\r\n  \u0022Name\u0022: {\r\n    \u0022FirstName\u0022: \u0022Mario\u0022,\r\n    \u0022LastName\u0022: \u0022Minderbinder\u0022\r\n  },\r\n  \u0022Age\u0022: 34\r\n}",
     "source": {
       "@steps": [
         {
@@ -23,7 +23,7 @@
     }
   },
   "program2": {
-    "result": "",
+    "result": "false",
     "source": {
       "@steps": [
         {
@@ -50,7 +50,7 @@
     }
   },
   "program3": {
-    "result": "",
+    "result": "true",
     "source": {
       "@steps": [
         {
@@ -78,7 +78,7 @@
   },
   "program4": {
     "result": "",
-    "comment": "Test array args",
+    "comment": "Test array args - where args are prior steps",
     "source": {
       "@steps": [
         {
@@ -98,18 +98,76 @@
               "FirstName": "John",
               "LastName": "Yossarian"
             },
-            28 
+            28
           ]
         },
         {
           "@func": "toJsonArray",
           "@args": [
-            { "@ref": 0 },
-            { "@ref": 1 }
+            [
+              { "@ref": 0 },
+              { "@ref": 1 }
+            ]
+          ]
+        }
+      ]
+    }
+  },
+  "program5": {
+    "result": "[\r\n  {\r\n    \u0022Name\u0022: {\r\n      \u0022FirstName\u0022: \u0022Mario\u0022,\r\n      \u0022LastName\u0022: \u0022Minderbinder\u0022\r\n    },\r\n    \u0022Age\u0022: 34\r\n  },\r\n  {\r\n    \u0022Name\u0022: {\r\n      \u0022FirstName\u0022: \u0022John\u0022,\r\n      \u0022LastName\u0022: \u0022Yossarian\u0022\r\n    },\r\n    \u0022Age\u0022: 28\r\n  },\r\n  {\r\n    \u0022Name\u0022: {\r\n      \u0022FirstName\u0022: \u0022Colonel\u0022,\r\n      \u0022LastName\u0022: \u0022Cathcart\u0022\r\n    },\r\n    \u0022Age\u0022: 45\r\n  },\r\n  {\r\n    \u0022Name\u0022: {\r\n      \u0022FirstName\u0022: \u0022Doc\u0022,\r\n      \u0022LastName\u0022: \u0022Daneeka\u0022\r\n    },\r\n    \u0022Age\u0022: 51\r\n  }\r\n]",
+    "comment": "Test array args - where args are prior steps AND inline calls",
+    "source": {
+      "@steps": [
+        {
+          "@func": "makePerson",
+          "@args": [
+            {
+              "FirstName": "Mario",
+              "LastName": "Minderbinder"
+            },
+            34
+          ]
+        },
+        {
+          "@func": "makePerson",
+          "@args": [
+            {
+              "FirstName": "John",
+              "LastName": "Yossarian"
+            },
+            28
+          ]
+        },
+        {
+          "@func": "toJsonArray",
+          "@args": [
+            [
+              { "@ref": 0 },
+              { "@ref": 1 },
+              {
+                "@func": "makePerson",
+                "@args": [
+                  {
+                    "FirstName": "Colonel",
+                    "LastName": "Cathcart"
+                  },
+                  45
+                ]
+              },
+              {
+                "@func": "makePerson",
+                "@args": [
+                  {
+                    "FirstName": "Doc",
+                    "LastName": "Daneeka"
+                  },
+                  51
+                ]
+              }
+            ]
           ]
         }
       ]
     }
   }
-
 }

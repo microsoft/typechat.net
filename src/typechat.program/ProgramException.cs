@@ -32,15 +32,25 @@ public class ProgramException : Exception
     public static void ThrowArgCountMismatch(FunctionCall call, int expectedCount, int actualCount)
     {
         string json = call.Source.ToString();
-        string message = $"@func {call.Name}: Wrong number of arguments passed: Expected {expectedCount}, Got {actualCount}\n\n{json}";
+        string message = $"@func {call.Name}: Wrong number of arguments passed. Expected {expectedCount}, Got {actualCount}\n\n{json}";
         throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, message);
+    }
+
+    internal static void ThrowArgCountMismatch(string name, int expectedCount, int actualCount)
+    {
+        throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, $"@func {name} Wrong number of arguments passed. Expected {expectedCount}, Got {actualCount}");
     }
 
     internal static void ThrowTypeMismatch(FunctionCall call, ParameterInfo param, Type actual)
     {
+        ThrowTypeMismatch(call.Name, param, actual);
+    }
+
+    internal static void ThrowTypeMismatch(string name, ParameterInfo param, Type actual)
+    {
         throw new ProgramException(
             ProgramException.ErrorCode.TypeMistmatch,
-            $"TypeMismatch: @func {call.Name} @arg {param.Name}: Expected {param.ParameterType.Name}, Got {actual.Name}"
+            $"TypeMismatch: @func {name} @arg {param.Name}: Expected {param.ParameterType.Name}, Got {actual.Name}"
             );
     }
 
@@ -55,9 +65,5 @@ public class ProgramException : Exception
     internal static void ThrowVariableNotFound(string name)
     {
         throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Variable {name} not found");
-    }
-    internal static void ThrowArgCountMismatch(string name, int expectedCount, int actualCount)
-    {
-        throw new ProgramException(ProgramException.ErrorCode.ArgCountMismatch, $"@func {name} Arg Count Mismatch: Expected {expectedCount}, Got {actualCount}");
     }
 }

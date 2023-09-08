@@ -165,7 +165,11 @@ public class CSharpProgramTranspiler
                     break;
 
                 case ArrayExpr arrayExpr:
-                    writer.Append(Compile(arrayExpr, param.ParameterType.IsArray ? param.ParameterType.Name : null));
+                    writer.Append(
+                        Compile(arrayExpr, param.ParameterType.IsArray ?
+                                param.ParameterType.GetElementType().Name :
+                                null)
+                    );
                     break;
 
                 case ObjectExpr objExpr:
