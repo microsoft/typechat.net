@@ -11,41 +11,44 @@ namespace HealthData;
 public class HealthDataApp : ConsoleApp
 {
     IVocabCollection _vocabs;
-    JsonTranslator<HealthDataResponse> _translator;
-    Agent<HealthDataResponse> _agent;
+    Agent<MedicationResponse> _agent;
 
     public HealthDataApp()
     {
         _vocabs = VocabFile.Load("Vocabs.json");
-        _translator = new JsonTranslator<HealthDataResponse>(
-            new LanguageModel(Config.LoadOpenAI()),
-            new TypeValidator<HealthDataResponse>(_vocabs)
-        );
-        _agent = new Agent<HealthDataResponse>(_translator);
+        _agent = new Agent<MedicationResponse>(new LanguageModel(Config.LoadOpenAI()), _vocabs);
         _agent.SaveResponse = false;
-        _agent.Preamble.PushInstruction($"Ask questions you have ALL information required for {nameof(Medication)}");
+
+        PromptSection preamble = "Ask the user questions until you have all data required by the JSON object. ";
+        preamble += "Until then, return a null object. ";
+        preamble += "Fix spelling mistakes; phonetic misspellings are common";
+        _agent.Preamble.Push(preamble);
+        // Uncomment to observe prompts
+        //base.SubscribeAllEvents(_agent.Translator);
     }
+
+    public TypeSchema Schema => _agent.Translator.Validator.Schema;
 
     public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
         var response = await _agent.TranslateAsync(input, cancelToken);
-        if (response.HasQuestion)
+        if (response.HasMessage)
         {
-            _agent.InteractionHistory.Append(Message.FromAssistant(response.Question.Text));
+            _agent.InteractionHistory.Append(Message.FromAssistant(response.Message));
         }
         PrintResponse(response);
     }
 
-    void PrintResponse(HealthDataResponse response)
+    void PrintResponse(MedicationResponse response)
     {
         Console.WriteLine($"IsDone: {response.IsDone}");
         if (response.Value != null)
         {
             Console.WriteLine(Json.Stringify(response.Value));
         }
-        if (response.HasQuestion)
+        if (response.HasMessage)
         {
-            Console.WriteLine($"📝: {response.Question.Text}");
+            Console.WriteLine($"📝: {response.Message}");
         }
     }
 
@@ -54,6 +57,7 @@ public class HealthDataApp : ConsoleApp
         try
         {
             HealthDataApp app = new HealthDataApp();
+            //Console.WriteLine(app.Schema.Schema.Text);
             await app.RunAsync("💉💊🤧> ", args.GetOrNull(0));
         }
         catch (Exception ex)

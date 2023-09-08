@@ -133,28 +133,28 @@ public abstract class ConsoleApp : IIntentProcessor
 
     protected void OnSendingPrompt(Prompt prompt)
     {
-        Console.WriteLine("### PROMPT ");
+        Console.WriteLine("### PROMPT");
         Console.WriteLine(prompt.ToString(true));
         Console.WriteLine("###");
     }
 
     protected void OnCompletionReceived(string value)
     {
-        Console.WriteLine("### COMPLETION ");
+        Console.WriteLine("### COMPLETION");
         Console.WriteLine(value);
         Console.WriteLine("###");
     }
 
     protected void OnAttemptingRepairs(string value)
     {
-        Console.WriteLine("### REPAIRING ERROR: ");
+        Console.WriteLine("### REPAIRING ERROR:");
         Console.WriteLine(value);
         Console.WriteLine("###");
     }
 
     protected static void WriteError(Exception ex)
     {
-        Console.WriteLine("### EXCEPTION: ");
+        Console.WriteLine("### EXCEPTION:");
         Console.WriteLine(ex.Message);
         Console.WriteLine("###");
     }

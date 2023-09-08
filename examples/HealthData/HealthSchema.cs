@@ -4,6 +4,7 @@ using System;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.TypeChat.Schema;
 using Microsoft.TypeChat.Dialog;
 
@@ -11,7 +12,9 @@ namespace HealthData;
 
 public class Quantity
 {
+    [Comment("Exact number")]
     public double Value { get; set; }
+    [Comment("UNITS include mg, kg, cm, pounds, liter, ml, tablet, pill, cup, per-day, per-week..ETC")]
     public string Units { get; set; }
 }
 
@@ -28,16 +31,20 @@ public class Medication
 {
     public string Name { get; set; }
 
-    [Comment("E.g. 2 tablets, 1 cup, etc")]
-    [Comment("Required")]
-    public ApproxQuantity Dosage { get; set; }
+    [Comment("E.g. 2 tablets, 1 cup")]
+    [Required]
+    public ApproxQuantity Dose { get; set; }
+
+    [Comment("E.g. twice a day, ")]
+    [Required]
+    public ApproxQuantity Frequency { get; set; }
 
     [Comment("E.g. 50 mg")]
-    [Comment("Required")]
+    [Required]
     public ApproxQuantity Strength { get; set; }
 }
 
-public class HealthDataResponse : AgentResponse<Medication>
+public class MedicationResponse : AgentResponse<Medication>
 {
 
 }

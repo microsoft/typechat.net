@@ -11,6 +11,12 @@ public class Agent<T>
     IMessageStream _history;
     Prompt _preamble;
     PromptBuilder _builder;
+    int _maxPromptLength;
+
+    public Agent(ILanguageModel model, IVocabCollection? vocabs = null)
+        : this(new JsonTranslator<T>(model, new TypeValidator<T>(vocabs)))
+    {
+    }
 
     public Agent(JsonTranslator<T> translator, IMessageStream? history = null)
     {
@@ -18,9 +24,11 @@ public class Agent<T>
         _translator = translator;
         _preamble = new Prompt();
         _builder = new PromptBuilder(translator.Model.ModelInfo.MaxCharCount / 2);
+        _maxPromptLength = _builder.MaxLength;
         _history = history ?? new MessageList();
     }
 
+    public JsonTranslator<T> Translator => _translator;
     public Prompt Preamble => _preamble;
     public RequestSettings RequestSettings { get; set; }
     public IMessageStream InteractionHistory => _history;
@@ -33,30 +41,17 @@ public class Agent<T>
     /// Place JSON responses in history
     /// </summary>
     public bool SaveResponse { get; set; } = true;
-    /// <summary>
-    /// Flatten history into a single prompt before sending to the model
-    /// </summary>
-    public bool InlineContext { get; set; } = true;
 
     public int MaxPromptLength
     {
-        get => _builder.MaxLength;
-        set => _builder.MaxLength = value;
+        get => _maxPromptLength;
+        set => _maxPromptLength = value;
     }
 
     public async Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
-        Prompt context = BuildContext(request);
-        T response;
-        if (InlineContext)
-        {
-            context.Push(request);
-            response = await _translator.TranslateAsync(context.ToString(true), null, RequestSettings, cancelToken).ConfigureAwait(false);
-        }
-        else
-        {
-            response = await _translator.TranslateAsync(request, context, RequestSettings, cancelToken).ConfigureAwait(false);
-        }
+        Prompt prompt = BuildPrompt(request);
+        T response = await _translator.TranslateAsync(prompt, _preamble, RequestSettings, cancelToken).ConfigureAwait(false);
         if (SaveRequest)
         {
             _history.Append(request);
@@ -68,14 +63,21 @@ public class Agent<T>
         return response;
     }
 
-    Prompt BuildContext(string request)
+    Prompt BuildPrompt(string request)
     {
-        _builder.Clear();
-        if (_preamble.Count > 0)
+        int preambleLength = _preamble.GetLength();
+        int availableContextLength = (_maxPromptLength - (preambleLength + request.Length));
+        if (availableContextLength <= 0)
         {
-            _builder.AddRange(_preamble);
+            return request;
         }
+
+        _builder.Clear();
+        _builder.MaxLength = availableContextLength;
         _builder.AddContext(_history.Nearest(request));
+        _builder.MaxLength += request.Length;
+        _builder.Add(request);
+
         return _builder.Prompt;
     }
 }

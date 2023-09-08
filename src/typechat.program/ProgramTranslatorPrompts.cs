@@ -12,7 +12,7 @@ public class ProgramTranslatorPrompts : JsonTranslatorPrompts
         _apiDef = apiDef;
     }
 
-    public override Prompt CreateRequestPrompt(TypeSchema schema, string request, IList<IPromptSection> context)
+    public override Prompt CreateRequestPrompt(TypeSchema schema, Prompt request, IList<IPromptSection> context)
     {
         return RequestProgramPrompt(request, schema.Schema.Text, _apiDef, context);
     }
@@ -24,8 +24,7 @@ public class ProgramTranslatorPrompts : JsonTranslatorPrompts
                $"```\n{programSchema}```\n" +
                "The programs can call functions from the API defined in the following TypeScript definitions:\n" +
                $"```\n{apiDef}```\n";
-        AddContext(prompt, context);
-        prompt += RequestSection(request);
+        AddContextAndRequest(prompt, request, context);
         return prompt;
     }
 }

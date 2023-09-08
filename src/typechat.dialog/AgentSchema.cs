@@ -13,15 +13,15 @@ public class AgentResponse<T>
 {
     public bool IsDone { get; set; } = false;
 
-    [Comment("Ask questions if more information is needed for complete translation")]
-    public Question Question { get; set; }
+    [Comment("Use this to ask questions, notify user etc")]
+    public string Message { get; set; }
 
-    [Comment("JSON object that has ALL required information")]
+    [Comment("Return Value if JSON has ALL required information. Else ask questions")]
     public T? Value { get; set; }
 
-    [Comment("Parts of the user request that could not be translated")]
+    [Comment("Use this for text that was not understood")]
     public string[]? NotTranslated { get; set; }
 
     [JsonIgnore]
-    public bool HasQuestion => (Question != null && !string.IsNullOrEmpty(Question.Text));
+    public bool HasMessage => (!string.IsNullOrEmpty(Message));
 }

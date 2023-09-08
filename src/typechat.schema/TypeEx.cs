@@ -102,6 +102,17 @@ public static class TypeEx
         return false;
     }
 
+    internal static bool IsRequired(this MemberInfo property)
+    {
+        var attrib = property.GetCustomAttribute(typeof(JsonRequiredAttribute));
+        if (attrib != null)
+        {
+            return true;
+        }
+        attrib = property.GetCustomAttribute(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute));
+        return (attrib != null);
+    }
+
     internal static bool IsNullableValueType(this Type type)
     {
         return type.IsGenericType && Nullable.GetUnderlyingType(type) != null;

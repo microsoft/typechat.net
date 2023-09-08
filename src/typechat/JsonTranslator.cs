@@ -105,7 +105,7 @@ public class JsonTranslator<T>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
-        string request,
+        Prompt request,
         IList<IPromptSection>? preamble,
         RequestSettings? requestSettings = null,
         CancellationToken cancelToken = default
@@ -160,7 +160,7 @@ public class JsonTranslator<T>
         }
     }
 
-    protected virtual Prompt CreateRequestPrompt(string request, IList<IPromptSection> preamble)
+    protected virtual Prompt CreateRequestPrompt(Prompt request, IList<IPromptSection> preamble)
     {
         return _prompts.CreateRequestPrompt(_validator.Schema, request, preamble);
     }

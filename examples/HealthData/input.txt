@@ -1,0 +1,9 @@
+# ================
+# USE GPT4
+# ================
+
+# Conversation #1 - YOU type this:
+klaritin
+2 tablets 3 times a day
+300 mg
+actually that is 1 tablet
