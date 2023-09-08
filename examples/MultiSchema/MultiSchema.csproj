@@ -10,18 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CoffeeShop\CoffeeShopSchema.cs" Link="CoffeeShop\CoffeeShopSchema.cs" />
-    <Compile Include="..\CoffeeShop\CoffeeShopImpl.cs" Link="CoffeeShop\CoffeeShopImpl.cs" />
-    <Compile Include="..\CoffeeShop\Program.cs" Link="CoffeeShop\Program.cs" />
-    <Compile Include="..\Calendar\CalendarActionsSchema.cs" Link="Calendar\CalendarActionsSchema.cs" />
-    <Compile Include="..\Calendar\Program.cs" Link="Calendar\Program.cs" />
-    <Compile Include="..\Restaurant\RestaurantSchema.cs" Link="Restaurant\RestaurantSchema.cs" />
-    <Compile Include="..\Restaurant\RestaurantImpl.cs" Link="Restaurant\RestaurantImpl.cs" />
-    <Compile Include="..\Restaurant\Program.cs" Link="Restaurant\Program.cs" />
-    <Compile Include="..\Math\Program.cs" Link="Math\Program.cs" />
-    <Compile Include="..\Math\MathAPI.cs" Link="Math\MathAPI.cs" />
-    <Compile Include="..\Sentiment\Program.cs" Link="Sentiment\Program.cs" />
-    <Compile Include="..\Sentiment\SentimentSchema.cs" Link="Sentiment\SentimentSchema.cs" />
+    <Compile Include="..\CoffeeShop\*.cs" LinkBase="CoffeeShop" />
+    <Compile Include="..\Calendar\*.cs" LinkBase="Calendar" />
+    <Compile Include="..\Restaurant\*.cs" LinkBase="Restaurant" />
+    <Compile Include="..\Math\*.cs" LinkBase="Math" />
+    <Compile Include="..\Sentiment\*.cs" LinkBase="Sentiment" />
+    <Compile Include="..\Plugins\*.cs" LinkBase="Plugins"/>
   </ItemGroup>
  
   <ItemGroup>
