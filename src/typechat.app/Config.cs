@@ -4,6 +4,9 @@ namespace Microsoft.TypeChat;
 
 public class Config
 {
+    public const string DefaultConfigFile = "appSettings.json";
+    public const string DefaultConfigFile_Dev = "appSettings.Development.json";
+
     public static class ModelNames
     {
         public const string Gpt35Turbo = "gpt-35-turbo";
@@ -32,9 +35,12 @@ public class Config
         return settings;
     }
 
-    public static OpenAIConfig LoadOpenAI()
+    public static OpenAIConfig LoadOpenAI(string? sectionName = null)
     {
-        return LoadConfig<OpenAIConfig>("appSettings.json", "appSettings.Development.json", "OpenAI");
+        sectionName ??= "OpenAI";
+        OpenAIConfig config = LoadConfig<OpenAIConfig>(DefaultConfigFile, DefaultConfigFile_Dev, sectionName);
+        config.Validate(DefaultConfigFile_Dev);
+        return config;
     }
 
     OpenAIConfig? _openAI;

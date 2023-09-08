@@ -30,10 +30,20 @@ public class OpenAIConfig
     public int MaxRetries { get; set; } = 3;
     public int MaxPauseMs { get; set; } = 100;
 
-    public void Validate()
+    public void Validate(string configFileName = default)
     {
-        ArgumentException.ThrowIfNullOrEmpty(Endpoint, nameof(Endpoint));
-        ArgumentException.ThrowIfNullOrEmpty(ApiKey, nameof(ApiKey));
+        configFileName ??= string.Empty;
+
+        Verify(Endpoint, nameof(Endpoint), configFileName);
+        Verify(ApiKey, nameof(ApiKey), configFileName);
+    }
+
+    void Verify(string value, string name, string fileName)
+    {
+        if (string.IsNullOrEmpty(value) || value == "?")
+        {
+            throw new ArgumentException($"OpenAIConfig: {name} is not initialized in {fileName}");
+        }
     }
 
     public static OpenAIConfig FromEnvironment()

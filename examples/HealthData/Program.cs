@@ -39,6 +39,21 @@ public class HealthDataApp : ConsoleApp
         PrintResponse(response);
     }
 
+    public override Task ProcessCommandAsync(string cmd, IList<string> args)
+    {
+        switch(cmd.ToLower())
+        {
+            default:
+                Console.WriteLine($"Unhandled command {cmd}");
+                break;
+
+            case "clear":
+                _agent.InteractionHistory.Clear();
+                break;
+        }
+        return Task.CompletedTask;
+    }
+
     void PrintResponse(MedicationResponse response)
     {
         Console.WriteLine($"IsDone: {response.IsDone}");
@@ -58,15 +73,23 @@ public class HealthDataApp : ConsoleApp
         {
             HealthDataApp app = new HealthDataApp();
             //Console.WriteLine(app.Schema.Schema.Text);
+            PrintHelp();
             await app.RunAsync("💉💊🤧> ", args.GetOrNull(0));
         }
         catch (Exception ex)
         {
             WriteError(ex);
+            Console.ReadLine();
             return -1;
         }
 
         return 0;
+    }
+
+    static void PrintHelp()
+    {
+        Console.WriteLine("Enter medications and conditions");
+        Console.WriteLine("@clear:\tReset history");
     }
 }
 

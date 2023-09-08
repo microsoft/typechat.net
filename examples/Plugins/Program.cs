@@ -88,6 +88,7 @@ public class PluginApp : ConsoleApp
         catch (Exception ex)
         {
             WriteError(ex);
+            Console.ReadLine();
             return -1;
         }
 

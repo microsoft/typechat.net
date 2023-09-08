@@ -27,6 +27,15 @@ public class ApproxQuantity
     public Quantity? Quantity { get; set; }
 }
 
+public class ApproxDateTime
+{
+    [JsonRequired]
+    public string DisplayText { get; set; }
+
+    [Comment("If precise timestamp can be set")]
+    public DateTime Timestamp { get; set; }
+}
+
 public class Medication
 {
     public string Name { get; set; }
@@ -44,10 +53,22 @@ public class Medication
     public ApproxQuantity Strength { get; set; }
 }
 
-public class MedicationResponse : AgentResponse<Medication>
+public class Condition
 {
+    public string Name { get; set; }
 
+    [JsonVocab("active | recurrence | relapse | inactive | remission | resolved | unknown")]
+    public string Status { get; set; }
+
+    [Required]
+    public ApproxDateTime StartDate { get; set; }
+
+    [Required]
+    public ApproxDateTime? EndDate { get; set; }
 }
+
+public class MedicationResponse : AgentResponse<Medication> { }
+public class ConditionResponse : AgentResponse<Condition> { }
 
 public static class HealthVocabs
 {

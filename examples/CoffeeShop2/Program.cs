@@ -77,6 +77,8 @@ public class CoffeeShop : ConsoleApp
         catch (Exception ex)
         {
             WriteError(ex);
+            Console.ReadLine();
+            return -1;
         }
 
         return 0;

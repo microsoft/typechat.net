@@ -56,6 +56,7 @@ public class RestaurantApp : ConsoleApp
         catch (Exception ex)
         {
             WriteError(ex);
+            Console.ReadLine();
             return -1;
         }
 
