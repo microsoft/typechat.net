@@ -16,6 +16,11 @@ public class PromptSection : IPromptSection
     string _source;
     string _text;
 
+    public PromptSection()
+        : this(string.Empty)
+    {
+    }
+
     public PromptSection(string text)
         : this(Sources.User, text)
     {
@@ -31,11 +36,24 @@ public class PromptSection : IPromptSection
 
     public string? Source => _source;
     public string GetText() => _text;
+    public bool IsEmpty => string.IsNullOrEmpty(_text);
 
     public void SetText(string text)
     {
         ArgumentNullException.ThrowIfNull(text, nameof(text));
         _text = text;
+    }
+
+    public void AppendText(string text)
+    {
+        if (IsEmpty)
+        {
+            _text = text;
+        }
+        else
+        {
+            _text += text;
+        }
     }
 
     public override string ToString()
@@ -48,4 +66,10 @@ public class PromptSection : IPromptSection
     public static PromptSection FromSystem(string text) => new PromptSection(Sources.System, text);
     public static PromptSection FromUser(string text) => new PromptSection(Sources.User, text);
     public static PromptSection FromAssistant(string text) => new PromptSection(Sources.Assistant, text);
+
+    public static PromptSection operator +(PromptSection section, string text)
+    {
+        section.AppendText(text);
+        return section;
+    }
 }

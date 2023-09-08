@@ -18,21 +18,20 @@ internal static class SerializationEx
     }
 
     /// <summary>
-    /// Add the newest messages in the history to the prompt
+    /// Add messages in priority order to the prompt
+    /// Will keep adding messages until the prompt runs out of room
     /// </summary>
     /// <param name="builder">builder used to build prompt</param>
     /// <param name="history">message history to add</param>
     /// <returns></returns>
-    public static bool AddHistory(this PromptBuilder builder, IMessageStream history)
+    public static bool AddContext(this PromptBuilder builder, IEnumerable<IPromptSection> context)
     {
-        ArgumentNullException.ThrowIfNull(history, nameof(history));
-
-        int historyStartAt = builder.Prompt.Count;
-        bool retVal = builder.AddRange(history.Newest());
-        int historyEndAt = builder.Prompt.Count;
-        if (historyStartAt < historyEndAt)
+        int contextStartAt = builder.Prompt.Count;
+        bool retVal = builder.AddRange(context);
+        int contextEndAt = builder.Prompt.Count;
+        if (contextStartAt < contextEndAt)
         {
-            builder.Prompt.Reverse(historyStartAt, historyEndAt - historyStartAt);
+            builder.Prompt.Reverse(contextStartAt, contextEndAt - contextStartAt);
         }
         return retVal;
     }

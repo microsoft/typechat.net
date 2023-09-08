@@ -8,6 +8,7 @@ public class JsonTranslator<T>
 
     ILanguageModel _model;
     IJsonTypeValidator<T> _validator;
+    IConstraintsValidator<T>? _constraintsValidator;
     IJsonTranslatorPrompts _prompts;
     RequestSettings _requestSettings;
     int _maxRepairAttempts;
@@ -17,7 +18,10 @@ public class JsonTranslator<T>
     {
     }
 
-    public JsonTranslator(ILanguageModel model, IJsonTypeValidator<T> validator, IJsonTranslatorPrompts? prompts = null)
+    public JsonTranslator(
+        ILanguageModel model,
+        IJsonTypeValidator<T> validator,
+        IJsonTranslatorPrompts? prompts = null)
     {
         ArgumentNullException.ThrowIfNull(model, nameof(model));
         ArgumentNullException.ThrowIfNull(validator, nameof(validator));
@@ -41,6 +45,12 @@ public class JsonTranslator<T>
             ArgumentNullException.ThrowIfNull(value, nameof(Validator));
             _validator = value;
         }
+    }
+
+    public IConstraintsValidator<T>? ConstraintsValidator
+    {
+        get => _constraintsValidator;
+        set => _constraintsValidator = value;
     }
 
     public ILanguageModel Model => _model;
@@ -95,8 +105,8 @@ public class JsonTranslator<T>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
-        string request,
-        IEnumerable<IPromptSection>? preamble,
+        Prompt request,
+        IList<IPromptSection>? preamble,
         RequestSettings? requestSettings = null,
         CancellationToken cancelToken = default
         )
@@ -119,11 +129,10 @@ public class JsonTranslator<T>
             Result<T> validationResult;
             if (jsonResponse.HasCompleteJson)
             {
-                validationResult = Validator.Validate(jsonResponse.Json);
-                if (!OnValidationComplete(validationResult) ||
-                    validationResult.Success)
+                validationResult = ValidateJson(jsonResponse.Json);
+                if (validationResult.Success)
                 {
-                    return validationResult.Value;
+                    return validationResult;
                 }
             }
             else
@@ -151,10 +160,9 @@ public class JsonTranslator<T>
         }
     }
 
-    protected virtual Prompt CreateRequestPrompt(string request, IEnumerable<IPromptSection> preamble)
+    protected virtual Prompt CreateRequestPrompt(Prompt request, IList<IPromptSection> preamble)
     {
-        PromptSection requestSection = _prompts.CreateRequestPrompt(_validator.Schema, request);
-        return new Prompt(preamble, requestSection);
+        return _prompts.CreateRequestPrompt(_validator.Schema, request, preamble);
     }
 
     protected virtual async Task<string> GetResponseAsync(Prompt prompt, RequestSettings requestSettings, CancellationToken cancelToken)
@@ -172,6 +180,22 @@ public class JsonTranslator<T>
 
     // Return false if translation loop should stop
     protected virtual bool OnValidationComplete(Result<T> validationResult) { return true; }
+
+    Result<T> ValidateJson(string json)
+    {
+        var result = Validator.Validate(json);
+        if (!OnValidationComplete(result))
+        {
+            return result;
+        }
+        if (result.Success)
+        {
+            result = (_constraintsValidator != null) ?
+                     _constraintsValidator.Validate(result.Value) :
+                     result;
+        }
+        return result;
+    }
 
     protected void NotifyEvent(Action<Prompt> evt, Prompt prompt)
     {

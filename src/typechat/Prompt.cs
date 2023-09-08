@@ -42,9 +42,11 @@ public class Prompt : List<IPromptSection>
     }
     public void Push(string section) => Push(PromptSection.Sources.User, section);
     public void PushResponse(string section) => Push(PromptSection.Sources.Assistant, section);
-    public void PushInstruction(string section) => Push(PromptSection.Sources.System, section);
+    public void PushInstruction(string section) => Push(PromptSection.Sources.User, section);
     public void Push(IPromptSection section) => Add(section);
-    public void PushRange(IEnumerable<IPromptSection> prompts) => base.AddRange(prompts);
+    public void Push(IEnumerable<IPromptSection> prompts) => base.AddRange(prompts);
+    public void Push(Prompt prompt) => base.AddRange(prompt);
+
     public IPromptSection? Last()
     {
         int position = IndexOfLast();
@@ -106,6 +108,11 @@ public class Prompt : List<IPromptSection>
     }
 
     public static implicit operator Prompt(string text) => new Prompt(text);
-    public static implicit operator Prompt(PromptSection section) => new Prompt(section);
     public static implicit operator string(Prompt prompt) => prompt.ToString();
+
+    public static Prompt operator +(Prompt prompt, PromptSection section)
+    {
+        prompt.Push(section);
+        return prompt;
+    }
 }

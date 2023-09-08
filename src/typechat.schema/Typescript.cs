@@ -50,6 +50,10 @@ public class Typescript : CodeLanguage
             {
                 return Types.Boolean;
             }
+            else if (type.IsDateTime())
+            {
+                return Types.String; // Json does not have a primitive DateTime
+            }
             else if (type.IsObject())
             {
                 return Types.Any;

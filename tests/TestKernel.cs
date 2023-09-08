@@ -19,9 +19,8 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
     [Fact]
     public void TestKernelBuild()
     {
-        if (!_config.HasOpenAI)
+        if (!CanRunEndToEndTest(_config, nameof(TestKernelBuild)))
         {
-            WriteSkipped(nameof(TestKernelBuild), "No OpenAI Config");
             return;
         }
         KernelBuilder kb = new KernelBuilder();

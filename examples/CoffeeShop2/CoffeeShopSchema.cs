@@ -35,7 +35,7 @@ public abstract partial class CartItem
 {
 }
 
-[Comment("Use this type for products with names that match NO listed PRODUCT NAME")]
+[Comment("Use this type for Cart Items that match nothing else")]
 public partial class UnknownItem : CartItem
 {
     [Comment("The text that wasn't understood")]
