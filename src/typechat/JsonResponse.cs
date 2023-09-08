@@ -45,7 +45,7 @@ public class JsonResponse
     {
         if (HasPrologue || HasEpilogue)
         {
-            return string.Join('\n', Prologue, Epilogue);
+            return string.Join("\n", Prologue, Epilogue);
         }
         return null;
     }

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.ComponentModel.DataAnnotations;
+
 namespace Microsoft.TypeChat;
 
 public interface IConstraintsValidator<T>
@@ -34,7 +36,7 @@ public class ConstraintsValidator<T> : IConstraintsValidator<T>
         foreach (var result in validationResults)
         {
             sb.AppendLine("Errors in the following: ");
-            sb.AppendLine(string.Join(',', result.MemberNames));
+            sb.AppendLine(string.Join(",", result.MemberNames));
             sb.AppendLine(result.ErrorMessage);
         }
         return sb.ToString();
