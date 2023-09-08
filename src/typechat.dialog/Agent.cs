@@ -30,7 +30,7 @@ public class Agent<T>
 
     public JsonTranslator<T> Translator => _translator;
     public Prompt Preamble => _preamble;
-    public RequestSettings RequestSettings { get; set; }
+    public TranslationSettings RequestSettings { get; set; }
     public IMessageStream InteractionHistory => _history;
 
     /// <summary>
