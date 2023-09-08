@@ -22,8 +22,14 @@ public struct SchemaText
     [JsonConstructor]
     public SchemaText(string text, string lang)
     {
-        ArgumentException.ThrowIfNullOrEmpty(text, nameof(text));
-        ArgumentException.ThrowIfNullOrEmpty(lang, nameof(lang));
+        if (string.IsNullOrEmpty(text))
+        {
+            throw new ArgumentException("Text cannot be null or empty.", nameof(text));
+        }
+        if (string.IsNullOrEmpty(lang))
+        {
+            throw new ArgumentException("Lanauge cannot be null or empty.", nameof(lang));
+        }
 
         _lang = lang;
         _text = text;

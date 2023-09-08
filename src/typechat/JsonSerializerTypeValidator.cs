@@ -94,7 +94,11 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
 
     public JsonSerializerTypeValidator(TypeSchema schema, JsonSerializerOptions? options = null)
     {
-        ArgumentNullException.ThrowIfNull(schema, nameof(schema));
+        if (schema == null)
+        {
+            throw new ArgumentNullException(nameof(schema));
+        }
+        
         _schema = schema;
         if (options != null)
         {

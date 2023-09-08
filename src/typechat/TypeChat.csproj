@@ -6,7 +6,7 @@
     <Nullable>annotations</Nullable>
     <AssemblyName>TypeChat</AssemblyName>
     <RootNamespace>Microsoft.TypeChat</RootNamespace>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>10</LangVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 

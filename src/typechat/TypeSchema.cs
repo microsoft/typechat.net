@@ -9,7 +9,10 @@ public class TypeSchema
 
     public TypeSchema(Type type, string schemaText)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        if (type == null)
+        {
+            throw new ArgumentNullException(nameof(type));
+        }
         _schema = new SchemaText(schemaText);
         _type = type;
     }
