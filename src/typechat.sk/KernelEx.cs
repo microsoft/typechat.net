@@ -2,6 +2,7 @@
 
 using Microsoft.SemanticKernel.AI.TextCompletion;
 using Microsoft.SemanticKernel.Reliability;
+using Microsoft.SemanticKernel.Reliability.Basic;
 
 namespace Microsoft.TypeChat;
 
@@ -59,13 +60,13 @@ public static class KernelEx
     public static KernelBuilder WithRetry(this KernelBuilder builder, OpenAIConfig config)
     {
         TimeSpan retryPause = TimeSpan.FromMilliseconds(config.MaxPauseMs);
-        HttpRetryConfig retryConfig = new HttpRetryConfig
+        BasicRetryConfig retryConfig = new BasicRetryConfig
         {
             MaxRetryDelay = retryPause,
             MaxRetryCount = config.MaxRetries,
             UseExponentialBackoff = false
         };
-        return builder.WithRetryHandlerFactory(new DefaultHttpRetryHandlerFactory(retryConfig));
+        return builder.WithRetryBasic(retryConfig);
     }
 
     public static LanguageModel LanguageModel(this IKernel kernel, ModelInfo model)
