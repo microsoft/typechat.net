@@ -12,7 +12,11 @@ public class ModelInfo
     [JsonConstructor]
     public ModelInfo(string name, int maxTokens, double tokenToCharMultiple = 2.5)
     {
-        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+        if (string.IsNullOrEmpty(name))
+        {
+            throw new ArgumentException("Name cannot be null or empty.", nameof(name));
+        }
+        
         _name = name;
         _maxTokens = maxTokens;
         _tokenToCharMultiple = tokenToCharMultiple;

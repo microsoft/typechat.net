@@ -28,8 +28,16 @@ public class PromptSection : IPromptSection
 
     public PromptSection(string source, string text)
     {
-        ArgumentException.ThrowIfNullOrEmpty(source, nameof(source));
-        ArgumentNullException.ThrowIfNull(text, nameof(text));
+        if (string.IsNullOrEmpty(source))
+        {
+            throw new ArgumentException("Source cannot be null or empty.", nameof(source));
+        }
+
+        if (text == null)
+        {
+            throw new ArgumentNullException(nameof(text));
+        }
+        
         _source = source;
         SetText(text);
     }
@@ -40,7 +48,10 @@ public class PromptSection : IPromptSection
 
     public void SetText(string text)
     {
-        ArgumentNullException.ThrowIfNull(text, nameof(text));
+        if (text == null)
+        {
+            throw new ArgumentNullException(nameof(text));
+        }
         _text = text;
     }
 
