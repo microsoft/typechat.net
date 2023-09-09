@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -10,6 +10,10 @@
     <AssemblyName>typechat.tests</AssemblyName>
     <RootNamespace>Microsoft.TypeChat.Tests</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="appSettings.Development.json" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.0" />
@@ -38,7 +42,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup Condition="Exists('appSettings.Development.json')">
     <Content Include="appSettings.Development.json" Link="appSettings.Development.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

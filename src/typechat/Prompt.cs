@@ -32,7 +32,10 @@ public class Prompt : List<IPromptSection>
 
     public new void Add(IPromptSection section)
     {
-        ArgumentNullException.ThrowIfNull(section, nameof(section));
+        if (section == null)
+        {
+            throw new ArgumentNullException(nameof(section));
+        }
         base.Add(section);
     }
 

@@ -63,7 +63,10 @@ public class PromptBuilder
     /// <returns>true if added, false if not</returns>
     public bool Add(IPromptSection section)
     {
-        ArgumentNullException.ThrowIfNull(section, nameof(section));
+        if (section == null)
+        {
+            throw new ArgumentNullException(nameof(section));
+        }
 
         string text = section.GetText();
         if (string.IsNullOrEmpty(text))
@@ -89,7 +92,10 @@ public class PromptBuilder
 
     public bool AddRange(IEnumerable<IPromptSection> sections)
     {
-        ArgumentNullException.ThrowIfNull(sections, nameof(sections));
+        if (sections == null)
+        {
+            throw new ArgumentNullException(nameof(sections));
+        }
         foreach (var section in sections)
         {
             if (!Add(section))
