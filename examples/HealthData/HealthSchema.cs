@@ -22,6 +22,7 @@ public class ApproxQuantity
 {
     [JsonRequired]
     [Comment("Use if no precise quantity")]
+    [Comment("Default: Unknown")]
     public string DisplayText { get; set; }
 
     [Comment("Optional: only if precise quantities are available")]
@@ -32,6 +33,7 @@ public class ApproxDateTime
 {
     [JsonRequired]
     [Comment("Use if no precise date")]
+    [Comment("Default: Unknown")]
     public string DisplayText { get; set; }
 
     [Comment("If precise timestamp can be set")]
@@ -77,4 +79,17 @@ public class HealthData
     public Condition? Condition { get; set; }
 }
 
-public class HealthDataResponse : AgentResponse<HealthData> { }
+public class HealthDataResponse
+{
+    [Comment("Use this to ask questions, respond to user, notify user")]
+    public string Message { get; set; }
+
+    [Comment("Return this if JSON has ALL required information. Else ask questions")]
+    public HealthData? Data { get; set; }
+
+    [Comment("Use this for text that was not understood")]
+    public string[]? NotTranslated { get; set; }
+
+    [JsonIgnore]
+    public bool HasMessage => (!string.IsNullOrEmpty(Message));
+}

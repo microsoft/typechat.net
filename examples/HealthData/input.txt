@@ -2,14 +2,22 @@
 # USE GPT4
 # ================
 
-# Conversation 2: YOU type this:
+# Conversation: YOU type this:
 klaritin
 2 tablets 3 times a day
 300 mg
 actually that is 1 tablet
 @clear
 
-# Conversation 2: YOU type this:
+# Conversation: YOU type this
+klaritin
+1 pill, morning and before bedtime
+Can't remember
+Actually, that is 3 tablets
+500 mg
+@clear
+
+# Conversation: YOU type this:
 Robotussin
 1 cup
 Daily, as needed
@@ -29,3 +37,4 @@ I got the flu
 no, its gone. Ended last week
 I did have to take some sudafed though
 I took 2 sudafed twice a day. Regular strength
+
