@@ -93,5 +93,35 @@ public class ProgramTest : TypeChatTest
         Assert.NotEmpty(call.Name);
     }
 
+    public string JsonWithLocalWhitespace(string json)
+    {
+        const string prefix = "json:";
 
+        if (!json.StartsWith(prefix))
+        {
+            return Json.Stringify(json);
+        }
+        json = json.Substring(prefix.Length);
+        JsonDocument document = JsonDocument.Parse(json);
+        return Json.Stringify(document);
+    }
+
+    public void ValidateResult(dynamic result, string expectedResult)
+    {
+        if (string.IsNullOrEmpty(expectedResult))
+        {
+            return;
+        }
+        string resultText;
+        if (result is string)
+        {
+            expectedResult = JsonWithLocalWhitespace(expectedResult);
+            resultText = result;
+        }
+        else
+        {
+            resultText = Json.Stringify(result);
+        }
+        Assert.Equal(expectedResult, resultText);
+    }
 }
