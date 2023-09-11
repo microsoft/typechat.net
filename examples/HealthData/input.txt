@@ -1,15 +1,22 @@
+#
+# Conversations with a Health Data Agent
+# For each conversation: 
+# You start with the first line 
+# Then type the next line in response
+#
+
 # ================
 # USE GPT4
 # ================
 
-# Conversation: YOU type this:
+# Conversation: 
 klaritin
 2 tablets 3 times a day
 300 mg
 actually that is 1 tablet
 @clear
 
-# Conversation: YOU type this
+# Conversation: 
 klaritin
 1 pill, morning and before bedtime
 Can't remember
@@ -17,7 +24,14 @@ Actually, that is 3 tablets
 500 mg
 @clear
 
-# Conversation: YOU type this:
+#Conversation
+I am taking binadryl now
+As needed. Groceery store strength
+That is all I have
+I also got allergies. Pollen
+@clear
+
+# Conversation: 
 Robotussin
 1 cup
 Daily, as needed
@@ -25,16 +39,17 @@ Robotussin with Codeine
 Put down strength as I don't know
 @clear
 
-# Conversation 3: 
+# Conversation: 
 Hey
 Melatonin
 1 3mg tablet every night
 @clear
 
-#Conversation 4:
+# Conversation: 
 I got the flu
-2 weeks ago
-no, its gone. Ended last week
-I did have to take some sudafed though
+Started 2 weeks ago
+Its gone now. Only lasted about a week
+I took some sudafed though
 I took 2 sudafed twice a day. Regular strength
+@clear
 

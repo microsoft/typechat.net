@@ -20,9 +20,8 @@ public class HealthDataAgent : ConsoleApp
                                           Message.FromAssistant(r.Message) :
                                           null;
 
-        PromptSection preamble = "Ask the user questions until you have all data required for a valid JSON object.\n";
-        //preamble += "Until then, return a null object.\n";
-        preamble += "Stop asking questions if the user does have the answer OR does not know";
+        PromptSection preamble = "Ask the user pertinent questions to get all DATA required for a valid JSON object.\n";
+        preamble += "Also ask about optional data, but stop asking if the user does have the answer OR does not know";
         _agent.Preamble.Push(preamble);
         _agent.Preamble.Push("DO fix spelling mistakes, including phonetic misspellings of medications and conditions.");
         _agent.Preamble.Push(PromptLibrary.Now());
@@ -94,7 +93,8 @@ public class HealthDataAgent : ConsoleApp
 
     static void PrintHelp()
     {
-        Console.WriteLine("Enter medications and conditions");
+        Console.WriteLine("Enter medications and conditions.");
+        Console.WriteLine("Commands:");
         Console.WriteLine("@history: Display history");
         Console.WriteLine("@clear: Reset history");
     }
