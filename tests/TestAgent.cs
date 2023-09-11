@@ -30,7 +30,7 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
         }
 
         Agent<Order> agent = new Agent<Order>(_config.CreateTranslator<Order>());
-        agent.SaveResponse = false;
+        agent.ResponseToMessage = (r) => null; // Don't save responses
 
         Order order = await agent.TranslateAsync("I would like 1 strawberry shortcake");
         Validate(order.Desserts, "Strawberry Shortcake");

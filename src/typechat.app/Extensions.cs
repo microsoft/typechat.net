@@ -16,7 +16,7 @@ public static class Extensions
 
     public static void Print(this TypeChatException tex)
     {
-        Console.WriteLine($"## Failed: TypeChatException");
+        Console.WriteLine($"## TypeChatException");
         Console.WriteLine(tex.ToString());
     }
 

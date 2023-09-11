@@ -3,7 +3,7 @@
 namespace Microsoft.TypeChat.Dialog;
 
 /// <summary>
-/// A simple, multi-turn agent
+/// A multi-turn message passing Agent
 /// </summary>
 public class Agent<T>
 {
@@ -34,13 +34,9 @@ public class Agent<T>
     public IMessageStream InteractionHistory => _history;
 
     /// <summary>
-    /// Save user requests
+    /// Transform raw responses into messages for the message history
     /// </summary>
-    public bool SaveRequest { get; set; } = true;
-    /// <summary>
-    /// Place JSON responses in history
-    /// </summary>
-    public bool SaveResponse { get; set; } = true;
+    public Func<T, Message?> ResponseToMessage { get; set; }
 
     public int MaxPromptLength
     {
@@ -52,13 +48,13 @@ public class Agent<T>
     {
         Prompt prompt = BuildPrompt(request);
         T response = await _translator.TranslateAsync(prompt, _preamble, RequestSettings, cancelToken).ConfigureAwait(false);
-        if (SaveRequest)
+        _history.Append(request);
+        Message? responseMessage = (ResponseToMessage != null) ?
+                                  ResponseToMessage(response) :
+                                  Message.FromAssistant(response);
+        if (responseMessage != null)
         {
-            _history.Append(request);
-        }
-        if (SaveResponse)
-        {
-            _history.Append(Message.FromAssistant(response));
+            _history.Append(responseMessage);
         }
         return response;
     }

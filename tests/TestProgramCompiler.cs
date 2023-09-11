@@ -66,6 +66,7 @@ public class TestProgramCompiler : ProgramTest
         Delegate compiledProgram = lambda.Compile();
         var result = compiledProgram.DynamicInvoke();
         Assert.NotNull(result);
+        ValidateResult(result, expectedResults);
     }
 
     [Fact]

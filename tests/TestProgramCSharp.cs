@@ -35,6 +35,7 @@ public class TestProgramCSharp : ProgramTest
         Assert.True(result.Success);
 
         dynamic objResult = result.Value.Run(api.Implementation);
+        ValidateResult(objResult, expectedResult);
     }
 
     void ValidateCode(IEnumerable<string> lines)
