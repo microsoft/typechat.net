@@ -81,6 +81,7 @@ public class JsonTranslator<T>
 
         _model = model;
         _validator = new TypeValidator<T>();
+        prompts ??= JsonTranslatorPrompts.Default;
         _prompts = prompts;
         _translationSettings = new TranslationSettings(); // Default settings
         _maxRepairAttempts = DefaultMaxRepairAttempts;

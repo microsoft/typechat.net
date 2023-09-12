@@ -12,8 +12,7 @@ public class CoffeeShopApp : ConsoleApp
     public CoffeeShopApp()
     {
         _translator = new JsonTranslator<Cart>(
-            new LanguageModel(Config.LoadOpenAI()),
-            new TypeValidator<Cart>()
+            new LanguageModel(Config.LoadOpenAI())
         );
         _translator.MaxRepairAttempts = 3;
         // Uncomment to see ALL raw messages to and from the AI
