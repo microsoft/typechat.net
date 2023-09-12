@@ -2,7 +2,6 @@
 
 using System.Text;
 using Microsoft.TypeChat;
-using Microsoft.TypeChat.Schema;
 
 namespace CoffeeShop;
 

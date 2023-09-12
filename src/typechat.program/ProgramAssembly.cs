@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 /// <summary>
 /// An in-memory assembly containing compiled code that can be executed
