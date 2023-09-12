@@ -1,9 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.ComponentModel;
-using System.Text;
-using Microsoft.TypeChat.Schema;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>

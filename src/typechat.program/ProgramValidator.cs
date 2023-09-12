@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Linq.Expressions;
-using System.Runtime.Serialization;
-
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 /// <summary>
 /// Given a structurally valid Program, this ensures that the Program can

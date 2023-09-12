@@ -11,3 +11,4 @@ global using System.Text.Json.Serialization;
 global using System.Reflection;
 global using System.Buffers;
 global using Microsoft.TypeChat;
+global using Microsoft.TypeChat.Schema;

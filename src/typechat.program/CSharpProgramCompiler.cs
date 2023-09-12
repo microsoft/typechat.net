@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 /// <summary>
 /// Compile Json Programs that were transpiled into C#
