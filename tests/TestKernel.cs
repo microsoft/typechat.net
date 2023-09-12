@@ -64,12 +64,12 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
 
         string response = await cm.CompleteAsync(prompt);
         Validate(response, "Yes");
-        prompt.PushResponse(response);
+        prompt.AppendResponse(response);
 
-        prompt.Push("What about Pluto?");
+        prompt.Append("What about Pluto?");
         response = await cm.CompleteAsync(prompt);
         Validate(response, "No");
-        prompt.Push(response);
+        prompt.Append(response);
 
         Assert.Equal(prompt.Count, 4);
     }

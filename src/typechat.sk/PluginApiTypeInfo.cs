@@ -62,6 +62,6 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
         PluginTypescriptExporter exporter = new PluginTypescriptExporter(writer);
         exporter.Comment(apiDescription);
         exporter.Export(apiName, this);
-        return new SchemaText(writer.ToString());
+        return new SchemaText(writer.ToString(), SchemaText.Languages.Typescript);
     }
 }

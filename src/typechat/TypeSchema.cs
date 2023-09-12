@@ -13,18 +13,17 @@ public class TypeSchema
     /// Create a new TypeSchema
     /// </summary>
     /// <param name="type">type</param>
-    /// <param name="schemaText">schema text for the type</param>
+    /// <param name="schema">schema for the type</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public TypeSchema(Type type, string schemaText)
+    public TypeSchema(Type type, SchemaText schema)
     {
         if (type == null)
         {
             throw new ArgumentNullException(nameof(type));
         }
-        _schema = new SchemaText(schemaText);
+        _schema = schema;
         _type = type;
     }
-
     /// <summary>
     /// Create TypeSchema
     /// </summary>

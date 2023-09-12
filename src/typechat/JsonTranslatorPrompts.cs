@@ -37,7 +37,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
     {
         if (!preamble.IsNullOrEmpty())
         {
-            prompt.Push(preamble);
+            prompt.Append(preamble);
         }
 
         if (request.Count == 1)
@@ -47,7 +47,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         }
 
         prompt += "USER REQUEST:";
-        prompt.Push(request);
+        prompt.Append(request);
         prompt += "The following is USER REQUEST translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n";
         return prompt;
     }

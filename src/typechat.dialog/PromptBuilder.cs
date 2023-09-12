@@ -14,25 +14,41 @@ public class PromptBuilder
     int _maxLength;
     Func<string, int, string>? _substring;
 
+    /// <summary>
+    /// Create a builder to create prompts whose length does not exceed maxLength characters
+    /// </summary>
+    /// <param name="maxLength">maximum length</param>
     public PromptBuilder(int maxLength)
         : this(maxLength, Substring)
     {
     }
 
     /// <summary>
-    /// Create a new prompt builder
+    /// Create a builder to create prompts whose length does not exceed maxLength characters
+    /// If a full prompt section is too long, inovokes a substringExtractor callback to extract a
+    /// suitable substring, if any. Substring extractors could do so at sentence boundaries, paragraph
+    /// boundaries and so on.
     /// </summary>
     /// <param name="maxLength">Prompt will not exceed this maxLengthin characters</param>
-    /// <param name="substringExtractor">If a full prompt section is too long, this callback can extract a suitable substring</param>
-    public PromptBuilder(int maxLength, Func<string, int, string>? substringExtractor)
+    /// <param name="substringExtractor">optinal extractor</param>
+    public PromptBuilder(int maxLength, Func<string, int, string>? substringExtractor = null)
     {
         _prompt = new Prompt();
         _maxLength = maxLength;
         _substring = substringExtractor;
     }
 
+    /// <summary>
+    /// The prompt being built
+    /// </summary>
     public Prompt Prompt => _prompt;
+    /// <summary>
+    /// Current length of the prompt in characters
+    /// </summary>
     public int Length => _currentLength;
+    /// <summary>
+    /// Maximum allowed prompt length
+    /// </summary>
     public int MaxLength
     {
         get => _maxLength;
@@ -77,14 +93,14 @@ public class PromptBuilder
         int lengthAvailable = _maxLength - _currentLength;
         if (text.Length <= lengthAvailable)
         {
-            _prompt.Push(section);
+            _prompt.Append(section);
             _currentLength += text.Length;
             return true;
         }
         if (_substring != null)
         {
             text = _substring(text, lengthAvailable);
-            _prompt.Push(section.Source, text);
+            _prompt.Append(section.Source, text);
             return true;
         }
         return false;

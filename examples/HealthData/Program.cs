@@ -22,9 +22,9 @@ public class HealthDataAgent : ConsoleApp
 
         PromptSection preamble = "Ask the user pertinent questions to get all DATA required for a valid JSON object.\n";
         preamble += "Also ask about optional data, but stop asking if the user does have the answer OR does not know";
-        _agent.Preamble.Push(preamble);
-        _agent.Preamble.Push("DO fix spelling mistakes, including phonetic misspellings of medications and conditions.");
-        _agent.Preamble.Push(PromptLibrary.Now());
+        _agent.Preamble.Append(preamble);
+        _agent.Preamble.Append("DO fix spelling mistakes, including phonetic misspellings of medications and conditions.");
+        _agent.Preamble.Append(PromptLibrary.Now());
         // Uncomment to observe prompts
         //base.SubscribeAllEvents(_agent.Translator);
     }

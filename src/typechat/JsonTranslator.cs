@@ -219,8 +219,8 @@ public class JsonTranslator<T>
                 // Remove the previous attempts
                 prompt.Trim(2);
             }
-            prompt.PushResponse(responseText);
-            prompt.Push(repairPrompt);
+            prompt.AppendResponse(responseText);
+            prompt.Append(repairPrompt);
         }
     }
 
