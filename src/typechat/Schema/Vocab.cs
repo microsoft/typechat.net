@@ -8,6 +8,13 @@ namespace Microsoft.TypeChat.Schema;
 /// A Vocabulary is a string table whose values need not be hardcoded in code
 /// Example: lists of product names
 /// This means that each time a schema is generated, it can be different.
+///
+/// These string tables can be emitted in Typescript schema, e.g. like this:
+/// type FourSeasons: 'Winter' | 'Spring' | 'Summer' | 'Fall'
+///
+/// The string tables can also be automatically validated to ensure the model sends back know strings.
+/// Any error can be sent to the model for correction
+/// 
 /// </summary>
 public interface IVocab : IEnumerable<VocabEntry>
 {
@@ -16,14 +23,18 @@ public interface IVocab : IEnumerable<VocabEntry>
 }
 
 /// <summary>
-/// An in-memory vocabulary. 
+/// An in-memory vocabulary.
 /// </summary>
 public class Vocab : List<VocabEntry>, IVocab
 {
-    public const char DefaultSeparator = '|';
+    const char DefaultEntrySeparator = '|';
 
     public Vocab() { }
 
+    /// <summary>
+    /// Make a copy of the source vocab
+    /// </summary>
+    /// <param name="src"></param>
     public Vocab(IVocab src)
     {
         ArgumentNullException.ThrowIfNull(src, nameof(src));
@@ -32,20 +43,19 @@ public class Vocab : List<VocabEntry>, IVocab
             Add(entry);
         }
     }
-
+    /// <summary>
+    /// Initialize a vocabulary
+    /// </summary>
+    /// <param name="entries"></param>
     public Vocab(params string[] entries)
     {
         Add(entries);
     }
 
-    public Vocab(IEnumerable<string> entries)
-    {
-        foreach (var entry in entries)
-        {
-            Add(entry);
-        }
-    }
-
+    /// <summary>
+    /// Add entries to a vocabulary
+    /// </summary>
+    /// <param name="entries"></param>
     public void Add(params string[] entries)
     {
         if (!entries.IsNullOrEmpty())
@@ -86,11 +96,17 @@ public class Vocab : List<VocabEntry>, IVocab
         AppendTo(sb);
         return sb.ToString();
     }
-
+    /// <summary>
+    /// Append this vocabulary to the given StringBuilder. 
+    /// </summary>
+    /// <param name="sb"></param>
+    /// <param name="quoteChar">How to quote individual entries</param>
+    /// <param name="separator">Separator between strings</param>
+    /// <returns></returns>
     public StringBuilder AppendTo(
         StringBuilder sb,
         char quoteChar = '\'',
-        char separator = DefaultSeparator)
+        char separator = DefaultEntrySeparator)
     {
         sb ??= new StringBuilder();
         foreach (var entry in this)
@@ -112,7 +128,14 @@ public class Vocab : List<VocabEntry>, IVocab
         return sb;
     }
 
-    public static Vocab? Parse(string text, char separator = DefaultSeparator)
+    /// <summary>
+    /// Create a new vocabulary by parsing an initialization string like this:
+    /// "Jane Austen | Charles Dickens | William Shakespeare | Toni Morisson"
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="separator"></param>
+    /// <returns></returns>
+    public static Vocab? Parse(string text, char separator = DefaultEntrySeparator)
     {
         string[] entries = text.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (entries == null || entries.Length == 0)
@@ -127,6 +150,11 @@ public class Vocab : List<VocabEntry>, IVocab
 
 public static class VocabEx
 {
+    /// <summary>
+    /// Return all strings in a vocab
+    /// </summary>
+    /// <param name="vocab"></param>
+    /// <returns></returns>
     public static IEnumerable<string> Strings(this IVocab vocab)
     {
         return from entry in vocab
