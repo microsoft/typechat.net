@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 public class TypescriptSchema : TypeSchema
 {
@@ -14,7 +14,7 @@ public class TypescriptSchema : TypeSchema
 
     public IVocabCollection? Vocabs => _vocabs;
 
-    public bool HasVocabs => (_vocabs != null);
+    public bool HasVocabs => _vocabs != null;
 
     public static TypescriptSchema Load(Type type, string filePath)
     {

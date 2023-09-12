@@ -3,7 +3,7 @@
 using System.Linq.Expressions;
 using LinqExpression = System.Linq.Expressions.Expression;
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
 /// Compiles a Json Program into a typesafe .NET lambda using the Dynamic Language Runtime

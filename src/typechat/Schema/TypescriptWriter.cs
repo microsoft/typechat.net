@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 public class TypescriptWriter
 {
@@ -56,7 +56,7 @@ public class TypescriptWriter
     {
         if (!string.IsNullOrEmpty(text))
         {
-            Append(Typescript.Punctuation.Comment).Space().Append(text).EOL();
+            Append(CodeLanguage.Punctuation.Comment).Space().Append(text).EOL();
         }
         return this;
     }

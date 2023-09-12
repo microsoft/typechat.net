@@ -2,6 +2,7 @@
 
 using Microsoft.SemanticKernel.SkillDefinition;
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 
 namespace Plugins;
 

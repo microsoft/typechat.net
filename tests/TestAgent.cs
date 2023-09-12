@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.TypeChat.Schema;
+
 namespace Microsoft.TypeChat.Tests;
 
 public class TestAgent : TypeChatTest, IClassFixture<Config>

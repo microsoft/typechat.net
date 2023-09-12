@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 
 namespace Math;
 

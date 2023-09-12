@@ -1,4 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
+using Microsoft.TypeChat.Schema;
+
 namespace Microsoft.TypeChat;
 
 internal static class Extensions

@@ -2,6 +2,7 @@
 
 using System.Reflection;
 using System.Text.Json;
+using Microsoft.TypeChat.Schema;
 
 namespace Microsoft.TypeChat.Tests;
 

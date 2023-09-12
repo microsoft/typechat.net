@@ -2,7 +2,7 @@
 
 using System.Linq.Expressions;
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 public partial class Program : IDisposable
 {

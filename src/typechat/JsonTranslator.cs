@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.TypeChat.Schema;
+
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -65,6 +67,20 @@ public class JsonTranslator<T>
 
         _validator = validator;
         prompts ??= JsonTranslatorPrompts.Default;
+        _prompts = prompts;
+        _translationSettings = new TranslationSettings(); // Default settings
+        _maxRepairAttempts = DefaultMaxRepairAttempts;
+    }
+
+    public JsonTranslator(ILanguageModel model, IJsonTranslatorPrompts? prompts = null)
+    {
+        if (model == null)
+        {
+            throw new ArgumentNullException(nameof(model));
+        }
+
+        _model = model;
+        _validator = new TypeValidator<T>();
         _prompts = prompts;
         _translationSettings = new TranslationSettings(); // Default settings
         _maxRepairAttempts = DefaultMaxRepairAttempts;

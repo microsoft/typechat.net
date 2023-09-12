@@ -2,7 +2,7 @@
 
 using System.Text;
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
 /// A Vocabulary is a string table whose values need not be hardcoded in code
@@ -50,7 +50,7 @@ public class Vocab : List<VocabEntry>, IVocab
     {
         if (!entries.IsNullOrEmpty())
         {
-            base.EnsureCapacity(entries.Length);
+            EnsureCapacity(entries.Length);
             for (int i = 0; i < entries.Length; ++i)
             {
                 base.Add(entries[i]);

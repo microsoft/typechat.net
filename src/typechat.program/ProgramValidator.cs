@@ -3,7 +3,7 @@
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
 /// Given a structurally valid Program, this ensures that the Program can

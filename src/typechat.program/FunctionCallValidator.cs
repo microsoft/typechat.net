@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
 /// A simple and fast program validator that ensures that any function calls

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 internal interface IStringType
 {
@@ -44,7 +44,7 @@ public static class TypeEx
 
     public static bool IsDateTime(this Type type)
     {
-        return (type == typeof(DateTime) || type == typeof(TimeSpan));
+        return type == typeof(DateTime) || type == typeof(TimeSpan);
     }
 
     public static bool IsNumber(this Type type)
@@ -114,8 +114,8 @@ public static class TypeEx
         {
             return true;
         }
-        attrib = property.GetCustomAttribute(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute));
-        return (attrib != null);
+        attrib = property.GetCustomAttribute(typeof(RequiredAttribute));
+        return attrib != null;
     }
 
     internal static bool IsNullableValueType(this Type type)

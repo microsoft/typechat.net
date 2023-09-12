@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 public class TypescriptExporter : TypeExporter<Type>
 {
@@ -412,7 +412,7 @@ public class TypescriptExporter : TypeExporter<Type>
         if (type.IsValueType)
         {
             Type? nullableType = type.GetNullableValueType();
-            isNullable = (nullableType != null);
+            isNullable = nullableType != null;
             actualType = isNullable ? nullableType : type;
         }
         else
@@ -448,7 +448,7 @@ public class TypescriptExporter : TypeExporter<Type>
         if (type.IsValueType)
         {
             Type? nullableType = type.GetNullableValueType();
-            isNullable = (nullableType != null);
+            isNullable = nullableType != null;
             actualType = isNullable ? nullableType : type;
         }
         else
@@ -607,19 +607,19 @@ public class TypescriptExporter : TypeExporter<Type>
     bool IsNullableRef(PropertyInfo prop)
     {
         var info = _nullableInfo.Create(prop);
-        return (info.WriteState == NullabilityState.Nullable);
+        return info.WriteState == NullabilityState.Nullable;
     }
 
     bool IsNullableRef(FieldInfo field)
     {
         var info = _nullableInfo.Create(field);
-        return (info.WriteState == NullabilityState.Nullable);
+        return info.WriteState == NullabilityState.Nullable;
     }
 
     bool IsNullableRef(ParameterInfo pinfo)
     {
         var info = _nullableInfo.Create(pinfo);
-        return (info.WriteState == NullabilityState.Nullable);
+        return info.WriteState == NullabilityState.Nullable;
     }
 
     protected override bool ShouldExport(Type type)
@@ -633,6 +633,6 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             type = type.GetElementType();
         }
-        return (!type.IsPrimitive && !_nonExportTypes.Contains(type));
+        return !type.IsPrimitive && !_nonExportTypes.Contains(type);
     }
 }

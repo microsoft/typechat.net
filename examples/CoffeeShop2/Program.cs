@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.SemanticKernel;
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 
 namespace CoffeeShop;
 
