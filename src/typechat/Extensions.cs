@@ -4,19 +4,12 @@ namespace Microsoft.TypeChat;
 
 public static class Extensions
 {
-    public static Task<string> CompleteAsync(this ILanguageModel model, PromptSection request)
-    {
-        Prompt prompt = new Prompt();
-        prompt.Append(request);
-        return model.CompleteAsync(prompt, null, CancellationToken.None);
-    }
-
     public static bool IsNullOrEmpty<T>(this IList<T> list)
     {
         return (list == null || list.Count == 0);
     }
 
-    public static void Trim<T>(this List<T> list, int trimCount)
+    internal static void Trim<T>(this List<T> list, int trimCount)
         where T : IPromptSection
     {
         if (trimCount > list.Count)

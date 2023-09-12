@@ -8,6 +8,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class JsonSerializerTypeValidator
 {
+    /// <summary>
+    /// Create default serialization options used by the validator
+    /// </summary>
+    /// <returns></returns>
     public static JsonSerializerOptions DefaultOptions()
     {
         var options = new JsonSerializerOptions
@@ -26,8 +30,12 @@ public class JsonSerializerTypeValidator
     static JsonSerializerOptions _defaultOptions = DefaultOptions();
     JsonSerializerOptions _options;
 
-    public static JsonSerializerTypeValidator Default = new JsonSerializerTypeValidator(_defaultOptions);
+    public static readonly JsonSerializerTypeValidator Default = new JsonSerializerTypeValidator(_defaultOptions);
 
+    /// <summary>
+    /// Create a new type validator
+    /// </summary>
+    /// <param name="options">options to use during serialization</param>
     public JsonSerializerTypeValidator(JsonSerializerOptions? options = null)
     {
         options ??= _defaultOptions;
@@ -36,6 +44,13 @@ public class JsonSerializerTypeValidator
 
     public JsonSerializerOptions Options => _options;
 
+    /// <summary>
+    /// Validate the given json using the supplied type schema. If successful, returns a
+    /// deserialized object
+    /// </summary>
+    /// <param name="schema">validation schema</param>
+    /// <param name="json">json to validate</param>
+    /// <returns>If success, a result containing a deserialized object. Else an diagnostic message</returns>
     public Result<object?> Validate(TypeSchema schema, string json)
     {
         try
@@ -82,16 +97,31 @@ public class JsonSerializerTypeValidator
     }
 }
 
+/// <summary>
+/// A Json Validator that uses the .NET Json Serializer to validate that the given json
+/// conforms to the type T
+/// </summary>
 public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
 {
     TypeSchema _schema;
     JsonSerializerTypeValidator _validator;
 
+    /// <summary>
+    /// Create a new validator
+    /// </summary>
+    /// <param name="schema">schema for T</param>
+    /// <param name="options">serialization options</param>
     public JsonSerializerTypeValidator(SchemaText schema, JsonSerializerOptions? options = null)
         : this(new TypeSchema(typeof(T), schema), options)
     {
     }
 
+    /// <summary>
+    /// Create a new validator
+    /// </summary>
+    /// <param name="schema">schema for T</param>
+    /// <param name="options">serialization options</param>
+    /// <exception cref="ArgumentNullException"></exception>
     public JsonSerializerTypeValidator(TypeSchema schema, JsonSerializerOptions? options = null)
     {
         if (schema == null)
@@ -109,9 +139,21 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
         }
     }
 
+    /// <summary>
+    /// Schema for T
+    /// </summary>
     public TypeSchema Schema => _schema;
+    /// <summary>
+    /// Serialization options
+    /// </summary>
     public JsonSerializerOptions Options => _validator.Options;
 
+    /// <summary>
+    /// Validate the given json, returning a validation result containing a deserialized
+    /// value of type T
+    /// </summary>
+    /// <param name="json">json to validate</param>
+    /// <returns>If success, a result containing value of type T. Else an diagnostic message</returns>
     public Result<T> Validate(string json)
     {
         Result<object?> result = _validator.Validate(_schema, json);
