@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
+
 global using System;
 global using System.Collections.Generic;
 global using System.Linq;
@@ -13,6 +14,6 @@ global using Xunit.Abstractions;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Configuration.Json;
 global using Microsoft.TypeChat;
+global using Microsoft.TypeChat.Schema;
 global using Microsoft.TypeChat.Dialog;
 global using Microsoft.SemanticKernel;
-

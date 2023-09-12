@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Reflection;
 using System.Text.Json;
-using Microsoft.TypeChat.Schema;
 
 namespace Microsoft.TypeChat.Tests;
 

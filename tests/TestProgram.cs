@@ -1,10 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Reflection;
-using System.Text.Json;
-using System.Linq.Expressions;
 using LinqExpression = System.Linq.Expressions.Expression;
-using Microsoft.TypeChat.Schema;
 
 namespace Microsoft.TypeChat.Tests;
 
