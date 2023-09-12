@@ -14,8 +14,8 @@ public interface IPromptSection
     /// </summary>
     public string? Source { get; }
     /// <summary>
-    /// The text for this section
+    /// Get the text for this section
     /// </summary>
-    /// <returns>text</returns>
+    /// <returns>string</returns>
     string GetText();
 }
