@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Dialog;
 
-public class MessageList : List<Message>, IMessageStream, IContextProvider
+public class MessageList : List<Message>, IMessageStream
 {
     public MessageList() { }
 
@@ -19,10 +19,7 @@ public class MessageList : List<Message>, IMessageStream, IContextProvider
 
     public IEnumerable<Message> Newest()
     {
-        for (int i = Count - 1; i >= 0; --i)
-        {
-            yield return this[i];
-        }
+        return this.Reverse<Message>();
     }
 
     /// <summary>
@@ -31,11 +28,6 @@ public class MessageList : List<Message>, IMessageStream, IContextProvider
     /// <param name="request"></param>
     /// <returns></returns>
     public virtual IEnumerable<Message> Nearest(string request)
-    {
-        return Newest();
-    }
-
-    public IEnumerable<IPromptSection> GetContext(string request)
     {
         return Newest();
     }
