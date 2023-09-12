@@ -85,7 +85,6 @@ public class UnknownItem
     public string Text { get; set; }
 }
 
-
 public class Order
 {
     [JsonPropertyName("coffee")]
@@ -313,5 +312,50 @@ public class Location
             State = State.ToLower();
             Country = Country.ToLower();
         }
+    }
+}
+
+[JsonPolymorphic]
+[JsonDerivedType(typeof(Rectangle), typeDiscriminator: nameof(Rectangle))]
+[JsonDerivedType(typeof(Circle), typeDiscriminator: nameof(Circle))]
+public class Shape
+{
+    public string Id;
+}
+
+public class Rectangle : Shape
+{
+    public double TopX;
+    public double TopY;
+    public double Height;
+    public double Width;
+}
+
+public class Circle : Shape
+{
+    public double CenterX;
+    public double CenterY;
+    public double Radius;
+}
+
+public class Canvas
+{
+    public Shape[] Shapes { get; set; }
+
+    public T? GetShape<T>(int objNumber = 0)
+        where T : Shape
+    {
+        int curNumber = 0;
+        foreach (var shape in Shapes)
+        {
+            if (shape.GetType() == typeof(T))
+            {
+                if (curNumber == objNumber)
+                {
+                    return (T) shape;
+                }
+            }
+        }
+        return null;
     }
 }

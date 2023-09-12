@@ -12,11 +12,15 @@ namespace Microsoft.TypeChat.Schema;
 /// types and validate the types for correctness.
 ///
 /// The exporter is written entirely in C# and does not depend on any Typescript components.
-/// It is also intended to support scenarios where every request has a different schema that is contextual
+/// It is also intended to support scenarios where every request has a different schema that is contextual.
 /// 
 /// The exporter has limitations because Type systems are complex. It aims to support common scenarios.
-/// The exporter has some awareness of Json Serializer attributes. Json Polymorphism is supported. But polymorphism
-/// related Json attributes are not looked at; by default, the discriminator used to support polymorphism must be
+///  - Will export classes, enums, value types, properties, fields etc.. including inheritance, mapped to their Typescript base types
+///  - Obeys nullable and '?' annotations in C#
+///  - Incorporates Serialazation attributes such as JsonPropertyName and JsonIgnore
+///  - Vocabularies: this is a new concept that greatly simplifies Json programming
+///  - Json Polymorphism is supported. But polymorphism Json serialiezer attributes are currently not looked at
+///  By default, the discriminator used to support polymorphism must be the same as the typename
 /// the same as the type name
 /// 
 /// You can always author the Typescript schema by hand and give it to the JsonTranslator using a suitable
