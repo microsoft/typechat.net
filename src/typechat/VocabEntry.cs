@@ -2,7 +2,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
 {

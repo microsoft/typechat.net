@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
 public class CommentAttribute : Attribute

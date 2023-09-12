@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 internal interface IStringType
 {

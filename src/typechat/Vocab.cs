@@ -2,7 +2,7 @@
 
 using System.Text;
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 /// <summary>
 /// A Vocabulary is a string table whose values need not be hardcoded in code

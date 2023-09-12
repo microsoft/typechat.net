@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 public class JsonVocabAttribute : JsonConverterAttribute
 {
@@ -25,7 +25,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
             _entries = value;
             if (!string.IsNullOrEmpty(value))
             {
-                _vocab = Schema.Vocab.Parse(_entries);
+                _vocab = Microsoft.TypeChat.Vocab.Parse(_entries);
             }
         }
     }

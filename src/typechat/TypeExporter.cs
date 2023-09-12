@@ -2,7 +2,7 @@
 
 using System.Reflection.Metadata.Ecma335;
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 public abstract class TypeExporter<T>
 {

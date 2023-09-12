@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.TypeChat.Schema;
+using Microsoft.TypeChat;
 using Microsoft.TypeChat.Dialog;
 
 namespace HealthData;

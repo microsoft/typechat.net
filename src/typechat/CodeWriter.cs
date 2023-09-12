@@ -2,7 +2,7 @@
 
 using System.Text;
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 public class CodeWriter
 {

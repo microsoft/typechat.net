@@ -2,7 +2,7 @@
 
 using System.Collections;
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat;
 
 public interface IVocabCollection : IEnumerable<VocabType>
 {
