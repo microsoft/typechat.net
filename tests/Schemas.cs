@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 
 namespace Microsoft.TypeChat.Tests;
@@ -239,7 +240,10 @@ public static class TestVocabs
 
 public class Person
 {
+    [ValidateObject]
     public Name Name { get; set; }
+
+    [Range(0, 105, ErrorMessage = "Person.Age must be between 0 and 105")]
     public int Age { get; set; }
 
     public Location Location { get; set; }
@@ -258,9 +262,11 @@ public class Person
 
 public class Name : IComparable<Name>
 {
+    [StringLength(32, ErrorMessage = "FirstName must be <= 32 characters")]
     public string FirstName { get; set; }
-    public string LastName { get; set; }
 
+    [StringLength(32)]
+    public string LastName { get; set; }
 
     public void ChangeCase(bool upper)
     {
