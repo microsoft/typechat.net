@@ -139,11 +139,6 @@ public static class TypeEx
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNullable(this MemberInfo member)
     {
-        if (member.DeclaringType.IsValueType)
-        {
-            return Nullable.GetUnderlyingType(member.DeclaringType) != null;
-        }
-
         switch (member)
         {
             case PropertyInfo propertyInfo:
