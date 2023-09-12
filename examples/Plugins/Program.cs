@@ -11,7 +11,7 @@ public class PluginApp : ConsoleApp
     IKernel _kernel;
     ProgramTranslator _translator;
     PluginApi _pluginApi;
-    string _pluginSchema;
+    SchemaText _pluginSchema;
     ProgramInterpreter _interpreter;
 
     public PluginApp()

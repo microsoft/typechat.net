@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Default Prompts used by the program translator
+/// </summary>
 public class ProgramTranslatorPrompts : JsonTranslatorPrompts
 {
     string _apiDef;

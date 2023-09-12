@@ -3,11 +3,14 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Transpile Json Programs into C#
-/// ClassName: Program (Default)
-/// MethodName: Run
+/// Experimental class that transpiles Json Programs into C#.
+/// Programs are emitted into a class:
+///     ClassName: Program (Default)
+///     MethodName: Run
 ///
-/// Only synchronous implemented. Coming: async, await. 
+/// Only SYNCHRONOUS methods currently supported
+/// Async will be added in a future release
+/// 
 /// </summary>
 public class CSharpProgramTranspiler
 {

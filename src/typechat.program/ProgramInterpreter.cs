@@ -4,7 +4,8 @@ namespace Microsoft.TypeChat;
 
 /// <summary>
 /// Evaluates a JSON program using a simple lighweight interpreter.
-/// This class is stateful, and not thread safe For multiple threads, use multiple interpreters: interpreters are extremely lightweight
+/// This class is stateful.
+/// For multiple threads, use multiple interpreters: interpreters are extremely lightweight
 /// Function calls in the program are passed to the handler callback function for dispatch.
 /// </summary>
 public class ProgramInterpreter
