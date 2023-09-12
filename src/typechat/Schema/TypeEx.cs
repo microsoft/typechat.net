@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Runtime.CompilerServices;
+
 namespace Microsoft.TypeChat.Schema;
 
 internal interface IStringType
@@ -128,6 +130,60 @@ public static class TypeEx
         var foo = Nullable.GetUnderlyingType(type);
         var bar = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         return foo;
+    }
+
+#if NET6_0_OR_GREATER
+    private static NullabilityInfoContext s_nullableInfo = new();
+#endif
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsNullable(this MemberInfo member)
+    {
+        if (member.DeclaringType.IsValueType)
+        {
+            return Nullable.GetUnderlyingType(member.DeclaringType) != null;
+        }
+
+        switch (member)
+        {
+            case PropertyInfo propertyInfo:
+                return propertyInfo.IsNullable();
+
+            case FieldInfo fieldInfo:
+                return fieldInfo.IsNullable();
+        }
+
+        return false;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsNullable(this PropertyInfo propInfo)
+    {
+#if NET6_0_OR_GREATER
+        return s_nullableInfo.Create(propInfo).WriteState is NullabilityState.Nullable;
+#else
+        return propInfo.PropertyType.IsNullableValueType();
+#endif
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsNullable(this FieldInfo fieldInfo)
+    {
+#if NET6_0_OR_GREATER
+        return s_nullableInfo.Create(fieldInfo).WriteState is NullabilityState.Nullable;
+#else
+        return fieldInfo.FieldType.IsNullableValueType();
+#endif
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsNullable(this ParameterInfo paramInfo)
+    {
+#if NET6_0_OR_GREATER
+        return s_nullableInfo.Create(paramInfo).WriteState is NullabilityState.Nullable;
+#else
+        return paramInfo.ParameterType.IsNullableValueType();
+#endif
     }
 
     internal static Type? BaseClass(this Type type)
