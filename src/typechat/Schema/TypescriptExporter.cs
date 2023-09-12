@@ -2,6 +2,15 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// Export the given .NET Type as schema expressed in Typescript
+/// 
+/// Typescript is a concise and expressive schema definition language, making it easy to to express the
+/// shape and structure of Json easily. We want language models to translate user requests into JSON
+/// of a particular shape that is defined by a schema. We then want to deserialize this JSON into strong
+/// types and validate the types for correctness.
+/// 
+/// </summary>
 public class TypescriptExporter : TypeExporter<Type>
 {
     public static TypescriptSchema GenerateSchema(Type type, IVocabCollection? knownVocabs = null)
@@ -95,10 +104,10 @@ public class TypescriptExporter : TypeExporter<Type>
         _nullableInfo = null;
     }
 
-    public override void ExportQueued()
+    public override void ExportPending()
     {
-        base.ExportQueued();
-        _vocabExporter?.ExportQueued();
+        base.ExportPending();
+        _vocabExporter?.ExportPending();
     }
 
     public override void ExportType(Type type)
