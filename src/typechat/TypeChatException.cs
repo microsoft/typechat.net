@@ -2,20 +2,33 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Exception thrown by TypeChat objects
+/// </summary>
 public class TypeChatException : Exception
 {
-    public static class ErrorMessages
+    static class ErrorMessages
     {
-        public const string TranslationFailed = "Translation Failed";
         public const string NoJsonReturned = "No JSON object returned";
         public const string IncompleteJson = "Json Parse Error. Json Object is incomplete";
     }
 
+    /// <summary>
+    /// Error code associted with the exception
+    /// </summary>
     public enum ErrorCode
     {
+        /// <summary>
+        /// Unknown error
+        /// </summary>
         Unknown,
+        /// <summary>
+        /// No Json object returned by the model
+        /// </summary>
         NoJsonObject,
-        IncompleteJsonObject,
+        /// <summary>
+        /// Json validation failed
+        /// </summary>
         JsonValidation
     }
 
@@ -31,8 +44,17 @@ public class TypeChatException : Exception
         _response = response;
     }
 
+    /// <summary>
+    /// Error code
+    /// </summary>
     public ErrorCode Code => _errorCode;
+    /// <summary>
+    /// The request string that caused the error
+    /// </summary>
     public string Request => _request;
+    /// <summary>
+    /// The response, if any, that caused the error
+    /// </summary>
     public JsonResponse? Response => _response;
 
     public override string ToString()

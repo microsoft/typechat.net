@@ -2,21 +2,33 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Schema is defined by:
+/// - The schema specification, in text
+/// - The language the schema is written in, such as Typescript
+/// </summary>
 public struct SchemaText
 {
+    /// <summary>
+    /// Standard schema languages
+    /// </summary>
     public static class Languages
     {
+        /// <summary>
+        /// The schema is written in Typescript
+        /// </summary>
         public const string Typescript = "TypeScript";
     }
 
     string _lang;
     string _text;
 
-    public SchemaText(string text)
-        : this(text, Languages.Typescript)
-    {
-    }
-
+    /// <summary>
+    /// Create a SchemaText object to hold schema specified in the given language
+    /// </summary>
+    /// <param name="text">schema text</param>
+    /// <param name="lang">schema language</param>
+    /// <exception cref="ArgumentException"></exception>
     [JsonConstructor]
     public SchemaText(string text, string lang)
     {
@@ -33,8 +45,14 @@ public struct SchemaText
         _text = text;
     }
 
+    /// <summary>
+    /// The schema language
+    /// </summary>
     [JsonPropertyName("lang")]
     public string Lang => _lang;
+    /// <summary>
+    /// The schema text
+    /// </summary>
     [JsonPropertyName("text")]
     public string Text => _text;
 
