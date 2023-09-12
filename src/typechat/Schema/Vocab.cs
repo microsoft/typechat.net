@@ -50,7 +50,7 @@ public class Vocab : List<VocabEntry>, IVocab
     {
         if (!entries.IsNullOrEmpty())
         {
-            base.EnsureCapacity(entries.Length);
+            EnsureCapacity(entries.Length);
             for (int i = 0; i < entries.Length; ++i)
             {
                 base.Add(entries[i]);

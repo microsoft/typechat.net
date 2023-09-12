@@ -1,8 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Linq.Expressions;
-using System.Runtime.Serialization;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>

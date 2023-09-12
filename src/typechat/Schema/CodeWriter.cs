@@ -104,9 +104,9 @@ public class CodeWriter
     public CodeWriter SQuote() => Write(CodeLanguage.Punctuation.SingleQuote);
     public CodeWriter DoubleQuote() => Write(CodeLanguage.Punctuation.DoubleQuote);
     public CodeWriter Question() => Write(CodeLanguage.Punctuation.Question);
-    public CodeWriter Space() => Write(Typescript.Punctuation.Space);
+    public CodeWriter Space() => Write(CodeLanguage.Punctuation.Space);
     public CodeWriter SOL() { WriteIndent(); return this; } // Start a line
-    public CodeWriter EOL() => Write(Typescript.Punctuation.EOL);
+    public CodeWriter EOL() => Write(CodeLanguage.Punctuation.EOL);
 
     public void Flush()
     {

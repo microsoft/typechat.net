@@ -89,7 +89,7 @@ public static class VocabCollectionEx
     public static bool Contains(this IVocabCollection vocabs, string vocabName, VocabEntry entry)
     {
         VocabType? vocabType = vocabs.Get(vocabName);
-        return (vocabType != null && vocabType.Vocab.Contains(entry));
+        return vocabType != null && vocabType.Vocab.Contains(entry);
     }
 }
 

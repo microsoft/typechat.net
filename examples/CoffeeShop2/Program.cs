@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
-using System;
+
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.SemanticKernel;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
@@ -24,8 +21,7 @@ public class CoffeeShop : ConsoleApp
         // Each with a different vocab specific to the request
         // E.g. you could service a different vocab to a Vegan user. Or show more options to a Premimum user
         _translator = new JsonTranslator<Cart>(
-            new LanguageModel(Config.LoadOpenAI()),
-            new TypeValidator<Cart>(_vocabs)
+            new LanguageModel(Config.LoadOpenAI())
         );
         _translator.MaxRepairAttempts = 3;
 

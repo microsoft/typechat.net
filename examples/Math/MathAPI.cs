@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
 namespace Math;
