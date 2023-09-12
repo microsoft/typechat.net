@@ -1,5 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Collections.ObjectModel;
+using System.Net.NetworkInformation;
+using System.Reflection;
+
 namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
@@ -479,7 +483,7 @@ public class TypescriptExporter : TypeExporter<Type>
         else
         {
             actualType = type;
-            isNullable = IsNullableRef(member);
+            isNullable = member.IsNullable();
         }
 
         if (actualType.IsString() &&
@@ -515,8 +519,9 @@ public class TypescriptExporter : TypeExporter<Type>
         else
         {
             actualType = type;
-            isNullable = IsNullableRef(parameter);
+            isNullable = parameter.IsNullable();
         }
+
         _writer.Parameter(
             parameter.Name,
             DataType(type),

@@ -125,7 +125,9 @@ public static class TypeEx
 
     internal static Type? GetNullableValueType(this Type type)
     {
-        return (type.IsGenericType) ? Nullable.GetUnderlyingType(type) : null;
+        var foo = Nullable.GetUnderlyingType(type);
+        var bar = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        return foo;
     }
 
     internal static Type? BaseClass(this Type type)
