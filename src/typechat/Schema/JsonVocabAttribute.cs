@@ -35,9 +35,9 @@ public class JsonVocabAttribute : JsonConverterAttribute
     public bool Enforce { get; set; } = true;
     public IVocab? Vocab => _vocab;
 
-    public bool HasEntries => (!string.IsNullOrEmpty(_entries));
+    public bool HasEntries => !string.IsNullOrEmpty(_entries);
     public bool HasName => !string.IsNullOrEmpty(Name);
-    public bool HasVocab => (_vocab != null);
+    public bool HasVocab => _vocab != null;
     public bool HasPropertyName => !string.IsNullOrEmpty(PropertyName);
 
     public override JsonConverter? CreateConverter(Type typeToConvert)

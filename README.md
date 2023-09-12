@@ -16,9 +16,7 @@ TypeChat.NET helps you build natural language interfaces with LLMs using strong 
 
 # Assemblies
 TypeChat.NET consists of the following assemblies:
-* **TypeChat**: Translate user intent into strongly typed and validated objects
- 
-* **TypeChat.Schema**: Classes for automatic exporting .NET types as Typescript schema. This schema is then sent to the AI. Also includes additional support for validating the returned JSON. 
+* **TypeChat**: Translate user intent into strongly typed and validated objects. Also Classes for automatic exporting .NET types as Typescript schema. This schema is then sent to the AI. Also includes additional support for validating the returned JSON. 
 
 * **TypeChat.Program**: Classes to synthesize, validate and execute ***JSON programs*** 
 

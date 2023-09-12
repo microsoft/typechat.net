@@ -1,10 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
-using System;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+
 using Microsoft.TypeChat;
-using Microsoft.TypeChat.Schema;
 
 namespace Restaurant;
 
@@ -15,8 +11,7 @@ public class RestaurantApp : ConsoleApp
     public RestaurantApp()
     {
         _translator = new JsonTranslator<Order>(
-            new LanguageModel(Config.LoadOpenAI()),
-            new TypeValidator<Order>()
+            new LanguageModel(Config.LoadOpenAI())
         );
         _translator.MaxRepairAttempts = 3;
         // Uncomment to see ALL raw messages to and from the AI

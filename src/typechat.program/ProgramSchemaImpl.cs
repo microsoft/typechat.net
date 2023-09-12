@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Linq.Expressions;
-
 namespace Microsoft.TypeChat;
 
 public partial class Program : IDisposable

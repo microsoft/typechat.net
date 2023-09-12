@@ -67,7 +67,7 @@ public class ConstraintsValidator<T> : ConstraintsValidator, IConstraintsValidat
     /// <returns></returns>
     public Result<T> Validate(T value)
     {
-        ValidationResult result = ConstraintsValidator.Default.ValidateConstraints(value);
+        ValidationResult result = Default.ValidateConstraints(value);
         if (result == ValidationResult.Success)
         {
             return new Result<T>(value);

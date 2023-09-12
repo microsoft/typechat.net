@@ -1,12 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.TypeChat.Schema;
-using Microsoft.TypeChat.Dialog;
 
 namespace HealthData;
 

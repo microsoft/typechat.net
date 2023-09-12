@@ -1,9 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Diagnostics;
-
-using Microsoft.SemanticKernel.AI.ChatCompletion;
-
 namespace Microsoft.TypeChat.Tests;
 
 public class TestKernel : TypeChatTest, IClassFixture<Config>

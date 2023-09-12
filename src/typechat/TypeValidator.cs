@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Schema;
+using Microsoft.TypeChat.Schema;
+
+namespace Microsoft.TypeChat;
 
 public class TypeValidator<T> : IJsonTypeValidator<T>
 {
