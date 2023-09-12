@@ -6,7 +6,7 @@ namespace Microsoft.TypeChat;
 /// A Json Validator that uses the .NET Json Serializer to validate that the given json
 /// conforms to the target schema
 /// </summary>
-public class JsonSerializerTypeValidator : IJsonTypeValidator
+public class JsonSerializerTypeValidator
 {
     public static JsonSerializerOptions DefaultOptions()
     {
@@ -98,7 +98,6 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
         {
             throw new ArgumentNullException(nameof(schema));
         }
-        
         _schema = schema;
         if (options != null)
         {

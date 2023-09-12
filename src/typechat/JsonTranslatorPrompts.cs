@@ -2,9 +2,12 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// The standard prompts used by JsonTranslator
+/// </summary>
 public class JsonTranslatorPrompts : IJsonTranslatorPrompts
 {
-    public static readonly JsonTranslatorPrompts Default = new JsonTranslatorPrompts();
+    internal static readonly JsonTranslatorPrompts Default = new JsonTranslatorPrompts();
 
     public virtual Prompt CreateRequestPrompt(TypeSchema schema, Prompt request, IList<IPromptSection> preamble = null)
     {

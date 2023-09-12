@@ -1,6 +1,6 @@
 # TypeChat.NET
 
-TypeChat.NET is a project from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
+TypeChat.NET is an experimental project from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
 TypeChat.NET helps you build natural language interfaces with LLMs using strong types and type-safe programs. 
 
