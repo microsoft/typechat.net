@@ -162,6 +162,7 @@ public static class TypeEx
 #if NET6_0_OR_GREATER
         return s_nullableInfo.Create(propInfo).WriteState is NullabilityState.Nullable;
 #else
+        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
         return propInfo.PropertyType.IsNullableValueType();
 #endif
     }
@@ -172,6 +173,7 @@ public static class TypeEx
 #if NET6_0_OR_GREATER
         return s_nullableInfo.Create(fieldInfo).WriteState is NullabilityState.Nullable;
 #else
+        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
         return fieldInfo.FieldType.IsNullableValueType();
 #endif
     }
@@ -182,6 +184,7 @@ public static class TypeEx
 #if NET6_0_OR_GREATER
         return s_nullableInfo.Create(paramInfo).WriteState is NullabilityState.Nullable;
 #else
+        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
         return paramInfo.ParameterType.IsNullableValueType();
 #endif
     }
