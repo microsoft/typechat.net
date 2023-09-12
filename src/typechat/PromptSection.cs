@@ -6,8 +6,17 @@ public class PromptSection : IPromptSection
 {
     public static class Sources
     {
+        /// <summary>
+        /// This section contains text supplied by the system
+        /// </summary>
         public const string System = "system";
+        /// <summary>
+        /// This section contains text supplied by the user
+        /// </summary>
         public const string User = "user";
+        /// <summary>
+        /// This section contains text produced by an AI assistant or model
+        /// </summary>
         public const string Assistant = "assistant";
     }
 
@@ -37,7 +46,7 @@ public class PromptSection : IPromptSection
         {
             throw new ArgumentNullException(nameof(text));
         }
-        
+
         _source = source;
         SetText(text);
     }

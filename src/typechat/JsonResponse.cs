@@ -49,7 +49,11 @@ public class JsonResponse
         }
         return null;
     }
-
+    /// <summary>
+    /// Parse the given json response into its parts
+    /// </summary>
+    /// <param name="responseText">response text</param>
+    /// <returns>JsonResponse object</returns>
     public static JsonResponse Parse(string responseText)
     {
         JsonResponse response = new JsonResponse(responseText);

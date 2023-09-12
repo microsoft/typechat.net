@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// A prompt is a list of one or more prompt sections
+/// </summary>
 public class Prompt : List<IPromptSection>
 {
     public Prompt(int capacity)

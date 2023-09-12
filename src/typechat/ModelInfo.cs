@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Language Model Information
+/// </summary>
 public class ModelInfo
 {
     string _name;
@@ -16,25 +19,28 @@ public class ModelInfo
         {
             throw new ArgumentException("Name cannot be null or empty.", nameof(name));
         }
-        
+
         _name = name;
         _maxTokens = maxTokens;
         _tokenToCharMultiple = tokenToCharMultiple;
         _maxCharCount = (int)((double)maxTokens * tokenToCharMultiple);
     }
 
+    /// <summary>
+    /// Modelname
+    /// </summary>
     [JsonPropertyName("name")]
     public string Name => _name;
-
+    /// <summary>
+    /// Maximum tokens allowed by this model
+    /// </summary>
     [JsonPropertyName("maxTokens")]
     public int MaxTokens => _maxTokens;
-
     /// <summary>
     /// Allows a simple way to estimate # of tokens from # of characters
     /// </summary>
     [JsonPropertyName("tokenMultiple")]
     public double TokenToCharMultiple => _tokenToCharMultiple;
-
     /// <summary>
     /// An estimate of the max # of characters - input + output - that the model will accept
     /// </summary>
