@@ -13,10 +13,7 @@ public class SentimentApp : ConsoleApp
 
     public SentimentApp()
     {
-        _translator = new JsonTranslator<SentimentResponse>(
-            new LanguageModel(Config.LoadOpenAI()),
-            new TypeValidator<SentimentResponse>()
-        );
+        _translator = new JsonTranslator<SentimentResponse>(new LanguageModel(Config.LoadOpenAI()));
     }
 
     public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
