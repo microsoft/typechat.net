@@ -4,6 +4,8 @@ namespace Microsoft.TypeChat;
 
 /// <summary>
 /// Translates natural language requests into simple programs, represented as JSON, that compose
+/// Returned Json programs are returned as a strongly typed abstract syntax tree.
+/// Program can then be executed using an interprter or compiled with a ProgramCompiler
 /// </summary>
 public class ProgramTranslator : JsonTranslator<Program>
 {
