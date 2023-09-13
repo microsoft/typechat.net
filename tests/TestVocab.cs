@@ -16,7 +16,7 @@ public class TestVocab : TypeChatTest
         Assert.NotNull(vocab);
         Assert.True(vocab.Count == 3);
 
-        VocabType? type = attribute.ToVocabType();
+        NamedVocab? type = attribute.ToVocabType();
         Assert.NotNull(type);
         Assert.Equal(type.Name, attribute.Name);
         Assert.Equal(vocab, type.Vocab);
@@ -47,7 +47,7 @@ public class TestVocab : TypeChatTest
         {
             {vocabName, new Vocab("One", "Two", "Three") }
         };
-        VocabType? type = store.Get(vocabName);
+        NamedVocab? type = store.Get(vocabName);
         Assert.NotNull(type);
 
         var exporter = new TypescriptVocabExporter(new TypescriptWriter(sw), store);
@@ -119,19 +119,19 @@ public class TestVocab : TypeChatTest
         obj2 = Json.Parse<ConverterTestObj>(json);
     }
 
-    public void ValidateVocab(TypeSchema schema, VocabType vocab)
+    public void ValidateVocab(TypeSchema schema, NamedVocab vocab)
     {
         ValidateVocab(schema.Schema.Text, vocab.Vocab);
     }
 
-    public void ValidateVocabInline(TypeSchema schema, VocabType vocab)
+    public void ValidateVocabInline(TypeSchema schema, NamedVocab vocab)
     {
         // Type should not be emitted. Kludgy test
         Assert.False(schema.Schema.Text.Contains(vocab.Name));
         ValidateVocab(schema.Schema.Text, vocab.Vocab);
     }
 
-    public void ValidateVocab(string text, VocabType vocabType) => ValidateVocab(text, vocabType.Vocab);
+    public void ValidateVocab(string text, NamedVocab vocabType) => ValidateVocab(text, vocabType.Vocab);
 
     public void ValidateVocab(string text, IVocab vocab)
     {

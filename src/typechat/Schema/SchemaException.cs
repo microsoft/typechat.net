@@ -24,6 +24,11 @@ public class SchemaException : Exception
     }
 
     public ErrorCode Code => _errorCode;
+
+    public override string ToString()
+    {
+        return $"Error: {Code}\n{Message}";
+    }
 }
 
 

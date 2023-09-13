@@ -537,14 +537,14 @@ public class TypescriptExporter : TypeExporter<Type>
             return false;
         }
         IVocab? vocab = null;
-        VocabType? vocabType = null;
+        NamedVocab? vocabType = null;
         if (vocabAttr.HasVocab)
         {
             // VocabAttribute has hardcoded vocabulary
             vocab = vocabAttr.Vocab;
             if (vocabAttr.HasName)
             {
-                vocabType = new VocabType(vocabAttr.Name, vocab);
+                vocabType = new NamedVocab(vocabAttr.Name, vocab);
             }
         }
         else
@@ -559,7 +559,7 @@ public class TypescriptExporter : TypeExporter<Type>
             if (vocab == null)
             {
                 // No vocab
-                throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, vocabAttr.Name);
+                throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, $"Vocabulary {vocabAttr.Name} not found");
             }
             ExportVocabInline(member, isNullable, vocab);
         }
@@ -600,7 +600,7 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.EOL();
     }
 
-    void ExportVocabType(MemberInfo member, Type type, VocabType vocabType, bool isNullable)
+    void ExportVocabType(MemberInfo member, Type type, NamedVocab vocabType, bool isNullable)
     {
         _writer.SOL();
         {

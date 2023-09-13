@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// Comment to add to the exported schema
+/// </summary>
 [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
 public class CommentAttribute : Attribute
 {

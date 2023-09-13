@@ -5,7 +5,7 @@ namespace Microsoft.TypeChat.Tests;
 public class TestAgent : TypeChatTest, IClassFixture<Config>
 {
     Config _config;
-    VocabType _desserts;
+    NamedVocab _desserts;
 
     public TestAgent(Config config)
     {

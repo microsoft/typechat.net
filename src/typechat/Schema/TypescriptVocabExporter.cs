@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-public class TypescriptVocabExporter : TypeExporter<VocabType>
+public class TypescriptVocabExporter : TypeExporter<NamedVocab>
 {
     TypescriptWriter _writer;
     IVocabCollection _store;
@@ -19,7 +19,7 @@ public class TypescriptVocabExporter : TypeExporter<VocabType>
 
     public IVocabCollection Vocabs => _store;
 
-    public override void ExportType(VocabType type)
+    public override void ExportType(NamedVocab type)
     {
         ArgumentNullException.ThrowIfNull(type, nameof(type));
 

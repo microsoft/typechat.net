@@ -1,23 +1,35 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Text;
-
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// CodeWriter uses a text writer to emit code
+/// Includes support of indentation
+/// </summary>
 public class CodeWriter
 {
     TextWriter _writer;
     List<char> _indent;
 
+    /// <summary>
+    /// Create a new CodeWriter
+    /// </summary>
+    /// <param name="writer"></param>
     public CodeWriter(TextWriter writer)
     {
         _writer = writer;
         _indent = new List<char>();
     }
 
+    /// <summary>
+    /// How many spaces to inject for each level of indent
+    /// </summary>
     public int IndentUnit { get; set; } = 2;
-    public bool IncludeSubclasses { get; set; } = true;
 
+    /// <summary>
+    /// Increase the indent 
+    /// </summary>
+    /// <returns></returns>
     public CodeWriter PushIndent()
     {
         for (int i = 0; i < IndentUnit; ++i)
@@ -27,6 +39,10 @@ public class CodeWriter
         return this;
     }
 
+    /// <summary>
+    /// Decrease the indent
+    /// </summary>
+    /// <returns></returns>
     public CodeWriter PopIndent()
     {
         if (_indent.Count > 0)
@@ -36,7 +52,12 @@ public class CodeWriter
         return this;
     }
 
-    public CodeWriter Write(string token)
+    /// <summary>
+    /// Write given token
+    /// </summary>
+    /// <param name="token">token to write</param>
+    /// <returns>this code writer</returns>
+    CodeWriter Write(string token)
     {
         if (!string.IsNullOrEmpty(token))
         {
@@ -45,7 +66,12 @@ public class CodeWriter
         return this;
     }
 
-    public CodeWriter Write(StringBuilder sb)
+    /// <summary>
+    /// Write the contents of the strig builder
+    /// </summary>
+    /// <param name="sb">string builder that contains the string to write</param>
+    /// <returns>CodeWriter</returns>
+    CodeWriter Write(StringBuilder sb)
     {
         if (sb.Length > 0)
         {
@@ -54,12 +80,10 @@ public class CodeWriter
         return this;
     }
 
-    public CodeWriter Write(double token)
-    {
-        _writer.Write(token);
-        return this;
-    }
-
+    /// <summary>
+    /// Write indent
+    /// </summary>
+    /// <returns>CodeWriter</returns>
     public CodeWriter WriteIndent()
     {
         if (_indent.Count > 0)
@@ -72,6 +96,11 @@ public class CodeWriter
         return this;
     }
 
+    /// <summary>
+    /// Append a token
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns>CodeWriter</returns>
     public CodeWriter Append(string token) => Write(token);
     public CodeWriter Append(StringBuilder tokens) => Write(tokens);
     public CodeWriter Append(char ch)
@@ -79,6 +108,23 @@ public class CodeWriter
         _writer.Write(ch);
         return this;
     }
+
+    /// <summary>
+    /// Write a double precision number
+    /// </summary>
+    /// <param name="token">number to write</param>
+    /// <returns>CodeWriter</returns>
+    public CodeWriter Append(double token)
+    {
+        _writer.Write(token);
+        return this;
+    }
+
+    /// <summary>
+    /// Write an integer
+    /// </summary>
+    /// <param name="value">number to write</param>
+    /// <returns>CodeWriter</returns>
     public CodeWriter Append(int value)
     {
         _writer.Write(value);

@@ -283,7 +283,7 @@ internal class CSharpWriter : CodeWriter
     }
     public CSharpWriter Literal(double value)
     {
-        base.Write(value);
+        base.Append(value);
         return this;
     }
 

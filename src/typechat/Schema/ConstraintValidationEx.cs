@@ -47,7 +47,7 @@ public static class ConstraintValidationEx
 
     public static void ThrowIfNotInVocab(this IVocabCollection vocabs, string vocabName, string? propertyName, string? value)
     {
-        VocabType? vocabType = vocabs.Get(vocabName);
+        NamedVocab? vocabType = vocabs.Get(vocabName);
         if (vocabType == null)
         {
             throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, vocabName);
