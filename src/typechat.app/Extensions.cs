@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.TypeChat.Schema;
+
 namespace Microsoft.TypeChat;
 
 public static class Extensions
@@ -14,10 +16,10 @@ public static class Extensions
         return args[index];
     }
 
-    public static void Print(this TypeChatException tex)
+    public static void Print(this TypeChatException ex)
     {
         Console.WriteLine($"## TypeChatException");
-        Console.WriteLine(tex.ToString());
+        Console.WriteLine(ex.ToString());
     }
 
     public static void PrintNotTranslated(this Program program)

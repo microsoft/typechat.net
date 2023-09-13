@@ -173,7 +173,7 @@ public static class TestVocabs
         };
     }
 
-    public static VocabType Desserts()
+    public static NamedVocab Desserts()
     {
         Vocab vocab = new Vocab
         {
@@ -184,10 +184,10 @@ public static class TestVocabs
             "Strawberry Shortcake",
             "Chocolate Cake"
         };
-        return new VocabType(Names.Desserts, vocab);
+        return new NamedVocab(Names.Desserts, vocab);
     }
 
-    public static VocabType Fruits()
+    public static NamedVocab Fruits()
     {
         Vocab vocab = new Vocab
         {
@@ -200,10 +200,10 @@ public static class TestVocabs
             "Nectarine"
         };
 
-        return new VocabType(Names.Fruits, vocab);
+        return new NamedVocab(Names.Fruits, vocab);
     }
 
-    public static VocabType Milks()
+    public static NamedVocab Milks()
     {
         Vocab vocab = new Vocab
         {
@@ -215,10 +215,10 @@ public static class TestVocabs
             "almond milk",
             "oat milk"
         };
-        return new VocabType(Names.Milks, vocab);
+        return new NamedVocab(Names.Milks, vocab);
     }
 
-    public static VocabType Creamers()
+    public static NamedVocab Creamers()
     {
         Vocab vocab = new Vocab
         {
@@ -233,7 +233,7 @@ public static class TestVocabs
             "half and half",
             "heavy cream"
         };
-        return new VocabType(Names.Creamers, vocab);
+        return new NamedVocab(Names.Creamers, vocab);
     }
 }
 

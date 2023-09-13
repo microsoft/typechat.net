@@ -2,20 +2,45 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// Json objects contain string properties that can be assigned values from a known set of strings: vocabularies.
+/// The JsonVocab atribute lets you specify these values as easily as you would in Typescript.
+/// During deserialization, the custom JsonVocabConverter verifies that the string property only contains
+/// values that belong to the vocabulary
+/// 
+/// You can specify a vocabulary inline:
+/// [JsonVocab("negative | neutral | positive")]
+/// 
+/// Or you can specify the name of vocabulary that is resolved at runtime. 
+/// </summary>
 public class JsonVocabAttribute : JsonConverterAttribute
 {
     string _entries;
     IVocab _vocab;
 
+    /// <summary>
+    /// Default const
+    /// </summary>
     public JsonVocabAttribute() { }
 
+    /// <summary>
+    /// Define a JsonVocab attribute
+    /// </summary>
+    /// <param name="entries">The entires in the vocabulary , each separated by a '|'</param>
+    /// <param name="propertyName">The json property name for which this is a vocabulary</param>
     public JsonVocabAttribute(string entries, string? propertyName = null)
     {
         Entries = entries;
         PropertyName = propertyName;
     }
 
+    /// <summary>
+    /// The Name of the vocabulary
+    /// </summary>
     public string? Name { get; set; }
+    /// <summary>
+    /// Entries in this vocabulary, if any were provided inline
+    /// </summary>
     public string? Entries
     {
         get => _entries;
@@ -29,17 +54,31 @@ public class JsonVocabAttribute : JsonConverterAttribute
             }
         }
     }
-
+    /// <summary>
+    /// The Json property name for which this is a vocabulary
+    /// </summary>
     public string? PropertyName { get; set; }
+    /// <summary>
+    /// Should the vocabulary be emitted inline, or as a standalone type
+    /// </summary>
     public bool Inline { get; set; } = true;
+    /// <summary>
+    /// If true, validates properties for membership in this vocabulary
+    /// </summary>
     public bool Enforce { get; set; } = true;
-    public IVocab? Vocab => _vocab;
 
-    public bool HasEntries => !string.IsNullOrEmpty(_entries);
-    public bool HasName => !string.IsNullOrEmpty(Name);
-    public bool HasVocab => _vocab != null;
-    public bool HasPropertyName => !string.IsNullOrEmpty(PropertyName);
+    internal IVocab? Vocab => _vocab;
 
+    internal bool HasEntries => !string.IsNullOrEmpty(_entries);
+    internal bool HasName => !string.IsNullOrEmpty(Name);
+    internal bool HasVocab => _vocab != null;
+    internal bool HasPropertyName => !string.IsNullOrEmpty(PropertyName);
+
+    /// <summary>
+    /// Create a convertor that ensures that any assigned value is a member of the associated vocabulary
+    /// </summary>
+    /// <param name="typeToConvert"></param>
+    /// <returns></returns>
     public override JsonConverter? CreateConverter(Type typeToConvert)
     {
         if (typeof(string) != typeToConvert)
@@ -67,13 +106,13 @@ public class JsonVocabAttribute : JsonConverterAttribute
         return new Vocab(_vocab);
     }
 
-    public VocabType? ToVocabType()
+    public NamedVocab? ToVocabType()
     {
         if (!HasVocab)
         {
             return null;
         }
-        return new VocabType(Name, _vocab);
+        return new NamedVocab(Name, _vocab);
     }
 }
 

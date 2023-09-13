@@ -30,7 +30,7 @@ public class PluginTypescriptExporter
             _tsWriter.PopIndent();
         }
         _tsWriter.EndInterface();
-        _tsWriter.Writer.Flush();
+        _tsWriter.Flush();
     }
 
     void Export(PluginFunctionName pluginName, FunctionView function)

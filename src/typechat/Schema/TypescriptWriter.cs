@@ -2,39 +2,60 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// Class with methods to support writing Typescript code
+/// </summary>
 public class TypescriptWriter
 {
     CodeWriter _writer;
 
+    /// <summary>
+    /// Create a new TypescriptWrite that writes Typescript to the given text writer
+    /// </summary>
+    /// <param name="writer"></param>
     public TypescriptWriter(TextWriter writer)
-        : this(new CodeWriter(writer))
     {
+        _writer = new CodeWriter(writer);
     }
 
-    public TypescriptWriter(CodeWriter writer)
-    {
-        _writer = writer;
-    }
-
+    /// <summary>
+    /// The underlying Code Writer
+    /// </summary>
     public CodeWriter Writer => _writer;
 
+    /// <summary>
+    /// Increase indent
+    /// </summary>
+    /// <returns></returns>
     public TypescriptWriter PushIndent()
     {
         _writer.PushIndent();
         return this;
     }
 
+    /// <summary>
+    /// Decrease indent
+    /// </summary>
+    /// <returns></returns>
     public TypescriptWriter PopIndent()
     {
         _writer.PopIndent();
         return this;
     }
 
+    /// <summary>
+    /// Reset the writer's state. 
+    /// </summary>
+    /// <returns></returns>
     public virtual TypescriptWriter Clear()
     {
         _writer.Clear();
         return this;
     }
+    /// <summary>
+    /// Flush current output
+    /// </summary>
+    public void Flush() => _writer.Flush();
 
     public TypescriptWriter Append(string token) { _writer.Append(token); return this; }
 
@@ -61,7 +82,15 @@ public class TypescriptWriter
         return this;
     }
 
+    /// <summary>
+    /// Start a code block
+    /// </summary>
+    /// <returns></returns>
     public TypescriptWriter StartBlock() => LBrace().EOL();
+    /// <summary>
+    /// End a code block
+    /// </summary>
+    /// <returns></returns>
     public TypescriptWriter EndBlock() => RBrace().EOL();
 
     public TypescriptWriter Export() => Append(Typescript.Keywords.Export);
@@ -81,7 +110,7 @@ public class TypescriptWriter
     public TypescriptWriter Array() => Append(Typescript.Punctuation.Array);
     public TypescriptWriter Literal(string value)
     {
-        _writer.SQuote().Write(value).SQuote();
+        _writer.SQuote().Append(value).SQuote();
         return this;
     }
 
@@ -213,13 +242,19 @@ public class TypescriptWriter
         return EOS();
     }
 
-    public static string WriteCode(Action<TypescriptWriter> codeGen)
+    /// <summary>
+    /// Wrapper method that sets up a TypescriptWriter, then calls the given codeGenerator
+    /// When codeGeneration completes, returns the generated code as a string
+    /// </summary>
+    /// <param name="codeGenerator">Callback that generates code</param>
+    /// <returns></returns>
+    public static string WriteCode(Action<TypescriptWriter> codeGenerator)
     {
-        ArgumentNullException.ThrowIfNull(codeGen, nameof(codeGen));
+        ArgumentNullException.ThrowIfNull(codeGenerator, nameof(codeGenerator));
 
         using StringWriter sw = new StringWriter();
         TypescriptWriter writer = new TypescriptWriter(sw);
-        codeGen(writer);
+        codeGenerator(writer);
         sw.Flush();
         return sw.ToString();
     }

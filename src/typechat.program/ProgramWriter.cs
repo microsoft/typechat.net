@@ -71,7 +71,7 @@ public class ProgramWriter
                 _writer.SOL().Append($"var {ResultVar(i)} = ");
                 Write(calls[i]);
             }
-            _writer.SOL().Write($"return {ResultVar(calls.Length - 1)};").EOL();
+            _writer.SOL().Append($"return {ResultVar(calls.Length - 1)};").EOL();
         }
         return this;
     }
