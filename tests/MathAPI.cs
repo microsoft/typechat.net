@@ -4,6 +4,8 @@ namespace Microsoft.TypeChat.Tests;
 
 public class MathAPI : IMathAPI
 {
+    public static double SmallPi = 3.142;
+
     public static MathAPI Default = new MathAPI();
 
     public double add(double x, double y) => x + y;
@@ -15,6 +17,22 @@ public class MathAPI : IMathAPI
     public double div(double x, double y) => x / y;
 
     public double neg(double x) => -x;
+
+    public double pi() => MathAPI.SmallPi;
+
+    public double power(double x, double power) => Math.Pow(x, power);
+
+    public double sqrRoot(double x) => Math.Sqrt(x);
+
+    public double addVector(double[] vector)
+    {
+        double sum = 0.0;
+        for (int i = 0; i < vector.Length; ++i)
+        {
+            sum += vector[i];
+        }
+        return sum;
+    }
 }
 
 public class MathAPIAsync : IMathAPIAsync
@@ -56,6 +74,22 @@ public class MathAPIAsync : IMathAPIAsync
     public Task<double> unknown(string text)
     {
         return SlowResult(double.NaN);
+    }
+
+    public Task<double> pi() => SlowResult(MathAPI.SmallPi);
+
+    public Task<double> power(double x, double power) => SlowResult(Math.Pow(x, power));
+
+    public Task<double> sqrRoot(double x) => SlowResult(Math.Sqrt(x));
+
+    public Task<double> addVector(double[] vector)
+    {
+        double sum = 0.0;
+        for (int i = 0; i < vector.Length; ++i)
+        {
+            sum += vector[i];
+        }
+        return SlowResult(sum);
     }
 
     async Task<double> SlowResult(double result)

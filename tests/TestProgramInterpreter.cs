@@ -12,6 +12,8 @@ public class TestProgramInterpreter : ProgramTest
     {
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
+        FunctionCallValidator<IMathAPI> validator = new FunctionCallValidator<IMathAPI>(MathAPI.Default);
+        validator.ValidateProgram(program);
 
         Api api = new Api(new MathAPI());
         double result = program.Run(api);
@@ -25,13 +27,11 @@ public class TestProgramInterpreter : ProgramTest
         Program program = Json.Parse<Program>(source);
         ValidateProgram(program);
 
-        Api api = new Api(MathAPIAsync.Default);
-        ProgramCompiler compiler = new ProgramCompiler(api.TypeInfo);
-        Delegate d = compiler.Compile(program, api);
-        double result = (double)d.DynamicInvoke();
-        Assert.Equal(expectedResult, result);
+        FunctionCallValidator<IMathAPIAsync> validator = new FunctionCallValidator<IMathAPIAsync>(MathAPIAsync.Default);
+        validator.ValidateProgram(program);
 
-        result = (double)await program.RunAsync(api);
+        Api api = new Api(MathAPIAsync.Default);
+        double result = await program.RunAsync(api);
         Assert.Equal(expectedResult, result);
     }
 

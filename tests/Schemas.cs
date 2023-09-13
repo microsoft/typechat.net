@@ -291,6 +291,11 @@ public class Name : IComparable<Name>
         }
         return cmp;
     }
+
+    public override string ToString()
+    {
+        return $"{FirstName} {LastName}";
+    }
 }
 
 public class Location
@@ -339,7 +344,7 @@ public class Circle : Shape
     public double Radius;
 }
 
-public class Canvas
+public class Drawing
 {
     public Shape[] Shapes { get; set; }
 
@@ -353,7 +358,7 @@ public class Canvas
             {
                 if (curNumber == objNumber)
                 {
-                    return (T) shape;
+                    return (T)shape;
                 }
             }
         }

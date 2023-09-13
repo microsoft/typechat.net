@@ -1,6 +1,6 @@
 ﻿{
   "program1": {
-    "result": "998877[One, 66][Two, 55]",
+    "result": "998877(One, 66)(Two, 55)",
     "source": {
       "@steps": [
         {
@@ -91,5 +91,40 @@
         }
       ]
     }
+  },
+  "program5": {
+    "result": "35hellogoodbye(city, athens)(country, greece)",
+    "source": {
+      "@steps": [
+        {
+          "@func": "concat",
+          "@args": [
+            [
+              3,
+              5,
+              "Hello",
+              "Goodbye",
+              {
+                "City": "Athens",
+                "Country": "Greece"
+              }
+            ]
+          ]
+        },
+        {
+          "@func": "uppercase",
+          "@args": [
+            { "@ref": 0 }
+          ]
+        },
+        {
+          "@func": "lowercase",
+          "@args": [
+            { "@ref": 1 }
+          ]
+        }
+      ]
+    }
   }
+
 }

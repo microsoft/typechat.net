@@ -55,7 +55,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
             return;
         }
 
-        var translator = new JsonTranslator<Canvas>(new LanguageModel(_config.OpenAI));
+        var translator = new JsonTranslator<Drawing>(new LanguageModel(_config.OpenAI));
         string request = "Add a circle of radius 4.5 at 30, 30 and\n" +
                          "Add a retangle at 5, 5 with height 10 and width 15";
 
