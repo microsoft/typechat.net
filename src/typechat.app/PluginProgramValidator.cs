@@ -4,7 +4,7 @@ using Microsoft.SemanticKernel.SkillDefinition;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
-namespace Plugins;
+namespace Microsoft.TypeChat;
 
 public class PluginProgramValidator : ProgramVisitor, IProgramValidator
 {
@@ -28,7 +28,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         }
     }
 
-    void CSharpValidate(Program program)
+    public void CSharpValidate(Program program)
     {
         using StringWriter sw = new StringWriter();
         new ProgramWriter(sw).Write(program, "IPlugin");

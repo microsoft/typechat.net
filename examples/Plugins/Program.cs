@@ -9,32 +9,26 @@ public class PluginApp : ConsoleApp
 {
     OpenAIConfig _config;
     IKernel _kernel;
-    ProgramTranslator _translator;
-    PluginApi _pluginApi;
-    SchemaText _pluginSchema;
+    PluginProgramTranslator _programTranslator;
     ProgramInterpreter _interpreter;
 
     public PluginApp()
     {
         InitPlugins();
-        _translator = new ProgramTranslator(
-            _kernel.LanguageModel(_config.Model),
-            new ProgramValidator(new PluginProgramValidator(_pluginApi.TypeInfo)),
-            _pluginSchema
-        );
-        _translator.MaxRepairAttempts = 2;
+        _programTranslator = new PluginProgramTranslator(_kernel, _config.Model);
+        _programTranslator.Translator.MaxRepairAttempts = 2;
         _interpreter = new ProgramInterpreter();
         // Uncomment to see ALL raw messages to and from the AI
-        //base.SubscribeAllEvents(_translator);
+        //base.SubscribeAllEvents(_translator.Translator);
     }
 
     public IKernel Kernel => _kernel;
-    public string Schema => _pluginSchema;
+    public string Schema => _programTranslator.Schema;
 
     public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
     {
-        using Program program = await _translator.TranslateAsync(input, cancelToken);
-        program.Print(_pluginApi.TypeName);
+        using Program program = await _programTranslator.TranslateAsync(input, cancelToken);
+        program.Print(_programTranslator.Api.TypeName);
         Console.WriteLine();
 
         if (program.IsComplete)
@@ -50,7 +44,7 @@ public class PluginApp : ConsoleApp
             return;
         }
         Console.WriteLine("Running program");
-        string result = await _interpreter.RunAsync(program, _pluginApi.InvokeAsync);
+        string result = await _interpreter.RunAsync(program, _programTranslator.Api.InvokeAsync);
         if (!string.IsNullOrEmpty(result))
         {
             Console.WriteLine(result);
@@ -65,9 +59,6 @@ public class PluginApp : ConsoleApp
         _kernel.ImportSkill(new FoldersPlugin());
         _kernel.ImportSkill(new StringPlugin());
         _kernel.ImportSkill(new TimePlugin());
-
-        _pluginApi = new PluginApi(_kernel);
-        _pluginSchema = _pluginApi.TypeInfo.ExportSchema(_pluginApi.TypeName);
     }
 
     public static async Task<int> Main(string[] args)

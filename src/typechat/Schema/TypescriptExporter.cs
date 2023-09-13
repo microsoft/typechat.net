@@ -2,8 +2,38 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// Export NET Types to schema for JSON objects. The schema is expressed in Typescript and passed to
+/// JsonTranslators
+/// 
+/// Typescript is a concise and expressive schema definition language, making it easy to to express the
+/// shape and structure of Json easily. We want language models to translate user requests into JSON
+/// of a particular shape that is defined by a schema. We then want to deserialize this JSON into strong
+/// types and validate the types for correctness.
+///
+/// The exporter is written entirely in C# and does not depend on any Typescript components.
+/// It is also intended to support scenarios where every request has a different schema that is contextual.
+/// 
+/// The exporter has limitations because Type systems are complex. It aims to support common scenarios.
+///  - Will export classes, enums, value types, properties, fields etc.. including inheritance, mapped to their Typescript base types
+///  - Obeys nullable and '?' annotations in C#
+///  - Incorporates Serialazation attributes such as JsonPropertyName and JsonIgnore
+///  - Vocabularies: this is a new concept that greatly simplifies Json programming
+///  - Json Polymorphism is supported. But polymorphism Json serialiezer attributes are currently not looked at
+///  By default, the discriminator used to support polymorphism must be the same as the typename
+/// the same as the type name
+/// 
+/// You can always author the Typescript schema by hand and give it to the JsonTranslator using a suitable
+/// constructor overload
+/// </summary>
 public class TypescriptExporter : TypeExporter<Type>
 {
+    /// <summary>
+    /// Export the given .NET type as schema... expressed in Typescript
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="knownVocabs"></param>
+    /// <returns></returns>
     public static TypescriptSchema GenerateSchema(Type type, IVocabCollection? knownVocabs = null)
     {
         using StringWriter writer = new StringWriter();
@@ -17,6 +47,11 @@ public class TypescriptExporter : TypeExporter<Type>
         return new TypescriptSchema(type, schema, exporter.UsedVocabs);
     }
 
+    /// <summary>
+    /// Export the given API interface as Typescript
+    /// </summary>
+    /// <param name="type">Must be an interface</param>
+    /// <returns>A typescript schema</returns>
     public static TypescriptSchema GenerateAPI(Type type)
     {
         using StringWriter writer = new StringWriter();
@@ -54,16 +89,42 @@ public class TypescriptExporter : TypeExporter<Type>
         _nullableInfo = new NullabilityInfoContext();
     }
 
+    /// <summary>
+    /// Typescript writer the exporter is using
+    /// </summary>
     public TypescriptWriter Writer => _writer;
     //
-    // Use this to *customize* how a .NET Type is mapped to a Typescript type
+    // Use this to *customize* how a .NET Type Name is mapped to a Typescript type name
     // Return null if you can't map and defaults are used.
     //
-    public Func<Type, string?> TypeMapper { get; set; }
-
+    public Func<Type, string?> TypeNameMapper { get; set; }
+    /// <summary>
+    /// Use this to customize how type discriminators are produced. 
+    /// </summary>
+    public Func<Type, string> DiscriminatorGenerator { get; set; }
+    /// <summary>
+    /// Should export subclasses of a given type: automatically exporting type hierarchies?
+    /// Default is true
+    /// </summary>
     public bool IncludeSubclasses { get; set; } = true;
+    /// <summary>
+    /// Include comments? You can provide includable comments using the [Comment] attribute
+    /// Default is true
+    /// </summary>
     public bool IncludeComments { get; set; } = true;
+    /// <summary>
+    /// Export enums as string literals? Typescript allows that and in some situations, this works
+    /// better with the some models
+    /// Default is false
+    /// </summary>
     public bool EnumsAsLiterals { get; set; } = false;
+    /// <summary>
+    /// Discriminators are needed for Json Polymorphism: so the Json Deserializer can distinguish which 
+    /// object should be deserialized to instances of which sub-class
+    /// By default discriminators are emitted and in a format recognized by System.Text.Json serilization
+    ///   "$type": "{type.Name}"
+    /// You can customize this using 
+    /// </summary>
     public bool IncludeDiscriminator { get; set; } = true;
 
     public IVocabCollection Vocabs
@@ -95,10 +156,10 @@ public class TypescriptExporter : TypeExporter<Type>
         _nullableInfo = null;
     }
 
-    public override void ExportQueued()
+    public override void ExportPending()
     {
-        base.ExportQueued();
-        _vocabExporter?.ExportQueued();
+        base.ExportPending();
+        _vocabExporter?.ExportPending();
     }
 
     public override void ExportType(Type type)
@@ -559,10 +620,13 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         if (!type.IsAbstract)
         {
-            _writer.
-            SOL().
-                Variable("$type", $"'{type.Name}'").
-            EOL();
+            string discriminator = (DiscriminatorGenerator != null) ?
+                                    DiscriminatorGenerator(type) :
+                                    $"'{type.Name}'";
+
+            _writer.SOL();
+                _writer.Variable("$type", discriminator);
+            _writer.EOL();
         }
         return this;
     }
@@ -575,9 +639,9 @@ public class TypescriptExporter : TypeExporter<Type>
         }
 
         string? typeName = null;
-        if (TypeMapper != null)
+        if (TypeNameMapper != null)
         {
-            typeName = TypeMapper(type);
+            typeName = TypeNameMapper(type);
         }
         if (typeName == null)
         {

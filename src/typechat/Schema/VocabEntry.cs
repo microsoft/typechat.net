@@ -1,9 +1,10 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Diagnostics.CodeAnalysis;
-
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// An Vocabulary Entry.
+/// </summary>
 public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
 {
     string _text;
@@ -14,6 +15,9 @@ public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
         _text = text;
     }
 
+    /// <summary>
+    /// Vocabulary text
+    /// </summary>
     public string Text => _text;
 
     public int CompareTo(VocabEntry other)
@@ -26,32 +30,13 @@ public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
         return string.Compare(_text, other._text, comparison);
     }
 
-    public override bool Equals([NotNullWhen(true)] object? obj)
-    {
-        return _text.Equals(obj);
-    }
+    public override bool Equals(object? obj) => _text.Equals(obj);
 
-    public bool Equals(VocabEntry other)
-    {
-        return _text.Equals(other._text);
-    }
+    public bool Equals(VocabEntry other) => _text.Equals(other._text);
 
-    public override int GetHashCode()
-    {
-        return _text.GetHashCode();
-    }
+    public override int GetHashCode() => _text.GetHashCode();
+    public override string? ToString() => _text;
 
-    public override string? ToString()
-    {
-        return _text;
-    }
-
-    public static implicit operator string(VocabEntry entry)
-    {
-        return entry._text;
-    }
-    public static implicit operator VocabEntry(string text)
-    {
-        return new VocabEntry(text);
-    }
+    public static implicit operator string(VocabEntry entry) => entry._text;
+    public static implicit operator VocabEntry(string text) => new VocabEntry(text);
 }

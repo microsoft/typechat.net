@@ -51,27 +51,24 @@ TypeChat.Program translates natural language requests into simple programs (***P
         );
  
 ## TypeChat.SemanticKernel ##
-TypeChat.SemanticKernel makes it easy to get ***strongly typed*** .NET objects from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel).
-
-With auto-generation of Typescript schema:
-
-        // Translates user input into a typed responses classifying sentiment
-        var translator = new JsonTranslator<SentimentResponse>(
-            new LanguageModel(Config.LoadOpenAI()),
-            new TypeValidator<SentimentResponse>()
-        );
-
-TypeChat.SemanticKernel also contains experimental support to dynamically synthesize and execute **programs** that call Semantic Kernel plugins. 
 
 The library contains classes for:
 * LLM bindings for TypeChat using the Semantic Kernel. All TypeChat examples use the Semantic Kernel to call LLMs
-* Program synthesis with Plugins: Automatically turns registered plugins into a PluginAPI that programs synthesized by the LLM can call. [Plugins Example](examples/Plugins/Program.cs)
-
+* **Program synthesis with Plugins**: Automatically turns registered plugins into a PluginAPI that programs synthesized by the LLM can call. [Plugins Example](examples/Plugins/Program.cs)
+ 
 # TypeChat.Dialog
 TypeChat.Dialog is an early version of framework desiged for strongly typed interactions with Agents with built in interaction history and other features. 
 
     // Create an agent that interactively helps the user enter their health information, such as medications and conditions
     new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()))
+
+# TypeChat.App
+Helper classes for:
+* Console Apps
+* Text Classification
+* Intent dispatch and routing
+* Generation and validation of programs that use Plugins
+
 
 
 # Getting Started 

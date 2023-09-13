@@ -4,22 +4,36 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// Used by classes that exports Type information of type T
+/// </summary>
+/// <typeparam name="T">The type of the type information being exported</typeparam>
 public abstract class TypeExporter<T>
 {
     HashSet<T> _exportedTypes;
     Queue<T>? _pendingTypes;
 
+    /// <summary>
+    /// Create an exporter
+    /// </summary>
     public TypeExporter()
     {
         _exportedTypes = new HashSet<T>();
     }
 
+    /// <summary>
+    /// Reset internal state, allowing this exporter to be reused
+    /// </summary>
     public virtual void Clear()
     {
         _exportedTypes?.Clear();
         _pendingTypes?.Clear();
     }
 
+    /// <summary>
+    /// Add a type to the pending list of types needing export
+    /// </summary>
+    /// <param name="type"></param>
     public void AddPending(T type)
     {
         if (!IsExported(type) && ShouldExport(type))
@@ -29,38 +43,36 @@ public abstract class TypeExporter<T>
         }
     }
 
+    /// <summary>
+    /// Add multiple types to the pending types needing export
+    /// </summary>
+    /// <param name="types"></param>
     public void AddPending(IEnumerable<T> types)
     {
+        ArgumentNullException.ThrowIfNull(types, nameof(types));
         foreach (var t in types)
         {
             AddPending(t);
         }
     }
 
-    public T? GetPending()
-    {
-        if (_pendingTypes != null && _pendingTypes.Count > 0)
-        {
-            return _pendingTypes.Dequeue();
-        }
-
-        return default;
-    }
-
+    /// <summary>
+    /// Has the given type been exported?
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
     public bool IsExported(T type) => _exportedTypes.Contains(type);
 
     public void Export(T type)
     {
         AddPending(type);
-        ExportQueued();
+        ExportPending();
     }
 
-    protected void AddExported(T type)
-    {
-        _exportedTypes.Add(type);
-    }
-
-    public virtual void ExportQueued()
+    /// <summary>
+    /// Export all currently pending Types
+    /// </summary>
+    public virtual void ExportPending()
     {
         T? type;
         while ((type = GetPending()) != null)
@@ -69,7 +81,39 @@ public abstract class TypeExporter<T>
         }
     }
 
+    /// <summary>
+    /// Implemented by exporters
+    /// After exporting a type, exporters should call AddExported(...)
+    /// </summary>
+    /// <param name="t"></param>
     public abstract void ExportType(T t);
 
+    /// <summary>
+    /// Should a type be exported? E.g primitive types may not be.
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
     protected virtual bool ShouldExport(T t) => true;
+    /// <summary>
+    /// Update the exported list... 
+    /// </summary>
+    /// <param name="type"></param>
+    protected void AddExported(T type)
+    {
+        _exportedTypes.Add(type);
+    }
+
+    /// <summary>
+    /// Dequeue the next pendin type for export
+    /// </summary>
+    /// <returns></returns>
+    T? GetPending()
+    {
+        if (_pendingTypes != null && _pendingTypes.Count > 0)
+        {
+            return _pendingTypes.Dequeue();
+        }
+
+        return default;
+    }
 }

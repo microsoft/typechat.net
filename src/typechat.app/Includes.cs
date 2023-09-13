@@ -10,4 +10,5 @@ global using System.Threading.Tasks;
 global using System.CommandLine.Parsing;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Configuration.Json;
+global using Microsoft.SemanticKernel;
 global using Microsoft.TypeChat;

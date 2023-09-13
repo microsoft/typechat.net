@@ -12,28 +12,27 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     }
 
     [Fact]
-    public async Task Translate()
+    public async Task TranslateSentiment()
     {
-        if (!CanRunEndToEndTest(_config))
+        if (!CanRunEndToEndTest(_config, nameof(TranslateSentiment)))
         {
-            Trace.WriteLine("No Open AI. Skipping");
             return;
         }
-        await Translate(new LanguageModel(_config.OpenAI));
+        await TranslateSentiment(new LanguageModel(_config.OpenAI));
     }
 
     [Fact]
-    public async Task TranslateCompletionModel()
+    public async Task TranslateSentiment_CompletionModel()
     {
-        if (!CanRunEndToEndTest(_config))
+        if (!CanRunEndToEndTest(_config, nameof(TranslateSentiment_CompletionModel)))
         {
             Trace.WriteLine("No Open AI. Skipping");
             return;
         }
-        await Translate(new TextCompletionModel(_config.OpenAI));
+        await TranslateSentiment(new TextCompletionModel(_config.OpenAI));
     }
 
-    async Task Translate(ILanguageModel model)
+    async Task TranslateSentiment(ILanguageModel model)
     {
         var translator = new JsonTranslator<SentimentResponse>(
             model,
@@ -46,6 +45,33 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         response = await translator.TranslateAsync("Its been a long days night, and I've been working like a dog");
         Assert.NotNull(response);
         Assert.NotNull(response.Sentiment);
+    }
+
+    [Fact]
+    public async Task Translate_Polymorphic()
+    {
+        if (!CanRunEndToEndTest(_config, nameof(Translate_Polymorphic)))
+        {
+            return;
+        }
+
+        var translator = new JsonTranslator<Canvas>(new LanguageModel(_config.OpenAI));
+        string request = "Add a circle of radius 4.5 at 30, 30 and\n" +
+                         "Add a retangle at 5, 5 with height 10 and width 15";
+
+        var canvas = await translator.TranslateAsync(request);
+        Assert.True(canvas.Shapes.Length == 2);
+
+        Circle circle = canvas.GetShape<Circle>();
+        Assert.Equal(4.5, circle.Radius);
+        Assert.Equal(30, circle.CenterX);
+        Assert.Equal(30, circle.CenterY);
+
+        Rectangle rect = canvas.GetShape<Rectangle>();
+        Assert.Equal(5, rect.TopX);
+        Assert.Equal(5, rect.TopY);
+        Assert.Equal(10, rect.Height);
+        Assert.Equal(15, rect.Width);
     }
 
     /// <summary>
