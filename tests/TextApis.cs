@@ -32,9 +32,9 @@ public class TextApis : IStringAPI, ITimeAPI
         {
             foreach (var kv in obj)
             {
-                sb.Append('[').Append(kv.Key).Append(", ");
+                sb.Append('(').Append(kv.Key).Append(", ");
                 sb.Append(kv.Value);
-                sb.Append("]");
+                sb.Append(")");
             }
         }
         else

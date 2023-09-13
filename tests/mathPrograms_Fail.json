@@ -108,6 +108,39 @@
         }
       ]
     }
+  },
+  "program6": {
+    "result": 50,
+    "source": {
+      "@steps": [
+        {
+          "@func": "addVector",
+          "@args": [
+            5,
+            10,
+            15,
+            20
+          ]
+        }
+      ]
+    }
+  },
+  "program7": {
+    "result": 0,
+    "source": {
+      "@steps": [
+        {
+          "@func": "add",
+          "@args": [
+            3,
+            4,
+            {
+              "@func": "pi_x"
+            }
+          ]
+        }
+      ]
+    }
   }
 
 }

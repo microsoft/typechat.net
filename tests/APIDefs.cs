@@ -15,6 +15,14 @@ public interface IMathAPI
     double div(double x, double y);
     [Comment("Negate a number")]
     double neg(double x);
+    [Comment("Return pi")]
+    double pi();
+    [Comment("power")]
+    double power(double x, double power);
+    [Comment("sqrRoot")]
+    double sqrRoot(double x);
+    [Comment("Vectorized addition")]
+    double addVector(double[] vector);
 }
 
 public interface IMathAPIAsync
@@ -29,6 +37,14 @@ public interface IMathAPIAsync
     Task<double> div(double x, double y);
     [Comment("Negate a number")]
     Task<double> neg(double x);
+    [Comment("Return pi")]
+    Task<double> pi();
+    [Comment("power")]
+    Task<double> power(double x, double power);
+    [Comment("sqrRoot")]
+    Task<double> sqrRoot(double x);
+    [Comment("Vectorized addition")]
+    Task<double> addVector(double[] vector);
 }
 
 [Comment("This is an API for String Operations")]

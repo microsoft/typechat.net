@@ -5,10 +5,7 @@
       "@steps": [
         {
           "@func": "mul",
-          "@args": [
-            3,
-            5
-          ]
+          "@args": [3, 5]
         }
       ]
     }
@@ -19,17 +16,11 @@
       "@steps": [
         {
           "@func": "mul",
-          "@args": [
-            3,
-            5
-          ]
+          "@args": [3, 5]
         },
         {
           "@func": "mul",
-          "@args": [
-            4,
-            7
-          ]
+          "@args": [4, 7]
         },
         {
           "@func": "add",
@@ -55,10 +46,7 @@
             3,
             {
               "@func": "mul",
-              "@args": [
-                4,
-                5
-              ]
+              "@args": [4, 5]
             }
           ]
         },
@@ -70,14 +58,41 @@
             },
             {
               "@func": "mul",
-              "@args": [
-                5,
-                6
-              ]
+              "@args": [5, 6]
             }
           ]
         }
       ]
     }
-  }
+  },
+  "program3": {
+    "result": 50,
+    "source": {
+      "@steps": [
+        {
+          "@func": "addVector",
+          "@args": [[5, 10, 15, 20]]
+        }
+      ]
+    }
+  },
+  "program4": {
+    "result": 78.55,
+    "source": {
+      "@steps": [
+        {
+          "@func": "mul",
+          "@args": [
+            {
+              "@func": "pi"
+            },
+            {
+              "@func": "power",
+              "@args": [ 5, 2 ]
+            }
+          ]
+        }
+      ]
+    }
+  } 
 }
