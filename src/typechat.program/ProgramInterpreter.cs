@@ -21,6 +21,13 @@ public class ProgramInterpreter
         _results = new List<dynamic>();
     }
 
+    /// <summary>
+    /// Runs the given program by evaluating each node in the Program AST
+    /// Evaulates any FunctionCalls by invoking the callHandler callback
+    /// </summary>
+    /// <param name="program">program to run</param>
+    /// <param name="callHandler">handler that will actually make function calls</param>
+    /// <returns>Result of running the program</returns>
     public dynamic? Run(Program program, Func<string, dynamic[], dynamic> callHandler)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
@@ -39,6 +46,13 @@ public class ProgramInterpreter
         return GetResult();
     }
 
+    /// <summary>
+    /// Asynchronously run the given program by evaluating each node in the Program AST
+    /// Evaulates any FunctionCalls by invoking the callHandler callback
+    /// </summary>
+    /// <param name="program">program to run</param>
+    /// <param name="callHandler">handler that will actually make function calls</param>
+    /// <returns>Result of running the program</returns>
     public async Task<dynamic?> RunAsync(Program program, Func<string, dynamic[], Task<dynamic>> callHandlerAsync)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));

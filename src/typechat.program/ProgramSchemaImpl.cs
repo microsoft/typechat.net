@@ -6,6 +6,11 @@ public partial class Program : IDisposable
 {
     JsonDocument? _programSource;
 
+    /// <summary>
+    /// Create a new Json program from the Json document
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="steps"></param>
     public Program(JsonDocument? source, Steps steps)
     {
         ArgumentNullException.ThrowIfNull(steps, nameof(steps));

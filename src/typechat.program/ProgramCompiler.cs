@@ -49,11 +49,23 @@ public class ProgramCompiler
         return LinqExpression.Lambda(lambdaBlock);
     }
 
+    /// <summary>
+    /// Return the program compiled to a delegate. 
+    /// </summary>
+    /// <param name="program">The program to compile</param>
+    /// <param name="api">The api that the program is permitted to call</param>
+    /// <returns></returns>
     public Delegate Compile(Program program, Api api)
     {
         return Compile(program, api.Implementation);
     }
 
+    /// <summary>
+    /// Return the program compiled to a delegate. 
+    /// </summary>
+    /// <param name="program">The program to compile</param>
+    /// <param name="api">The api that the program is permitted to call</param>
+    /// <returns></returns>
     public Delegate Compile(Program program, object apiImpl)
     {
         LambdaExpression lambda = CompileToExpressionTree(program, apiImpl);

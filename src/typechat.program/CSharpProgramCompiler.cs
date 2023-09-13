@@ -8,8 +8,8 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Compile Json Programs that were transpiled into C#
-///  - Class Name 
+/// Compile Json Programs that were first transpiled into C#
+/// 
 /// </summary>
 public class CSharpProgramCompiler
 {
