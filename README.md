@@ -9,14 +9,16 @@ TypeChat.NET helps you build natural language interfaces with LLMs using strong 
             new LanguageModel(Config.LoadOpenAI())
         );
 
-**Project Goal**: develop frameworks that enable strongly typed programming with AI. Currently supported scenarios are shown in the examples. TypeChat.NET is in **active and rapid development** with frequent updates and refactoring. When in doubt, look at the code. Comments and documentation will improve as the code settles. 
+**Goal**: develop frameworks that enable strongly typed programming with AI. Currently supported scenarios are shown in the examples. TypeChat.NET is in **active and rapid development** with frequent updates and refactoring. When in doubt, look at the code. Comments and documentation will improve as the code settles. 
 
 
 # Assemblies
 TypeChat.NET consists of the following assemblies:
-* **TypeChat**: Translate user intent into strongly typed and validated objects. Also Classes for automatic exporting .NET types as Typescript schema. This schema is then sent to the AI. Also includes additional support for validating the returned JSON. 
+* **TypeChat**: Classes (JsonTranslator<T>) that translate user intent into strongly typed and validated objects. Additionally includes:
+  * Support for automatically exporting .NET type information as schema expressed using the concise syntax of Typescript. This schema is sent to language models. 
+  * Validation of returned JSON. 
 
-* **TypeChat.Program**: Classes to synthesize, validate and execute ***JSON programs*** 
+* **TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs*** 
 
 * **TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel - access to language models, support for Semantic Kernel Plugins, Embeddings and Semantic Memory
 
