@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.TypeChat.CSharp;
+
 namespace Microsoft.TypeChat.Tests;
 
 public class TestProgramCSharp : ProgramTest

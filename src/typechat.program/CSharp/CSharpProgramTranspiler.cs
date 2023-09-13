@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.CSharp;
 
 /// <summary>
 /// Experimental class that transpiles Json Programs into C#.
 /// Programs are emitted into a class:
-///     ClassName: Program (Default)
+///     ClassName: Program
 ///     MethodName: Run
 ///
 /// Only SYNCHRONOUS methods currently supported
@@ -44,6 +44,9 @@ public class CSharpProgramTranspiler
         _blocks = new List<string>();
     }
 
+    /// <summary>
+    /// Your program is transpiled into a class with this name
+    /// </summary>
     public string ClassName
     {
         get => _className;
@@ -53,9 +56,10 @@ public class CSharpProgramTranspiler
             _className = value;
         }
     }
-    public string ApiVarName { get; set; } = "api";
-    public string ResultVarPrefix { get; set; } = "step";
-    public string MethodName { get; set; } = "Run";
+
+    internal string ApiVarName { get; set; } = "api";
+    internal string ResultVarPrefix { get; set; } = "step";
+    internal string MethodName { get; set; } = "Run";
 
     public IList<string> Namespaces => _namespaces;
 
@@ -377,7 +381,7 @@ public class CSharpProgramTranspiler
         }
     }
 
-    string ResultVar(int resultNumber) => (ResultVarPrefix + (resultNumber + 1));
+    string ResultVar(int resultNumber) => ResultVarPrefix + (resultNumber + 1);
 
     (StringWriter, CSharpWriter) BeginBlock()
     {

@@ -5,16 +5,21 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.CSharp;
 
 /// <summary>
-/// Compile Json Programs that were first transpiled into C#
-/// 
+/// CSharp compiler. Uses Roslyn to compile C# code to assemblies
+/// While the compiler is generic, it is intended to be used in tandem with CSharpProgramTranspiler
 /// </summary>
 public class CSharpProgramCompiler
 {
     public const string DefaultProgramName = "Program";
 
+    /// <summary>
+    /// Default compiler options - compiles the program as a DLL
+    /// Optimizations are disabled
+    /// </summary>
+    /// <returns></returns>
     public static CSharpCompilationOptions DefaultOptions()
     {
         return new CSharpCompilationOptions(
@@ -23,6 +28,10 @@ public class CSharpProgramCompiler
             );
     }
 
+    /// <summary>
+    /// Return the location of the runtime this assembly is bound to
+    /// </summary>
+    /// <returns></returns>
     public static string GetRuntimeLocation()
     {
         string sysLocation = typeof(object).Assembly.Location;
@@ -34,6 +43,10 @@ public class CSharpProgramCompiler
     string _assemblyName;
     CSharpCompilation _compilation;
 
+    /// <summary>
+    /// Create a new compiler
+    /// </summary>
+    /// <param name="programName">Name of the assembly</param>
     public CSharpProgramCompiler(string programName = DefaultProgramName)
     {
         ArgumentException.ThrowIfNullOrEmpty(programName, nameof(programName));
@@ -41,18 +54,29 @@ public class CSharpProgramCompiler
         _compilation = CSharpCompilation.Create(_assemblyName).WithOptions(s_defaultOptions);
     }
 
+    /// <summary>
+    /// Add code as a new compilation unit
+    /// </summary>
+    /// <param name="code"></param>
     public void AddCode(string code)
     {
         var apiTree = CSharpSyntaxTree.ParseText(code);
         _compilation = _compilation.AddSyntaxTrees(apiTree);
     }
-
+    /// <summary>
+    /// Load source code from a file as a compilation unit
+    /// </summary>
+    /// <param name="filePath">file path</param>
     public void AddCodeFile(string filePath)
     {
         using var stream = File.OpenRead(filePath);
         _compilation = _compilation.AddSyntaxTrees(CSharpSyntaxTree.ParseText(SourceText.From(stream)));
     }
 
+    /// <summary>
+    /// Add assembly references to the compiler
+    /// </summary>
+    /// <param name="list"></param>
     public void AddReferences(AssemblyReferences list)
     {
         var references = from path in list
@@ -70,6 +94,13 @@ public class CSharpProgramCompiler
         return null;
     }
 
+    /// <summary>
+    /// Run the compiler
+    /// If successful, returns the bytes for the compiled assembly
+    /// If failed, returns diagnostic error information
+    /// </summary>
+    /// <param name="code">Optional supplied code. Code could also have been added by calls to Add</param>
+    /// <returns>Result</returns>
     public Result<byte[]> Compile(string? code = null)
     {
         if (!string.IsNullOrEmpty(code))
@@ -116,6 +147,8 @@ public class CSharpProgramCompiler
 
     /// <summary>
     /// Compile the Json program into a .NET aseembly
+    /// - First, transpiles the program into C#
+    /// - Then runs the C# compiler on that source code and returns a program assembly
     /// </summary>
     /// <param name="program"></param>
     /// <returns>In in-memory compiled assembly</returns>
@@ -138,51 +171,6 @@ public class CSharpProgramCompiler
         }
 
         return Result<ProgramAssembly>.Error(result.Message);
-    }
-}
-
-public class AssemblyReferences : HashSet<string>
-{
-    public AssemblyReferences() { }
-
-    public void AddStandard()
-    {
-        Add(
-            typeof(object),
-            typeof(System.Runtime.CompilerServices.DynamicAttribute)
-        );
-        string runtimeDir = CSharpProgramCompiler.GetRuntimeLocation();
-        Add(runtimeDir, "System.Runtime.dll");
-        Add(runtimeDir, "System.Collections.dll");
-        Add(runtimeDir, "System.Text.Json.dll");
-        Add(runtimeDir, "System.Threading.dll");
-        Add(runtimeDir, "System.Threading.Tasks.dll");
-    }
-
-    public void Add(string rootPath, string assemblyName)
-    {
-        string assemblyPath = Path.Join(rootPath, assemblyName);
-        if (!File.Exists(assemblyPath))
-        {
-            throw new ArgumentException($"{assemblyPath} not found");
-        }
-        Add(assemblyPath);
-    }
-
-    public void Add(params Type[] types)
-    {
-        if (types.IsNullOrEmpty())
-        {
-            return;
-        }
-        for (int i = 0; i < types.Length; ++i)
-        {
-            string path = types[i].Assembly.Location;
-            if (!Contains(path))
-            {
-                Add(path);
-            }
-        }
     }
 }
 
