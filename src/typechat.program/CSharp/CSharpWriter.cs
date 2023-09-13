@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.CSharp;
 
 internal class CSharpLang : CodeLanguage
 {
@@ -283,7 +283,7 @@ internal class CSharpWriter : CodeWriter
     }
     public CSharpWriter Literal(double value)
     {
-        base.Append(value);
+        Append(value);
         return this;
     }
 
