@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Simple helper class for traversing a Program's AST
+/// </summary>
 public class ProgramVisitor
 {
     public ProgramVisitor() { }

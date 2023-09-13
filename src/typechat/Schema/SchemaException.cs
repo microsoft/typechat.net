@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// Exception thrown if Typechat encounters a schema issue
+/// </summary>
 public class SchemaException : Exception
 {
     public enum ErrorCode

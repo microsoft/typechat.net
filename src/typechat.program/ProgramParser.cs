@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Parses a Json Program into a Program object
+/// </summary>
 public class ProgramParser
 {
     public class ExprNames
@@ -13,13 +16,27 @@ public class ProgramParser
         public const string CannotTranslate = "@cannot_translate";
     }
 
+    /// <summary>
+    /// Create a new parser
+    /// </summary>
     public ProgramParser() { }
 
+    /// <summary>
+    /// Parse the given program source
+    /// </summary>
+    /// <param name="programSource"></param>
+    /// <returns>parsed program</returns>
     public Program Parse(string programSource)
     {
         return Parse(JsonDocument.Parse(programSource));
     }
 
+    /// <summary>
+    /// Parsed the given program source found in a Json document
+    /// </summary>
+    /// <param name="programSource"></param>
+    /// <returns>parsed program</returns>
+    /// <exception cref="ProgramException"></exception>
     public Program Parse(JsonDocument programSource)
     {
         JsonElement root = programSource.RootElement;

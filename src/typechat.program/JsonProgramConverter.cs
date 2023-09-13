@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public class JsonProgramConvertor : JsonConverter<Program>
+internal class JsonProgramConvertor : JsonConverter<Program>
 {
     internal static readonly JsonSerializerOptions Options = JsonSerializerTypeValidator.DefaultOptions();
 

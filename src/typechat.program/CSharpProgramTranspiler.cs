@@ -59,6 +59,11 @@ public class CSharpProgramTranspiler
 
     public IList<string> Namespaces => _namespaces;
 
+    /// <summary>
+    /// Transpiles the program to C#
+    /// </summary>
+    /// <param name="program"></param>
+    /// <returns>Program source code</returns>
     public string Compile(Program program)
     {
         ArgumentNullException.ThrowIfNull(program, nameof(program));
