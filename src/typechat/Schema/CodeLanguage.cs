@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// This class is reserved for TypeChat infrastructure. 
+/// </summary>
 public class CodeLanguage
 {
     public class Punctuation

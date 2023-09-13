@@ -100,6 +100,7 @@ public class Order
 public class SentimentResponse
 {
     [JsonPropertyName("sentiment")]
+    [JsonVocab("negative | neutral | positive")]
     public string Sentiment { get; set; }
 }
 

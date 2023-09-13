@@ -2,7 +2,10 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-public class JsonVocabConvertor : JsonConverter<string?>
+/// <summary>
+/// A custom convertor used with the Json Serializer to implement vocabuaries
+/// </summary>
+internal class JsonVocabConvertor : JsonConverter<string?>
 {
     string? _propertyName;
     string? _vocabName;
