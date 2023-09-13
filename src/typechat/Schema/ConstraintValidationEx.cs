@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-public static class ConstraintValidationEx
+internal static class ConstraintValidationEx
 {
     public static void ThrowIfNotInVocab(this IVocab vocab, string? propertyName, string? value)
     {

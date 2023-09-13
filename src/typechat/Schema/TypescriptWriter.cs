@@ -4,6 +4,7 @@ namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
 /// Class with methods to support writing Typescript code
+/// This class is reserved for TypeChat infrastructure
 /// </summary>
 public class TypescriptWriter
 {

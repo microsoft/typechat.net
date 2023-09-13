@@ -2,6 +2,11 @@
 
 namespace Microsoft.TypeChat.Schema;
 
+/// <summary>
+/// This class is reserved for TypeChat infrastructure
+/// Exports vocabularies as schema using Typescript
+/// Some vocabularies are exported inline, but others may be exported as standalone types
+/// </summary>
 public class TypescriptVocabExporter : TypeExporter<NamedVocab>
 {
     TypescriptWriter _writer;
