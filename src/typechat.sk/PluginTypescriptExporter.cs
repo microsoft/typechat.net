@@ -5,6 +5,10 @@ using Microsoft.TypeChat.Schema;
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Exports Type information about Plugins as Typescript interfaces
+/// This interface is a concise and precise way to communicate this information to the model
+/// </summary>
 public class PluginTypescriptExporter
 {
     TypescriptWriter _tsWriter;
@@ -18,6 +22,11 @@ public class PluginTypescriptExporter
 
     public void Comment(string descr) => _tsWriter.Comment(descr);
 
+    /// <summary>
+    /// Exports with the api with the given name and type information
+    /// </summary>
+    /// <param name="apiName"></param>
+    /// <param name="typeInfo"></param>
     public void Export(string apiName, PluginApiTypeInfo typeInfo)
     {
         _tsWriter.BeginInterface(apiName);

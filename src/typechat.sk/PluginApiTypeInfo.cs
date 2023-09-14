@@ -2,6 +2,10 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Type information for a Plugin API
+/// This is type information returned by the semantic kernel, but cached for fast lookup
+/// </summary>
 public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
 {
     public PluginApiTypeInfo(IKernel kernel)
@@ -56,6 +60,13 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
         Add(function.ToPluginName(), function);
     }
 
+    /// <summary>
+    /// Export the type information for this Plugin API as Typescript interfaces
+    /// Language models will emit programs that call this interface
+    /// </summary>
+    /// <param name="apiName">Name of the Api</param>
+    /// <param name="apiDescription">(Optional) Description of the API</param>
+    /// <returns></returns>
     public SchemaText ExportSchema(string apiName, string apiDescription = null)
     {
         using StringWriter writer = new StringWriter();

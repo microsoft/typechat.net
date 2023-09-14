@@ -2,28 +2,52 @@
 
 namespace Microsoft.TypeChat;
 
-public struct PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<PluginFunctionName>
+/// <summary>
+/// Metadata about individual semantic kernel plugin functions
+/// Each function can be scoped by its plugin name. This eliminates name collisions
+/// </summary>
+public class PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<PluginFunctionName>
 {
     public const string DefaultSeparator = "__";
 
+    /// <summary>
+    /// A function that is not part of a Plugin
+    /// </summary>
+    /// <param name="functionName"></param>
     public PluginFunctionName(string functionName)
         : this(null, functionName)
     {
     }
 
+    /// <summary>
+    /// Create a PluginFunctionName
+    /// </summary>
+    /// <param name="pluginName">The plugin that contains this function</param>
+    /// <param name="functionName">function</param>
     public PluginFunctionName(string pluginName, string functionName)
     {
         PluginName = pluginName;
         FunctionName = functionName;
     }
 
+    /// <summary>
+    /// Plugin
+    /// </summary>
     public string? PluginName { get; private set; }
+    /// <summary>
+    /// A function contained in a plugin
+    /// </summary>
     public string? FunctionName { get; private set; }
 
     public bool IsGlobal => (string.IsNullOrEmpty(PluginName));
 
     public override string ToString() => ToString(DefaultSeparator);
-
+    /// <summary>
+    /// Returns the plugin function name programs can use to reference this plugin function.
+    /// By default is {pluginName}.{functionName}
+    /// </summary>
+    /// <param name="separator"></param>
+    /// <returns></returns>
     public string ToString(string separator)
     {
         if (IsGlobal)
@@ -36,7 +60,12 @@ public struct PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<P
         }
         return $"{PluginName}{separator}{FunctionName}";
     }
-
+    /// <summary>
+    /// Parse the plugin function string
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="separator"></param>
+    /// <returns></returns>
     public static PluginFunctionName Parse(string name, string separator = DefaultSeparator)
     {
         string function = null;

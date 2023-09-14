@@ -2,16 +2,23 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Exception thrown when there is any issue with a program
+/// </summary>
 public class ProgramException : Exception
 {
+    /// <summary>
+    /// Exception error codes
+    /// </summary>
     public enum ErrorCode
     {
-        InvalidProgram,
-        TypeNotSupported,
-        TypeMistmatch,
-        InvalidResultRef,
-        ArgCountMismatch,
-        FunctionNotFound,
+        // Program JSON does not contain a valid program
+        InvalidProgramJson,
+        JsonValueTypeNotSupported,
+        TypeMistmatch,      // There was a type mismatch when attempting to call a function
+        InvalidResultRef,   // Invalid Reference to a result returned by a program step
+        ArgCountMismatch,   // 
+        FunctionNotFound,   // No such function in the target Api
         UnknownExpression
     }
 

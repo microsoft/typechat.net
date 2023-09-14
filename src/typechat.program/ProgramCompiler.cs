@@ -6,8 +6,8 @@ using LinqExpression = System.Linq.Expressions.Expression;
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Compiles a Json Program into a typesafe .NET lambda using the Dynamic Language Runtime
-/// Does so using System.Linq.Expressions and the DLR
+/// Compiles a Json Program that calls an Api of Type T
+/// Compilation produces a typesafe .NET lambda using the Dynamic Language Runtime
 /// </summary>
 public class ProgramCompiler
 {
@@ -15,11 +15,19 @@ public class ProgramCompiler
     ConstantExpression _apiImpl;
     Dictionary<string, ParameterExpression> _variables;
 
+    /// <summary>
+    /// Create a compiler that will allow programs to call an API defined by all public methods of the given type
+    /// </summary>
+    /// <param name="type"></param>
     public ProgramCompiler(Type type)
         : this(new ApiTypeInfo(type))
     {
     }
 
+    /// <summary>
+    /// Create a compiler that will allow programs to call all an Api with the given type information
+    /// </summary>
+    /// <param name="typeInfo"></param>
     public ProgramCompiler(ApiTypeInfo typeInfo)
     {
         ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
@@ -31,8 +39,8 @@ public class ProgramCompiler
     /// Return a Lambda Expression representation for the program to run against
     /// the given implementation of an api
     /// </summary>
-    /// <param name="apiImpl"></param>
-    /// <param name="program"></param>
+    /// <param name="program">program to compile</param>
+    /// <param name="apiImpl">an implementation of the api</param>
     /// <returns></returns>
     public LambdaExpression CompileToExpressionTree(Program program, object apiImpl)
     {
@@ -220,7 +228,7 @@ public class ProgramCompiler
         switch (expr.Value.ValueKind)
         {
             default:
-                throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{expr.Value.ValueKind}");
+                throw new ProgramException(ProgramException.ErrorCode.JsonValueTypeNotSupported, $"{expr.Value.ValueKind}");
             case JsonValueKind.True:
                 return LinqExpression.Constant(true);
             case JsonValueKind.False:
