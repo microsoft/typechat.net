@@ -21,7 +21,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
 
     public static Prompt RequestPrompt(string typeName, string schema, Prompt request, IList<IPromptSection>? context = null)
     {
-        ArgumentNullException.ThrowIfNull(request, nameof(request));
+        ArgumentVerify.ThrowIfNull(request, nameof(request));
         Prompt prompt = new Prompt();
 
         prompt += IntroSection(typeName, schema);

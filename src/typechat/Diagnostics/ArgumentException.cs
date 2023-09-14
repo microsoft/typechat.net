@@ -11,6 +11,7 @@ using System.Text;
 
 namespace Microsoft.TypeChat;
 
+/*
 internal static class ArgumentException
 {
     /// <summary>Throws an exception if <paramref name="argument"/> is null or empty.</summary>
@@ -59,3 +60,4 @@ internal static class ArgumentException
         throw new System.ArgumentException("The value cannot be an empty string or composed entirely of whitespace.", paramName);
     }
 }
+*/

@@ -79,7 +79,7 @@ public class TypescriptExporter : TypeExporter<Type>
     public TypescriptExporter(TypescriptWriter writer)
         : base()
     {
-        ArgumentNullException.ThrowIfNull(writer, nameof(writer));
+        ArgumentVerify.ThrowIfNull(writer, nameof(writer));
         _writer = writer;
         _nonExportTypes = new HashSet<Type>()
         {
@@ -190,10 +190,10 @@ public class TypescriptExporter : TypeExporter<Type>
 
     public TypescriptExporter ExportClass(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
         if (!type.IsClass)
         {
-            ArgumentException.Throw($"{type.Name} must be a class");
+            ArgumentVerify.Throw($"{type.Name} must be a class");
         }
 
         if (IsExported(type))
@@ -238,10 +238,10 @@ public class TypescriptExporter : TypeExporter<Type>
 
     public TypescriptExporter ExportEnum(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
         if (!type.IsEnum)
         {
-           ArgumentException.Throw($"{type.Name} must be Enum");
+           ArgumentVerify.Throw($"{type.Name} must be Enum");
         }
 
         if (IsExported(type))
@@ -267,10 +267,10 @@ public class TypescriptExporter : TypeExporter<Type>
     /// </summary>
     public TypescriptExporter ExportAPI(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
         if (!type.IsInterface)
         {
-            ArgumentException.Throw($"{type.Name} must be an interface");
+            ArgumentVerify.Throw($"{type.Name} must be an interface");
         }
 
         if (IsExported(type))
@@ -376,7 +376,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     TypescriptExporter ExportProperties(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
 
         var properties = type.GetProperties(MemberFlags);
         return ExportProperties(properties);
@@ -384,7 +384,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     TypescriptExporter ExportProperties(IEnumerable<PropertyInfo> properties)
     {
-        ArgumentNullException.ThrowIfNull(properties, nameof(properties));
+        ArgumentVerify.ThrowIfNull(properties, nameof(properties));
 
         foreach (var property in properties)
         {
@@ -395,7 +395,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     TypescriptExporter ExportFields(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
 
         var fields = type.GetFields(MemberFlags);
         return ExportFields(fields);

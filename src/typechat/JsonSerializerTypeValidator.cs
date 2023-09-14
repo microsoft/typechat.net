@@ -124,7 +124,7 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
     /// <exception cref="ArgumentNullException"></exception>
     public JsonSerializerTypeValidator(TypeSchema schema, JsonSerializerOptions? options = null)
     {
-        ArgumentNullException.ThrowIfNull(schema, nameof(schema));
+        ArgumentVerify.ThrowIfNull(schema, nameof(schema));
         _schema = schema;
         if (options != null)
         {

@@ -16,7 +16,7 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
 
     public TypeValidator(TypescriptSchema schema)
     {
-        ArgumentNullException.ThrowIfNull(schema, nameof(schema));
+        ArgumentVerify.ThrowIfNull(schema, nameof(schema));
         _schema = schema;
         _jsonValidator = new JsonSerializerTypeValidator<T>(_schema);
         if (_schema.HasVocabs)

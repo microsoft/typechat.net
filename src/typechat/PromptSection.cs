@@ -58,8 +58,8 @@ public class PromptSection : IPromptSection
     /// <exception cref="ArgumentNullException"></exception>
     public PromptSection(string source, string text)
     {
-        ArgumentException.ThrowIfNullOrEmpty(source, nameof(source));
-        ArgumentNullException.ThrowIfNull(text, nameof(text));
+        ArgumentVerify.ThrowIfNullOrEmpty(source, nameof(source));
+        ArgumentVerify.ThrowIfNull(text, nameof(text));
 
         _source = source;
         SetText(text);
@@ -86,7 +86,7 @@ public class PromptSection : IPromptSection
     /// <exception cref="ArgumentNullException"></exception>
     public void SetText(string text)
     {
-        ArgumentNullException.ThrowIfNull(text, nameof(text));
+        ArgumentVerify.ThrowIfNull(text, nameof(text));
         _text = text;
     }
 

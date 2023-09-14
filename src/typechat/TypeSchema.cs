@@ -17,7 +17,7 @@ public class TypeSchema
     /// <exception cref="ArgumentNullException"></exception>
     public TypeSchema(Type type, SchemaText schema)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
         _schema = schema;
         _type = type;
     }

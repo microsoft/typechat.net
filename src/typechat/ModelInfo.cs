@@ -17,7 +17,7 @@ public class ModelInfo
     [JsonConstructor]
     public ModelInfo(string name, int maxTokens, double tokenToCharMultiple = 2.5)
     {
-        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
+        ArgumentVerify.ThrowIfNullOrEmpty(name, nameof(name));
 
         _name = name;
         _maxTokens = maxTokens;

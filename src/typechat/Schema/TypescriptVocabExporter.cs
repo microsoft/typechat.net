@@ -15,8 +15,8 @@ public class TypescriptVocabExporter : TypeExporter<NamedVocab>
     public TypescriptVocabExporter(TypescriptWriter writer, IVocabCollection store)
         : base()
     {
-        ArgumentNullException.ThrowIfNull(writer, nameof(writer));
-        ArgumentNullException.ThrowIfNull(store, nameof(store));
+        ArgumentVerify.ThrowIfNull(writer, nameof(writer));
+        ArgumentVerify.ThrowIfNull(store, nameof(store));
 
         _writer = writer;
         _store = store;
@@ -26,7 +26,7 @@ public class TypescriptVocabExporter : TypeExporter<NamedVocab>
 
     public override void ExportType(NamedVocab type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
 
         if (IsExported(type))
         {

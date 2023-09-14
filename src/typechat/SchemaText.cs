@@ -32,8 +32,8 @@ public struct SchemaText
     [JsonConstructor]
     public SchemaText(string text, string lang)
     {
-        ArgumentException.ThrowIfNullOrEmpty(text, nameof(text));
-        ArgumentException.ThrowIfNullOrEmpty(lang, nameof(lang));
+        ArgumentVerify.ThrowIfNullOrEmpty(text, nameof(text));
+        ArgumentVerify.ThrowIfNullOrEmpty(lang, nameof(lang));
 
         _lang = lang;
         _text = text;

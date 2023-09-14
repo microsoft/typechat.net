@@ -11,6 +11,7 @@ using System.Text;
 
 namespace Microsoft.TypeChat;
 
+/*
 internal static class ArgumentNullException
 {
     /// <summary>Throws an <see cref="ArgumentNullException"/> if <paramref name="argument"/> is null.</summary>
@@ -29,3 +30,4 @@ internal static class ArgumentNullException
     internal static void Throw(string? paramName) =>
         throw new System.ArgumentNullException(paramName);
 }
+*/

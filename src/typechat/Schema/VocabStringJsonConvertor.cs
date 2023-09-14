@@ -8,7 +8,7 @@ internal class VocabStringJsonConvertor : JsonConverter<VocabString>
 
     public VocabStringJsonConvertor(IVocabCollection vocabs)
     {
-        ArgumentNullException.ThrowIfNull(vocabs, nameof(vocabs));
+        ArgumentVerify.ThrowIfNull(vocabs, nameof(vocabs));
         _vocabs = vocabs;
     }
 

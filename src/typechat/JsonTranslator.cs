@@ -55,9 +55,9 @@ public class JsonTranslator<T>
         IJsonTypeValidator<T> validator,
         IJsonTranslatorPrompts? prompts = null)
     {
-        
-        ArgumentNullException.ThrowIfNull(model, nameof(model));
-        ArgumentNullException.ThrowIfNull(validator, nameof(validator));
+
+        ArgumentVerify.ThrowIfNull(model, nameof(model));
+        ArgumentVerify.ThrowIfNull(validator, nameof(validator));
 
         _model = model;
 
@@ -70,7 +70,7 @@ public class JsonTranslator<T>
 
     public JsonTranslator(ILanguageModel model, IJsonTranslatorPrompts? prompts = null)
     {
-        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        ArgumentVerify.ThrowIfNull(model, nameof(model));
 
         _model = model;
         _validator = new TypeValidator<T>();
@@ -93,7 +93,7 @@ public class JsonTranslator<T>
         get => _validator;
         set
         {
-            ArgumentNullException.ThrowIfNull(value, nameof(Validator));
+            ArgumentVerify.ThrowIfNull(value, nameof(Validator));
             _validator = value;
         }
     }
@@ -179,7 +179,7 @@ public class JsonTranslator<T>
         CancellationToken cancelToken = default
     )
     {
-        ArgumentNullException.ThrowIfNull(request, nameof(request));
+        ArgumentVerify.ThrowIfNull(request, nameof(request));
 
         requestSettings ??= _translationSettings;
         Prompt prompt = CreateRequestPrompt(request, preamble);

@@ -18,8 +18,8 @@ public class NamedVocab : IComparable<NamedVocab>
 
     public NamedVocab(string name, IVocab vocab)
     {
-        ArgumentNullException.ThrowIfNull(name, nameof(name));
-        ArgumentNullException.ThrowIfNull(vocab, nameof(vocab));
+        ArgumentVerify.ThrowIfNull(name, nameof(name));
+        ArgumentVerify.ThrowIfNull(vocab, nameof(vocab));
 
         _name = name;
         _vocab = vocab;
