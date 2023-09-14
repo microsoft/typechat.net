@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Reflection;
 using Microsoft.TypeChat.Schema;
 
 namespace Microsoft.TypeChat;
@@ -54,14 +55,9 @@ public class JsonTranslator<T>
         IJsonTypeValidator<T> validator,
         IJsonTranslatorPrompts? prompts = null)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
-        if (validator == null)
-        {
-            throw new ArgumentNullException(nameof(validator));
-        }
+        
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        ArgumentNullException.ThrowIfNull(validator, nameof(validator));
 
         _model = model;
 
@@ -74,10 +70,7 @@ public class JsonTranslator<T>
 
     public JsonTranslator(ILanguageModel model, IJsonTranslatorPrompts? prompts = null)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
+        ArgumentNullException.ThrowIfNull(model, nameof(model));
 
         _model = model;
         _validator = new TypeValidator<T>();
@@ -100,10 +93,7 @@ public class JsonTranslator<T>
         get => _validator;
         set
         {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(Validator));
-            }
+            ArgumentNullException.ThrowIfNull(value, nameof(Validator));
             _validator = value;
         }
     }
@@ -187,12 +177,9 @@ public class JsonTranslator<T>
         IList<IPromptSection>? preamble,
         TranslationSettings? requestSettings = null,
         CancellationToken cancelToken = default
-        )
+    )
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentNullException.ThrowIfNull(request, nameof(request));
 
         requestSettings ??= _translationSettings;
         Prompt prompt = CreateRequestPrompt(request, preamble);

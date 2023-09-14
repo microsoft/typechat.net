@@ -60,7 +60,10 @@ public class Vocab : List<VocabEntry>, IVocab
     {
         if (!entries.IsNullOrEmpty())
         {
+
+#if NET7_0_OR_GREATER
             EnsureCapacity(entries.Length);
+#endif
             for (int i = 0; i < entries.Length; ++i)
             {
                 base.Add(entries[i]);
@@ -137,7 +140,11 @@ public class Vocab : List<VocabEntry>, IVocab
     /// <returns></returns>
     public static Vocab? Parse(string text, char separator = DefaultEntrySeparator)
     {
+#if NET7_0_OR_GREATER
         string[] entries = text.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+#else
+        string[] entries = text.Split(separator).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
+#endif
         if (entries == null || entries.Length == 0)
         {
             return null;

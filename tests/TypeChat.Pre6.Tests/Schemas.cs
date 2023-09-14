@@ -100,6 +100,7 @@ public class Order
 public class SentimentResponse
 {
     [JsonPropertyName("sentiment")]
+    [JsonVocab("negative | neutral | positive")]
     public string Sentiment { get; set; }
 }
 
@@ -173,7 +174,7 @@ public static class TestVocabs
         };
     }
 
-    public static VocabType Desserts()
+    public static NamedVocab Desserts()
     {
         Vocab vocab = new Vocab
         {
@@ -184,10 +185,10 @@ public static class TestVocabs
             "Strawberry Shortcake",
             "Chocolate Cake"
         };
-        return new VocabType(Names.Desserts, vocab);
+        return new NamedVocab(Names.Desserts, vocab);
     }
 
-    public static VocabType Fruits()
+    public static NamedVocab Fruits()
     {
         Vocab vocab = new Vocab
         {
@@ -200,10 +201,10 @@ public static class TestVocabs
             "Nectarine"
         };
 
-        return new VocabType(Names.Fruits, vocab);
+        return new NamedVocab(Names.Fruits, vocab);
     }
 
-    public static VocabType Milks()
+    public static NamedVocab Milks()
     {
         Vocab vocab = new Vocab
         {
@@ -215,10 +216,10 @@ public static class TestVocabs
             "almond milk",
             "oat milk"
         };
-        return new VocabType(Names.Milks, vocab);
+        return new NamedVocab(Names.Milks, vocab);
     }
 
-    public static VocabType Creamers()
+    public static NamedVocab Creamers()
     {
         Vocab vocab = new Vocab
         {
@@ -233,6 +234,89 @@ public static class TestVocabs
             "half and half",
             "heavy cream"
         };
-        return new VocabType(Names.Creamers, vocab);
+        return new NamedVocab(Names.Creamers, vocab);
+    }
+}
+
+public class Person
+{
+    [ValidateObject]
+    public Name Name { get; set; }
+
+    [Range(0, 105, ErrorMessage = "Person.Age must be between 0 and 105")]
+    public int Age { get; set; }
+
+    public Location Location { get; set; }
+
+    public bool HasSameName(Person other)
+    {
+        return (this.Name.CompareTo(other.Name) == 0);
+    }
+
+    public void ChangeCase(bool upper)
+    {
+        Name.ChangeCase(upper);
+        Location.ChangeCase(upper);
+    }
+}
+
+public class Name : IComparable<Name>
+{
+    [StringLength(32, ErrorMessage = "FirstName must be <= 32 characters")]
+    public string FirstName { get; set; }
+
+    [StringLength(32)]
+    public string LastName { get; set; }
+
+    public void ChangeCase(bool upper)
+    {
+        if (upper)
+        {
+            FirstName = FirstName.ToUpper();
+            LastName = LastName.ToUpper();
+        }
+        else
+        {
+            FirstName = FirstName.ToLower();
+            LastName = LastName.ToLower();
+        }
+    }
+
+    public int CompareTo(Name other)
+    {
+        int cmp = string.Compare(FirstName, other.FirstName, StringComparison.OrdinalIgnoreCase);
+        if (cmp == 0)
+        {
+            cmp = string.Compare(LastName, other.LastName, StringComparison.OrdinalIgnoreCase);
+        }
+        return cmp;
+    }
+
+    public override string ToString()
+    {
+        return $"{FirstName} {LastName}";
+    }
+}
+
+public class Location
+{
+    public string City { get; set; }
+    public string State { get; set; }
+    public string Country { get; set; }
+
+    public void ChangeCase(bool upper)
+    {
+        if (upper)
+        {
+            City = City.ToUpper();
+            State = State.ToUpper();
+            Country = Country.ToUpper();
+        }
+        else
+        {
+            City = City.ToLower();
+            State = State.ToLower();
+            Country = Country.ToLower();
+        }
     }
 }

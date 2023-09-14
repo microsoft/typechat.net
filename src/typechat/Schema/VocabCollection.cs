@@ -78,7 +78,12 @@ public class VocabCollection : IVocabCollection
 
     public NamedVocab? Get(string name)
     {
+#if NET7_0_OR_GREATER
         return _vocabs.GetValueOrDefault(name, null);
+#else
+        NamedVocab vocab;
+        return _vocabs.TryGetValue(name, out vocab) ? vocab : null;
+#endif
     }
 
     public IEnumerator<NamedVocab> GetEnumerator()

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat", "src\typechat\TypeChat.csproj", "{E682D47B-D290-4CD1-8D7A-EC00FD323D9B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.SemanticKernel", "src\typechat.sk\TypeChat.SemanticKernel.csproj", "{3E986252-C73E-4FD5-99A1-CE2FAB8899FC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4EE943BA-EA53-4CD2-A2E3-7B2A2C61FAE3}"
@@ -50,16 +48,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.Tests.Pre6", "test
 		{68ED885B-36C6-454B-BC94-742A2B2BE21B} = {68ED885B-36C6-454B-BC94-742A2B2BE21B}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat", "src\typechat\TypeChat.csproj", "{EF1231C5-56C4-439F-84F0-FE5D5315D4AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E682D47B-D290-4CD1-8D7A-EC00FD323D9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E682D47B-D290-4CD1-8D7A-EC00FD323D9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E682D47B-D290-4CD1-8D7A-EC00FD323D9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E682D47B-D290-4CD1-8D7A-EC00FD323D9B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E986252-C73E-4FD5-99A1-CE2FAB8899FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E986252-C73E-4FD5-99A1-CE2FAB8899FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E986252-C73E-4FD5-99A1-CE2FAB8899FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -120,6 +116,10 @@ Global
 		{AF0A444A-F902-40B3-8FD6-60BE130A1143}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF0A444A-F902-40B3-8FD6-60BE130A1143}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF0A444A-F902-40B3-8FD6-60BE130A1143}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF1231C5-56C4-439F-84F0-FE5D5315D4AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF1231C5-56C4-439F-84F0-FE5D5315D4AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF1231C5-56C4-439F-84F0-FE5D5315D4AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF1231C5-56C4-439F-84F0-FE5D5315D4AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -56,10 +56,7 @@ public class Prompt : List<IPromptSection>
     /// <exception cref="ArgumentNullException"></exception>
     public new void Add(IPromptSection section)
     {
-        if (section == null)
-        {
-            throw new ArgumentNullException(nameof(section));
-        }
+        ArgumentNullException.ThrowIfNull(section, nameof(section));
         base.Add(section);
     }
 

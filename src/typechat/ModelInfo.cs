@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Reflection;
+
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -15,10 +17,7 @@ public class ModelInfo
     [JsonConstructor]
     public ModelInfo(string name, int maxTokens, double tokenToCharMultiple = 2.5)
     {
-        if (string.IsNullOrEmpty(name))
-        {
-            throw new ArgumentException("Name cannot be null or empty.", nameof(name));
-        }
+        ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
 
         _name = name;
         _maxTokens = maxTokens;

@@ -7,7 +7,6 @@ namespace Microsoft.TypeChat.Schema;
 internal interface IStringType
 {
 }
-
 public static class TypeEx
 {
     public static IEnumerable<CommentAttribute> CommentAttributes(this MemberInfo member)
@@ -36,7 +35,11 @@ public static class TypeEx
 
     public static bool IsString(this Type type)
     {
+#if NET7_0_OR_GREATER
         return type == typeof(string) || type.IsAssignableTo(typeof(IStringType));
+#else
+        return type == typeof(string);
+#endif
     }
 
     public static bool IsBoolean(this Type type)
@@ -111,6 +114,7 @@ public static class TypeEx
 
     internal static bool IsRequired(this MemberInfo property)
     {
+#if NET7_0_OR_GREATER
         var attrib = property.GetCustomAttribute(typeof(JsonRequiredAttribute));
         if (attrib != null)
         {
@@ -118,6 +122,9 @@ public static class TypeEx
         }
         attrib = property.GetCustomAttribute(typeof(RequiredAttribute));
         return attrib != null;
+#else
+        return true;
+#endif
     }
 
     internal static bool IsNullableValueType(this Type type)
@@ -132,7 +139,7 @@ public static class TypeEx
         return foo;
     }
 
-#if NET6_0_OR_GREATER
+#if NET7_0_OR_GREATER
     private static NullabilityInfoContext s_nullableInfo = new();
 #endif
 
@@ -154,7 +161,7 @@ public static class TypeEx
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNullable(this PropertyInfo propInfo)
     {
-#if NET6_0_OR_GREATER
+#if NET7_0_OR_GREATER
         return s_nullableInfo.Create(propInfo).WriteState is NullabilityState.Nullable;
 #else
         // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
@@ -165,7 +172,7 @@ public static class TypeEx
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNullable(this FieldInfo fieldInfo)
     {
-#if NET6_0_OR_GREATER
+#if NET7_0_OR_GREATER
         return s_nullableInfo.Create(fieldInfo).WriteState is NullabilityState.Nullable;
 #else
         // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
@@ -176,7 +183,7 @@ public static class TypeEx
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNullable(this ParameterInfo paramInfo)
     {
-#if NET6_0_OR_GREATER
+#if NET7_0_OR_GREATER
         return s_nullableInfo.Create(paramInfo).WriteState is NullabilityState.Nullable;
 #else
         // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
