@@ -29,9 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\TypeChat.Tests\appSettings.Development.json" Link="appSettings.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="appSettings.json" Link="appSettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
