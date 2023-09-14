@@ -113,16 +113,14 @@ public static class TypeEx
     internal static bool IsRequired(this MemberInfo property)
     {
 #if NET7_0_OR_GREATER
-        var attrib = property.GetCustomAttribute(typeof(JsonRequiredAttribute));
-        if (attrib != null)
+        var json_attrib = property.GetCustomAttribute(typeof(JsonRequiredAttribute));
+        if (json_attrib != null)
         {
             return true;
         }
-        attrib = property.GetCustomAttribute(typeof(RequiredAttribute));
-        return attrib != null;
-#else
-        return true;
 #endif
+        var attrib = property.GetCustomAttribute(typeof(RequiredAttribute));
+        return attrib != null;
     }
 
     internal static bool IsNullableValueType(this Type type)
