@@ -664,6 +664,14 @@ public class TypescriptExporter : TypeExporter<Type>
 
     bool IsNullableRef(MemberInfo member)
     {
+        if (member is PropertyInfo p)
+        {
+            return IsNullableRef(p);
+        }
+        else if (member is FieldInfo f)
+        {
+            return IsNullableRef(f);
+        }
         return false;
     }
 
