@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Internal: used to Deserialize json programs
+/// </summary>
 internal class JsonProgramConvertor : JsonConverter<Program>
 {
     internal static readonly JsonSerializerOptions Options = JsonSerializerTypeValidator.DefaultOptions();

@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat;
 
 /// <summary>
 /// A simple and fast program validator that ensures that any function calls
-/// are to actual APIs with the right parameters
+/// are to actual APIs with the parameter types that match
 /// </summary>
 public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
 {
@@ -16,6 +16,15 @@ public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
         _api = api;
     }
 
+    /// <summary>
+    /// Validate the program
+    /// If successful, returns Result.Success
+    /// Else returns Result with Success false, along with a diagnostic message
+    /// Currently, the validator stops when it hits its first error.
+    /// Future versions will support collecting all diagnostics before returning
+    /// </summary>
+    /// <param name="program">program to validate</param>
+    /// <returns></returns>
     public Result<Program> ValidateProgram(Program program)
     {
         try

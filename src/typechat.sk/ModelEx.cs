@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public static class ModelEx
+internal static class ModelEx
 {
     public static AuthorRole GetRole(this IPromptSection section)
     {

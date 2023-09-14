@@ -2,6 +2,10 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// A Json Program. See ProgramSchema.ts for the grammar for Programs
+/// This class is the root is a simple AST for programs
+/// </summary>
 public partial class Program : IDisposable
 {
     JsonDocument? _programSource;
@@ -69,7 +73,7 @@ public partial class Program : IDisposable
         ArgumentNullException.ThrowIfNull(api, nameof(api));
         if (!IsComplete)
         {
-            throw new ProgramException(ProgramException.ErrorCode.InvalidProgram);
+            throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson);
         }
         if (Delegate != null)
         {
@@ -86,7 +90,7 @@ public partial class Program : IDisposable
 
         if (!IsComplete)
         {
-            throw new ProgramException(ProgramException.ErrorCode.InvalidProgram);
+            throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson);
         }
 
         ProgramInterpreter interpreter = new ProgramInterpreter();
@@ -211,7 +215,7 @@ public partial class ValueExpr : Expression
         switch (Value.ValueKind)
         {
             default:
-                throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{Value.ValueKind}");
+                throw new ProgramException(ProgramException.ErrorCode.JsonValueTypeNotSupported, $"{Value.ValueKind}");
             case JsonValueKind.True:
                 return true;
             case JsonValueKind.False:

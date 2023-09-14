@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace Microsoft.TypeChat.CSharp;
 
 /// <summary>
+/// Experimental
 /// CSharp compiler. Uses Roslyn to compile C# code to assemblies
 /// While the compiler is generic, it is intended to be used in tandem with CSharpProgramTranspiler
 /// </summary>

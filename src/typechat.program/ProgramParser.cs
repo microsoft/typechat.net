@@ -73,7 +73,7 @@ public class ProgramParser
             return program;
         }
 
-        throw new ProgramException(ProgramException.ErrorCode.InvalidProgram, root.ToString());
+        throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson, root.ToString());
     }
 
     Steps ParseSteps(JsonElement source)

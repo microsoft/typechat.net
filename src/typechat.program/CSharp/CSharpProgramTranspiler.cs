@@ -3,7 +3,8 @@
 namespace Microsoft.TypeChat.CSharp;
 
 /// <summary>
-/// Experimental class that transpiles Json Programs into C#.
+/// Experimental
+/// Class that transpiles Json Programs into C#.
 /// Programs are emitted into a class:
 ///     ClassName: Program
 ///     MethodName: Run
@@ -221,7 +222,7 @@ public class CSharpProgramTranspiler
         switch (expr.Value.ValueKind)
         {
             default:
-                throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{expr.Value.ValueKind}");
+                throw new ProgramException(ProgramException.ErrorCode.JsonValueTypeNotSupported, $"{expr.Value.ValueKind}");
             case JsonValueKind.True:
                 return CSharpLang.Types.True;
             case JsonValueKind.False:
