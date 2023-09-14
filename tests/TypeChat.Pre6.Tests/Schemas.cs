@@ -5,6 +5,7 @@ using System.Text.Json;
 
 namespace Microsoft.TypeChat.Tests.Netstandard20;
 
+#pragma warning disable CS8618 // Non-nullable propert must container a non-null value when exiting constructor. Consider declaring as nullable.
 public enum Coffees
 {
     [Comment("Drip coffee")]
@@ -53,8 +54,8 @@ public class DessertOrder
     public DessertOrder() { }
     public DessertOrder(string name, int quantity)
     {
-        Name = name;
-        Quantity = quantity;
+        this.Name = name;
+        this.Quantity = quantity;
     }
 
     [JsonVocab(Name = TestVocabs.Names.Desserts)]
@@ -255,8 +256,8 @@ public class Person
 
     public void ChangeCase(bool upper)
     {
-        Name.ChangeCase(upper);
-        Location.ChangeCase(upper);
+        this.Name.ChangeCase(upper);
+        this.Location.ChangeCase(upper);
     }
 }
 
@@ -272,29 +273,29 @@ public class Name : IComparable<Name>
     {
         if (upper)
         {
-            FirstName = FirstName.ToUpper();
-            LastName = LastName.ToUpper();
+            this.FirstName = this.FirstName.ToUpper();
+            this.LastName = this.LastName.ToUpper();
         }
         else
         {
-            FirstName = FirstName.ToLower();
-            LastName = LastName.ToLower();
+            this.FirstName = this.FirstName.ToLower();
+            this.LastName = this.LastName.ToLower();
         }
     }
 
     public int CompareTo(Name other)
     {
-        int cmp = string.Compare(FirstName, other.FirstName, StringComparison.OrdinalIgnoreCase);
+        int cmp = string.Compare(this.FirstName, other.FirstName, StringComparison.OrdinalIgnoreCase);
         if (cmp == 0)
         {
-            cmp = string.Compare(LastName, other.LastName, StringComparison.OrdinalIgnoreCase);
+            cmp = string.Compare(this.LastName, other.LastName, StringComparison.OrdinalIgnoreCase);
         }
         return cmp;
     }
 
     public override string ToString()
     {
-        return $"{FirstName} {LastName}";
+        return $"{this.FirstName} {this.LastName}";
     }
 }
 
@@ -308,15 +309,16 @@ public class Location
     {
         if (upper)
         {
-            City = City.ToUpper();
-            State = State.ToUpper();
-            Country = Country.ToUpper();
+            this.City = this.City.ToUpper();
+            this.State = this.State.ToUpper();
+            this.Country = this.Country.ToUpper();
         }
         else
         {
-            City = City.ToLower();
-            State = State.ToLower();
-            Country = Country.ToLower();
+            this.City = this.City.ToLower();
+            this.State = this.State.ToLower();
+            this.Country = this.Country.ToLower();
         }
     }
 }
+#pragma warning restore CS8618 // Non-nullable propert must container a non-null value when exiting constructor. Consider declaring as nullable.
