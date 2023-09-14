@@ -9,7 +9,7 @@ public class LanguageModel : ILanguageModel
 
     public LanguageModel(OpenAIConfig config, ModelInfo? model = null)
     {
-        ArgumentNullException.ThrowIfNull(config, nameof(config));
+        ArgumentVerify.ThrowIfNull(config, nameof(config));
         config.Validate();
 
         model ??= config.Model;
@@ -20,7 +20,7 @@ public class LanguageModel : ILanguageModel
 
     public LanguageModel(IChatCompletion service, ModelInfo model)
     {
-        ArgumentNullException.ThrowIfNull(service, nameof(service));
+        ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
         _model = model;
     }

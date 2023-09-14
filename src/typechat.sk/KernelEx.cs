@@ -27,7 +27,7 @@ public static class KernelEx
 
     public static KernelBuilder WithChatModels(this KernelBuilder builder, OpenAIConfig config, params string[] modelNames)
     {
-        ArgumentNullException.ThrowIfNull(config, nameof(config));
+        ArgumentVerify.ThrowIfNull(config, nameof(config));
 
         foreach (string modelName in modelNames)
         {
@@ -38,7 +38,7 @@ public static class KernelEx
 
     public static KernelBuilder WithChatModel(this KernelBuilder builder, string modelName, OpenAIConfig config)
     {
-        ArgumentNullException.ThrowIfNull(config, nameof(config));
+        ArgumentVerify.ThrowIfNull(config, nameof(config));
 
         HttpClient client = null;
         if (config.TimeoutMs > 0)
@@ -71,14 +71,14 @@ public static class KernelEx
 
     public static LanguageModel LanguageModel(this IKernel kernel, ModelInfo model)
     {
-        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        ArgumentVerify.ThrowIfNull(model, nameof(model));
 
         return new LanguageModel(kernel.GetService<IChatCompletion>(model.Name), model);
     }
 
     public static TextCompletionModel TextCompletionModel(this IKernel kernel, ModelInfo model)
     {
-        ArgumentNullException.ThrowIfNull(model, nameof(model));
+        ArgumentVerify.ThrowIfNull(model, nameof(model));
 
         return new TextCompletionModel(kernel.GetService<ITextCompletion>(model.Name), model);
     }

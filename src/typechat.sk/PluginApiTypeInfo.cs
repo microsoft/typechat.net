@@ -20,7 +20,7 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
 
     public void Add(FunctionsView plugins)
     {
-        ArgumentNullException.ThrowIfNull(plugins, nameof(plugins));
+        ArgumentVerify.ThrowIfNull(plugins, nameof(plugins));
 
         if (plugins.SemanticFunctions != null)
         {
@@ -34,7 +34,7 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
 
     public void Add(IEnumerable<IEnumerable<FunctionView>> plugins)
     {
-        ArgumentNullException.ThrowIfNull(plugins, nameof(plugins));
+        ArgumentVerify.ThrowIfNull(plugins, nameof(plugins));
         foreach (var plugin in plugins)
         {
             Add(plugin);
@@ -43,7 +43,7 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
 
     public void Add(IEnumerable<FunctionView> plugin)
     {
-        ArgumentNullException.ThrowIfNull(plugin, nameof(plugin));
+        ArgumentVerify.ThrowIfNull(plugin, nameof(plugin));
 
         foreach (var function in plugin)
         {

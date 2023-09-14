@@ -9,7 +9,7 @@ public class TextCompletionModel : ILanguageModel
 
     public TextCompletionModel(OpenAIConfig config, ModelInfo? model = null)
     {
-        ArgumentNullException.ThrowIfNull(config, nameof(config));
+        ArgumentVerify.ThrowIfNull(config, nameof(config));
 
         config.Validate();
 
@@ -21,7 +21,7 @@ public class TextCompletionModel : ILanguageModel
 
     public TextCompletionModel(ITextCompletion service, ModelInfo model)
     {
-        ArgumentNullException.ThrowIfNull(service, nameof(service));
+        ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
         _model = model;
     }
