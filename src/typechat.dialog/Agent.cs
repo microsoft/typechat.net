@@ -5,7 +5,9 @@ using Microsoft.TypeChat.Schema;
 namespace Microsoft.TypeChat.Dialog;
 
 /// <summary>
-/// A multi-turn message passing Agent
+/// Experimental:
+/// A multi-turn message passing Agent that returns strongly typed responses
+/// Message
 /// </summary>
 public class Agent<T>
 {

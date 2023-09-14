@@ -11,7 +11,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
 
     public virtual Prompt CreateRequestPrompt(TypeSchema schema, Prompt request, IList<IPromptSection> preamble = null)
     {
-        return RequestPrompt(schema.TypeFullName, schema.Schema, request, preamble);
+        return RequestPrompt(schema, request, preamble);
     }
 
     public virtual string CreateRepairPrompt(TypeSchema schema, string json, string validationError)
@@ -19,7 +19,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         return RepairPrompt(validationError);
     }
 
-    public static Prompt RequestPrompt(string typeName, string schema, Prompt request, IList<IPromptSection>? context = null)
+    public static Prompt RequestPrompt(TypeSchema typeSchema, Prompt request, IList<IPromptSection>? context = null)
     {
         if (request == null)
         {
@@ -27,17 +27,24 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         }
         Prompt prompt = new Prompt();
 
-        prompt += IntroSection(typeName, schema);
+        prompt += IntroSection(typeSchema.TypeFullName, typeSchema.Schema);
         AddContextAndRequest(prompt, request, context);
 
         return prompt;
     }
 
-    public static Prompt AddContextAndRequest(Prompt prompt, Prompt request, IList<IPromptSection> preamble)
+    /// <summary>
+    /// Add the given user request and any context to the prompt we are sending to the model
+    /// </summary>
+    /// <param name="prompt">prompt being constructed</param>
+    /// <param name="request">user request</param>
+    /// <param name="context">any RAG context</param>
+    /// <returns>prompt to send to the model</returns>
+    public static Prompt AddContextAndRequest(Prompt prompt, Prompt request, IList<IPromptSection> context)
     {
-        if (!preamble.IsNullOrEmpty())
+        if (!context.IsNullOrEmpty())
         {
-            prompt.Append(preamble);
+            prompt.Append(context);
         }
 
         if (request.Count == 1)
@@ -52,7 +59,14 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         return prompt;
     }
 
-    static PromptSection IntroSection(string typeName, string schema)
+    /// <summary>
+    /// Adds a section that tells the model that its task to is translate requests into JSON matching the
+    /// given schema
+    /// </summary>
+    /// <param name="typeName"></param>
+    /// <param name="schema"></param>
+    /// <returns></returns>
+    public static PromptSection IntroSection(string typeName, string schema)
     {
         PromptSection introSection = new PromptSection();
         introSection += $"You are a service that translates user requests into JSON objects of type \"{typeName}\" according to the following TypeScript definitions:\n";
@@ -60,7 +74,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         return introSection;
     }
 
-    public static PromptSection RequestSection(string request)
+    static PromptSection RequestSection(string request)
     {
         PromptSection requestSection = new PromptSection();
         requestSection += "The following is a user request:\n";
