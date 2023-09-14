@@ -138,8 +138,7 @@ public partial class Steps : Expression
     public Steps(JsonElement source, FunctionCall[]? calls)
         : base(source)
     {
-        calls ??= EmptySteps;
-        Calls = calls;
+        Calls = calls ?? EmptySteps;
     }
 }
 

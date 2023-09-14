@@ -251,7 +251,7 @@ public class NumberQuantity : OptionQuantity
 /// <summary>
 /// Coffeshop vocabulary is hardcoded here for simplicity
 /// But you can always load these vocabularies from a store or database dynamically.
-/// You can supply them to the schema generator using the IVocabCollection interface.
+/// You can supply them to the schema generator using the <see cref="IVocabCollection"/> interface.
 /// A real coffee shop will do just that - so that product lines can change, different users can be offered
 /// different options, etc
 /// </summary>

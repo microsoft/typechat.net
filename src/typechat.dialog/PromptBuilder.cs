@@ -30,7 +30,7 @@ public class PromptBuilder
     /// boundaries and so on.
     /// </summary>
     /// <param name="maxLength">Prompt will not exceed this maxLengthin characters</param>
-    /// <param name="substringExtractor">optinal extractor</param>
+    /// <param name="substringExtractor">optional extractor</param>
     public PromptBuilder(int maxLength, Func<string, int, string>? substringExtractor = null)
     {
         _prompt = new Prompt();

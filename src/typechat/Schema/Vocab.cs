@@ -38,10 +38,7 @@ public class Vocab : List<VocabEntry>, IVocab
     public Vocab(IVocab src)
     {
         ArgumentNullException.ThrowIfNull(src, nameof(src));
-        foreach (var entry in src)
-        {
-            Add(entry);
-        }
+        AddRange(src);
     }
     /// <summary>
     /// Initialize a vocabulary
@@ -75,14 +72,7 @@ public class Vocab : List<VocabEntry>, IVocab
             return false;
         }
 
-        for (int i = 0; i < Count; ++i)
-        {
-            if (this[i].CompareTo(entry, comparison) == 0)
-            {
-                return true;
-            }
-        }
-        return false;
+        return Exists(v => v.CompareTo(entry, comparison) == 0);
     }
 
     public static implicit operator Vocab(string[] values)
@@ -137,6 +127,7 @@ public class Vocab : List<VocabEntry>, IVocab
     /// <returns></returns>
     public static Vocab? Parse(string text, char separator = DefaultEntrySeparator)
     {
+        // TODO: this won't work for `"hello||world" | "123"`
         string[] entries = text.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (entries == null || entries.Length == 0)
         {
