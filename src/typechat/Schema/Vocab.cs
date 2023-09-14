@@ -60,10 +60,6 @@ public class Vocab : List<VocabEntry>, IVocab
     {
         if (!entries.IsNullOrEmpty())
         {
-
-#if NET7_0_OR_GREATER
-            EnsureCapacity(entries.Length);
-#endif
             for (int i = 0; i < entries.Length; ++i)
             {
                 base.Add(entries[i]);

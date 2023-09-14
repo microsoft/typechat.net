@@ -33,11 +33,7 @@ public static class TypeEx
 
     public static bool IsString(this Type type)
     {
-#if NET7_0_OR_GREATER
-        return type == typeof(string) || type.IsAssignableTo(typeof(IStringType));
-#else
-        return type == typeof(string);
-#endif
+        return type == typeof(string) || typeof(IStringType).IsAssignableFrom(type);
     }
 
     public static bool IsBoolean(this Type type)

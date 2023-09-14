@@ -4,9 +4,10 @@ using System.Runtime.CompilerServices;
 namespace Microsoft.TypeChat;
 
 /// <summary>
+/// Reserved for Typechat infrastructure
 /// Used by Typechat libraries to do argument validation in a .NET framework agnostic way
 /// </summary>
-public static class ArgumentVerify
+internal static class ArgumentVerify
 {
     public static void Throw(string message)
     {
