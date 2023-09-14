@@ -42,6 +42,10 @@ internal static class ArgumentException
     }
 
     [DoesNotReturn]
+    internal static void Throw(string? paramName) =>
+        throw new System.ArgumentException(paramName);
+
+    [DoesNotReturn]
     private static void ThrowNullOrEmptyException(string? argument, string? paramName)
     {
         ArgumentNullException.ThrowIfNull(argument, paramName);

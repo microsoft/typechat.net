@@ -1,10 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat;
-using System.Collections.ObjectModel;
-using System.Net.NetworkInformation;
-using System.Reflection;
-
 namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
@@ -162,7 +157,7 @@ public class TypescriptExporter : TypeExporter<Type>
         base.Clear();
         _writer.Clear();
         _vocabExporter?.Clear();
-        
+
 #if NET7_0_OR_GREATER
         _nullableInfo = null;
 #endif
@@ -198,7 +193,7 @@ public class TypescriptExporter : TypeExporter<Type>
         ArgumentNullException.ThrowIfNull(type, nameof(type));
         if (!type.IsClass)
         {
-            ArgumentNullException.Throw($"{type.Name} must be a class");
+            ArgumentException.Throw($"{type.Name} must be a class");
         }
 
         if (IsExported(type))
@@ -244,10 +239,9 @@ public class TypescriptExporter : TypeExporter<Type>
     public TypescriptExporter ExportEnum(Type type)
     {
         ArgumentNullException.ThrowIfNull(type, nameof(type));
-        
         if (!type.IsEnum)
         {
-            throw new System.ArgumentException($"{type.Name} must be Enum");
+           ArgumentException.Throw($"{type.Name} must be Enum");
         }
 
         if (IsExported(type))
@@ -276,7 +270,7 @@ public class TypescriptExporter : TypeExporter<Type>
         ArgumentNullException.ThrowIfNull(type, nameof(type));
         if (!type.IsInterface)
         {
-            throw new System.ArgumentException($"{type.Name} must be an interface");
+            ArgumentException.Throw($"{type.Name} must be an interface");
         }
 
         if (IsExported(type))
@@ -492,7 +486,7 @@ public class TypescriptExporter : TypeExporter<Type>
         else
         {
             actualType = type;
-            isNullable = member.IsNullable();
+            isNullable = IsNullableRef(member);
         }
 
         if (actualType.IsString() &&
@@ -528,9 +522,8 @@ public class TypescriptExporter : TypeExporter<Type>
         else
         {
             actualType = type;
-            isNullable = parameter.IsNullable();
+            isNullable = IsNullableRef(parameter);
         }
-
         _writer.Parameter(
             parameter.Name,
             DataType(type),
@@ -639,7 +632,7 @@ public class TypescriptExporter : TypeExporter<Type>
                                     $"'{type.Name}'";
 
             _writer.SOL();
-                _writer.Variable("$type", discriminator);
+            _writer.Variable("$type", discriminator);
             _writer.EOL();
         }
         return this;
@@ -672,6 +665,39 @@ public class TypescriptExporter : TypeExporter<Type>
     bool IsNullableRef(MemberInfo member)
     {
         return false;
+    }
+
+    bool IsNullableRef(PropertyInfo prop)
+    {
+#if NET7_0_OR_GREATER
+        var info = _nullableInfo.Create(prop);
+        return info.WriteState == NullabilityState.Nullable;
+#else
+        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
+        return prop.PropertyType.IsNullableValueType();
+#endif
+    }
+
+    bool IsNullableRef(FieldInfo field)
+    {
+#if NET7_0_OR_GREATER
+        var info = _nullableInfo.Create(field);
+        return info.WriteState == NullabilityState.Nullable;
+#else
+        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
+        return field.FieldType.IsNullableValueType();
+#endif
+    }
+
+    bool IsNullableRef(ParameterInfo pinfo)
+    {
+#if NET7_0_OR_GREATER
+        var info = _nullableInfo.Create(pinfo);
+        return info.WriteState == NullabilityState.Nullable;
+#else
+        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
+        return pinfo.ParameterType.IsNullableValueType();
+#endif
     }
 
     protected override bool ShouldExport(Type type)
