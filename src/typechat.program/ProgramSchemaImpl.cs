@@ -17,7 +17,8 @@ public partial class Program : IDisposable
     /// <param name="steps"></param>
     public Program(JsonDocument? source, Steps steps)
     {
-        ArgumentNullException.ThrowIfNull(steps, nameof(steps));
+        ArgumentVerify.ThrowIfNull(steps, nameof(steps));
+
         _programSource = source;
         Steps = steps;
     }
@@ -70,7 +71,7 @@ public partial class Program : IDisposable
 
     public dynamic Run(Api api)
     {
-        ArgumentNullException.ThrowIfNull(api, nameof(api));
+        ArgumentVerify.ThrowIfNull(api, nameof(api));
         if (!IsComplete)
         {
             throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson);
@@ -86,7 +87,7 @@ public partial class Program : IDisposable
 
     public Task<dynamic> RunAsync(Api api)
     {
-        ArgumentNullException.ThrowIfNull(api, nameof(api));
+        ArgumentVerify.ThrowIfNull(api, nameof(api));
 
         if (!IsComplete)
         {
@@ -234,7 +235,7 @@ public partial class ArrayExpr : Expression
     public ArrayExpr(JsonElement source, Expression[] exprs)
         : base(source)
     {
-        ArgumentNullException.ThrowIfNull(exprs, nameof(exprs));
+        ArgumentVerify.ThrowIfNull(exprs, nameof(exprs));
         Value = exprs;
     }
 
@@ -246,7 +247,7 @@ public partial class ObjectExpr : Expression
     public ObjectExpr(JsonElement source, Dictionary<string, Expression> obj)
         : base(source)
     {
-        ArgumentNullException.ThrowIfNull(obj, nameof(obj));
+        ArgumentVerify.ThrowIfNull(obj, nameof(obj));
         Value = obj;
     }
 

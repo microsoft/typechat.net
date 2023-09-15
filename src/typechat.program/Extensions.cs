@@ -6,7 +6,7 @@ internal static class Extensions
 {
     internal static bool IsAsync(this ParameterInfo returnType)
     {
-        return (returnType.ParameterType.IsAssignableTo(typeof(Task)));
+        return (returnType.ParameterType.IsAssignableFrom(typeof(Task)));
     }
 
     internal static bool IsJsonObject(this Type type)
@@ -40,7 +40,7 @@ internal static class Extensions
             }
             return (expectedType.GetElementType() == otherType.GetElementType());
         }
-        return (otherType.IsAssignableTo(expectedType));
+        return (otherType.IsAssignableFrom(expectedType));
     }
 
     internal static string Stringify<T>(this T value)

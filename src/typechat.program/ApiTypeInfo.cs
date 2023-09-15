@@ -14,7 +14,7 @@ public class ApiMethod
     /// <param name="method"></param>
     public ApiMethod(MethodInfo method)
     {
-        ArgumentNullException.ThrowIfNull(method, nameof(method));
+        ArgumentVerify.ThrowIfNull(method, nameof(method));
         Method = method;
         Params = method.GetParameters();
         ReturnType = method.ReturnParameter;
@@ -98,7 +98,7 @@ public class ApiTypeInfo
     /// <param name="methods"></param>
     public void Add(MethodInfo[] methods)
     {
-        ArgumentNullException.ThrowIfNull(methods, nameof(methods));
+        ArgumentVerify.ThrowIfNull(methods, nameof(methods));
 
         foreach (var method in methods)
         {
@@ -113,7 +113,7 @@ public class ApiTypeInfo
     /// <returns></returns>
     public ApiMethod? Get(string methodName)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(methodName, nameof(methodName));
+        ArgumentVerify.ThrowIfNullOrEmpty(methodName, nameof(methodName));
 
         foreach (var typeInfo in _typeInfo)
         {

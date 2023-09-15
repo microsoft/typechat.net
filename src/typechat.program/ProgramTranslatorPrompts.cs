@@ -16,7 +16,7 @@ public class ProgramTranslatorPrompts : JsonTranslatorPrompts
     /// <param name="apiDef"></param>
     public ProgramTranslatorPrompts(string apiDef)
     {
-        ArgumentException.ThrowIfNullOrEmpty(apiDef, nameof(apiDef));
+        ArgumentVerify.ThrowIfNullOrEmpty(apiDef, nameof(apiDef));
         _apiDef = apiDef;
     }
 

@@ -30,7 +30,7 @@ public class ProgramCompiler
     /// <param name="typeInfo"></param>
     public ProgramCompiler(ApiTypeInfo typeInfo)
     {
-        ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
+        ArgumentVerify.ThrowIfNull(typeInfo, nameof(typeInfo));
         _apiTypeInfo = typeInfo;
         _variables = new Dictionary<string, ParameterExpression>();
     }
@@ -44,8 +44,8 @@ public class ProgramCompiler
     /// <returns></returns>
     public LambdaExpression CompileToExpressionTree(Program program, object apiImpl)
     {
-        ArgumentNullException.ThrowIfNull(apiImpl, nameof(apiImpl));
-        ArgumentNullException.ThrowIfNull(program, nameof(program));
+        ArgumentVerify.ThrowIfNull(apiImpl, nameof(apiImpl));
+        ArgumentVerify.ThrowIfNull(program, nameof(program));
 
         Clear();
 
@@ -374,7 +374,7 @@ public class ProgramCompiler
     {
         Type retType = retVal.Type;
 
-        if (retType.IsAssignableTo(typeof(Task)))
+        if (retType.IsAssignableFrom(typeof(Task)))
         {
             if (retType.IsGenericType)
             {
