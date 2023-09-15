@@ -36,6 +36,7 @@ public class ApproxDateTime
     public DateTime? Timestamp { get; set; }
 }
 
+[Comment("Meds, pills, etc")]
 public class Medication
 {
     public string Name { get; set; }
@@ -77,15 +78,15 @@ public class HealthData
 
 public class HealthDataResponse
 {
-    [Comment("Use this to ask questions, respond to user, notify user")]
-    public string Message { get; set; }
+    [Comment("Use this to ask the user questions")]
+    public string? Question { get; set; }
 
     [Comment("Return this if JSON has ALL required information. Else ask questions")]
     public HealthData? Data { get; set; }
 
-    [Comment("Use this for text that was not understood")]
+    [Comment("Use for text that was not understood")]
     public string[]? NotTranslated { get; set; }
 
     [JsonIgnore]
-    public bool HasMessage => (!string.IsNullOrEmpty(Message));
+    public bool HasMessage => (!string.IsNullOrEmpty(Question));
 }

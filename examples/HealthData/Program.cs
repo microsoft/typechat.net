@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 using Microsoft.TypeChat.Dialog;
 
 namespace HealthData;
@@ -13,14 +14,16 @@ public class HealthDataAgent : ConsoleApp
     {
         _agent = new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
         _agent.Translator.MaxRepairAttempts = 2;
+        _agent.Translator.ConstraintsValidator = new ConstraintsValidator<HealthDataResponse>();
         _agent.ResponseToMessage = (r) => (r.HasMessage) ?
-                                          Message.FromAssistant(r.Message) :
+                                          Message.FromAssistant(r.Question) :
                                           null;
-
-        PromptSection preamble = "Ask the user pertinent questions to get all DATA required for a valid JSON object.\n";
-        preamble += "Also ask about optional data, but stop asking if the user does have the answer OR does not know";
-        _agent.Preamble.Append(preamble);
-        _agent.Preamble.Append("DO fix spelling mistakes, including phonetic misspellings of medications and conditions.");
+        PromptSection section = "Ask the user pertinent follow up questions to get the data required in the Typescript definition.\n";
+        section += "Also ask about optional information";
+        _agent.Preamble.Append("DO fix spelling mistakes, including phonetic misspellings.");
+        _agent.Preamble.Add(section);
+        section += "Stop asking when you have enough information OR if the user does have the answer OR does not know";
+        _agent.Preamble.Append(section);
         _agent.Preamble.Append(PromptLibrary.Now());
         // Uncomment to observe prompts
         //base.SubscribeAllEvents(_agent.Translator);
@@ -65,7 +68,7 @@ public class HealthDataAgent : ConsoleApp
         }
         if (response.HasMessage)
         {
-            Console.WriteLine($"📝: {response.Message}");
+            Console.WriteLine($"📝: {response.Question}");
         }
     }
 
