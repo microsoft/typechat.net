@@ -36,7 +36,6 @@ public class Agent<T>
     public Prompt Preamble => _preamble;
     public TranslationSettings RequestSettings { get; set; }
     public IMessageStream InteractionHistory => _history;
-    public bool FlattenPrompt { get; set; } = false;
     /// <summary>
     /// Transform raw responses into messages for the message history
     /// </summary>
@@ -51,10 +50,6 @@ public class Agent<T>
     public async Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
         Prompt prompt = BuildPrompt(request);
-        if (FlattenPrompt)
-        {
-            prompt = prompt.ToString(true);
-        }
         T response = await _translator.TranslateAsync(prompt, _preamble, RequestSettings, cancelToken).ConfigureAwait(false);
         _history.Append(request);
         Message? responseMessage = (ResponseToMessage != null) ?

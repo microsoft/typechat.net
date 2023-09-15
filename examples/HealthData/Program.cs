@@ -16,14 +16,13 @@ public class HealthDataAgent : ConsoleApp
         _agent.Translator.MaxRepairAttempts = 2;
         _agent.Translator.ConstraintsValidator = new ConstraintsValidator<HealthDataResponse>();
         _agent.ResponseToMessage = (r) => (r.HasMessage) ?
-                                          Message.FromAssistant(r.Question) :
+                                          Message.FromAssistant(r.Message) :
                                           null;
-        PromptSection section = "Ask the user pertinent follow up questions to get the data required in the Typescript definition.\n";
-        section += "Also ask about optional information";
-        _agent.Preamble.Append("DO fix spelling mistakes, including phonetic misspellings.");
+
+        PromptSection section = "Ask the user pertinent questions to get all DATA required and optional for a valid JSON object.\n";
+        section += "But stop asking if the user does have the answer OR does not know";
         _agent.Preamble.Add(section);
-        section += "Stop asking when you have enough information OR if the user does have the answer OR does not know";
-        _agent.Preamble.Append(section);
+        _agent.Preamble.Append("Fix spelling mistakes, including phonetic misspellings.");
         _agent.Preamble.Append(PromptLibrary.Now());
         // Uncomment to observe prompts
         //base.SubscribeAllEvents(_agent.Translator);
@@ -68,7 +67,7 @@ public class HealthDataAgent : ConsoleApp
         }
         if (response.HasMessage)
         {
-            Console.WriteLine($"📝: {response.Question}");
+            Console.WriteLine($"📝: {response.Message}");
         }
     }
 

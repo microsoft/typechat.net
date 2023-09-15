@@ -56,6 +56,11 @@ public struct SchemaText
     [JsonPropertyName("text")]
     public string Text => _text;
 
+    public override string ToString()
+    {
+        return _text;
+    }
+
     public static implicit operator string(SchemaText schema)
     {
         return schema._text;

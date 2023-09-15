@@ -4,22 +4,14 @@ namespace Microsoft.TypeChat;
 
 /// <summary>
 /// The standard prompts used by JsonTranslator
+/// You can customize prompts you give to the translator as per your scenario
+/// To do so, you can implement IJsonTranslatorPrompts OR just inherit from this class and override
 /// </summary>
 public class JsonTranslatorPrompts : IJsonTranslatorPrompts
 {
     internal static readonly JsonTranslatorPrompts Default = new JsonTranslatorPrompts();
 
-    public virtual Prompt CreateRequestPrompt(TypeSchema schema, Prompt request, IList<IPromptSection> preamble = null)
-    {
-        return RequestPrompt(schema, request, preamble);
-    }
-
-    public virtual string CreateRepairPrompt(TypeSchema schema, string json, string validationError)
-    {
-        return RepairPrompt(validationError);
-    }
-
-    public static Prompt RequestPrompt(TypeSchema typeSchema, Prompt request, IList<IPromptSection>? context = null)
+    public virtual Prompt CreateRequestPrompt(TypeSchema typeSchema, Prompt request, IList<IPromptSection> context = null)
     {
         if (request == null)
         {
@@ -31,6 +23,11 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         AddContextAndRequest(prompt, request, context);
 
         return prompt;
+    }
+
+    public virtual string CreateRepairPrompt(TypeSchema schema, string json, string validationError)
+    {
+        return RepairPrompt(validationError);
     }
 
     /// <summary>
@@ -74,7 +71,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         return introSection;
     }
 
-    static PromptSection RequestSection(string request)
+    public static PromptSection RequestSection(string request)
     {
         PromptSection requestSection = new PromptSection();
         requestSection += "The following is a user request:\n";
