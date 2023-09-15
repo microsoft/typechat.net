@@ -36,7 +36,6 @@ public class Agent<T>
     public Prompt Preamble => _preamble;
     public TranslationSettings RequestSettings { get; set; }
     public IMessageStream InteractionHistory => _history;
-
     /// <summary>
     /// Transform raw responses into messages for the message history
     /// </summary>

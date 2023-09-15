@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 using Microsoft.TypeChat.Dialog;
 
 namespace HealthData;
@@ -13,14 +14,15 @@ public class HealthDataAgent : ConsoleApp
     {
         _agent = new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
         _agent.Translator.MaxRepairAttempts = 2;
+        _agent.Translator.ConstraintsValidator = new ConstraintsValidator<HealthDataResponse>();
         _agent.ResponseToMessage = (r) => (r.HasMessage) ?
                                           Message.FromAssistant(r.Message) :
                                           null;
 
-        PromptSection preamble = "Ask the user pertinent questions to get all DATA required for a valid JSON object.\n";
-        preamble += "Also ask about optional data, but stop asking if the user does have the answer OR does not know";
-        _agent.Preamble.Append(preamble);
-        _agent.Preamble.Append("DO fix spelling mistakes, including phonetic misspellings of medications and conditions.");
+        PromptSection section = "Ask the user pertinent questions to get all DATA required and optional for a valid JSON object.\n";
+        section += "But stop asking if the user does have the answer OR does not know";
+        _agent.Preamble.Add(section);
+        _agent.Preamble.Append("Fix spelling mistakes, including phonetic misspellings.");
         _agent.Preamble.Append(PromptLibrary.Now());
         // Uncomment to observe prompts
         //base.SubscribeAllEvents(_agent.Translator);
