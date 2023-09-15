@@ -24,7 +24,7 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
 
-  <Import Project="../TypeChat/Package/nuget.props" />
+  <Import Project="../typechat/Package/nuget.props" />
   <PropertyGroup>
     <Version>0.1.0</Version>
     <PackageId>Microsoft.TypeChat.Program</PackageId>
