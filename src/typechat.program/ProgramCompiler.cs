@@ -373,12 +373,8 @@ public class ProgramCompiler
     LinqExpression CompileReturnValue(LinqExpression retVal)
     {
         Type retType = retVal.Type;
-
-#if NET7_0_OR_GREATER
-        if (retType.IsAssignableTo(typeof(Task)))
-#else
+        
         if (typeof(Task).IsAssignableFrom(retType))
-#endif
         {
             if (retType.IsGenericType)
             {

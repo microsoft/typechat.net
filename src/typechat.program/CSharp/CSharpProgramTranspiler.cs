@@ -374,11 +374,7 @@ public class CSharpProgramTranspiler
 
     void CastFromJsonObject(CSharpWriter writer, string jsonObj, Type type)
     {
-#if NET7_0_OR_GREATER
-        if (!type.IsAssignableTo(typeof(JsonObject)))
-#else
         if (!typeof(JsonObject).IsAssignableFrom(type))
-#endif
         {
             string targetType = type.Name;
             writer.Cast(targetType);

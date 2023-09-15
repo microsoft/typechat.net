@@ -6,20 +6,12 @@ internal static class Extensions
 {
     internal static bool IsAsync(this ParameterInfo returnType)
     {
-#if NET7_0_OR_GREATER
-        return (returnType.ParameterType.IsAssignableTo(typeof(Task)));
-#else
         return (typeof(Task)).IsAssignableFrom(returnType.ParameterType);
-#endif
     }
 
     internal static bool IsJsonObject(this Type type)
     {
-#if NET7_0_OR_GREATER
-        return type.IsAssignableTo(typeof(JsonObject));
-#else
-        return typeof(JsonObject).IsAssignableFrom(type);
-#endif
+        return type.IsAssignableFrom(typeof(JsonObject));
     }
 
     /// <summary>
@@ -48,11 +40,7 @@ internal static class Extensions
             }
             return (expectedType.GetElementType() == otherType.GetElementType());
         }
-#if NET7_0_OR_GREATER
-        return (otherType.IsAssignableTo(expectedType));
-#else
         return (expectedType.IsAssignableFrom(otherType));
-#endif
     }
 
     internal static string Stringify<T>(this T value)
