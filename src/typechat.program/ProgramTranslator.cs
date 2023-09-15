@@ -69,7 +69,6 @@ public class ProgramTranslator : JsonTranslator<Program>
 /// repair the returned program.
 /// Program are run using a ProgramInterprter or compiled with a ProgramCompiler into type safe lambdas
 /// </summary>
-/// <param name="model">model used for translation</param>
 /// <typeparam name="TApi">Api definition</typeparam>
 public class ProgramTranslator<TApi> : ProgramTranslator
 {

@@ -152,6 +152,7 @@ public class CSharpProgramCompiler
     /// - Then runs the C# compiler on that source code and returns a program assembly
     /// </summary>
     /// <param name="program"></param>
+    /// <param name="apiType">The Type of the API the program targets</param>
     /// <returns>In in-memory compiled assembly</returns>
     public static Result<ProgramAssembly> Compile(Program program, Type apiType)
     {

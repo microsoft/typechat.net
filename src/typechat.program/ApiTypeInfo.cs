@@ -53,7 +53,6 @@ public class ApiTypeInfo
     /// <summary>
     /// Api type information
     /// </summary>
-    /// <param name="type">Api type</param>
     /// <param name="apiMethods">Set of methods for your API</param>
     public ApiTypeInfo(MethodInfo[]? apiMethods = null)
     {

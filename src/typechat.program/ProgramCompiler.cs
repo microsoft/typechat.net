@@ -72,7 +72,7 @@ public class ProgramCompiler
     /// Return the program compiled to a delegate. 
     /// </summary>
     /// <param name="program">The program to compile</param>
-    /// <param name="api">The api that the program is permitted to call</param>
+    /// <param name="apiImpl">The api that the program is permitted to call</param>
     /// <returns></returns>
     public Delegate Compile(Program program, object apiImpl)
     {
@@ -373,7 +373,6 @@ public class ProgramCompiler
     LinqExpression CompileReturnValue(LinqExpression retVal)
     {
         Type retType = retVal.Type;
-        
         if (typeof(Task).IsAssignableFrom(retType))
         {
             if (retType.IsGenericType)

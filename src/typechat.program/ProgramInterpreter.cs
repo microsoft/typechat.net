@@ -54,7 +54,7 @@ public class ProgramInterpreter
     /// Evaulates any FunctionCalls by invoking the callHandler callback
     /// </summary>
     /// <param name="program">program to run</param>
-    /// <param name="callHandler">handler that will actually make function calls</param>
+    /// <param name="callHandlerAsync">handler that will actually make function calls</param>
     /// <returns>Result of running the program</returns>
     public async Task<dynamic?> RunAsync(Program program, Func<string, dynamic[], Task<dynamic>> callHandlerAsync)
     {
