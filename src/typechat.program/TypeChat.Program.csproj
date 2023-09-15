@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net60;net70</TargetFrameworks>
@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\typechat\TypeChat.csproj" />
+    <ProjectReference Include="../typechat/TypeChat.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,5 +23,12 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
+
+  <Import Project="../typechat/Package/nuget.props" />
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <PackageId>Microsoft.TypeChat.Program</PackageId>
+    <Description>TypeChat.Program translates natural language requests into simple programs (Plans) that are dynamically typed checked, compiled and run</Description>
+  </PropertyGroup>
 
 </Project>
