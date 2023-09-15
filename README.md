@@ -84,6 +84,15 @@ You will need Visual Studio 2022. VS Code is not tested.
 
 To see TypeChat in action, we recommend exploring the [TypeChat example projects](./examples). 
 
+We sugggest exploring examples in this order:
+* To learn about Typechat and JsonTranslator: 
+  * Sentiment: the simplest example that demonstrates JsonTranslator and other core features 
+  * CoffeeShop
+  * Calendar
+* To learn about TypeChat.Program and program synthesis
+  * Math
+  * Plugins (program synthesis that target Semantic Kernel Plugins)
+
 ### Api Key
 - You will need to provide an **Open API key**
 - Go to the ***examples*** folder in the solution
