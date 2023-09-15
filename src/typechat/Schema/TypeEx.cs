@@ -33,7 +33,11 @@ public static class TypeEx
 
     public static bool IsString(this Type type)
     {
-        return type == typeof(string) || typeof(IStringType).IsAssignableFrom(type);
+#if NET7_0_OR_GREATER
+        return type == typeof(string) || typeof(IStringType).IsAssignableTo(type);
+#else
+        return type == typeof(string) || type.IsAssignableFrom(typeof(IStringType));
+#endif
     }
 
     public static bool IsBoolean(this Type type)
@@ -155,7 +159,11 @@ public static class TypeEx
         }
 
         Assembly assembly = type.Assembly;
-        return assembly.GetTypes().Where(t => t.IsClass && type.IsAssignableFrom(t));
+#if NET7_0_OR_GREATER
+        return assembly.GetTypes().Where(t => t.IsClass && type.IsAssignableTo(t));
+#else
+        return assembly.GetTypes().Where(t => t.IsClass && t.IsAssignableFrom(type));
+#endif
     }
 
 

@@ -374,7 +374,11 @@ public class ProgramCompiler
     {
         Type retType = retVal.Type;
 
-        if (retType.IsAssignableFrom(typeof(Task)))
+#if NET7_0_OR_GREATER
+        if (retType.IsAssignableTo(typeof(Task)))
+#else
+        if (typeof(Task).IsAssignableFrom(retType))
+#endif
         {
             if (retType.IsGenericType)
             {
