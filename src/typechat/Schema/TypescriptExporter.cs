@@ -66,7 +66,7 @@ public class TypescriptExporter : TypeExporter<Type>
     TypescriptWriter _writer;
     HashSet<Type> _nonExportTypes;
     TypescriptVocabExporter? _vocabExporter;
-#if NET7_0_OR_GREATER
+#if NET6_0_OR_GREATER
     NullabilityInfoContext _nullableInfo;
 #endif
     VocabCollection _usedVocabs;
@@ -88,7 +88,7 @@ public class TypescriptExporter : TypeExporter<Type>
             typeof(Array),
             typeof(Nullable<>)
         };
-#if NET7_0_OR_GREATER
+#if NET6_0_OR_GREATER
         _nullableInfo = new NullabilityInfoContext();
 #endif
     }
@@ -158,7 +158,7 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.Clear();
         _vocabExporter?.Clear();
 
-#if NET7_0_OR_GREATER
+#if NET6_0_OR_GREATER
         _nullableInfo = null;
 #endif
     }
@@ -677,7 +677,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     bool IsNullableRef(PropertyInfo prop)
     {
-#if NET7_0_OR_GREATER
+#if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(prop);
         return info.WriteState == NullabilityState.Nullable;
 #else
@@ -688,7 +688,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     bool IsNullableRef(FieldInfo field)
     {
-#if NET7_0_OR_GREATER
+#if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(field);
         return info.WriteState == NullabilityState.Nullable;
 #else
@@ -699,7 +699,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     bool IsNullableRef(ParameterInfo pinfo)
     {
-#if NET7_0_OR_GREATER
+#if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(pinfo);
         return info.WriteState == NullabilityState.Nullable;
 #else

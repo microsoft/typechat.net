@@ -136,7 +136,7 @@ public class Vocab : List<VocabEntry>, IVocab
     /// <returns></returns>
     public static Vocab? Parse(string text, char separator = DefaultEntrySeparator)
     {
-#if NET7_0_OR_GREATER
+#if NET6_0_OR_GREATER
         string[] entries = text.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 #else
         string[] entries = text.Split(separator).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
