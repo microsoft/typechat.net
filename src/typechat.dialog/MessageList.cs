@@ -11,7 +11,10 @@ public class MessageList : List<Message>, IMessageStream, IContextProvider
 
     public new void Add(Message message)
     {
-        ArgumentNullException.ThrowIfNull(message, nameof(message));
+        if (message == null)
+        {
+            throw new ArgumentNullException(nameof(message));
+        }
         base.Add(message);
     }
 

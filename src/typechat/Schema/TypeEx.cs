@@ -5,7 +5,6 @@ namespace Microsoft.TypeChat.Schema;
 internal interface IStringType
 {
 }
-
 public static class TypeEx
 {
     public static IEnumerable<CommentAttribute> CommentAttributes(this MemberInfo member)
@@ -34,7 +33,7 @@ public static class TypeEx
 
     public static bool IsString(this Type type)
     {
-        return type == typeof(string) || type.IsAssignableTo(typeof(IStringType));
+        return type == typeof(string) || typeof(IStringType).IsAssignableFrom(type);
     }
 
     public static bool IsBoolean(this Type type)
@@ -109,28 +108,27 @@ public static class TypeEx
 
     internal static bool IsRequired(this MemberInfo property)
     {
-        var attrib = property.GetCustomAttribute(typeof(JsonRequiredAttribute));
-        if (attrib != null)
+#if NET7_0_OR_GREATER
+        var json_attrib = property.GetCustomAttribute(typeof(JsonRequiredAttribute));
+        if (json_attrib != null)
         {
             return true;
         }
-        attrib = property.GetCustomAttribute(typeof(RequiredAttribute));
+#endif
+        var attrib = property.GetCustomAttribute(typeof(RequiredAttribute));
         return attrib != null;
     }
 
     internal static bool IsNullableValueType(this Type type)
     {
-        return type.IsGenericType && Nullable.GetUnderlyingType(type) != null;
+        return GetNullableValueType(type) is not null;
     }
 
     internal static Type? GetNullableValueType(this Type type)
     {
-        Type baseType = null;
-        if (type.IsGenericType)
-        {
-            baseType = Nullable.GetUnderlyingType(type);
-        }
-        return baseType;
+        var foo = Nullable.GetUnderlyingType(type);
+        var bar = type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        return foo;
     }
 
     internal static Type? BaseClass(this Type type)
@@ -155,9 +153,10 @@ public static class TypeEx
         {
             return Empty<Type>();
         }
-
+        
         Assembly assembly = type.Assembly;
-        return assembly.GetTypes().Where(t => t.IsClass && type.IsAssignableFrom(t));
+        
+        return assembly.GetTypes().Where(t => t.IsClass && t.IsAssignableFrom(type));
     }
 
 

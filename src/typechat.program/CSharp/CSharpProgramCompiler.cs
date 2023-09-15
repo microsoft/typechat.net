@@ -50,7 +50,7 @@ public class CSharpProgramCompiler
     /// <param name="programName">Name of the assembly</param>
     public CSharpProgramCompiler(string programName = DefaultProgramName)
     {
-        ArgumentException.ThrowIfNullOrEmpty(programName, nameof(programName));
+        ArgumentVerify.ThrowIfNullOrEmpty(programName, nameof(programName));
         _assemblyName = programName;
         _compilation = CSharpCompilation.Create(_assemblyName).WithOptions(s_defaultOptions);
     }

@@ -30,8 +30,8 @@ public class Api
     /// <param name="apiImpl">object instance that implements the API</param>
     public Api(ApiTypeInfo typeInfo, object apiImpl)
     {
-        ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
-        ArgumentNullException.ThrowIfNull(apiImpl, nameof(apiImpl));
+        ArgumentVerify.ThrowIfNull(typeInfo, nameof(typeInfo));
+        ArgumentVerify.ThrowIfNull(apiImpl, nameof(apiImpl));
         _typeInfo = typeInfo;
         _apiImpl = apiImpl;
     }

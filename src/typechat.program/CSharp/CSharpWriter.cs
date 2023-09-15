@@ -63,7 +63,7 @@ internal class CSharpWriter : CodeWriter
 
     public CSharpWriter Using(IEnumerable<string> names)
     {
-        ArgumentNullException.ThrowIfNull(names, nameof(names));
+        ArgumentVerify.ThrowIfNull(names, nameof(names));
         foreach (string name in names)
         {
             Using(name);

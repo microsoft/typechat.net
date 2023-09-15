@@ -28,7 +28,7 @@ internal static class ModelEx
 
     public static void Append(this ChatHistory history, IEnumerable<IPromptSection> sections)
     {
-        ArgumentNullException.ThrowIfNull(sections, nameof(sections));
+        ArgumentVerify.ThrowIfNull(sections, nameof(sections));
 
         foreach (var section in sections)
         {

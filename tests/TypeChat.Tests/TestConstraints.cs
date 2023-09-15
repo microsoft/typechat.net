@@ -51,4 +51,25 @@ public class TestConstraints : TypeChatTest
         Assert.True(result.Message.Length > 0);
         Assert.Contains("Age", result.Message);
     }
+
+    /*
+    [Fact]
+    public void TestArgVerify()
+    {
+        string test = null;
+        string testObj = null;
+
+        Assert.Throws<ArgumentNullException>(() =>ArgumentVerify.ThrowIfNull(test, nameof(test)));
+        Assert.Throws<ArgumentNullException>(() => ArgumentVerify.ThrowIfNull(testObj, nameof(testObj)));
+
+        Assert.Throws<ArgumentNullException>(() => ArgumentVerify.ThrowIfNullOrEmpty(test, nameof(test)));
+        test = string.Empty;
+        Assert.Throws<ArgumentException>(() => ArgumentVerify.ThrowIfNullOrEmpty(test, nameof(test)));
+
+        test = "foo";
+        ArgumentVerify.ThrowIfNullOrEmpty(test, nameof(test));
+        testObj = "bar";
+        ArgumentVerify.ThrowIfNull(testObj, nameof(testObj));
+    }
+    */
 }

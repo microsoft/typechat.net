@@ -117,7 +117,7 @@ public class TypescriptWriter
 
     public TypescriptWriter Literals(IEnumerable<string> values)
     {
-        ArgumentNullException.ThrowIfNull(values, nameof(values));
+        ArgumentVerify.ThrowIfNull(values, nameof(values));
         int i = 0;
         foreach (var value in values)
         {
@@ -251,7 +251,7 @@ public class TypescriptWriter
     /// <returns></returns>
     public static string WriteCode(Action<TypescriptWriter> codeGenerator)
     {
-        ArgumentNullException.ThrowIfNull(codeGenerator, nameof(codeGenerator));
+        ArgumentVerify.ThrowIfNull(codeGenerator, nameof(codeGenerator));
 
         using StringWriter sw = new StringWriter();
         TypescriptWriter writer = new TypescriptWriter(sw);

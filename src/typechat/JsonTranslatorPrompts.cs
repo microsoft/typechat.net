@@ -13,10 +13,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
 
     public virtual Prompt CreateRequestPrompt(TypeSchema typeSchema, Prompt request, IList<IPromptSection> context = null)
     {
-        if (request == null)
-        {
-            throw new ArgumentNullException(nameof(request));
-        }
+        ArgumentVerify.ThrowIfNull(request, nameof(request));
         Prompt prompt = new Prompt();
 
         prompt += IntroSection(typeSchema.TypeFullName, typeSchema.Schema);

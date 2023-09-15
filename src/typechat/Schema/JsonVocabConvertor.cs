@@ -21,7 +21,7 @@ internal class JsonVocabConvertor : JsonConverter<string?>
 
     public JsonVocabConvertor(IVocab vocab, string? propertyName)
     {
-        ArgumentNullException.ThrowIfNull(vocab, nameof(vocab));
+        ArgumentVerify.ThrowIfNull(vocab, nameof(vocab));
         _propertyName = propertyName;
         _vocab = vocab;
     }

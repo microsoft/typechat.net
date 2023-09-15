@@ -66,7 +66,9 @@ public class TypescriptExporter : TypeExporter<Type>
     TypescriptWriter _writer;
     HashSet<Type> _nonExportTypes;
     TypescriptVocabExporter? _vocabExporter;
+#if NET6_0_OR_GREATER
     NullabilityInfoContext _nullableInfo;
+#endif
     VocabCollection _usedVocabs;
 
     public TypescriptExporter(TextWriter writer)
@@ -77,7 +79,7 @@ public class TypescriptExporter : TypeExporter<Type>
     public TypescriptExporter(TypescriptWriter writer)
         : base()
     {
-        ArgumentNullException.ThrowIfNull(writer, nameof(writer));
+        ArgumentVerify.ThrowIfNull(writer, nameof(writer));
         _writer = writer;
         _nonExportTypes = new HashSet<Type>()
         {
@@ -86,7 +88,9 @@ public class TypescriptExporter : TypeExporter<Type>
             typeof(Array),
             typeof(Nullable<>)
         };
+#if NET6_0_OR_GREATER
         _nullableInfo = new NullabilityInfoContext();
+#endif
     }
 
     /// <summary>
@@ -153,7 +157,10 @@ public class TypescriptExporter : TypeExporter<Type>
         base.Clear();
         _writer.Clear();
         _vocabExporter?.Clear();
+
+#if NET6_0_OR_GREATER
         _nullableInfo = null;
+#endif
     }
 
     public override void ExportPending()
@@ -183,10 +190,10 @@ public class TypescriptExporter : TypeExporter<Type>
 
     public TypescriptExporter ExportClass(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
         if (!type.IsClass)
         {
-            throw new ArgumentException($"{type.Name} must be a class");
+            ArgumentVerify.Throw($"{type.Name} must be a class");
         }
 
         if (IsExported(type))
@@ -231,10 +238,10 @@ public class TypescriptExporter : TypeExporter<Type>
 
     public TypescriptExporter ExportEnum(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
         if (!type.IsEnum)
         {
-            throw new ArgumentException($"{type.Name} must be Enum");
+           ArgumentVerify.Throw($"{type.Name} must be Enum");
         }
 
         if (IsExported(type))
@@ -260,10 +267,10 @@ public class TypescriptExporter : TypeExporter<Type>
     /// </summary>
     public TypescriptExporter ExportAPI(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
         if (!type.IsInterface)
         {
-            throw new ArgumentException($"{type.Name} must be an interface");
+            ArgumentVerify.Throw($"{type.Name} must be an interface");
         }
 
         if (IsExported(type))
@@ -369,7 +376,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     TypescriptExporter ExportProperties(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
 
         var properties = type.GetProperties(MemberFlags);
         return ExportProperties(properties);
@@ -377,7 +384,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     TypescriptExporter ExportProperties(IEnumerable<PropertyInfo> properties)
     {
-        ArgumentNullException.ThrowIfNull(properties, nameof(properties));
+        ArgumentVerify.ThrowIfNull(properties, nameof(properties));
 
         foreach (var property in properties)
         {
@@ -388,7 +395,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     TypescriptExporter ExportFields(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
 
         var fields = type.GetFields(MemberFlags);
         return ExportFields(fields);
@@ -625,7 +632,7 @@ public class TypescriptExporter : TypeExporter<Type>
                                     $"'{type.Name}'";
 
             _writer.SOL();
-                _writer.Variable("$type", discriminator);
+            _writer.Variable("$type", discriminator);
             _writer.EOL();
         }
         return this;
@@ -670,20 +677,35 @@ public class TypescriptExporter : TypeExporter<Type>
 
     bool IsNullableRef(PropertyInfo prop)
     {
+#if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(prop);
         return info.WriteState == NullabilityState.Nullable;
+#else
+        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
+        return prop.PropertyType.IsNullableValueType();
+#endif
     }
 
     bool IsNullableRef(FieldInfo field)
     {
+#if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(field);
         return info.WriteState == NullabilityState.Nullable;
+#else
+        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
+        return field.FieldType.IsNullableValueType();
+#endif
     }
 
     bool IsNullableRef(ParameterInfo pinfo)
     {
+#if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(pinfo);
         return info.WriteState == NullabilityState.Nullable;
+#else
+        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
+        return pinfo.ParameterType.IsNullableValueType();
+#endif
     }
 
     protected override bool ShouldExport(Type type)

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Microsoft.SemanticKernel.Orchestration;
+using Microsoft.CSharp;
 
 namespace Microsoft.TypeChat;
 
@@ -32,9 +33,9 @@ public class PluginApi
     /// <param name="typeInfo"></param>
     public PluginApi(IKernel kernel, string typeName, PluginApiTypeInfo typeInfo)
     {
-        ArgumentNullException.ThrowIfNull(kernel, nameof(kernel));
-        ArgumentNullException.ThrowIfNullOrEmpty(typeName, nameof(typeName));
-        ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
+        ArgumentVerify.ThrowIfNull(kernel, nameof(kernel));
+        ArgumentVerify.ThrowIfNullOrEmpty(typeName, nameof(typeName));
+        ArgumentVerify.ThrowIfNull(typeInfo, nameof(typeInfo));
 
         _kernel = kernel;
         _typeName = typeName;

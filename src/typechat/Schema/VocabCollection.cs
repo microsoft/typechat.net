@@ -39,7 +39,7 @@ public class VocabCollection : IVocabCollection
     /// <param name="vocab"></param>
     public void Add(NamedVocab vocab)
     {
-        ArgumentNullException.ThrowIfNull(vocab, nameof(vocab));
+        ArgumentVerify.ThrowIfNull(vocab, nameof(vocab));
         _vocabs.Add(vocab.Name, vocab);
     }
     /// <summary>
@@ -78,7 +78,7 @@ public class VocabCollection : IVocabCollection
 
     public NamedVocab? Get(string name)
     {
-        return _vocabs.GetValueOrDefault(name, null);
+        return _vocabs.TryGetValue(name, out NamedVocab vocab) ? vocab : null;
     }
 
     public IEnumerator<NamedVocab> GetEnumerator()
@@ -88,7 +88,7 @@ public class VocabCollection : IVocabCollection
 
     public bool Remove(NamedVocab item)
     {
-        ArgumentNullException.ThrowIfNull(item, nameof(item));
+        ArgumentVerify.ThrowIfNull(item, nameof(item));
         return _vocabs.Remove(item.Name);
     }
 
