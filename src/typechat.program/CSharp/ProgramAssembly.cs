@@ -18,9 +18,9 @@ public class ProgramAssembly
 
     public ProgramAssembly(byte[] bytes, string className, string methodName)
     {
-        ArgumentNullException.ThrowIfNull(bytes, nameof(bytes));
-        ArgumentException.ThrowIfNullOrEmpty(className, nameof(className));
-        ArgumentException.ThrowIfNullOrEmpty(methodName, nameof(methodName));
+        ArgumentVerify.ThrowIfNull(bytes, nameof(bytes));
+        ArgumentVerify.ThrowIfNullOrEmpty(className, nameof(className));
+        ArgumentVerify.ThrowIfNullOrEmpty(methodName, nameof(methodName));
 
         _assembly = Assembly.Load(bytes);
         _className = className;

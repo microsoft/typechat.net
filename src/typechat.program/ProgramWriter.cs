@@ -46,7 +46,7 @@ public class ProgramWriter
 
     public ProgramWriter Write(Program program, string apiName)
     {
-        ArgumentNullException.ThrowIfNull(program, nameof(program));
+        ArgumentVerify.ThrowIfNull(program, nameof(program));
 
         if (program.Steps == null || program.Steps.Calls.IsNullOrEmpty())
         {

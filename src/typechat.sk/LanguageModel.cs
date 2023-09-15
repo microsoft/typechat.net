@@ -18,7 +18,7 @@ public class LanguageModel : ILanguageModel
     /// <param name="model">model to create - allows you to supply additional model information</param>
     public LanguageModel(OpenAIConfig config, ModelInfo? model = null)
     {
-        ArgumentNullException.ThrowIfNull(config, nameof(config));
+        ArgumentVerify.ThrowIfNull(config, nameof(config));
         config.Validate();
 
         model ??= config.Model;
@@ -34,7 +34,7 @@ public class LanguageModel : ILanguageModel
     /// <param name="model"></param>
     public LanguageModel(IChatCompletion service, ModelInfo model)
     {
-        ArgumentNullException.ThrowIfNull(service, nameof(service));
+        ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
         _model = model;
     }

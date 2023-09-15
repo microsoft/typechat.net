@@ -44,7 +44,7 @@ public class VocabFile
     /// <returns></returns>
     public static async Task<VocabCollection> LoadAsync(Stream stream)
     {
-        ArgumentNullException.ThrowIfNull(stream, nameof(stream));
+        ArgumentVerify.ThrowIfNull(stream, nameof(stream));
 
         var records = await JsonSerializer.DeserializeAsync<Dictionary<string, string[]>>(stream).ConfigureAwait(false);
         VocabCollection vocabs = new VocabCollection();
@@ -54,7 +54,7 @@ public class VocabFile
 
     static void Add(VocabCollection vocabs, IDictionary<string, string[]> vocabRecords)
     {
-        ArgumentNullException.ThrowIfNull(vocabRecords, nameof(vocabRecords));
+        ArgumentVerify.ThrowIfNull(vocabRecords, nameof(vocabRecords));
         foreach (var record in vocabRecords)
         {
             var vocab = new Vocab(record.Value);

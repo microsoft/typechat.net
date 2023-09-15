@@ -44,7 +44,7 @@ public class PluginTypescriptExporter
 
     void Export(PluginFunctionName pluginName, FunctionView function)
     {
-        ArgumentNullException.ThrowIfNull(function, nameof(function));
+        ArgumentVerify.ThrowIfNull(function, nameof(function));
 
         _tsWriter.SOL().Comment(function.Description);
         _tsWriter.BeginMethodDeclare(pluginName.ToString());

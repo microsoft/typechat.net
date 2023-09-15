@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Reflection.Metadata.Ecma335;
-
 namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
@@ -49,7 +47,7 @@ public abstract class TypeExporter<T>
     /// <param name="types"></param>
     public void AddPending(IEnumerable<T> types)
     {
-        ArgumentNullException.ThrowIfNull(types, nameof(types));
+        ArgumentVerify.ThrowIfNull(types, nameof(types));
         foreach (var t in types)
         {
             AddPending(t);

@@ -28,7 +28,7 @@ public class CSharpProgramTranspiler
 
     public CSharpProgramTranspiler(Type type, ApiTypeInfo? typeInfo = null)
     {
-        ArgumentNullException.ThrowIfNull(type, nameof(type));
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
         typeInfo ??= new ApiTypeInfo(type);
         //
         // Currently we don't support async operations
@@ -53,7 +53,7 @@ public class CSharpProgramTranspiler
         get => _className;
         set
         {
-            ArgumentException.ThrowIfNullOrEmpty(value, nameof(ClassName));
+            ArgumentVerify.ThrowIfNullOrEmpty(value, nameof(ClassName));
             _className = value;
         }
     }
@@ -71,7 +71,7 @@ public class CSharpProgramTranspiler
     /// <returns>Program source code</returns>
     public string Compile(Program program)
     {
-        ArgumentNullException.ThrowIfNull(program, nameof(program));
+        ArgumentVerify.ThrowIfNull(program, nameof(program));
 
         var (buffer, writer) = BeginBlock();
         {
@@ -374,7 +374,7 @@ public class CSharpProgramTranspiler
 
     void CastFromJsonObject(CSharpWriter writer, string jsonObj, Type type)
     {
-        if (!type.IsAssignableFrom(typeof(JsonObject)))
+        if (!typeof(JsonObject).IsAssignableFrom(type))
         {
             string targetType = type.Name;
             writer.Cast(targetType);

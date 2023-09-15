@@ -33,8 +33,8 @@ public class ProgramInterpreter
     /// <returns>Result of running the program</returns>
     public dynamic? Run(Program program, Func<string, dynamic[], dynamic> callHandler)
     {
-        ArgumentNullException.ThrowIfNull(program, nameof(program));
-        ArgumentNullException.ThrowIfNull(callHandler, nameof(callHandler));
+        ArgumentVerify.ThrowIfNull(program, nameof(program));
+        ArgumentVerify.ThrowIfNull(callHandler, nameof(callHandler));
 
         Clear();
 
@@ -58,8 +58,8 @@ public class ProgramInterpreter
     /// <returns>Result of running the program</returns>
     public async Task<dynamic?> RunAsync(Program program, Func<string, dynamic[], Task<dynamic>> callHandlerAsync)
     {
-        ArgumentNullException.ThrowIfNull(program, nameof(program));
-        ArgumentNullException.ThrowIfNull(callHandlerAsync, nameof(callHandlerAsync));
+        ArgumentVerify.ThrowIfNull(program, nameof(program));
+        ArgumentVerify.ThrowIfNull(callHandlerAsync, nameof(callHandlerAsync));
 
         Clear();
         _callHandlerAsync = callHandlerAsync;

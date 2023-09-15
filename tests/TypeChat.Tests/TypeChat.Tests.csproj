@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -29,11 +29,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\typechat.app\TypeChat.App.csproj" />
-    <ProjectReference Include="..\src\typechat.dialog\TypeChat.Dialog.csproj" />
-    <ProjectReference Include="..\src\typechat.program\TypeChat.Program.csproj" />
-    <ProjectReference Include="..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
-    <ProjectReference Include="..\src\typechat\TypeChat.csproj" />
+    <ProjectReference Include="..\..\src\typechat.app\TypeChat.App.csproj" />
+    <ProjectReference Include="..\..\src\typechat.dialog\TypeChat.Dialog.csproj" />
+    <ProjectReference Include="..\..\src\typechat.program\TypeChat.Program.csproj" />
+    <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
+    <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
   </ItemGroup>
 
   <ItemGroup>

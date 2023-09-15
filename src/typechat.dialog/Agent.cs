@@ -24,7 +24,10 @@ public class Agent<T>
 
     public Agent(JsonTranslator<T> translator, IMessageStream? history = null)
     {
-        ArgumentNullException.ThrowIfNull(translator, nameof(translator));
+        if (translator == null)
+        {
+            throw new ArgumentNullException(nameof(translator));
+        }
         _translator = translator;
         _preamble = new Prompt();
         _builder = new PromptBuilder(translator.Model.ModelInfo.MaxCharCount / 2);
