@@ -9,16 +9,25 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class Api
 {
-    public static readonly object?[] EmptyArgs = Array.Empty<object?>();
+    static readonly object?[] EmptyArgs = Array.Empty<object?>();
 
     ApiTypeInfo _typeInfo;
     object _apiImpl;
 
+    /// <summary>
+    /// Create an Api using ALL Public instance methods of the supplied apiImpl
+    /// </summary>
+    /// <param name="apiImpl">object that implements the API</param>
     public Api(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
     {
 
     }
+    /// <summary>
+    /// Create an Api using the supplied methods + type info implemented in the given object instance
+    /// </summary>
+    /// <param name="typeInfo">Type information for the Api</param>
+    /// <param name="apiImpl">object instance that implements the API</param>
     public Api(ApiTypeInfo typeInfo, object apiImpl)
     {
         ArgumentNullException.ThrowIfNull(typeInfo, nameof(typeInfo));
@@ -27,9 +36,18 @@ public class Api
         _apiImpl = apiImpl;
     }
 
+    /// <summary>
+    /// Type information for this Api
+    /// </summary>
     public ApiTypeInfo TypeInfo => _typeInfo;
+    /// <summary>
+    /// The object that implements the Api
+    /// </summary>
     public object Implementation => _apiImpl;
 
+    /// <summary>
+    /// Diagnostics
+    /// </summary>
     public event Action<string, dynamic[], dynamic> CallCompleted;
 
     /// <summary>
@@ -52,8 +70,8 @@ public class Api
     /// Call a method with name using the given args
     /// A ProgramInterpreter can use this method to call APIs
     /// </summary>
-    /// <param name="name"></param>
-    /// <param name="args"></param>
+    /// <param name="name">method name</param>
+    /// <param name="args">args</param>
     /// <returns>Result, if any</returns>
     public async Task<dynamic> CallAsync(string name, params dynamic[] args)
     {

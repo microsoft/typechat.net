@@ -2,11 +2,20 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// A LanguageModel that uses IChatCompletion AI models
+/// </summary>
 public class LanguageModel : ILanguageModel
 {
     IChatCompletion _service;
     ModelInfo _model;
 
+    /// <summary>
+    /// Create a new language model from the Open AI config
+    /// By default, uses model in config.Model
+    /// </summary>
+    /// <param name="config"></param>
+    /// <param name="model">model to create - allows you to supply additional model information</param>
     public LanguageModel(OpenAIConfig config, ModelInfo? model = null)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
@@ -18,6 +27,11 @@ public class LanguageModel : ILanguageModel
         _model = model;
     }
 
+    /// <summary>
+    /// Create a new language model using the supplied IChatCompletion service
+    /// </summary>
+    /// <param name="service"></param>
+    /// <param name="model"></param>
     public LanguageModel(IChatCompletion service, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
@@ -27,6 +41,13 @@ public class LanguageModel : ILanguageModel
 
     public ModelInfo ModelInfo => _model;
 
+    /// <summary>
+    /// Return a completion for the prompt
+    /// </summary>
+    /// <param name="prompt"></param>
+    /// <param name="settings"></param>
+    /// <param name="cancelToken"></param>
+    /// <returns></returns>
     public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ChatHistory history = ToHistory(prompt);

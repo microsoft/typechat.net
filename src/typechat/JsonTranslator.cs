@@ -110,7 +110,15 @@ public class JsonTranslator<T>
     /// <summary>
     /// Prompts used during translation
     /// </summary>
-    public IJsonTranslatorPrompts Prompts => _prompts;
+    public IJsonTranslatorPrompts Prompts
+    {
+        get => _prompts;
+        set
+        {
+            value ??= JsonTranslatorPrompts.Default;
+            _prompts = value;
+        }
+    }
 
     /// <summary>
     /// Translation settings
@@ -189,11 +197,6 @@ public class JsonTranslator<T>
             string responseText = await GetResponseAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
 
             JsonResponse jsonResponse = JsonResponse.Parse(responseText);
-            if (!jsonResponse.HasJson)
-            {
-                TypeChatException.ThrowNoJson(request, jsonResponse);
-            }
-
             Result<T> validationResult;
             if (jsonResponse.HasCompleteJson)
             {
@@ -203,10 +206,14 @@ public class JsonTranslator<T>
                     return validationResult;
                 }
             }
-            else
+            else if (jsonResponse.HasJson)
             {
                 // Partial json
                 validationResult = Result<T>.Error(TypeChatException.IncompleteJson(jsonResponse));
+            }
+            else
+            {
+                validationResult = Result<T>.Error(TypeChatException.NoJson(jsonResponse));
             }
 
             // Attempt to repair the Json that was returned

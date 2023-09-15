@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// A language model that can work models that support the ITextCompletion interface
+/// </summary>
 public class TextCompletionModel : ILanguageModel
 {
     ITextCompletion _service;

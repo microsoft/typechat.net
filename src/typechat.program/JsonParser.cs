@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Extensions for Json Parsing with System.Text.Json
+/// </summary>
 internal static class JsonParser
 {
     public static JsonElement GetStringProperty(this JsonElement elt, string propertyName)

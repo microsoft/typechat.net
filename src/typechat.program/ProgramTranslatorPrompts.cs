@@ -9,6 +9,11 @@ public class ProgramTranslatorPrompts : JsonTranslatorPrompts
 {
     string _apiDef;
 
+    /// <summary>
+    /// Create a program translator
+    /// The apiDef string contains the methods and their signatures 
+    /// </summary>
+    /// <param name="apiDef"></param>
     public ProgramTranslatorPrompts(string apiDef)
     {
         ArgumentException.ThrowIfNullOrEmpty(apiDef, nameof(apiDef));

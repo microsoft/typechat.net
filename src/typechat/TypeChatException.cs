@@ -9,8 +9,8 @@ public class TypeChatException : Exception
 {
     static class ErrorMessages
     {
-        public const string NoJsonReturned = "No JSON object returned";
-        public const string IncompleteJson = "Json Parse Error. Json Object is incomplete";
+        public const string NoJsonReturned = "The response is not Json";
+        public const string IncompleteJson = "Json Object is incomplete";
     }
 
     /// <summary>
@@ -80,6 +80,11 @@ public class TypeChatException : Exception
             response,
             message
             );
+    }
+
+    internal static string NoJson(JsonResponse response)
+    {
+        return $"{TypeChatException.ErrorMessages.NoJsonReturned}:\n{response.ResponseText}";
     }
 
     internal static string IncompleteJson(JsonResponse response)

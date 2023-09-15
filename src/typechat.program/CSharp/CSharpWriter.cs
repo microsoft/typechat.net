@@ -2,6 +2,10 @@
 
 namespace Microsoft.TypeChat.CSharp;
 
+/// <summary>
+/// Experimental
+/// Used by the CSharpWriter
+/// </summary>
 internal class CSharpLang : CodeLanguage
 {
     public static class Keywords
@@ -40,6 +44,10 @@ internal class CSharpLang : CodeLanguage
     }
 }
 
+/// <summary>
+/// Experimental
+/// CSharpWriter can emit enough C# to transpile the current Program grammar
+/// </summary>
 internal class CSharpWriter : CodeWriter
 {
     public CSharpWriter(TextWriter writer)

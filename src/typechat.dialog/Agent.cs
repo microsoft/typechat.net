@@ -5,7 +5,9 @@ using Microsoft.TypeChat.Schema;
 namespace Microsoft.TypeChat.Dialog;
 
 /// <summary>
-/// A multi-turn message passing Agent
+/// Experimental:
+/// A multi-turn message passing Agent that returns strongly typed responses
+/// Message
 /// </summary>
 public class Agent<T>
 {
@@ -37,7 +39,6 @@ public class Agent<T>
     public Prompt Preamble => _preamble;
     public TranslationSettings RequestSettings { get; set; }
     public IMessageStream InteractionHistory => _history;
-
     /// <summary>
     /// Transform raw responses into messages for the message history
     /// </summary>

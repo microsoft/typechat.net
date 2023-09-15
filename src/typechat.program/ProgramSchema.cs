@@ -4,6 +4,8 @@ namespace Microsoft.TypeChat;
 
 /// <summary>
 /// A Json Program. See ProgramSchema.ts for the grammar for Programs
+/// A Program is a set of steps, where each step is a function call.
+/// Function calls can nest and take arguments that are Json values, arrays and objects
 /// This class is the root is a simple AST for programs
 /// </summary>
 [JsonConverter(typeof(JsonProgramConvertor))]
@@ -20,6 +22,7 @@ public partial class Program
 
     /// <summary>
     /// Part or all of the user request that could not be translated into program steps
+    /// This is especially handy where the user asks has intent that cannot be mapped to existing APIs
     /// </summary>
     public string[] NotTranslated { get; set; }
 }
@@ -36,6 +39,9 @@ public abstract partial class Expression
 /// </summary>
 public partial class Steps : Expression
 {
+    /// <summary>
+    /// Currently, program steps are a collection of function calls
+    /// </summary>
     public FunctionCall[] Calls
     {
         get;
@@ -45,6 +51,7 @@ public partial class Steps : Expression
 
 /// <summary>
 /// A Function Call to a named function with zero or more arguments
+/// This call is bound to the API targeted by this program.
 /// </summary>
 public partial class FunctionCall : Expression
 {
@@ -79,6 +86,10 @@ public partial class ResultReference : Expression
 
 /// <summary>
 /// An expression representing a Json value
+/// Supported Json types:
+/// - string
+/// - number
+/// - boolean
 /// </summary>
 public partial class ValueExpr : Expression
 {
@@ -90,10 +101,13 @@ public partial class ValueExpr : Expression
 }
 
 /// <summary>
-/// An array expression - can contain any expression including function calls
+/// An array expression - can contain any expression including Json objects and function calls
 /// </summary>
 public partial class ArrayExpr : Expression
 {
+    /// <summary>
+    /// Any array can be a collection of any expression
+    /// </summary>
     public Expression[] Value
     {
         get;
@@ -102,7 +116,8 @@ public partial class ArrayExpr : Expression
 }
 
 /// <summary>
-/// A Json Object. 
+/// A Json Object where the value can be any expression, including values returned
+/// dynamically at runtime by function calls
 /// </summary>
 public partial class ObjectExpr : Expression
 {

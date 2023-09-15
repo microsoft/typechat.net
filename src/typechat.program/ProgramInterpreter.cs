@@ -16,6 +16,9 @@ public class ProgramInterpreter
     Func<string, dynamic[], dynamic>? _callHandler;
     Func<string, dynamic[], Task<dynamic>>? _callHandlerAsync;
 
+    /// <summary>
+    /// Create an interpreter
+    /// </summary>
     public ProgramInterpreter()
     {
         _results = new List<dynamic>();
@@ -184,7 +187,7 @@ public class ProgramInterpreter
         switch (expr.Value.ValueKind)
         {
             default:
-                throw new ProgramException(ProgramException.ErrorCode.TypeNotSupported, $"{expr.Value.ValueKind}");
+                throw new ProgramException(ProgramException.ErrorCode.JsonValueTypeNotSupported, $"{expr.Value.ValueKind}");
             case JsonValueKind.True:
                 return true;
             case JsonValueKind.False:

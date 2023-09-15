@@ -4,6 +4,7 @@ namespace Microsoft.TypeChat;
 
 /// <summary>
 /// Simple Program writer: writes out Program as a psuedo C# like function
+/// Useful for displaying programs to a user
 /// </summary>
 public class ProgramWriter
 {
@@ -14,9 +15,9 @@ public class ProgramWriter
         _writer = new CodeWriter(writer);
     }
 
-    public string ProgramName { get; set; } = "Program";
-    public string ApiVarName { get; set; } = "api";
-    public string ResultVarPrefix { get; set; } = "step";
+    string ProgramName { get; set; } = "Program";
+    string ApiVarName { get; set; } = "api";
+    string ResultVarPrefix { get; set; } = "step";
 
     public CodeWriter Writer => _writer;
 

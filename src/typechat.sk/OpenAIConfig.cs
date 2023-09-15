@@ -4,8 +4,15 @@ using Microsoft.SemanticKernel.Reliability;
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Open AI configuration
+/// Can be initialized either from environment variables or from config files
+/// </summary>
 public class OpenAIConfig
 {
+    /// <summary>
+    /// Names of environment variables
+    /// </summary>
     public static class VariableNames
     {
         public const string OPENAI_API_KEY = "OPENAI_API_KEY";
@@ -18,10 +25,25 @@ public class OpenAIConfig
 
     public OpenAIConfig() { }
 
+    /// <summary>
+    /// Use Azure Open AI?
+    /// </summary>
     public bool Azure { get; set; } = true;
+    /// <summary>
+    /// Api endpoint
+    /// </summary>
     public string Endpoint { get; set; }
+    /// <summary>
+    /// Api key to use
+    /// </summary>
     public string ApiKey { get; set; }
+    /// <summary>
+    /// Organization: only used by Open AI service. 
+    /// </summary>
     public string? Organization { get; set; }
+    /// <summary>
+    /// Model name
+    /// </summary>
     public string? Model { get; set; }
     /// <summary>
     /// Http Settings
@@ -30,7 +52,11 @@ public class OpenAIConfig
     public int MaxRetries { get; set; } = 3;
     public int MaxPauseMs { get; set; } = 100;
 
-    public void Validate(string configFileName = default)
+    /// <summary>
+    /// Validate the configuration
+    /// </summary>
+    /// <param name="configFileName"></param>
+    internal void Validate(string configFileName = default)
     {
         configFileName ??= string.Empty;
 
@@ -46,6 +72,10 @@ public class OpenAIConfig
         }
     }
 
+    /// <summary>
+    /// Load configuration from environment variables
+    /// </summary>
+    /// <returns></returns>
     public static OpenAIConfig FromEnvironment()
     {
         OpenAIConfig config = new OpenAIConfig();
