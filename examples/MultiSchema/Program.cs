@@ -8,6 +8,7 @@ using Calendar;
 using Restaurant;
 using Math;
 using Plugins;
+using HealthData;
 
 namespace MultiSchema;
 
@@ -18,23 +19,23 @@ namespace MultiSchema;
 public class MultiSchemaApp : ConsoleApp
 {
     ILanguageModel _model;
-    IntentRouter<IIntentProcessor> _childApps;
+    InputRouter _childApps;
 
     public MultiSchemaApp()
     {
         _model = new LanguageModel(Config.LoadOpenAI());
-        _childApps = new IntentRouter<IIntentProcessor>(_model);
+        _childApps = new InputRouter(_model);
         InitApps();
     }
 
-    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
         var match = await _childApps.RouteAsync(input, cancelToken);
         var processor = match.Value;
         if (processor != null)
         {
             Console.WriteLine($"App Selected: {match.Key}");
-            await processor.ProcessRequestAsync(input, cancelToken);
+            await processor.ProcessInputAsync(input, cancelToken);
         }
         else
         {
@@ -55,13 +56,14 @@ public class MultiSchemaApp : ConsoleApp
         _childApps.Add("Math", new MathApp(), "Calculations using the four basic math operations");
         _childApps.Add("Sentiment", new SentimentApp(), "Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings");
         _childApps.Add("Plugins", new PluginApp(), "Command shell operations: list and search for files, machine information");
+        _childApps.Add("HealthData", new HealthDataAgent(), "Health information: enter your medications, conditions");
         _childApps.Add("No Match", null, "None of the others matched");
     }
 
     void PrintApps()
     {
         int i = 0;
-        foreach (var app in _childApps.Routes)
+        foreach (var app in _childApps.Handlers)
         {
             if (app.Value != null)
             {

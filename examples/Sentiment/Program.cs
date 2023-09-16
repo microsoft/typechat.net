@@ -16,7 +16,7 @@ public class SentimentApp : ConsoleApp
         _translator = new JsonTranslator<SentimentResponse>(new LanguageModel(Config.LoadOpenAI()));
     }
 
-    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
         SentimentResponse response = await _translator.TranslateAsync(input);
         Console.WriteLine($"The sentiment is {response.Sentiment}");

@@ -2,8 +2,15 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// A library of common Prompt Sections and instructions
+/// </summary>
 public class PromptLibrary
 {
+    /// <summary>
+    /// Tell the model about the current Date and Time
+    /// </summary>
+    /// <returns>prompt section</returns>
     public static PromptSection Now()
     {
         DateTime now = DateTime.Now;

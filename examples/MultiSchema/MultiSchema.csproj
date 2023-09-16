@@ -15,7 +15,8 @@
     <Compile Include="..\Restaurant\*.cs" LinkBase="Restaurant" />
     <Compile Include="..\Math\*.cs" LinkBase="Math" />
     <Compile Include="..\Sentiment\*.cs" LinkBase="Sentiment" />
-    <Compile Include="..\Plugins\*.cs" LinkBase="Plugins"/>
+    <Compile Include="..\Plugins\*.cs" LinkBase="Plugins" />
+    <Compile Include="..\HealthData\*.cs" LinkBase="HealthData" />
   </ItemGroup>
  
   <ItemGroup>
@@ -32,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\typechat.app\TypeChat.App.csproj" />
+    <ProjectReference Include="..\..\src\typechat.dialog\TypeChat.Dialog.csproj" />
     <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
     <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
   </ItemGroup>
