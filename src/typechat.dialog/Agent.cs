@@ -42,7 +42,7 @@ public class Agent<T>
     /// <summary>
     /// Transform raw responses into messages for the message history
     /// </summary>
-    public Func<T, Message?> ResponseToMessage { get; set; }
+    public Func<T, Message?> TransformResponseForHistory { get; set; }
 
     public int MaxPromptLength
     {
@@ -52,11 +52,11 @@ public class Agent<T>
 
     public async Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
     {
-        Prompt prompt = BuildPrompt(request);
-        T response = await _translator.TranslateAsync(prompt, _preamble, RequestSettings, cancelToken).ConfigureAwait(false);
+        Prompt context = BuildContext(request);
+        T response = await _translator.TranslateAsync(request, context, RequestSettings, cancelToken).ConfigureAwait(false);
         _history.Append(request);
-        Message? responseMessage = (ResponseToMessage != null) ?
-                                  ResponseToMessage(response) :
+        Message? responseMessage = (TransformResponseForHistory != null) ?
+                                  TransformResponseForHistory(response) :
                                   Message.FromAssistant(response);
         if (responseMessage != null)
         {
@@ -65,7 +65,21 @@ public class Agent<T>
         return response;
     }
 
-    Prompt BuildPrompt(string request)
+    Prompt BuildContext(string request)
+    {
+        _builder.Clear();
+        _builder.MaxLength = (_maxPromptLength - request.Length);
+        _builder.AddRange(_preamble);
+        if (_history.GetCount() > 0)
+        {
+            _builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
+            _builder.AddHistory(_history.Nearest(request));
+        }
+        return _builder.Prompt;
+    }
+
+    /*
+    Prompt BuildContext(string request)
     {
         int preambleLength = _preamble.GetLength();
         int availableContextLength = (_maxPromptLength - (preambleLength + request.Length));
@@ -82,4 +96,5 @@ public class Agent<T>
 
         return _builder.Prompt;
     }
+    */
 }
