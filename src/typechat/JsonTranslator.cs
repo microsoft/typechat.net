@@ -68,12 +68,18 @@ public class JsonTranslator<T>
         _maxRepairAttempts = DefaultMaxRepairAttempts;
     }
 
-    public JsonTranslator(ILanguageModel model, IJsonTranslatorPrompts? prompts = null)
+    /// <summary>
+    /// Create a new, customized JsonTranslator
+    /// </summary>
+    /// <param name="model">The language model to use for translation</param>
+    /// <param name="prompts">Custom prompts to use during translation</param>
+    /// <param name="knownVocabs">Any known vocabularies. JsonVocab attributes can bind to these during JSON deserialiation</param>
+    public JsonTranslator(ILanguageModel model, IJsonTranslatorPrompts? prompts = null, IVocabCollection? knownVocabs = null)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
 
         _model = model;
-        _validator = new TypeValidator<T>();
+        _validator = new TypeValidator<T>(knownVocabs);
         prompts ??= JsonTranslatorPrompts.Default;
         _prompts = prompts;
         _translationSettings = new TranslationSettings(); // Default settings
@@ -121,7 +127,7 @@ public class JsonTranslator<T>
     }
 
     /// <summary>
-    /// Translation settings
+    /// Translation settings. Use this to customize attributes like MaxTokens emitted
     /// </summary>
     public TranslationSettings TranslationSettings => _translationSettings;
 

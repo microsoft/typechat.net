@@ -4,11 +4,18 @@ using Microsoft.VisualBasic;
 
 namespace Microsoft.TypeChat.Dialog;
 
+/// <summary>
+/// Agents exchange messages. 
+/// </summary>
 public class Message : IPromptSection
 {
     string _source;
     object _body;
 
+    /// <summary>
+    /// Create a new message with the given message body
+    /// </summary>
+    /// <param name="body">message body</param>
     public Message(object body)
         : this(null, body)
     {

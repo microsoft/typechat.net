@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat.Dialog;
 
+/// <summary>
+/// A stream of messages between Agents
+/// </summary>
 public interface IMessageStream : IContextProvider
 {
     int GetCount();

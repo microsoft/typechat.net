@@ -35,7 +35,7 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
         Order order = await agent.TranslateAsync("I would like 1 strawberry shortcake");
         Validate(order.Desserts, "Strawberry Shortcake");
 
-        agent.Preamble.Append("The following are PAST requests from the user. Use them during translation.");
+        agent.Instructions.Append("The following are PAST requests from the user. Use them during translation.");
 
         order = await agent.TranslateAsync("Actually, no shortcake. Make it 2 tiramisu instead");
         Validate(order.Desserts, new DessertOrder("Tiramisu", 2));
