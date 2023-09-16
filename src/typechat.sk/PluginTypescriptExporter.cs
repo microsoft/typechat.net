@@ -18,15 +18,23 @@ public class PluginTypescriptExporter
         _tsWriter = new TypescriptWriter(writer);
     }
 
+    /// <summary>
+    /// Include parameter descriptions in the schema
+    /// Default is true
+    /// </summary>
     public bool IncludeParamDescriptions { get; set; } = true;
 
-    public void Comment(string descr) => _tsWriter.Comment(descr);
+    /// <summary>
+    /// Add helper comments to the generated schema
+    /// </summary>
+    /// <param name="comment">comment to add</param>
+    public void Comment(string comment) => _tsWriter.Comment(comment);
 
     /// <summary>
     /// Exports with the api with the given name and type information
     /// </summary>
-    /// <param name="apiName"></param>
-    /// <param name="typeInfo"></param>
+    /// <param name="apiName">The name of the api</param>
+    /// <param name="typeInfo">type information for this plugin Api</param>
     public void Export(string apiName, PluginApiTypeInfo typeInfo)
     {
         _tsWriter.BeginInterface(apiName);
