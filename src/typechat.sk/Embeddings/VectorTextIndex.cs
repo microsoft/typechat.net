@@ -14,10 +14,10 @@ public interface ITextIndex<K>
 /// <typeparam name="T"></typeparam>
 public class VectorTextIndex<T> : VectorizedList<T>
 {
-    IEmbeddingGeneration<string, float> _model;
+    ITextEmbeddingGeneration _model;
     VectorizedList<T> _list;
 
-    public VectorTextIndex(IEmbeddingGeneration<string, float> model, int capacity = 8)
+    public VectorTextIndex(ITextEmbeddingGeneration model, int capacity = 8)
         : base(capacity)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));

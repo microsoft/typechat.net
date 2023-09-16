@@ -29,12 +29,6 @@ public interface IMessageStream : IContextProvider
     /// <returns></returns>
     IEnumerable<Message> Newest();
     /// <summary>
-    /// Return messages that are semantically nearest to the given message
-    /// </summary>
-    /// <param name="message"></param>
-    /// <returns>Ranked messages, in order</returns>
-    IEnumerable<Message> Nearest(string request);
-    /// <summary>
     /// Clear the stream
     /// </summary>
     void Clear();

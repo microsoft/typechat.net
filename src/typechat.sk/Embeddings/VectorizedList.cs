@@ -4,6 +4,7 @@ namespace Microsoft.TypeChat.Embeddings;
 
 /// <summary>
 /// A List of items with associated embeddings
+/// You can use this to build collections of objects that you can search using semantic similarity
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class VectorizedList<T> : IEnumerable<KeyValuePair<T, Embedding>>

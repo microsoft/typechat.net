@@ -25,6 +25,13 @@ public static class KernelEx
         return kernel;
     }
 
+    /// <summary>
+    /// Configure the kernel to use the given chat models
+    /// </summary>
+    /// <param name="builder">kernel builder</param>
+    /// <param name="config">OpenAI configuration</param>
+    /// <param name="modelNames">names of chat models</param>
+    /// <returns>kernel builder</returns>
     public static KernelBuilder WithChatModels(this KernelBuilder builder, OpenAIConfig config, params string[] modelNames)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
@@ -36,6 +43,14 @@ public static class KernelEx
         return builder;
     }
 
+    /// <summary>
+    /// Configure the kernel to use the given chat model
+    /// Automatically configures the builder with retries and other settings
+    /// </summary>
+    /// <param name="builder">kernel builder</param>
+    /// <param name="modelName">name of the model to use</param>
+    /// <param name="config">Open AI configuration for the model</param>
+    /// <returns>builder</returns>
     public static KernelBuilder WithChatModel(this KernelBuilder builder, string modelName, OpenAIConfig config)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
@@ -57,6 +72,12 @@ public static class KernelEx
         return builder;
     }
 
+    /// <summary>
+    /// Configure the kernel with retry settings defined in the Open AI config
+    /// </summary>
+    /// <param name="builder">builder</param>
+    /// <param name="config">Open AI configuration</param>
+    /// <returns>builder</returns>
     public static KernelBuilder WithRetry(this KernelBuilder builder, OpenAIConfig config)
     {
         TimeSpan retryPause = TimeSpan.FromMilliseconds(config.MaxPauseMs);
@@ -69,6 +90,32 @@ public static class KernelEx
         return builder.WithRetryBasic(retryConfig);
     }
 
+    /// <summary>
+    /// Configure a kernel with an embedding model
+    /// </summary>
+    /// <param name="builder">builder</param>
+    /// <param name="modelName">model to use</param>
+    /// <param name="config">Open AI configuration</param>
+    /// <returns>builder</returns>
+    public static KernelBuilder WithEmbeddingModel(this KernelBuilder builder, string modelName, OpenAIConfig config)
+    {
+        if (config.Azure)
+        {
+            builder = builder.WithAzureTextEmbeddingGenerationService(modelName, config.Endpoint, config.ApiKey, modelName);
+        }
+        else
+        {
+            builder = builder.WithOpenAITextEmbeddingGenerationService(modelName, config.ApiKey, config.Organization, modelName);
+        }
+        return builder;
+    }
+
+    /// <summary>
+    /// Create a new language model using the given Kernel
+    /// </summary>
+    /// <param name="kernel">semantic kernel object</param>
+    /// <param name="model">information about the model to use</param>
+    /// <returns>LanguageModel object</returns>
     public static LanguageModel LanguageModel(this IKernel kernel, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
@@ -76,6 +123,12 @@ public static class KernelEx
         return new LanguageModel(kernel.GetService<IChatCompletion>(model.Name), model);
     }
 
+    /// <summary>
+    /// Create a new Text completion model using the given kernel
+    /// </summary>
+    /// <param name="kernel">semantic kernel object</param>
+    /// <param name="model">information about the model to use</param>
+    /// <returns>TextCompletionModel</returns>
     public static TextCompletionModel TextCompletionModel(this IKernel kernel, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
