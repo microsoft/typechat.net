@@ -73,28 +73,8 @@ public class Agent<T>
         if (_history.GetCount() > 0)
         {
             _builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
-            _builder.AddHistory(_history.Nearest(request));
+            _builder.AddHistory(_history.GetContext(request));
         }
         return _builder.Prompt;
     }
-
-    /*
-    Prompt BuildContext(string request)
-    {
-        int preambleLength = _preamble.GetLength();
-        int availableContextLength = (_maxPromptLength - (preambleLength + request.Length));
-        if (availableContextLength <= 0)
-        {
-            return request;
-        }
-
-        _builder.Clear();
-        _builder.MaxLength = availableContextLength;
-        _builder.AddContext(_history.Nearest(request));
-        _builder.MaxLength += request.Length;
-        _builder.Add(request);
-
-        return _builder.Prompt;
-    }
-    */
 }

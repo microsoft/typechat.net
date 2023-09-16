@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Dialog;
 
-public interface IMessageStream
+public interface IMessageStream : IContextProvider
 {
     int GetCount();
 

@@ -49,4 +49,19 @@ internal static class Extensions
             new LanguageModel(config.OpenAI),
             new TypeValidator<T>(TestVocabs.All()));
     }
+
+    /// <summary>
+    /// Generate an array of random floats
+    /// </summary>
+    public static float[] FloatArray(this Random random, int count)
+    {
+        float[] array = new float[count];
+        for (int i = 0; i < count; ++i)
+        {
+            array[i] = random.NextSingle();
+        }
+
+        return array;
+    }
+
 }
