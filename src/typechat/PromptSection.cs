@@ -134,6 +134,12 @@ public class PromptSection : IPromptSection
     /// <param name="text">section text</param>
     /// <returns>PromptSection</returns>
     public static PromptSection FromAssistant(string text) => new PromptSection(Sources.Assistant, text);
+    /// <summary>
+    /// Create a new Instruction
+    /// </summary>
+    /// <param name="text">section text</param>
+    /// <returns>PromptSection</returns>
+    public static PromptSection Instruction(string text) => FromSystem(text);
 
     /// <summary>
     /// Append text to the given section

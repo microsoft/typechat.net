@@ -88,11 +88,11 @@ public class HealthData
 
 public class HealthDataResponse
 {
-    [Comment("Use this to ask questions, respond to user, notify user")]
-    public string? Message { get; set; }
-
     [Comment("Return this if JSON has ALL required information. Else ask questions")]
     public HealthData? Data { get; set; }
+
+    [Comment("Use this to ask questions, respond to user, return errors")]
+    public string? Message { get; set; }
 
     [JsonIgnore]
     public bool HasMessage => (!string.IsNullOrEmpty(Message));

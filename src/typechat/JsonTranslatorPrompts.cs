@@ -41,13 +41,13 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
             prompt.Append(context);
         }
 
-        if (request.Count == 1)
+        if (request.Count >= 1)
         {
             prompt += RequestSection(request[0].GetText());
             return prompt;
         }
 
-        prompt += "USER REQUEST:";
+        prompt.AppendInstruction("USER REQUEST:");
         prompt.Append(request);
         prompt += "The following is USER REQUEST translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n";
         return prompt;

@@ -24,7 +24,7 @@ internal static class SerializationEx
     /// <param name="builder">builder used to build prompt</param>
     /// <param name="history">message history to add</param>
     /// <returns></returns>
-    public static bool AddContext(this PromptBuilder builder, IEnumerable<IPromptSection> context)
+    public static bool AddHistory(this PromptBuilder builder, IEnumerable<IPromptSection> context)
     {
         int contextStartAt = builder.Prompt.Count;
         bool retVal = builder.AddRange(context);
