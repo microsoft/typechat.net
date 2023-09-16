@@ -61,6 +61,7 @@ public class TextClassification
     /// </summary>
     [JsonPropertyName("class")]
     [JsonVocab(Name = "Classes", PropertyName = "class")]
+    [Comment("Use this for the classification")]
     public string Class { get; set; }
 
     public override string ToString() => Class;

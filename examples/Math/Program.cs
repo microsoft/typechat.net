@@ -16,6 +16,7 @@ public class MathApp : ConsoleApp
             new LanguageModel(Config.LoadOpenAI()),
             _api
         );
+        _translator.MaxRepairAttempts = 3;
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);
