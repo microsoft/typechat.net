@@ -15,7 +15,8 @@
     <Compile Include="..\Restaurant\*.cs" LinkBase="Restaurant" />
     <Compile Include="..\Math\*.cs" LinkBase="Math" />
     <Compile Include="..\Sentiment\*.cs" LinkBase="Sentiment" />
-    <Compile Include="..\Plugins\*.cs" LinkBase="Plugins"/>
+    <Compile Include="..\Plugins\*.cs" LinkBase="Plugins" />
+    <Compile Include="..\HealthData\*.cs" LinkBase="HealthData" />
   </ItemGroup>
  
   <ItemGroup>

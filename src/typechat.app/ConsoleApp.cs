@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public abstract class ConsoleApp : IIntentProcessor
+public abstract class ConsoleApp : IInputHandler
 {
     List<string> _stopStrings;
 
@@ -92,7 +92,7 @@ public abstract class ConsoleApp : IIntentProcessor
         {
             return false;
         }
-        await ProcessRequestAsync(input, cancelToken).ConfigureAwait(false);
+        await ProcessInputAsync(input, cancelToken).ConfigureAwait(false);
         return true;
     }
 
@@ -145,7 +145,7 @@ public abstract class ConsoleApp : IIntentProcessor
         }
     }
 
-    public abstract Task ProcessRequestAsync(string input, CancellationToken cancelToken);
+    public abstract Task ProcessInputAsync(string input, CancellationToken cancelToken);
     public virtual Task ProcessCommandAsync(string cmd, IList<string> args)
     {
         Console.WriteLine($"Command {cmd} not handled");

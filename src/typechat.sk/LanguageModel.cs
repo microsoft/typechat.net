@@ -15,7 +15,7 @@ public class LanguageModel : ILanguageModel
     /// By default, uses model in config.Model
     /// </summary>
     /// <param name="config"></param>
-    /// <param name="model">model to create - allows you to supply additional model information</param>
+    /// <param name="model">information about the model to create</param>
     public LanguageModel(OpenAIConfig config, ModelInfo? model = null)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
@@ -39,6 +39,9 @@ public class LanguageModel : ILanguageModel
         _model = model;
     }
 
+    /// <summary>
+    /// Information about the model
+    /// </summary>
     public ModelInfo ModelInfo => _model;
 
     /// <summary>

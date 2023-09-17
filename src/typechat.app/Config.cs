@@ -11,6 +11,7 @@ public class Config
     {
         public const string Gpt35Turbo = "gpt-35-turbo";
         public const string Gpt4 = "gpt-4";
+        public const string Ad002 = "ada-002";
     }
 
     public static T LoadConfig<T>(string configFile, string configOverloadFile, string sectionName = default)
@@ -43,15 +44,19 @@ public class Config
     }
 
     OpenAIConfig? _openAI;
+    OpenAIConfig? _openAIEmbeddings;
 
     public Config()
     {
         _openAI = LoadOpenAI();
+        _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
     }
 
     public OpenAIConfig OpenAI => _openAI;
+    public OpenAIConfig? OpenAIEmbeddings => _openAIEmbeddings;
 
     public bool HasOpenAI => (_openAI != null);
+    public bool HasOpenAIEmbeddings => (_openAIEmbeddings != null);
 
     /// <summary>
     /// Load a file in .env format. Apply contained variables as process specific environment

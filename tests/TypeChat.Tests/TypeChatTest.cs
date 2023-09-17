@@ -85,6 +85,23 @@ public class TypeChatTest
         return false;
     }
 
+    public bool CanRunEndToEndTest_Embeddings(Config config)
+    {
+        return (config.HasOpenAIEmbeddings &&
+                !string.IsNullOrEmpty(config.OpenAIEmbeddings.ApiKey) &&
+                config.OpenAIEmbeddings.ApiKey != "?");
+    }
+
+    public bool CanRunEndToEndTest_Embeddings(Config config, string testName)
+    {
+        if (CanRunEndToEndTest_Embeddings(config))
+        {
+            return true;
+        }
+        WriteSkipped(testName, "NO OpenAI Embeddings Configured");
+        return false;
+    }
+
     public MethodInfo? GetMethod(Type type, string name)
     {
         MethodInfo[] methods = type.GetMethods();

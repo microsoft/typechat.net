@@ -16,6 +16,7 @@ public class MathApp : ConsoleApp
             new LanguageModel(Config.LoadOpenAI()),
             _api
         );
+        _translator.MaxRepairAttempts = 3;
         _api.CallCompleted += this.DisplayCall;
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);
@@ -23,7 +24,7 @@ public class MathApp : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
         using Program program = await _translator.TranslateAsync(input, cancelToken);
 

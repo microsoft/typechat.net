@@ -13,6 +13,7 @@ public class HealthDataAgent : ConsoleApp
     public HealthDataAgent()
     {
         _agent = new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
+        _agent.MaxRequestPromptLength = 2048;
         _agent.Translator.MaxRepairAttempts = 2;
         _agent.Translator.ConstraintsValidator = new ConstraintsValidator<HealthDataResponse>();
         //
@@ -21,19 +22,17 @@ public class HealthDataAgent : ConsoleApp
         _agent.TransformResponseForHistory = (r) => (r.HasMessage) ?
                                           Message.FromAssistant(r.Message) :
                                           null;
-        _agent.Preamble.Append(PromptLibrary.Now());
-        _agent.Preamble.Append(GetInstructions());
+        _agent.Instructions.Append(PromptLibrary.Now());
+        _agent.Instructions.Append(GetInstructions());
         // Uncomment to observe prompts
         //base.SubscribeAllEvents(_agent.Translator);
     }
 
     public TypeSchema Schema => _agent.Translator.Validator.Schema;
 
-    public override async Task ProcessRequestAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
-        Prompt request = new Prompt();
-        request += input;
-        var response = await _agent.TranslateAsync(request, cancelToken);
+        var response = await _agent.TranslateAsync(input, cancelToken);
         PrintResponse(response);
     }
 
@@ -43,7 +42,8 @@ public class HealthDataAgent : ConsoleApp
                "Ask specific questions to gather required OR optional fields I have not already provided" +
                "Stop asking if I don't know the answer\n" +
                "Automatically fix my spelling mistakes\n" +
-               "Always return a response";
+               "My health data may be complex: always record and return ALL of it.\n" +
+               "Always return a response. If you don't understand what I say, ask a question.";
     }
 
     public override Task ProcessCommandAsync(string cmd, IList<string> args)
@@ -55,14 +55,14 @@ public class HealthDataAgent : ConsoleApp
                 break;
 
             case "history":
-                foreach (var message in _agent.InteractionHistory.All())
+                foreach (var message in _agent.History.All())
                 {
                     Console.WriteLine($"{message.Source}: {message.GetText()}");
                 }
                 break;
 
             case "clear":
-                _agent.InteractionHistory.Clear();
+                _agent.History.Clear();
                 break;
         }
         return Task.CompletedTask;

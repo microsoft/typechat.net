@@ -8,6 +8,14 @@
 # ================
 # USE GPT4
 # ================
+# Conversation:
+i want to record my shingles
+August 2016
+It lasted 3 months
+I also broke my foot
+I broke it in high school
+2001
+The foot took a year to be ok
 
 # Conversation: 
 klaritin

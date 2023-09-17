@@ -9,7 +9,9 @@ TypeChat.NET helps you build natural language interfaces with LLMs using strong 
             new LanguageModel(Config.LoadOpenAI())
         );
 
-**Goal**: develop frameworks that enable strongly typed programming with AI. Currently supported scenarios are shown in the examples. TypeChat.NET is in **active and rapid development** with frequent updates and refactoring. When in doubt, look at the code. Comments and documentation will improve as the code settles. 
+**Goal**: develop frameworks that enable strongly typed programming with AI. Currently supported scenarios are shown in the examples. 
+
+TypeChat.NET is in **active development** with frequent updates. When in doubt, look at the code. Comments and documentation will improve as the code settles. 
 
 
 # Assemblies

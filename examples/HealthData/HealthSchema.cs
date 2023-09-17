@@ -39,6 +39,7 @@ public class ApproxDateTime
 [Comment("Meds, pills, etc")]
 public class Medication
 {
+    [Comment("Fix any spelling mistakes, especially phonetic spelling")]
     public string Name { get; set; }
 
     [Comment("E.g. 2 tablets, 1 cup")]
@@ -57,16 +58,19 @@ public class Medication
 [Comment("Disease, Ailment, Injury, Sickness")]
 public class Condition
 {
+    [Comment("Fix any spelling mistakes, especially phonetic spelling")]
     public string Name { get; set; }
 
-    [JsonVocab("active | recurrence | relapse | inactive | remission | resolved | unknown")]
-    public string Status { get; set; }
-
+    [Comment("When the condition started?")]
     [Required]
     public ApproxDateTime StartDate { get; set; }
 
+    [Comment("Always ask for current status of the condition")]
+    [JsonVocab("active | recurrence | relapse | inactive | remission | resolved | unknown")]
     [Required]
-    [Comment("If the disease ended")]
+    public string Status { get; set; }
+
+    [Comment("If the condition was no longer active")]
     public ApproxDateTime? EndDate { get; set; }
 }
 
@@ -91,7 +95,7 @@ public class HealthDataResponse
     [Comment("Return this if JSON has ALL required information. Else ask questions")]
     public HealthData? Data { get; set; }
 
-    [Comment("Use this to ask questions, respond to user, return errors")]
+    [Comment("Use this to ask questions, respond to user, return errors or text you did not understand")]
     public string? Message { get; set; }
 
     [JsonIgnore]
