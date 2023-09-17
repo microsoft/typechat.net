@@ -9,9 +9,7 @@ TypeChat.NET helps you build natural language interfaces with LLMs using strong 
             new LanguageModel(Config.LoadOpenAI())
         );
 
-**Goal**: develop frameworks that enable strongly typed programming with AI. Currently supported scenarios are shown in the examples. 
-
-TypeChat.NET is in **active development** with frequent updates. When in doubt, look at the code. Comments and documentation will improve as the code settles. 
+TypeChat.NET is in **active development** with frequent updates. The framework will evolve as the team explores the space and incorporates feedback. Currently supported scenarios are shown in the examples. Documentation will continue to improve. When in doubt, please look at the code.  
 
 # Assemblies
 TypeChat.NET consists of the following assemblies:
@@ -19,9 +17,9 @@ TypeChat.NET consists of the following assemblies:
   * Support for automatically exporting .NET type information as schema expressed using the concise syntax of Typescript. This schema is sent to language models. 
   * Validation of returned JSON. 
 
-* **TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs*** 
+* **TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs***. 
 
-* **TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel: language models, Semantic Kernel Plugins and Embeddings
+* **TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel: Language models, Plugins and Embeddings.
 
 * **TypeChat.Dialog** (Early): Classes for working with interactive Agents that have history. 
 
@@ -30,12 +28,11 @@ TypeChat.NET consists of the following assemblies:
 
 ## TypeChat ##
 Brings TypeChat to .NET with .NET idiom introduced as appropriate.
-- Json Translators
-- Json Validators
-- Schema: exporters for .NET Types to schema expressed using Typescript. 
-
+* Json Translators
+* Json Validators
+* Schema Exporters from .NET Types to schema expressed using Typescript. 
 Schema export includes support for:
-* Dynamic export at runtime, including with ***each request*** to the AI. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team.
+* Dynamic export at runtime. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team.
 * Vocabularies: easy unions of string tables, like in Typescript, along with support for dynamic loading. See examples: CoffeeShop and CoffeeShop2.
 
 ## TypeChat.Program ##
@@ -64,21 +61,30 @@ The library contains classes for:
 TypeChat.Dialog is an early version of framework desiged for strongly typed interactions with Agents with built in interaction history and other features. 
 
     // Create an agent that interactively helps the user enter their health information, such as medications and conditions
-    new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()))
+    new Agent<HealthData>(new LanguageModel(Config.LoadOpenAI()))
 
 # TypeChat.App
-Helper classes for:
-* Console Apps
+Contains classes used by Typechat examples. These classes may be generally useful for apps built on top of Typechat. Helper classes include:
 * Text Classification
-* Intent dispatch and routing
-* Generation and validation of programs that use Plugins
+* Input routing to sub-apps and schemas
+* Program synthesis of programs that call Plugins
+* Console Apps
 
 # Getting Started 
 ## Building
-You will need Visual Studio 2022. VS Code is not tested. 
-* Load **typechat.sln** from the root directory of your . 
-* Restore packages
-* Build
+
+* Visual Studio 2022. 
+  * Load **typechat.sln** from the root directory. 
+  * Restore packages
+  * Build
+
+* Command Line
+  * Launch a command prompt
+  * Go to the root directory of the project
+  * dotnet Typechat.sln
+ 
+
+## Nuget Packages
 
 ## Examples
 
@@ -104,15 +110,7 @@ To run the examples, you will need an **API key** for an Open AI service. Both A
 - Each example includes an **input.txt** with sample input. 
 - Pass the input file as an argument to run the example in **batch mode**. 
 
-# Contributing
-
-This project welcomes contributions and suggestions.  Most contributions require you to agree to a
-Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
-the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
-
-When you submit a pull request, a CLA bot will automatically determine whether you need to provide
-a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
-provided by the bot. You will only need to do this once across all repos using our CLA.
+# License
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
