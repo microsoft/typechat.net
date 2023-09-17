@@ -2,7 +2,7 @@
 
 TypeChat.NET is an experimental project from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
-TypeChat.NET helps you build natural language interfaces with LLMs using strong types and type-safe programs. 
+TypeChat.NET helps you build natural language interfaces with LLMs using strong validated types and type-safe programs. 
 
         // Translates user intent into strongly typed Calendar Actions
         var translator = new JsonTranslator<CalendarActions>(
@@ -13,7 +13,6 @@ TypeChat.NET helps you build natural language interfaces with LLMs using strong 
 
 TypeChat.NET is in **active development** with frequent updates. When in doubt, look at the code. Comments and documentation will improve as the code settles. 
 
-
 # Assemblies
 TypeChat.NET consists of the following assemblies:
 * **TypeChat**: Classes (JsonTranslator<T>) that translate user intent into strongly typed and validated objects. Additionally includes:
@@ -22,9 +21,9 @@ TypeChat.NET consists of the following assemblies:
 
 * **TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs*** 
 
-* **TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel - access to language models, support for Semantic Kernel Plugins, Embeddings and Semantic Memory
+* **TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel: language models, Semantic Kernel Plugins and Embeddings
 
-* **TypeChat.Dialog** (Early): Classes for working with interactive Agents
+* **TypeChat.Dialog** (Early): Classes for working with interactive Agents that have history. 
 
 * **TypeChat.App**: Useful support classes and extensions used by Typechat examples, such as Text Classifiers. These may also be useful for other apps built using Typechat
 
@@ -83,22 +82,23 @@ You will need Visual Studio 2022. VS Code is not tested.
 
 ## Examples
 
-To see TypeChat in action, we recommend exploring the [TypeChat example projects](./examples). 
+To see TypeChat in action, explore the [TypeChat example projects](./examples). 
 
-We sugggest exploring examples in this order:
-* To learn about Typechat and JsonTranslator: 
+* Learn about Typechat, JsonTranslator and schemas from these examples: 
   * Sentiment: the simplest example that demonstrates JsonTranslator and other core features 
   * CoffeeShop
   * Calendar
-* To learn about TypeChat.Program and program synthesis
+  * Restaurant
+  * MultiSchema
+* Learn about TypeChat.Program and program synthesis from these examples:
   * Math
   * Plugins (program synthesis that target Semantic Kernel Plugins)
 
 ### Api Key
-- You will need to provide an **Open API key**
+To run the examples, you will need an **API key** for an Open AI service. Both Azure Open AI and the Open AI service are supported. 
 - Go to the ***examples*** folder in the solution
-- Create appSettings.Development.json
-- Add your Api Key
+- Make a copy of the appSettings.json file. Name it **appSettings.Development.json**. This file contains a local override of the settings in appSettings.json
+- Add your Api Key to **appSettings.Development.json**. 
 
 ### Inputs
 - Each example includes an **input.txt** with sample input. 
