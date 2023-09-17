@@ -24,14 +24,18 @@ public class TestVectorized
         }
     }
 
-    //[Fact]
+    [Fact]
     public void TestSerialize_VectorList()
     {
+        KeyValuePair<string, Embedding> kv = new KeyValuePair<string, Embedding>("foo", Random.Shared.FloatArray(4));
+        string json = Json.Stringify(kv);
+        kv = Json.Parse<KeyValuePair<string, Embedding>>(json);
+
         VectorizedList<string> list = new VectorizedList<string>();
         list.Add("one", Random.Shared.FloatArray(8));
         list.Add("two", Random.Shared.FloatArray(8));
 
-        string json = Json.Stringify(list);
+        json = Json.Stringify(list);
         VectorizedList<string> listBack = Json.Parse<VectorizedList<string>>(json);
 
         Assert.Equal(list.Count, listBack.Count);

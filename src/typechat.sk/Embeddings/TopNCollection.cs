@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Embeddings;
 /// <summary>
 /// A collector for Top N matches. Keeps only the best N matches by Score.
 /// Automatically flushes out any not in the top N.
-/// By default, items are not sorted by score until you call <see cref="TopNCollection{T}.SortByScore"/>.
+/// By default, items are not sorted by score until you call <see cref="TopNCollection{T}.Sort"/>.
 /// </summary>
 public class TopNCollection<T>
 {
@@ -12,10 +12,10 @@ public class TopNCollection<T>
     /// <summary>
     /// Initializes a new instance of the <see cref="TopNCollection{T}"/> class.
     /// </summary>
-    /// <param name="maxItems">The maximum number of items to keep in the collection.</param>
-    public TopNCollection(int maxItems)
+    /// <param name="topNCount">The maximum number of matches.</param>
+    public TopNCollection(int topNCount)
     {
-        this.MaxItems = maxItems;
+        this.MaxItems = topNCount;
         this._heap = new MinHeap<T>();
     }
 

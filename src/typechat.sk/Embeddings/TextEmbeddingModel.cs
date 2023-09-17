@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
-namespace Microsoft.TypeChat;
+
+namespace Microsoft.TypeChat.Embeddings;
 
 public class TextEmbeddingModel
 {
@@ -40,7 +41,13 @@ public class TextEmbeddingModel
     /// </summary>
     public ModelInfo ModelInfo => _modelInfo;
 
-    public Task<ReadOnlyMemory<float>> GenerateEmbeddingAsync(string text, CancellationToken cancelToken = default)
+    /// <summary>
+    /// Generate an embedding
+    /// </summary>
+    /// <param name="text">text to create embeddings for</param>
+    /// <param name="cancelToken">optional cancel token</param>
+    /// <returns></returns>
+    public Task<Embedding> GenerateEmbeddingAsync(string text, CancellationToken cancelToken = default)
     {
         return _model.GenerateEmbeddingAsync(text, cancelToken);
     }

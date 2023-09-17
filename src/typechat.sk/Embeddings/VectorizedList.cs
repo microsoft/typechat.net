@@ -5,14 +5,18 @@ namespace Microsoft.TypeChat.Embeddings;
 /// <summary>
 /// A List of items with associated embeddings
 /// You can use this to build collections of objects that you can search using semantic similarity
+///
+/// This collection supports Json Serialization
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class VectorizedList<T> : IEnumerable<KeyValuePair<T, Embedding>>
+public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
 {
     List<T> _buffer;
     List<Embedding> _embeddings;
 
-    [JsonConstructor]
+    /// <summary>
+    /// Create a new list
+    /// </summary>
     public VectorizedList()
         : this(8)
     { }
@@ -44,6 +48,9 @@ public class VectorizedList<T> : IEnumerable<KeyValuePair<T, Embedding>>
     /// Enumerate all items
     /// </summary>
     public IEnumerable<T> AllItems => _buffer;
+
+    public bool IsReadOnly => false;
+
     /// <summary>
     /// Add an item and its embedding to the collection
     /// </summary>
@@ -166,9 +173,9 @@ public class VectorizedList<T> : IEnumerable<KeyValuePair<T, Embedding>>
     /// </summary>
     /// <param name="other"></param>
     /// <returns>index of nearest item</returns>
-    public int IndexOfNearest(Embedding other)
+    public int IndexOfNearest(Embedding other, EmbeddingDistance distanceType)
     {
-        return _embeddings.Nearest(other).Value;
+        return _embeddings.IndexOfNearest(other, distanceType).Value;
     }
 
     /// <summary>
@@ -176,9 +183,9 @@ public class VectorizedList<T> : IEnumerable<KeyValuePair<T, Embedding>>
     /// </summary>
     /// <param name="other"></param>
     /// <returns>nearest item, or default</returns>
-    public T Nearest(Embedding other)
+    public T Nearest(Embedding other, EmbeddingDistance distanceType)
     {
-        int i = IndexOfNearest(other);
+        int i = IndexOfNearest(other, distanceType);
         if (i >= 0)
         {
             return this[i];
@@ -187,33 +194,35 @@ public class VectorizedList<T> : IEnumerable<KeyValuePair<T, Embedding>>
     }
 
     /// <summary>
-    /// Return the top N nearest matches
+    /// Return the top N nearest matches by running a comparision against all embeddings in this list
     /// </summary>
     /// <param name="other">embedding to match against</param>
     /// <param name="matches">matches collection</param>
     /// <returns></returns>
-    public TopNCollection<int> IndexOfNearest(Embedding other, TopNCollection<int> matches)
+    public TopNCollection<int> IndexOfNearest(Embedding other, TopNCollection<int> matches, EmbeddingDistance distanceType)
     {
-        return _embeddings.Nearest(other, matches);
+        return _embeddings.Nearest(other, matches, distanceType);
     }
 
     /// <summary>
     /// Return the topN nearest matches nearest to the given embedding
     /// </summary>
     /// <param name="other"></param>
-    /// <param name="topNCount"></param>
+    /// <param name="maxMatches">maximum number of matches</param>
     /// <returns>An enumeration of top matches</returns>
-    public IEnumerable<T> Nearest(Embedding other, int topNCount)
+    public IEnumerable<T> Nearest(Embedding other, int maxMatches, EmbeddingDistance distanceType)
     {
-        TopNCollection<int> matches = new TopNCollection<int>(topNCount);
-        IndexOfNearest(other, matches);
-        matches.Sort();
+        var matches = _embeddings.Nearest(other, maxMatches, distanceType);
         for (int i = 0; i < matches.Count; ++i)
         {
             yield return this[matches[i].Value];
         }
     }
 
+    /// <summary>
+    /// Enumerate the items in this list
+    /// </summary>
+    /// <returns>an enumerator</returns>
     public IEnumerator<KeyValuePair<T, Embedding>> GetEnumerator()
     {
         for (int i = 0, count = _buffer.Count; i < count; ++i)
@@ -225,5 +234,41 @@ public class VectorizedList<T> : IEnumerable<KeyValuePair<T, Embedding>>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
+    }
+
+    int IndexOf(KeyValuePair<T, Embedding> item)
+    {
+        for (int i = 0; i < _buffer.Count; ++i)
+        {
+            if (_buffer[i].Equals(item.Key) && _embeddings[i].Equals(item.Value))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public bool Contains(KeyValuePair<T, Embedding> item) => (IndexOf(item) >= 0);
+
+    /// <summary>
+    /// Not supported.
+    /// </summary>
+    /// <param name="array"></param>
+    /// <param name="arrayIndex"></param>
+    /// <exception cref="NotSupportedException"></exception>
+    public void CopyTo(KeyValuePair<T, Embedding>[] array, int arrayIndex)
+    {
+        throw new NotSupportedException();
+    }
+
+    public bool Remove(KeyValuePair<T, Embedding> item)
+    {
+        int i = IndexOf(item);
+        if (i >= 0)
+        {
+            _buffer.RemoveAt(i);
+            _embeddings.RemoveAt(i);
+        }
+        return false;
     }
 }
