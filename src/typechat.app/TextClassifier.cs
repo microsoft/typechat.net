@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using Microsoft.TypeChat.Schema;
 
-namespace Microsoft.TypeChat.Dialog;
+namespace Microsoft.TypeChat;
 
 /// <summary>
 /// A Text classifier is a JsonTranslator that translates the user's request into a TextClassification
