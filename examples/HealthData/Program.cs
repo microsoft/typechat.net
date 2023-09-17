@@ -13,6 +13,7 @@ public class HealthDataAgent : ConsoleApp
     public HealthDataAgent()
     {
         _agent = new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
+        _agent.MaxRequestPromptLength = 2048;
         _agent.Translator.MaxRepairAttempts = 2;
         _agent.Translator.ConstraintsValidator = new ConstraintsValidator<HealthDataResponse>();
         //

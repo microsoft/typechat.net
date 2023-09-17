@@ -41,6 +41,22 @@ public struct Embedding
         _vector = vector;
     }
 
+    [JsonIgnore]
+    public int Size => _vector.Length;
+
+    /// <summary>
+    /// The raw embedding vector
+    /// </summary>
+    public float[] Vector
+    {
+        get => _vector;
+        set
+        {
+            ArgumentVerify.ThrowIfNull(value, nameof(Vector));
+            _vector = value;
+        }
+    }
+
     /// <summary>
     /// Makes this embedding into a unit vector - in place
     /// If all embeddings have length 1, you can use DotProducts into of full Cosine Similarity. 
@@ -82,19 +98,6 @@ public struct Embedding
             return _vector.DotProduct(other._vector);
         }
         return _vector.CosineSimilarity(other._vector);
-    }
-
-    /// <summary>
-    /// The raw embedding vector
-    /// </summary>
-    public float[] Vector
-    {
-        get => _vector;
-        set
-        {
-            ArgumentVerify.ThrowIfNull(value, nameof(Vector));
-            _vector = value;
-        }
     }
 
     public bool Equal(Embedding other)

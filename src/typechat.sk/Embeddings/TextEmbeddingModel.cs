@@ -18,8 +18,12 @@ public class TextEmbeddingModel
         ArgumentVerify.ThrowIfNull(config, nameof(config));
         config.Validate();
 
+        KernelBuilder kb = new KernelBuilder();
+        kb.WithEmbeddingModel(config.Model, config)
+          .WithRetry(config);
+
+        IKernel kernel = kb.Build();
         modelInfo ??= config.Model;
-        IKernel kernel = config.CreateKernel();
         _model = kernel.GetService<ITextEmbeddingGeneration>(modelInfo.Name);
         _modelInfo = modelInfo;
     }
@@ -50,5 +54,22 @@ public class TextEmbeddingModel
     public Task<Embedding> GenerateEmbeddingAsync(string text, CancellationToken cancelToken = default)
     {
         return _model.GenerateEmbeddingAsync(text, cancelToken);
+    }
+
+    /// <summary>
+    /// Generate embeddings in a batch
+    /// </summary>
+    /// <param name="texts">list of texts to turn into embeddings</param>
+    /// <param name="cancelToken">optional cancel token</param>
+    /// <returns></returns>
+    public async Task<Embedding[]> GenerateEmbeddingsAsync(IList<string> texts, CancellationToken cancelToken = default)
+    {
+        var results = await _model.GenerateEmbeddingsAsync(texts, cancelToken);
+        Embedding[] embeddings = new Embedding[results.Count];
+        for (int i = 0; i < embeddings.Length; ++i)
+        {
+            embeddings[i] = new Embedding(results[i]);
+        }
+        return embeddings;
     }
 }

@@ -11,10 +11,11 @@ public static class EmbeddingsEx
     /// <param name="text">text for which to generate an embedding</param>
     /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    public static async Task<Embedding> GenerateEmbeddingAsync(this IEmbeddingGeneration<string, float> model, string text, CancellationToken cancelToken = default)
+    public static async Task<Embedding> GenerateEmbeddingAsync(this ITextEmbeddingGeneration model, string text, CancellationToken cancelToken = default)
     {
-        Embedding embedding = await model.GenerateEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
-        return embedding;
+        string[] texts = new string[] { text };
+        var results = await model.GenerateEmbeddingsAsync(texts, cancelToken).ConfigureAwait(false);
+        return new Embedding(results[0]);
     }
 
     /// <summary>
