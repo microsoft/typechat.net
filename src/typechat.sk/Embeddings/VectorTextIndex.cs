@@ -16,26 +16,29 @@ public class VectorTextIndex<T>
     /// <summary>
     /// Create a new VectorTextIndex
     /// </summary>
-    /// <param name="model"></param>
-    /// <param name="capacity"></param>
-    public VectorTextIndex(TextEmbeddingModel model, int capacity = 4)
+    /// <param name="model">embedding model</param>
+    public VectorTextIndex(TextEmbeddingModel model)
+        : this(model, new VectorizedList<T>())
     {
-        ArgumentVerify.ThrowIfNull(model, nameof(model));
-        _model = model;
-        _list = new VectorizedList<T>(capacity);
     }
 
     /// <summary>
-    /// Count of items in the index
+    /// Create a new VectorTextIndex
     /// </summary>
-    public int Count => _list.Count;
+    /// <param name="model">model to use</param>
+    /// <param name="list">vector list to use</param>
+    public VectorTextIndex(TextEmbeddingModel model, VectorizedList<T> list)
+    {
+        ArgumentVerify.ThrowIfNull(model, nameof(model));
+        ArgumentVerify.ThrowIfNull(list, nameof(list));
+        _model = model;
+        _list = list;
+    }
 
     /// <summary>
-    /// Return the item at the given position
+    /// Items in this index
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns>item</returns>
-    public T this[int index] => _list[index];
+    public VectorizedList<T> Items => _list;
 
     /// <summary>
     /// Add an item to the collection. Its associated textKey will be vectorized into an embedding
@@ -71,15 +74,6 @@ public class VectorTextIndex<T>
     }
 
     /// <summary>
-    /// Remove the item at the given index
-    /// </summary>
-    /// <param name="index">index to remove at</param>
-    public void RemoveAt(int index)
-    {
-        _list.RemoveAt(index);
-    }
-
-    /// <summary>
     /// Find nearest match to the given text
     /// </summary>
     /// <param name="text"></param>
@@ -101,31 +95,6 @@ public class VectorTextIndex<T>
     {
         var embedding = await GetNormalizedEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
         return _list.Nearest(embedding, maxMatches, EmbeddingDistance.Dot).ToList();
-    }
-
-    /// <summary>
-    /// Return the positions of the nearest matches
-    /// </summary>
-    /// <param name="text">find nearest matches to this text</param>
-    /// <param name="maxMatches">max number of matches</param>
-    /// <param name="cancelToken">optional cancel token</param>
-    /// <returns>matches</returns>
-    public Task<TopNCollection<int>> IndexOfNearestAsync(string text, int maxMatches, CancellationToken cancelToken = default)
-    {
-        TopNCollection<int> matches = new TopNCollection<int>(maxMatches);
-        return IndexOfNearestAsync(text, maxMatches, cancelToken);
-    }
-    /// <summary>
-    /// Return the positions of the nearest matches
-    /// </summary>
-    /// <param name="text">find nearest matches to this text</param>
-    /// <param name="matches">matches collection</param>
-    /// <param name="cancelToken">optional cancel token</param>
-    /// <returns>matches</returns>
-    public async Task<TopNCollection<int>> IndexOfNearestAsync(string text, TopNCollection<int> matches = null, CancellationToken cancelToken = default)
-    {
-        var embedding = await GetNormalizedEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
-        return _list.IndexOfNearest(embedding, matches, EmbeddingDistance.Dot);
     }
 
     async Task<Embedding> GetNormalizedEmbeddingAsync(string text, CancellationToken cancelToken)
