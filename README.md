@@ -60,7 +60,7 @@ The library contains classes for:
 TypeChat.Dialog is an early version of framework desiged for strongly typed interactions with Agents with built in interaction history and other features. 
 
     // Create an agent that interactively helps the user enter their health information, such as medications and conditions
-    new Agent<HealthData>(new LanguageModel(Config.LoadOpenAI()))
+    new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()))
 
 # TypeChat.App
 Contains classes used by Typechat examples. These classes may be generally useful for apps built on top of Typechat. Helper classes include:
