@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\typechat\ArgumentVerify.cs" Link="ArgumentVerify.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>
 

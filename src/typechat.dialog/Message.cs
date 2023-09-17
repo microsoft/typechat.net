@@ -67,6 +67,8 @@ public class Message : IPromptSection
         return _body.Stringify();
     }
 
+    public T GetBody<T>() => (T)_body;
+
     /// <summary>
     /// Create a new message from the given text
     /// </summary>

@@ -6,13 +6,14 @@ namespace Microsoft.TypeChat.Dialog;
 
 /// <summary>
 /// Experimental:
-/// A multi-turn message passing Agent that returns strongly typed responses
-/// The Agent automatically maintains interaction history. For every request, it automatically
+/// A multi-turn message passing Agent that uses a JsonTranslator to create strongly typed responses to user requests. 
+/// 
+/// The Agent automatically maintains interaction history. For every request, the agent
 /// retrieves pertinent context from this history and includes it in the request. You can control
-/// the size of each request by setting the MaxRequestPromptLength property
-/// Message
+/// the size of each request by setting the MaxRequestPromptLength property.
+/// 
 /// </summary>
-public class Agent<T>
+public class Agent<T> : IAgent
 {
     JsonTranslator<T> _translator;
     IMessageStream _history;
@@ -63,12 +64,6 @@ public class Agent<T>
     /// </summary>
     public IMessageStream History => _history;
     /// <summary>
-    /// Transform raw model responses into messages for the message history
-    /// Lets you customize what you write into history: you may not always want to store the raw T in history
-    /// especially if T is a complex Json
-    /// </summary>
-    public Func<T, Message?> TransformResponseForHistory { get; set; }
-    /// <summary>
     /// The maximum number of characters to put in a request prompt. The prompt contains
     /// - the user's request
     /// - any automatically collected context, from history 
@@ -80,27 +75,64 @@ public class Agent<T>
     }
 
     /// <summary>
-    /// Translate the user request to T
+    /// Get response for the given request
     /// </summary>
-    /// <param name="request">request</param>
-    /// <param name="cancelToken">optional cancellation token</param>
-    /// <returns>value of type T</returns>
-    public async Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
+    /// <param name="message">request message</param>
+    /// <param name="cancelToken">optional cancel token</param>
+    /// <returns>Response message</returns>
+    public Task<Message> GetResponseMessageAsync(Message message, CancellationToken cancelToken = default)
     {
-        Prompt context = BuildContext(request);
-        T response = await _translator.TranslateAsync(request, context, null, cancelToken).ConfigureAwait(false);
+        return GetResponseMessageAsync(message, null, cancelToken);
+    }
+
+    /// <summary>
+    /// Get response for the given request
+    /// </summary>
+    /// <param name="request">request message</param>
+    /// <param name="createMessageForHistory">Customize how a response is written into history</param>
+    /// <param name="cancelToken">optional cancellation token</param>
+    /// <returns>response message</returns>
+    public async Task<Message> GetResponseMessageAsync(
+        Message request,
+        Func<T, Message?> createMessageForHistory,
+        CancellationToken cancelToken = default)
+    {
+        ArgumentVerify.ThrowIfNull(request, nameof(request));
+
+        string requestText = request.GetText();
+        Prompt context = BuildContext(requestText);
+
+        T response = await _translator.TranslateAsync(requestText, context, null, cancelToken).ConfigureAwait(false);
+        Message responseMessage = Message.FromAssistant(response);
 
         // Save user message in the interaction history
         _history.Append(request);
-
-        Message? responseMessage = (TransformResponseForHistory != null) ?
-                                  TransformResponseForHistory(response) :
-                                  Message.FromAssistant(response);
-        if (responseMessage != null)
+        // Create a message to save in history
+        Message? historyMessage = (createMessageForHistory != null) ?
+                                  createMessageForHistory(response) :
+                                  responseMessage;
+        if (historyMessage != null)
         {
-            _history.Append(responseMessage);
+            _history.Append(historyMessage);
         }
-        return response;
+
+        return responseMessage;
+    }
+
+    /// <summary>
+    /// Get a response to the given message
+    /// </summary>
+    /// <param name="request">request</param>
+    /// <param name="createMessageForHistory">Customize how a response is written into history</param>
+    /// <param name="cancelToken">optional cancel token</param>
+    /// <returns>Response object</returns>
+    public async Task<T> GetResponseAsync(
+        Message request,
+        Func<T, Message?>? createMessageForHistory = null,
+        CancellationToken cancelToken = default)
+    {
+        Message response = await GetResponseMessageAsync(request, createMessageForHistory, cancelToken).ConfigureAwait(false);
+        return response.GetBody<T>();
     }
 
     Prompt BuildContext(string request)
@@ -110,10 +142,18 @@ public class Agent<T>
         _builder.MaxLength = (_maxPromptLength - requestLength);
         // Add any preamble       
         _builder.AddRange(_instructions);
+        //
+        // If we have history, find parts of it that are contextually relevant and add
+        //
         if (_history.GetCount() > 0)
         {
             _builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
-            _builder.AddHistory(_history.GetContext(request));
+
+            IEnumerable<IPromptSection> context = _history.GetContext(request);
+            if (context != null)
+            {
+                _builder.AddHistory(context);
+            }
         }
         return _builder.Prompt;
     }

@@ -15,15 +15,11 @@ public class HealthDataAgent : ConsoleApp
         _agent = new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
         _agent.MaxRequestPromptLength = 2048;
         _agent.Translator.MaxRepairAttempts = 2;
+        // Enforce additional constraints validation, as provided by System.ComponentModel.DataAnnotations namespace
         _agent.Translator.ConstraintsValidator = new ConstraintsValidator<HealthDataResponse>();
-        //
-        // We will only capture the questions the model asked us in the history
-        //
-        _agent.TransformResponseForHistory = (r) => (r.HasMessage) ?
-                                          Message.FromAssistant(r.Message) :
-                                          null;
-        _agent.Instructions.Append(PromptLibrary.Now());
-        _agent.Instructions.Append(GetInstructions());
+        // Instruct the agent on how it should act
+        GiveAgentInstructions();
+
         // Uncomment to observe prompts
         //base.SubscribeAllEvents(_agent.Translator);
     }
@@ -32,13 +28,24 @@ public class HealthDataAgent : ConsoleApp
 
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
-        var response = await _agent.TranslateAsync(input, cancelToken);
+        HealthDataResponse response = await _agent.GetResponseAsync(
+            input,
+            // We only capture the questions that the model asked us into history
+            (r) => (r.HasMessage) ? Message.FromAssistant(r.Message) : null,
+            cancelToken
+            );
         PrintResponse(response);
     }
 
-    PromptSection GetInstructions()
+    /// <summary>
+    /// Give the agent instructions
+    /// </summary>
+    void GiveAgentInstructions()
     {
-        return "Help me enter my health data step by step.\n" +
+        Prompt instructions = _agent.Instructions;
+        // Supply current date and time, and how to use it
+        instructions += PromptLibrary.Now();
+        instructions += "Help me enter my health data step by step.\n" +
                "Ask specific questions to gather required OR optional fields I have not already provided" +
                "Stop asking if I don't know the answer\n" +
                "Automatically fix my spelling mistakes\n" +
