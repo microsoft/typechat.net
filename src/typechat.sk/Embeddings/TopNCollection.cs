@@ -16,7 +16,7 @@ public class TopNCollection<T>
     public TopNCollection(int topNCount)
     {
         this.MaxItems = topNCount;
-        this._heap = new MinHeap<T>();
+        this._heap = new MinHeap<T>(topNCount);
     }
 
     public int Count => _heap.Count;

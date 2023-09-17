@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.SemanticKernel.Memory.Collections;
 using Microsoft.TypeChat.Embeddings;
 
 namespace Microsoft.TypeChat.Tests;
@@ -41,6 +42,60 @@ public class TestVectorized
         Assert.Equal(list.Count, listBack.Count);
     }
 
+    [Fact]
+    public void TestEmbedding()
+    {
+        const int embeddingSize = 1536;
+        Embedding x = Random.Shared.FloatArray(embeddingSize);
+        Embedding y = Random.Shared.FloatArray(embeddingSize);
+
+        double cos1 = x.CosineSimilarity(y);
+
+        x.NormalizeInPlace();
+        y.NormalizeInPlace();
+        double dot2 = x.DotProduct(y);
+        Assert.Equal(Degrees(cos1), Degrees(dot2));
+    }
+
+    [Fact]
+    public void TestVectorizedList()
+    {
+        VectorizedList<string> list = new VectorizedList<string>(16);
+        Assert.Equal(0, list.Count);
+
+        const int embeddingSize = 8;
+        const int numItems = 10;
+        int i = 0;
+        for (; i < numItems; ++i)
+        {
+            list.Add(i.ToString(), Random.Shared.FloatArray(embeddingSize));
+        }
+
+        const int i_test = 5;
+        string i_test_str = i_test.ToString();
+        Assert.Equal(i_test, list.IndexOf(i_test_str));
+        var kv = new KeyValuePair<string, Embedding>(i_test_str, list.GetEmbedding(5));
+        Assert.True(list.Contains(kv));
+
+        // Test search
+        Embedding testEmbedding = list.GetEmbedding(i_test);
+        int iNearest = list.IndexOfNearest(testEmbedding, EmbeddingDistance.Cosine);
+        Assert.Equal(i_test, iNearest);
+        Assert.Equal(i_test_str, list.Nearest(testEmbedding, EmbeddingDistance.Cosine));
+
+        var matches = list.Nearest(testEmbedding, 5, EmbeddingDistance.Dot).ToList();
+        Assert.Equal(5, matches.Count);
+        matches = list.Nearest(testEmbedding, 5, EmbeddingDistance.Cosine).ToList();
+        Assert.Equal(5, matches.Count);
+        int iDotNearest = list.IndexOfNearest(testEmbedding, EmbeddingDistance.Dot);
+        Assert.NotEqual(-1, iDotNearest);
+
+        // Test remove
+        Assert.True(list.Remove(i_test_str));
+        Assert.True(list.Count == numItems - 1);
+        Assert.False(list.Remove(i_test_str));
+    }
+
     void ValidateEqual(Embedding x, Embedding y)
     {
         Assert.Equal(x.Vector.Length, y.Vector.Length);
@@ -51,5 +106,12 @@ public class TestVectorized
         }
         Assert.True(cmp);
     }
+
+    int Degrees(double cosine)
+    {
+        double angle = Math.Acos(cosine); // In radians
+        return ((180 / Math.PI) * angle).RoundToInt();
+    }
+
 }
 

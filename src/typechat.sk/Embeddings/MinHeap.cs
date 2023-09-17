@@ -9,7 +9,7 @@ internal struct MinHeap<T>
     ScoredValue<T>[] _items;
     int _count;
 
-    public MinHeap(T minValue, int capacity)
+    public MinHeap(int capacity)
     {
         _items = new ScoredValue<T>[capacity + 1];
         _count = 0;

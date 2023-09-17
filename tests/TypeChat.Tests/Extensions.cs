@@ -64,4 +64,9 @@ internal static class Extensions
         return array;
     }
 
+
+    public static int RoundToInt(this double value)
+    {
+        return (int)(value + 0.5);
+    }
 }

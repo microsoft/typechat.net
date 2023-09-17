@@ -169,6 +169,16 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     }
 
     /// <summary>
+    /// Get the emedding at index
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns>embedding</returns>
+    public Embedding GetEmbedding(int index)
+    {
+        return _embeddings[index];
+    }
+
+    /// <summary>
     /// Return the position of the nearest item
     /// </summary>
     /// <param name="other"></param>
