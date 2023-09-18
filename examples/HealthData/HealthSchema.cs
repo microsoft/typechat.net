@@ -73,7 +73,7 @@ public class Condition
 }
 
 [Comment("Use for health data that match nothing else. E.g. immunization, blood prssure etc")]
-public class OtherData
+public class OtherHealthData
 {
     [JsonPropertyName("text")]
     public string Text { get; set; }
@@ -85,7 +85,7 @@ public class HealthData
 {
     public Medication[]? Medication { get; set; }
     public Condition[]? Condition { get; set; }
-    public OtherData[]? Other { get; set; }
+    public OtherHealthData[]? Other { get; set; }
 }
 
 public class HealthDataResponse
@@ -93,9 +93,15 @@ public class HealthDataResponse
     [Comment("Return this if JSON has ALL required information. Else ask questions")]
     public HealthData? Data { get; set; }
 
-    [Comment("Use this to ask questions, respond to user, return errors or text you did not understand")]
+    [Comment("Use this to ask questions and give pertient responses")]
     public string? Message { get; set; }
+
+    [Comment("Use this parts of the user request not translateed, off topic, etc")]
+    public string? NotTranslated { get; set; }
 
     [JsonIgnore]
     public bool HasMessage => (!string.IsNullOrEmpty(Message));
+
+    [JsonIgnore]
+    public bool HasNotTranslated => (!string.IsNullOrEmpty(NotTranslated));
 }

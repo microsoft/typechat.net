@@ -88,13 +88,16 @@ public class UnknownItem
 public class Order
 {
     [JsonPropertyName("coffee")]
-    public CoffeeOrder[] Coffees { get; set; }
+    public CoffeeOrder[]? Coffees { get; set; }
+
     [JsonPropertyName("desserts")]
     public DessertOrder[] Desserts { get; set; }
+
     [JsonPropertyName("fruits")]
-    public FruitOrder[] Fruits { get; set; }
+    public FruitOrder[]? Fruits { get; set; }
+
     [JsonPropertyName("unknown")]
-    public UnknownItem[] Unknown { get; set; }
+    public UnknownItem[]? Unknown { get; set; }
 }
 
 public class SentimentResponse

@@ -8,7 +8,7 @@ internal static class ConstraintValidationEx
     {
         if (vocab == null)
         {
-            throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, $"{value} is not a known value");
+            throw new SchemaException(SchemaException.ErrorCode.VocabNotFound);
         }
         string? error;
         if (propertyName == null)
@@ -50,7 +50,7 @@ internal static class ConstraintValidationEx
         NamedVocab? vocabType = vocabs.Get(vocabName);
         if (vocabType == null)
         {
-            throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, vocabName);
+            SchemaException.ThrowVocabNotFound(vocabName, value);
         }
         string? error;
         if (propertyName == null)

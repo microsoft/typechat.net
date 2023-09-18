@@ -7,23 +7,23 @@ namespace Microsoft.TypeChat;
 
 /// <summary>
 /// JsonTranslator translates natural language requests into objects of type T.
-/// Translation works as follows:
-/// - Each T has an associated schema that describes its structure in JSON. This schema is typically expressed using the
-/// Typescript language, which was designed to define schema consisely. JsonTranslator will automatically generate
-/// Typescript schema for T by default. But you can also use other mechanisms.
 /// 
-/// - Language models use this schema to translate natural language requests into JSON objects.
-///
-/// - JsonTranslator uses Validators to validate and transform the returned JSON into a valid object of type T
-///
-/// - Optional ConstraintsValidators can also run
-///
-/// - Since language models are stochastic, the returned JSON can have errors or fail type checks.
-/// JsonTranslator tries to repair the JSON by sending translation errors back to the language model.
+/// Translation works as follows:
+/// - The language model - which works in text - translates the request into JSON. JsonTranslator gives the model the schema describing the
+/// structure of the JSON it should emit.
+/// - This schema is typically expressed using the Typescript language, which was designed to define schema consisely.
+/// - JsonTranslator can automatically generate Typescript schema for T. But you can also create schema in other ways.
+/// - The model returns JSON.
+/// - JsonTranslator uses Validators to validate and deserialize the returned JSON into a valid object of type T
+/// - Optional ConstraintsValidators can also futher valdidate the object
+/// 
+/// Since language models are stochastic, the returned JSON can have errors or fail type checks.
+/// When this happens, JsonTranslator tries to REPAIR the JSON by sending translation errors back to the language model.
+/// JsonTranslator will attempt repairs MaxRepairAttempts number of times.
 /// 
 /// </summary>
 /// <typeparam name="T">Type to translate requests into</typeparam>
-public class JsonTranslator<T>
+public class JsonTranslator<T> : IJsonTranslator
 {
     public const int DefaultMaxRepairAttempts = 1;
 
@@ -166,10 +166,21 @@ public class JsonTranslator<T>
     public event Action<string> AttemptingRepair;
 
     /// <summary>
+    /// Translate a natural language request into an object'
+    /// </summary>
+    /// <param name="request">text request</param>
+    /// <param name="cancelToken">optional cancel token</param>
+    /// <returns></returns>
+    public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken)
+    {
+        return await TranslateAsync(request, cancelToken);
+    }
+
+    /// <summary>
     /// Translate a natural language request into an object of type 'T'
     /// </summary>
-    /// <param name="request"></param>
-    /// <param name="cancelToken"></param>
+    /// <param name="request">text request</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)

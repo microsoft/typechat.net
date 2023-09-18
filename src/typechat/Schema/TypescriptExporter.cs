@@ -241,7 +241,7 @@ public class TypescriptExporter : TypeExporter<Type>
         ArgumentVerify.ThrowIfNull(type, nameof(type));
         if (!type.IsEnum)
         {
-           ArgumentVerify.Throw($"{type.Name} must be Enum");
+            ArgumentVerify.Throw($"{type.Name} must be Enum");
         }
 
         if (IsExported(type))
@@ -575,7 +575,7 @@ public class TypescriptExporter : TypeExporter<Type>
             if (vocabType == null)
             {
                 // No vocab
-                throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, vocabAttr.Name);
+                SchemaException.ThrowVocabNotFound(vocabAttr.Name);
             }
             ExportVocabType(member, type, vocabType, isNullable);
         }

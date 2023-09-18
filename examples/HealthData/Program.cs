@@ -85,6 +85,10 @@ public class HealthDataAgent : ConsoleApp
         {
             Console.WriteLine($"📝: {response.Message}");
         }
+        if (response.HasNotTranslated)
+        {
+            Console.WriteLine($"🤔: I did not understand\n {response.NotTranslated}");
+        }
     }
 
     public static async Task<int> Main(string[] args)

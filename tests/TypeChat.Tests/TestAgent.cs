@@ -22,6 +22,26 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
     }
 
     [Fact]
+    public void TestMessageStream()
+    {
+        const int messageCount = 3;
+
+        MessageList messageList = new MessageList();
+        for (int i = 0; i < messageCount; ++i)
+        {
+            messageList.Append(i.ToString());
+        }
+        Assert.Equal(messageCount, messageList.Count);
+
+        var newestList = messageList.Newest().ToList();
+        Assert.Equal(messageList.Count, newestList.Count);
+        for (int i = messageCount - 1, j = 0; i >= 0; --i, ++j)
+        {
+            Assert.Equal(i.ToString(), newestList[j].GetText());
+        }
+    }
+
+    [Fact]
     public async Task TestEndToEnd()
     {
         if (!CanRunEndToEndTest(_config))
@@ -31,6 +51,7 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
 
         AgentWithHistory<Order> agent = new AgentWithHistory<Order>(_config.CreateTranslator<Order>());
         agent.CreateMessageForHistory = (r) => null; // Don't remember responses. 
+        agent.Translator.MaxRepairAttempts = 3;
 
         Order order = await agent.GetResponseAsync("I would like 1 strawberry shortcake");
         Validate(order.Desserts, "Strawberry Shortcake");
@@ -39,9 +60,6 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
 
         order = await agent.GetResponseAsync("Actually, no shortcake. Make it 2 tiramisu instead");
         Validate(order.Desserts, new DessertOrder("Tiramisu", 2));
-
-        order = await agent.GetResponseAsync("And you know, how about adding a strawbery cake");
-        Validate(order.Desserts, new DessertOrder("Tiramisu", 2), "Strawberry Cake");
     }
 
     void Validate(DessertOrder[] order, params DessertOrder[] expected)

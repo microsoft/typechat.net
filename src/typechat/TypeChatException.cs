@@ -29,7 +29,11 @@ public class TypeChatException : Exception
         /// <summary>
         /// Json validation failed
         /// </summary>
-        JsonValidation
+        JsonValidation,
+        /// <summary>
+        /// There is no suitable translator this request
+        /// </summary>
+        NoTranslator
     }
 
     string _request;

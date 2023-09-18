@@ -1,14 +1,18 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Embeddings;
+using Microsoft.TypeChat.Embeddings;
+
+namespace Microsoft.TypeChat;
 
 /// <summary>
-/// An in-memory vector text table that automatically vectorizes given items using a model
-/// All embeddings are normalized automatically for performance. With all embeddings of unit length,
-/// dot products can replace cosine similarity
+/// VectorTextIndex is an in-memory vector text index that automatically vectorizes given items using a model
+/// All embeddings are normalized automatically for performance.
+/// Each item T has an associated text description. It is this description that is indexed using embeddings.
+/// 
+/// The VectorTextIndex is also a TextRequestRouter that uses embeddings to route text requests
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class VectorTextIndex<T>
+public class VectorTextIndex<T> : ITextRequestRouter<T>
 {
     TextEmbeddingModel _model;
     VectorizedList<T> _list;
@@ -41,6 +45,19 @@ public class VectorTextIndex<T>
     public VectorizedList<T> Items => _list;
 
     /// <summary>
+    /// Route the given request to the semantically nearest T
+    /// Does so by comparing the embedding of request to that of all registered T
+    /// </summary>
+    /// <param name="request">tequest</param>
+    /// <param name="cancelToken">optional cancel token</param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public Task<T> RouteRequestAsync(string request, CancellationToken cancelToken = default)
+    {
+        return NearestAsync(request, cancelToken);
+    }
+
+    /// <summary>
     /// Add an item to the collection. Its associated textKey will be vectorized into an embedding
     /// </summary>
     /// <param name="item">item to add to the index</param>
@@ -54,6 +71,15 @@ public class VectorTextIndex<T>
         _list.Add(item, embedding);
     }
 
+    /// <summary>
+    /// A multiple items to the collection.
+    /// If the associated embedding model supports batching, this can be much faster
+    /// </summary>
+    /// <param name="items">items to add to the collection</param>
+    /// <param name="textRepresentations">the text represenations of these items</param>
+    /// <param name="cancelToken">optional cancel token</param>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task AddAsync(T[] items, string[] textRepresentations, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNull(items, nameof(items));

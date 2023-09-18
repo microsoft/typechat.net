@@ -33,6 +33,7 @@ Brings TypeChat to .NET with .NET idiom introduced as appropriate.
 * Schema Exporters from .NET Types to schema expressed using Typescript. Schema export includes support for:
   * Dynamic export at runtime. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team.
   * Vocabularies: easy unions of string tables, like in Typescript, along with support for dynamic loading. See examples: CoffeeShop and CoffeeShop2.
+* Classifiers used to route requests to child or hierarchical schemas and handlers
 
 ## TypeChat.Program ##
 TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. These programs are then type checked, compiled and run with type safety.
@@ -54,6 +55,7 @@ TypeChat.Program includes:
 
 The library contains classes for:
 * LLM bindings for TypeChat using the Semantic Kernel. All TypeChat examples use the Semantic Kernel to call LLMs
+* Embeddings, VectorizedLists
 * **Program synthesis with Plugins**: Automatically turns registered plugins into a PluginAPI that programs synthesized by the LLM can call. [Plugins Example](examples/Plugins/Program.cs)
  
 # TypeChat.Dialog
@@ -64,8 +66,6 @@ TypeChat.Dialog is an early version of framework desiged for strongly typed inte
 
 # TypeChat.App
 Contains classes used by Typechat examples. These classes may be generally useful for apps built on top of Typechat. Helper classes include:
-* Text Classification
-* Input routing to sub-apps and schemas
 * Program synthesis of programs that call Plugins
 * Console Apps
 
@@ -80,7 +80,7 @@ Contains classes used by Typechat examples. These classes may be generally usefu
 * Command Line
   * Launch a command prompt
   * Go to the root directory of the project
-  * dotnet Typechat.sln
+  * dotnet build Typechat.sln
  
 
 ## Nuget Packages

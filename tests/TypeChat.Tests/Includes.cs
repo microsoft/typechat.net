@@ -15,6 +15,7 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.Configuration.Json;
 global using Microsoft.TypeChat;
 global using Microsoft.TypeChat.Schema;
+global using Microsoft.TypeChat.Classification;
 global using Microsoft.TypeChat.Dialog;
 global using Microsoft.TypeChat.Embeddings;
 global using Microsoft.SemanticKernel;

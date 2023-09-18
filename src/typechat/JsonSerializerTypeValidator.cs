@@ -30,8 +30,6 @@ public class JsonSerializerTypeValidator
     static JsonSerializerOptions _defaultOptions = DefaultOptions();
     JsonSerializerOptions _options;
 
-    public static readonly JsonSerializerTypeValidator Default = new JsonSerializerTypeValidator(_defaultOptions);
-
     /// <summary>
     /// Create a new type validator
     /// </summary>
@@ -126,14 +124,7 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
     {
         ArgumentVerify.ThrowIfNull(schema, nameof(schema));
         _schema = schema;
-        if (options != null)
-        {
-            _validator = new JsonSerializerTypeValidator(options);
-        }
-        else
-        {
-            _validator = JsonSerializerTypeValidator.Default;
-        }
+        _validator = new JsonSerializerTypeValidator(options ?? JsonSerializerTypeValidator.DefaultOptions());
     }
 
     /// <summary>

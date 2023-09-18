@@ -6,7 +6,8 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
 {
     Config _config;
 
-    public TestEndToEnd(Config config)
+    public TestEndToEnd(Config config, ITestOutputHelper output)
+        : base(output)
     {
         _config = config;
     }
