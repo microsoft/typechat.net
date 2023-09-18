@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Classification;
 
 using Sentiment;
 using CoffeeShop;
@@ -19,18 +20,18 @@ namespace MultiSchema;
 public class MultiSchemaApp : ConsoleApp
 {
     ILanguageModel _model;
-    InputRouter _childApps;
+    TextRequestRouter<IInputHandler> _childApps;
 
     public MultiSchemaApp()
     {
         _model = new LanguageModel(Config.LoadOpenAI());
-        _childApps = new InputRouter(_model);
+        _childApps = new TextRequestRouter<IInputHandler>(_model);
         InitApps();
     }
 
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
-        var match = await _childApps.RouteAsync(input, cancelToken);
+        var match = await _childApps.ClassifyRequestAsync(input, cancelToken);
         var processor = match.Value;
         if (processor != null)
         {
@@ -50,20 +51,20 @@ public class MultiSchemaApp : ConsoleApp
     {
         // While this is hardcoded here, you can also do this dynamically
         // targets dynamically
-        _childApps.Add("CoffeeShop", new CoffeeShopApp(), "Order Coffee Drinks (Italian names included) and Baked Goods");
-        _childApps.Add("Calendar", new CalendarApp(), "Actions related to calendars, appointments, meetings, schedules");
-        _childApps.Add("Restaurant", new RestaurantApp(), "Order pizza, beer and salads");
-        _childApps.Add("Math", new MathApp(), "Calculations using the four basic math operations");
-        _childApps.Add("Sentiment", new SentimentApp(), "Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings");
-        _childApps.Add("Plugins", new PluginApp(), "Command shell operations: list and search for files, machine information");
-        _childApps.Add("HealthData", new HealthDataAgent(), "Health information: enter your medications, conditions");
-        _childApps.Add("No Match", null, "None of the others matched");
+        _childApps.Add(new CoffeeShopApp(), "CoffeeShop", "Order Coffee Drinks (Italian names included) and Baked Goods");
+        _childApps.Add(new CalendarApp(), "Calendar", "Actions related to calendars, appointments, meetings, schedules");
+        _childApps.Add(new RestaurantApp(), "Restaurant", "Order pizza, beer and salads");
+        _childApps.Add(new MathApp(), "Math", "Calculations using the four basic math operations");
+        _childApps.Add(new SentimentApp(), "Sentiment", "Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings");
+        _childApps.Add(new PluginApp(), "Plugins", "Command shell operations: list and search for files, machine information");
+        _childApps.Add(new HealthDataAgent(), "HealthData", "Health information: enter your medications, conditions");
+        _childApps.Add(null, "No Match", "None of the others matched");
     }
 
     void PrintApps()
     {
         int i = 0;
-        foreach (var app in _childApps.Handlers)
+        foreach (var app in _childApps.Routes)
         {
             if (app.Value != null)
             {

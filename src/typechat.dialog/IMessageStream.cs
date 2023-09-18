@@ -8,12 +8,6 @@ namespace Microsoft.TypeChat.Dialog;
 public interface IMessageStream : IContextProvider
 {
     /// <summary>
-    /// Number of messages in the stream
-    /// </summary>
-    /// <returns>count</returns>
-    int GetCount();
-
-    /// <summary>
     /// Append a message to the stream
     /// </summary>
     /// <param name="message">message to append</param>
