@@ -29,19 +29,18 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
             return;
         }
 
-        Agent<Order> agent = new Agent<Order>(_config.CreateTranslator<Order>());
+        AgentWithHistory<Order> agent = new AgentWithHistory<Order>(_config.CreateTranslator<Order>());
+        agent.CreateMessageForHistory = (r) => null; // Don't remember responses. 
 
-        Func<Order, Message> responseTransform = (r) => null;
-
-        Order order = (await agent.GetResponseAsync("I would like 1 strawberry shortcake", responseTransform));
+        Order order = await agent.GetResponseAsync("I would like 1 strawberry shortcake");
         Validate(order.Desserts, "Strawberry Shortcake");
 
         agent.Instructions.Append("The following are PAST requests from the user. Use them during translation.");
 
-        order = await agent.GetResponseAsync("Actually, no shortcake. Make it 2 tiramisu instead", responseTransform);
+        order = await agent.GetResponseAsync("Actually, no shortcake. Make it 2 tiramisu instead");
         Validate(order.Desserts, new DessertOrder("Tiramisu", 2));
 
-        order = await agent.GetResponseAsync("And you know, how about adding a strawbery cake", responseTransform);
+        order = await agent.GetResponseAsync("And you know, how about adding a strawbery cake");
         Validate(order.Desserts, new DessertOrder("Tiramisu", 2), "Strawberry Cake");
     }
 

@@ -17,7 +17,6 @@ public class Quantity
 public class ApproxQuantity
 {
     [JsonRequired]
-    [Comment("Use if no precise quantity")]
     [Comment("Default: Unknown")]
     public string DisplayText { get; set; }
 
@@ -28,7 +27,6 @@ public class ApproxQuantity
 public class ApproxDateTime
 {
     [JsonRequired]
-    [Comment("Use if no precise date")]
     [Comment("Default: Unknown")]
     public string DisplayText { get; set; }
 
