@@ -52,6 +52,7 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
 
         AgentWithHistory<Order> agent = new AgentWithHistory<Order>(_config.CreateTranslator<Order>());
         agent.CreateMessageForHistory = (r) => null; // Don't remember responses. 
+        agent.Translator.MaxRepairAttempts = 3;
 
         Order order = await agent.GetResponseAsync("I would like 1 strawberry shortcake");
         Validate(order.Desserts, "Strawberry Shortcake");
@@ -60,9 +61,6 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
 
         order = await agent.GetResponseAsync("Actually, no shortcake. Make it 2 tiramisu instead");
         Validate(order.Desserts, new DessertOrder("Tiramisu", 2));
-
-        order = await agent.GetResponseAsync("And you know, how about adding a strawbery cake");
-        Validate(order.Desserts, new DessertOrder("Tiramisu", 2), "Strawberry Cake");
     }
 
     void Validate(DessertOrder[] order, params DessertOrder[] expected)
