@@ -575,7 +575,7 @@ public class TypescriptExporter : TypeExporter<Type>
             if (vocabType == null)
             {
                 // No vocab
-                throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, vocabAttr.Name);
+                SchemaException.ThrowVocabNotFound(vocabAttr.Name);
             }
             ExportVocabType(member, type, vocabType, isNullable);
         }

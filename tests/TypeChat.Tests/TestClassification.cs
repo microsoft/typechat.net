@@ -6,7 +6,8 @@ public class TestClassification : TypeChatTest, IClassFixture<Config>
 {
     Config _config;
 
-    public TestClassification(Config config)
+    public TestClassification(Config config, ITestOutputHelper output)
+        : base(output)
     {
         _config = config;
     }

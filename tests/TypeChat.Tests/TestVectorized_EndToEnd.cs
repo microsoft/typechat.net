@@ -6,7 +6,8 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
 {
     Config _config;
 
-    public TestVectorized_EndToEnd(Config config)
+    public TestVectorized_EndToEnd(Config config, ITestOutputHelper output)
+        : base(output)
     {
         _config = config;
     }
