@@ -8,17 +8,22 @@ namespace HealthData;
 
 public class HealthDataAgent : ConsoleApp
 {
-    Agent<HealthDataResponse> _agent;
+    AgentWithHistory<HealthDataResponse> _agent;
 
     public HealthDataAgent()
     {
-        _agent = new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
-        _agent.MaxRequestPromptLength = 2048;
-        _agent.Translator.MaxRepairAttempts = 2;
-        // Enforce additional constraints validation, as provided by System.ComponentModel.DataAnnotations namespace
-        _agent.Translator.ConstraintsValidator = new ConstraintsValidator<HealthDataResponse>();
+        _agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
         // Instruct the agent on how it should act
         GiveAgentInstructions();
+        // We only capture the questions that the model asked us into history
+        _agent.CreateMessageForHistory = (r) => (r.HasMessage) ? Message.FromAssistant(r.Message) : null;
+        // Enforce additional constraints validation, as provided by System.ComponentModel.DataAnnotations namespace
+        _agent.Translator.ConstraintsValidator = new ConstraintsValidator<HealthDataResponse>();
+        //
+        // Set up some parameters
+        //
+        _agent.MaxRequestPromptLength = 2048; // Limit # of characters, to avoid hitting token limits
+        _agent.Translator.MaxRepairAttempts = 2;
 
         // Uncomment to observe prompts
         //base.SubscribeAllEvents(_agent.Translator);
@@ -28,12 +33,7 @@ public class HealthDataAgent : ConsoleApp
 
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
-        HealthDataResponse response = await _agent.GetResponseAsync(
-            input,
-            // We only capture the questions that the model asked us into history
-            (r) => (r.HasMessage) ? Message.FromAssistant(r.Message) : null,
-            cancelToken
-            );
+        HealthDataResponse response = await _agent.GetResponseAsync(input, cancelToken);
         PrintResponse(response);
     }
 
