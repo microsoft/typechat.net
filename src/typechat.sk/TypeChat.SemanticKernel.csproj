@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\typechat\ArgumentVerify.cs" Link="ArgumentVerify.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="0.22.230905.3-preview" />
   </ItemGroup>
