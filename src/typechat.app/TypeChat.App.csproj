@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\typechat.dialog\TypeChat.Dialog.csproj" />
     <ProjectReference Include="..\typechat.program\TypeChat.Program.csproj" />
     <ProjectReference Include="..\typechat.sk\TypeChat.SemanticKernel.csproj" />
     <ProjectReference Include="..\typechat\TypeChat.csproj" />

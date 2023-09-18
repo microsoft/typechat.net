@@ -75,9 +75,9 @@ public abstract class ConsoleApp : IInputHandler
         {
             if (input.StartsWith(CommandPrefix))
             {
-                return await EvalCommand(input, cancelToken);
+                return await EvalCommand(input, cancelToken).ConfigureAwait(false);
             }
-            return await EvalLine(input, cancelToken);
+            return await EvalLine(input, cancelToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

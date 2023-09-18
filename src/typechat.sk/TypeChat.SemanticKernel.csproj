@@ -20,8 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\typechat.dialog\TypeChat.Dialog.csproj" />
     <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>
+
+  <Import Project="../typechat/Package/nuget.props" />
+  <PropertyGroup>
+    <Version>0.1.0</Version>
+    <PackageId>TypeChat.SemanticKernel</PackageId>
+    <Description>TypeChat.SemanticKernel supplies bindings for Language models, Plugins and Embeddings to TypeChat.NET</Description>
+  </PropertyGroup>
 
 </Project>
