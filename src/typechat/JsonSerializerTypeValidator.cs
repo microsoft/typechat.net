@@ -30,8 +30,6 @@ public class JsonSerializerTypeValidator
     static JsonSerializerOptions _defaultOptions = DefaultOptions();
     JsonSerializerOptions _options;
 
-    public static readonly JsonSerializerTypeValidator Default = new JsonSerializerTypeValidator(_defaultOptions);
-
     /// <summary>
     /// Create a new type validator
     /// </summary>
