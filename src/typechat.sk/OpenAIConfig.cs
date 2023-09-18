@@ -19,6 +19,7 @@ public class OpenAIConfig
         public const string OPENAI_ENDPOINT = "OPENAI_ENDPOINT";
         public const string OPENAI_ORGANIZATION = "OPENAI_ORGANIZATION";
         public const string OPENAI_MODEL = "OPENAI_MODEL";
+        public const string OPENAI_EMBEDDINGMODEL = "OPENAI_EMBEDDINGMODEL";
         public const string AZURE_OPENAI_API_KEY = "AZURE_OPENAI_API_KEY";
         public const string AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT";
     }
@@ -75,8 +76,9 @@ public class OpenAIConfig
     /// <summary>
     /// Load configuration from environment variables
     /// </summary>
+    /// <param name="isEmbedding">Is this an embedding model?</param>
     /// <returns></returns>
-    public static OpenAIConfig FromEnvironment()
+    public static OpenAIConfig FromEnvironment(bool isEmbedding = false)
     {
         OpenAIConfig config = new OpenAIConfig();
         config.ApiKey = Environment.GetEnvironmentVariable(VariableNames.AZURE_OPENAI_API_KEY);
@@ -91,7 +93,14 @@ public class OpenAIConfig
         {
             config.Endpoint = Environment.GetEnvironmentVariable(VariableNames.AZURE_OPENAI_ENDPOINT);
         }
-        config.Model = Environment.GetEnvironmentVariable(VariableNames.OPENAI_MODEL);
+        if (isEmbedding)
+        {
+            config.Model = Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDINGMODEL);
+        }
+        else
+        {
+            config.Model = Environment.GetEnvironmentVariable(VariableNames.OPENAI_MODEL);
+        }
         config.Validate();
         return config;
     }
