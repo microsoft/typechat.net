@@ -179,9 +179,10 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     }
 
     /// <summary>
-    /// Return the position of the nearest item
+    /// Return the position of the nearest neighbor to the given embedding
     /// </summary>
     /// <param name="other"></param>
+    /// <param name="distanceType">distance measure to use</param>
     /// <returns>index of nearest item</returns>
     public int IndexOfNearest(Embedding other, EmbeddingDistance distanceType)
     {
@@ -189,9 +190,10 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     }
 
     /// <summary>
-    /// Return the item nearest to the given embedding
+    /// Return the item that is the nearest neighbor to the given embedding
     /// </summary>
     /// <param name="other"></param>
+    /// <param name="distanceType">distance measure to use</param>
     /// <returns>nearest item, or default</returns>
     public T Nearest(Embedding other, EmbeddingDistance distanceType)
     {
@@ -204,10 +206,11 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     }
 
     /// <summary>
-    /// Return the top N nearest matches by running a comparision against all embeddings in this list
+    /// Return the top N nearest neighbors by running a comparison against all embeddings in this list
     /// </summary>
     /// <param name="other">embedding to match against</param>
     /// <param name="matches">matches collection</param>
+    /// <param name="distanceType">distance measure to use</param>
     /// <returns></returns>
     public TopNCollection<int> IndexOfNearest(Embedding other, TopNCollection<int> matches, EmbeddingDistance distanceType)
     {
@@ -219,6 +222,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     /// </summary>
     /// <param name="other"></param>
     /// <param name="maxMatches">maximum number of matches</param>
+    /// <param name="distanceType">distance measure to use</param>
     /// <returns>An enumeration of top matches</returns>
     public IEnumerable<T> Nearest(Embedding other, int maxMatches, EmbeddingDistance distanceType)
     {

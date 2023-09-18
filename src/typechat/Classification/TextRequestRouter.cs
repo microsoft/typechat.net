@@ -62,7 +62,7 @@ public class TextRequestRouter<T> : ITextRequestRouter<T>
     public async Task<T> RouteRequestAsync(string request, CancellationToken cancelToken = default)
     {
         // Route the user input by using the language model to classify it
-        TextClassification classification = await _classifier.TranslateAsync(request, cancelToken);
+        TextClassification classification = await _classifier.TranslateAsync(request, cancelToken).ConfigureAwait(false);
         if (classification.HasClass && _routes.TryGetValue(classification.Class, out T target))
         {
             return target;
@@ -78,7 +78,7 @@ public class TextRequestRouter<T> : ITextRequestRouter<T>
     /// <returns>The class and route</returns>
     public async Task<KeyValuePair<string, T>> ClassifyRequestAsync(string request, CancellationToken cancelToken = default)
     {
-        TextClassification classification = await _classifier.TranslateAsync(request, cancelToken);
+        TextClassification classification = await _classifier.TranslateAsync(request, cancelToken).ConfigureAwait(false);
         if (classification.HasClass && _routes.TryGetValue(classification.Class, out T target))
         {
             return new KeyValuePair<string, T>(classification.Class, target);

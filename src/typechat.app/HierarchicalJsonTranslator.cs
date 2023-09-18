@@ -33,11 +33,11 @@ public class HierarchicalJsonTranslator : IJsonTranslator
     public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken)
     {
         // First, select the translator that is best suited to translate this request
-        IJsonTranslator? translator = await _requestRouter.RouteRequestAsync(request, cancelToken);
+        IJsonTranslator? translator = await _requestRouter.RouteRequestAsync(request, cancelToken).ConfigureAwait(false);
         if (translator == null)
         {
             throw new TypeChatException(TypeChatException.ErrorCode.NoTranslator, request);
         }
-        return await translator.TranslateToObjectAsync(request, cancelToken);
+        return await translator.TranslateToObjectAsync(request, cancelToken).ConfigureAwait(false);
     }
 }

@@ -30,8 +30,7 @@
 
   <Import Project="../typechat/Package/nuget.props" />
   <PropertyGroup>
-    <Version>0.1.0</Version>
-    <PackageId>Microsoft.TypeChat.Program</PackageId>
+    <PackageId>$(AssemblyName)</PackageId>
     <Description>TypeChat.Program translates natural language requests into simple programs (Plans) that are dynamically typed checked, compiled and run</Description>
   </PropertyGroup>
 
