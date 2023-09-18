@@ -46,11 +46,13 @@ public class HealthDataAgent : ConsoleApp
         // Supply current date and time, and how to use it
         instructions += PromptLibrary.Now();
         instructions += "Help me enter my health data step by step.\n" +
-               "Ask specific questions to gather required OR optional fields I have not already provided" +
+               "Ask specific questions to gather required and optional fields I have not already provided" +
                "Stop asking if I don't know the answer\n" +
                "Automatically fix my spelling mistakes\n" +
                "My health data may be complex: always record and return ALL of it.\n" +
-               "Always return a response. If you don't understand what I say, ask a question.";
+               "Always return a response:\n" +
+               "- If you don't understand what I say, ask a question.\n" +
+               "- At least respond with an OK message.";
     }
 
     public override Task ProcessCommandAsync(string cmd, IList<string> args)
