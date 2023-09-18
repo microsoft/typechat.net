@@ -14,8 +14,14 @@ public class ModelInfo
     int _maxCharCount;
     double _tokenToCharMultiple;
 
+    /// <summary>
+    /// Create model information
+    /// </summary>
+    /// <param name="name">Name of the model</param>
+    /// <param name="maxTokens">Token limit - default is 4096</param>
+    /// <param name="tokenToCharMultiple">When a tokenizer is not available, a simple way relate number of characters to number of tokens</param>
     [JsonConstructor]
-    public ModelInfo(string name, int maxTokens, double tokenToCharMultiple = 2.5)
+    public ModelInfo(string name, int maxTokens = 4096, double tokenToCharMultiple = 2.5)
     {
         ArgumentVerify.ThrowIfNullOrEmpty(name, nameof(name));
 
@@ -48,6 +54,6 @@ public class ModelInfo
 
     public static implicit operator ModelInfo(string name)
     {
-        return new ModelInfo(name, 4096);
+        return new ModelInfo(name);
     }
 }

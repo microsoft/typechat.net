@@ -13,7 +13,6 @@ public class Agent<T> : IAgent
     JsonTranslator<T> _translator;
     IContextProvider? _contextProvider;
     Prompt _instructions;
-    PromptBuilder _builder;
     int _maxPromptLength;
 
     /// <summary>
@@ -38,8 +37,9 @@ public class Agent<T> : IAgent
         ArgumentVerify.ThrowIfNull(translator, nameof(translator));
         _translator = translator;
         _instructions = new Prompt();
-        _builder = new PromptBuilder(translator.Model.ModelInfo.MaxCharCount / 2);
-        _maxPromptLength = _builder.MaxLength;
+        // By default, only use 1/2 the estimated # of characters the model supports.. for prompts
+        // the Agent sends
+        _maxPromptLength = translator.Model.ModelInfo.MaxCharCount / 2;
         _contextProvider = contextProvider;
     }
 
@@ -73,12 +73,27 @@ public class Agent<T> : IAgent
         ArgumentVerify.ThrowIfNull(requestMessage, nameof(requestMessage));
 
         string requestText = requestMessage.GetText();
-        Prompt context = await BuildContextAsync(requestText, cancelToken);
+        string preparedRequestText = requestText;
+        //
+        // Prepare the actual message to send to the model
+        //
+        Message preparedRequestMessage = await PrepareRequestAsync(requestMessage, cancelToken);
+        if (!object.ReferenceEquals(preparedRequestMessage, requestMessage))
+        {
+            preparedRequestText = preparedRequestMessage.GetText();
+        }
+        //
+        // Prepare the context to send. For context building, use the original request text
+        //
+        Prompt context = await BuildContextAsync(requestText, preparedRequestText.Length, cancelToken);
+        //
+        // Translate
+        //
+        T response = await _translator.TranslateAsync(preparedRequestText, context, null, cancelToken).ConfigureAwait(false);
 
-        T response = await _translator.TranslateAsync(requestText, context, null, cancelToken).ConfigureAwait(false);
         Message responseMessage = Message.FromAssistant(response);
 
-        OnReceivedResponse(requestMessage, responseMessage);
+        await ReceivedResponseAsync(requestMessage, preparedRequestMessage, responseMessage);
 
         return responseMessage;
     }
@@ -95,32 +110,61 @@ public class Agent<T> : IAgent
         return response.GetBody<T>();
     }
 
-    async Task<Prompt> BuildContextAsync(string requestText, CancellationToken cancelToken)
+    async Task<Prompt> BuildContextAsync(string requestText, int actualRequestLength, CancellationToken cancelToken)
     {
-        int requestLength = requestText.Length;
-        //
-        // Since are single threaded, we can keep reusing the same builder
-        //
-        _builder.Clear();
-        _builder.MaxLength = (_maxPromptLength - requestLength);
+        PromptBuilder builder = CreateBuilder(_maxPromptLength - actualRequestLength);
         // Add any preamble       
-        _builder.AddRange(_instructions);
+        builder.AddRange(_instructions);
         //
         // If a context provider is available, inject additional context
         //
         if (_contextProvider != null)
         {
             var context = _contextProvider.GetContextAsync(requestText, cancelToken);
-            _builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
-            await AppendContextAsync(_builder, context);
+            builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
+            await AppendContextAsync(builder, context);
         }
-        return _builder.Prompt;
+        return builder.Prompt;
     }
 
-    internal virtual Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
+    /// <summary>
+    /// Override to customize the actual message sent to the model. Several scenarios involve
+    /// transforming the user's message in various ways first
+    /// By default, the request message is sent to the model as is
+    /// </summary>
+    /// <param name="request">request message</param>
+    /// <param name="cancelToken">cancel </param>
+    /// <returns>Actual text to send to the AI</returns>
+    protected virtual Task<Message> PrepareRequestAsync(Message request, CancellationToken cancelToken)
+    {
+        return Task.FromResult(request);
+    }
+    /// <summary>
+    /// Override to customize how user context is added to the given prompt builder
+    /// Since the builder will limit the # of characters, you may want to do some pre processing
+    /// </summary>
+    /// <param name="builder">builder to append to</param>
+    /// <param name="context">context to append</param>
+    /// <returns></returns>
+    protected virtual Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
     {
         return builder.AddRangeAsync(context);
     }
+    /// <summary>
+    /// Invoked when a valid response was received - the response is placed in the message body
+    /// </summary>
+    /// <param name="request">request message</param>
+    /// <param name="preparedRequest">the prepared request that was actually used in translation</param>
+    /// <param name="response">response message</param>
+    /// <returns></returns>
+    protected virtual Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response)
+    {
+        return Task.CompletedTask;
+    }
 
-    protected virtual void OnReceivedResponse(Message request, Message response) { }
+    PromptBuilder CreateBuilder(int maxLength)
+    {
+        // Future: Pool these
+        return new PromptBuilder(maxLength);
+    }
 }

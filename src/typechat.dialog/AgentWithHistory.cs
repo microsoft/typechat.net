@@ -59,12 +59,21 @@ public class AgentWithHistory<T> : Agent<T>
     /// </summary>
     public Func<T, Message?> CreateMessageForHistory { get; set; }
 
-    internal override Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
+    protected override Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
     {
         return builder.AddHistoryAsync(context);
     }
 
-    protected override void OnReceivedResponse(Message request, Message response)
+    /// <summary>
+    /// This is where we append messages to history
+    /// - User message is saved as is
+    /// - The response is further (optionally) transformed and then saved
+    /// </summary>
+    /// <param name="request">user request</param>
+    /// <param name="preparedRequest"></param>
+    /// <param name="response"></param>
+    /// <returns></returns>
+    protected override Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response)
     {
         _history.Append(request);
         Message? historyMessage = (CreateMessageForHistory != null) ?
@@ -74,5 +83,6 @@ public class AgentWithHistory<T> : Agent<T>
         {
             _history.Append(historyMessage);
         }
+        return Task.CompletedTask;
     }
 }
