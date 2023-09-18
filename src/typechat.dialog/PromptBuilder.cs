@@ -108,11 +108,23 @@ public class PromptBuilder
 
     public bool AddRange(IEnumerable<IPromptSection> sections)
     {
-        if (sections == null)
-        {
-            throw new ArgumentNullException(nameof(sections));
-        }
+        ArgumentVerify.ThrowIfNull(sections, nameof(sections));
+
         foreach (var section in sections)
+        {
+            if (!Add(section))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public async Task<bool> AddRangeAsync(IAsyncEnumerable<IPromptSection> sections)
+    {
+        ArgumentVerify.ThrowIfNull(sections, nameof(sections));
+
+        await foreach (var section in sections.ConfigureAwait(false))
         {
             if (!Add(section))
             {

@@ -8,5 +8,6 @@ namespace Microsoft.TypeChat.Dialog;
 /// </summary>
 public interface IContextProvider
 {
-    IEnumerable<IPromptSection>? GetContext(string request);
+    //IEnumerable<IPromptSection>? GetContext(string request);
+    IAsyncEnumerable<IPromptSection> GetContextAsync(string request, CancellationToken cancelToken);
 }

@@ -59,9 +59,9 @@ public class AgentWithHistory<T> : Agent<T>
     /// </summary>
     public Func<T, Message?> CreateMessageForHistory { get; set; }
 
-    internal override void AppendContext(PromptBuilder builder, IEnumerable<IPromptSection> context)
+    internal override Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
     {
-        builder.AddHistory(context);
+        return builder.AddHistoryAsync(context);
     }
 
     protected override void OnReceivedResponse(Message request, Message response)

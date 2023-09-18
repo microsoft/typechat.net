@@ -73,7 +73,7 @@ public class Agent<T> : IAgent
         ArgumentVerify.ThrowIfNull(requestMessage, nameof(requestMessage));
 
         string requestText = requestMessage.GetText();
-        Prompt context = BuildContext(requestText);
+        Prompt context = await BuildContextAsync(requestText, cancelToken);
 
         T response = await _translator.TranslateAsync(requestText, context, null, cancelToken).ConfigureAwait(false);
         Message responseMessage = Message.FromAssistant(response);
@@ -95,7 +95,7 @@ public class Agent<T> : IAgent
         return response.GetBody<T>();
     }
 
-    Prompt BuildContext(string requestText)
+    async Task<Prompt> BuildContextAsync(string requestText, CancellationToken cancelToken)
     {
         int requestLength = requestText.Length;
         //
@@ -110,19 +110,16 @@ public class Agent<T> : IAgent
         //
         if (_contextProvider != null)
         {
-            IEnumerable<IPromptSection> context = _contextProvider.GetContext(requestText);
-            if (context != null)
-            {
-                _builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
-                AppendContext(_builder, context);
-            }
+            var context = _contextProvider.GetContextAsync(requestText, cancelToken);
+            _builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
+            await AppendContextAsync(_builder, context);
         }
         return _builder.Prompt;
     }
 
-    internal virtual void AppendContext(PromptBuilder builder, IEnumerable<IPromptSection> context)
+    internal virtual Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
     {
-        builder.AddRange(context);
+        return builder.AddRangeAsync(context);
     }
 
     protected virtual void OnReceivedResponse(Message request, Message response) { }
