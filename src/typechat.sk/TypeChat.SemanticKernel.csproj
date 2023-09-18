@@ -25,8 +25,7 @@
 
   <Import Project="../typechat/Package/nuget.props" />
   <PropertyGroup>
-    <Version>0.1.0</Version>
-    <PackageId>TypeChat.SemanticKernel</PackageId>
+    <PackageId>$(AssemblyName)</PackageId>
     <Description>TypeChat.SemanticKernel supplies bindings for Language models, Plugins and Embeddings to TypeChat.NET</Description>
   </PropertyGroup>
 
