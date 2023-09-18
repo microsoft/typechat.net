@@ -241,7 +241,7 @@ public class TypescriptExporter : TypeExporter<Type>
         ArgumentVerify.ThrowIfNull(type, nameof(type));
         if (!type.IsEnum)
         {
-           ArgumentVerify.Throw($"{type.Name} must be Enum");
+            ArgumentVerify.Throw($"{type.Name} must be Enum");
         }
 
         if (IsExported(type))

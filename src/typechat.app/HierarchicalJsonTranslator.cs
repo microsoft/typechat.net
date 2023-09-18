@@ -21,7 +21,7 @@ public class HierarchicalJsonTranslator : IJsonTranslator
     /// <param name="router"></param>
     public HierarchicalJsonTranslator(ITextRequestRouter<IJsonTranslator> router)
     {
-        ArgumentVerify.ThrowIfNull(router, nameof(router));
+        ArgumentNullException.ThrowIfNull(router, nameof(router));
         _requestRouter = router;
     }
 

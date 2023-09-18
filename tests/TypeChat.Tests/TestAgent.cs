@@ -27,14 +27,13 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
         const int messageCount = 3;
 
         MessageList messageList = new MessageList();
-        IMessageStream messages = messageList;
         for (int i = 0; i < messageCount; ++i)
         {
-            messages.Append(i.ToString());
+            messageList.Append(i.ToString());
         }
         Assert.Equal(messageCount, messageList.Count);
 
-        var newestList = messages.Newest().ToList();
+        var newestList = messageList.Newest().ToList();
         Assert.Equal(messageList.Count, newestList.Count);
         for (int i = messageCount - 1, j = 0; i >= 0; --i, ++j)
         {
