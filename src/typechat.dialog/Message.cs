@@ -56,6 +56,7 @@ public class Message : IPromptSection
 
     /// <summary>
     /// Return the message body serialized as text
+    /// You can override this to cache generated text
     /// </summary>
     /// <returns>body as text</returns>
     public virtual string GetText()

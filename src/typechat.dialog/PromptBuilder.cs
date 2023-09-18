@@ -106,12 +106,15 @@ public class PromptBuilder
         return false;
     }
 
+    /// <summary>
+    /// Add a collection of prompt sections - until the MaxLength - is hit
+    /// </summary>
+    /// <param name="sections">sections to add</param>
+    /// <returns>true if all sections were added</returns>
     public bool AddRange(IEnumerable<IPromptSection> sections)
     {
-        if (sections == null)
-        {
-            throw new ArgumentNullException(nameof(sections));
-        }
+        ArgumentVerify.ThrowIfNull(sections, nameof(sections));
+
         foreach (var section in sections)
         {
             if (!Add(section))
@@ -122,12 +125,39 @@ public class PromptBuilder
         return true;
     }
 
+    /// <summary>
+    /// Add collection of prompt sections - until the MaxLength - is hit
+    /// </summary>
+    /// <param name="sections"></param>
+    /// <returns></returns>
+    public async Task<bool> AddRangeAsync(IAsyncEnumerable<IPromptSection> sections)
+    {
+        ArgumentVerify.ThrowIfNull(sections, nameof(sections));
+
+        await foreach (var section in sections.ConfigureAwait(false))
+        {
+            if (!Add(section))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Clear the builder
+    /// </summary>
     public void Clear()
     {
         _prompt.Clear();
         _currentLength = 0;
     }
 
+    /// <summary>
+    /// Reverse the order of sections in the builder, in the given range
+    /// </summary>
+    /// <param name="startAt"></param>
+    /// <param name="count"></param>
     public void Reverse(int startAt, int count)
     {
         Reverse(startAt, count);

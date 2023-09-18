@@ -48,6 +48,16 @@ public class MessageList : List<Message>, IMessageStream, IContextProvider
     public void Append(Message message) => Add(message);
 
     /// <summary>
+    /// Append a message to the message stream
+    /// </summary>
+    /// <param name="message">message to append</param>
+    public Task AppendAsync(Message message)
+    {
+        Add(message);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
     /// Return an enumeration of messages, most recent first
     /// </summary>
     /// <returns>enumeration of messages</returns>
@@ -60,7 +70,7 @@ public class MessageList : List<Message>, IMessageStream, IContextProvider
     }
 
     /// <summary>
-    /// Just returns the newest messages. You can build other message lists that support semantic and
+    /// Just returns messages in order of newest first. You can build other message lists that support semantic and
     /// other forms of similarity
     /// supply
     /// </summary>
@@ -70,6 +80,50 @@ public class MessageList : List<Message>, IMessageStream, IContextProvider
     {
         return Newest();
     }
+
+#pragma warning disable 1998
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="cancelToken"></param>
+    /// <returns>async enumeration</returns>
+    public async IAsyncEnumerable<Message> AllAsync([EnumeratorCancellation] CancellationToken cancelToken = default)
+    {
+        for (int i = 0; i < Count; ++i)
+        {
+            yield return this[i];
+        }
+    }
+
+    /// <summary>
+    /// Enumerate messages asynchronously - newest first
+    /// </summary>
+    /// <param name="cancelToken"></param>
+    /// <returns>async enumeration</returns>
+    public async IAsyncEnumerable<Message> NewestAsync([EnumeratorCancellation] CancellationToken cancelToken = default)
+    {
+        for (int i = Count - 1; i >= 0; --i)
+        {
+            yield return this[i];
+        }
+    }
+
+    /// <summary>
+    /// Just returns messages in order of newest first. You can build other message lists that support semantic and
+    /// </summary>
+    /// <param name="request">find messages nearest to this</param>
+    /// <param name="cancelToken">optional cancel token</param>
+    /// <returns></returns>
+    public async IAsyncEnumerable<IPromptSection>? GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancelToken)
+    {
+        for (int i = Count - 1; i >= 0; --i)
+        {
+            yield return this[i];
+        }
+    }
+
+#pragma warning restore 1998
 
     /// <summary>
     /// Close the message stream. MessageList does nothing here

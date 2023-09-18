@@ -13,15 +13,30 @@ public interface IMessageStream : IContextProvider
     /// <param name="message">message to append</param>
     void Append(Message message);
     /// <summary>
+    /// Append a message to the stream
+    /// </summary>
+    /// <param name="message">message to append</param>
+    Task AppendAsync(Message message);
+    /// <summary>
     /// Return all messages in the stream
     /// </summary>
-    /// <returns></returns>
+    /// <returns>an enumeration of messages</returns>
     IEnumerable<Message> All();
+    /// <summary>
+    /// Return all messages in the stream
+    /// </summary>
+    /// <returns>An async enumeration of messages</returns>
+    IAsyncEnumerable<Message> AllAsync(CancellationToken cancelToken);
     /// <summary>
     /// Return the newest messages in the stream in order - most recent messages first
     /// </summary>
-    /// <returns></returns>
+    /// <returns>an enumeration of messages</returns>
     IEnumerable<Message> Newest();
+    /// <summary>
+    /// Return the newest messages in the stream in order - most recent messages first
+    /// </summary>
+    /// <returns>An async enumeration of messages</returns>
+    IAsyncEnumerable<Message> NewestAsync(CancellationToken cancelToken);
     /// <summary>
     /// Clear the stream
     /// </summary>
