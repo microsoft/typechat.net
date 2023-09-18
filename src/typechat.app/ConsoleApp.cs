@@ -36,7 +36,7 @@ public abstract class ConsoleApp : IInputHandler
         while (!cancelToken.IsCancellationRequested)
         {
             Console.Write(ConsolePrompt);
-            string? input = await ReadLineAsync(cancelToken).ConfigureAwait(false);
+            string? input = await ReadLineAsync().ConfigureAwait(false);
             input = input.Trim();
             if (!string.IsNullOrEmpty(input) &&
                 !await EvalInput(input, cancelToken).ConfigureAwait(false))
@@ -127,9 +127,9 @@ public abstract class ConsoleApp : IInputHandler
         return _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
     }
 
-    public async Task<string?> ReadLineAsync(CancellationToken cancelToken)
+    public async Task<string?> ReadLineAsync()
     {
-        string? line = await Console.In.ReadLineAsync(cancelToken).ConfigureAwait(false);
+        string? line = await Console.In.ReadLineAsync().ConfigureAwait(false);
         return (line != null) ? line.Trim() : line;
     }
 

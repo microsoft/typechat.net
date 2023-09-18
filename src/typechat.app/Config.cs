@@ -74,12 +74,12 @@ public class Config
         string line = null;
         while ((line = reader.ReadLine()) != null)
         {
-            if (line.StartsWith('#'))
+            if (line.StartsWith("#"))
             {
                 continue;
             }
 
-            string[] envVars = line.Split('=', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            string[] envVars = line.Split('=', (char)StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray(); ;
             if (envVars != null)
             {
                 UpdateVariable(envVars);
