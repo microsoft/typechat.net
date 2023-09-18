@@ -61,10 +61,14 @@ TypeChat.SemanticKernel includes:
 * Embeddings, VectorizedLists
  
 # TypeChat.Dialog
-TypeChat.Dialog is an early version of framework desiged for strongly typed interactions with Agents with built in interaction history and other features. 
+TypeChat.Dialog uses TypeChat.Net to provide strongly typed interactions with message passing Agents that have features such as built in interaction history. 
 
-    // Create an agent that interactively helps the user enter their health information, such as medications and conditions
-    new Agent<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()))
+TypeChat.Dialog includes support for:
+* Agents, Agents with History
+* Messages, Message Streams
+
+      // Create an agent with history
+      _agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
 
 
 # TypeChat.App
