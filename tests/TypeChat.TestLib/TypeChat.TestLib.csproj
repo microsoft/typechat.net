@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net470;net70</TargetFrameworks>
+    <TargetFrameworks>net470;net60;net70</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <NoWarn>CS8632</NoWarn>
   </PropertyGroup>
