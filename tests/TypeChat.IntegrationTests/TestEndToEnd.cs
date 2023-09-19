@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Xunit;
+using Xunit.Sdk;
+
 namespace Microsoft.TypeChat.Tests;
 
 public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
@@ -12,24 +15,18 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         _config = config;
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task TranslateSentiment()
     {
-        if (!CanRunEndToEndTest(_config, nameof(TranslateSentiment)))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
         await TranslateSentiment(new LanguageModel(_config.OpenAI));
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task TranslateSentiment_CompletionModel()
     {
-        if (!CanRunEndToEndTest(_config, nameof(TranslateSentiment_CompletionModel)))
-        {
-            Trace.WriteLine("No Open AI. Skipping");
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
+        
         await TranslateSentiment(new TextCompletionModel(_config.OpenAI));
     }
 
@@ -48,13 +45,10 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         Assert.NotNull(response.Sentiment);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task Translate_Polymorphic()
     {
-        if (!CanRunEndToEndTest(_config, nameof(Translate_Polymorphic)))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
 
         var translator = new JsonTranslator<Drawing>(new LanguageModel(_config.OpenAI));
         string request = "Add a circle of radius 4.5 at 30, 30 and\n" +
@@ -77,14 +71,10 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
 
     /// <summary>
     /// This one loads the schema from a TS file
-    [Fact]
+    [SkippableFact]
     public async Task TranslateWithTSFileSchema()
     {
-        if (!CanRunEndToEndTest(_config))
-        {
-            Trace.WriteLine("No Open AI. Skipping");
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
 
         SchemaText schema = SchemaText.Load("./SentimentSchema.ts");
         var translator = new JsonTranslator<SentimentResponse>(
@@ -100,25 +90,19 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         Assert.NotNull(response.Sentiment);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task ProgramMath()
     {
-        if (!CanRunEndToEndTest(_config))
-        {
-            Trace.WriteLine("No Open AI. Skipping");
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
+        
         await ProgramMath(new LanguageModel(_config.OpenAI));
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task ProgramMath_Completion()
     {
-        if (!CanRunEndToEndTest(_config))
-        {
-            Trace.WriteLine("No Open AI. Skipping");
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
+        
         await ProgramMath(new TextCompletionModel(_config.OpenAI));
     }
 

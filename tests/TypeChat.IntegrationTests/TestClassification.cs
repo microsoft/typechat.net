@@ -26,13 +26,11 @@ public class TestClassification : TypeChatTest, IClassFixture<Config>
         Assert.False(router.Routes.ContainsKey("Foo"));
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task TestRouting()
     {
-        if (!CanRunEndToEndTest(_config, nameof(TestRouting)))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
+        
         TextRequestRouter<string> router = CreateRouter();
         string query = "I want to buy a Sherlock Holmes novel";
         string route = await router.RouteRequestAsync(query);

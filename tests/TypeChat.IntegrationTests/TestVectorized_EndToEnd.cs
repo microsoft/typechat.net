@@ -12,13 +12,11 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
         _config = config;
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task TestEmbeddings()
     {
-        if (!CanRunEndToEndTest_Embeddings(_config, nameof(TestEmbeddings)))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
+        
         //
         // Get the same embedding twice. Should have same result
         //
@@ -44,13 +42,10 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
         Assert.True(score1 > score2);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task TestVectorTextIndex()
     {
-        if (!CanRunEndToEndTest_Embeddings(_config, nameof(TestEmbeddings)))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
 
         VectorTextIndex<int> index = CreateIndex<int>();
 
@@ -88,13 +83,10 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
         Assert.Equal(iMatch, matches[0]);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task TestRouting()
     {
-        if (!CanRunEndToEndTest_Embeddings(_config, nameof(TestEmbeddings)))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
 
         VectorTextIndex<string> index = CreateIndex<string>();
         foreach (var shop in Classes.Shops())

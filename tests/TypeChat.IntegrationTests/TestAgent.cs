@@ -41,13 +41,10 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
         }
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task TestEndToEnd()
     {
-        if (!CanRunEndToEndTest(_config))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
 
         AgentWithHistory<Order> agent = new AgentWithHistory<Order>(_config.CreateTranslator<Order>());
         agent.CreateMessageForHistory = (r) => null; // Don't remember responses. 
