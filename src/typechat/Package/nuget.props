@@ -1,7 +1,7 @@
 <Project>
   <!-- NuGet package properties -->
   <PropertyGroup>
-    <PackageId>Microsoft.TypeChat</PackageId>
+    <PackageId>$(AssemblyName)</PackageId>
     <Version>0.1.0-pre</Version>
     <IsPackable>true</IsPackable>
     <Authors>Microsoft</Authors>

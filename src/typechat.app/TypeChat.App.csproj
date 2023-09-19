@@ -5,7 +5,7 @@
     <LangVersion>10</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
-    <AssemblyName>TypeChat.App</AssemblyName>
+    <AssemblyName>Microsoft.TypeChat.App</AssemblyName>
     <RootNamespace>Microsoft.TypeChat</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
