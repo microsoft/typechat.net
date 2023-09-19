@@ -18,16 +18,17 @@ public abstract class ConsoleApp : IInputHandler
     public string CommentPrefix { get; set; } = "#";
     public string CommandPrefix { get; set; } = "@";
 
-    public Task RunAsync(string consolePrompt, string? inputFilePath = null)
+    public async Task RunAsync(string consolePrompt, string? inputFilePath = null)
     {
         ConsolePrompt = consolePrompt;
+        await InitApp();
         if (string.IsNullOrEmpty(inputFilePath))
         {
-            return RunAsync();
+            await RunAsync();
         }
         else
         {
-            return RunBatchAsync(inputFilePath);
+            await RunBatchAsync(inputFilePath);
         }
     }
 
@@ -75,9 +76,9 @@ public abstract class ConsoleApp : IInputHandler
         {
             if (input.StartsWith(CommandPrefix))
             {
-                return await EvalCommand(input, cancelToken);
+                return await EvalCommand(input, cancelToken).ConfigureAwait(false);
             }
-            return await EvalLine(input, cancelToken);
+            return await EvalLine(input, cancelToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -151,6 +152,9 @@ public abstract class ConsoleApp : IInputHandler
         Console.WriteLine($"Command {cmd} not handled");
         return Task.CompletedTask;
     }
+
+    protected virtual Task InitApp() => Task.CompletedTask;
+
     protected void SubscribeAllEvents<T>(JsonTranslator<T> translator)
     {
         translator.SendingPrompt += this.OnSendingPrompt;

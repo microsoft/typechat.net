@@ -2,7 +2,7 @@
   <!-- NuGet package properties -->
   <PropertyGroup>
     <PackageId>Microsoft.TypeChat</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.0-pre</Version>
     <IsPackable>true</IsPackable>
     <Authors>Microsoft</Authors>
     <Company>Microsoft</Company>

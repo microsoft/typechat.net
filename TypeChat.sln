@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeChat.IntegrationTests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeChat.TestLib", "tests\TypeChat.TestLib\TypeChat.TestLib.csproj", "{B7F278E8-CE85-4987-B292-F15238A80A75}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchemaHierarchy", "examples\SchemaHierarchy\SchemaHierarchy.csproj", "{6FDA463B-4A1E-4E3E-B508-A14910FAF579}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -132,6 +134,10 @@ Global
 		{B7F278E8-CE85-4987-B292-F15238A80A75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7F278E8-CE85-4987-B292-F15238A80A75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7F278E8-CE85-4987-B292-F15238A80A75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FDA463B-4A1E-4E3E-B508-A14910FAF579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FDA463B-4A1E-4E3E-B508-A14910FAF579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FDA463B-4A1E-4E3E-B508-A14910FAF579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FDA463B-4A1E-4E3E-B508-A14910FAF579}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -146,6 +152,7 @@ Global
 		{5F8B1030-2D87-4942-BCB3-271B4541BAF3} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 		{9598D98A-3688-45E5-9C51-1C4F385BD693} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 		{F4B127FE-CAB9-483E-AA79-6A2F8665C5FC} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
+		{6FDA463B-4A1E-4E3E-B508-A14910FAF579} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A9AF678-E669-4AF2-9644-7EBB970DAC41}

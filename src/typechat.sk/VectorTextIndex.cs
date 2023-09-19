@@ -88,7 +88,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
         {
             throw new ArgumentException("items and their representations must of the same length");
         }
-        Embedding[] embeddings = await GetNormalizedEmbeddingAsync(textRepresentations, cancelToken);
+        Embedding[] embeddings = await GetNormalizedEmbeddingAsync(textRepresentations, cancelToken).ConfigureAwait(false);
         if (embeddings.Length != items.Length)
         {
             throw new InvalidOperationException($"Embedding length {embeddings.Length} does not match items length {items.Length}");
@@ -103,6 +103,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     /// Find nearest match to the given text
     /// </summary>
     /// <param name="text"></param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns>nearest item</returns>
     public async Task<T> NearestAsync(string text, CancellationToken cancelToken = default)
     {

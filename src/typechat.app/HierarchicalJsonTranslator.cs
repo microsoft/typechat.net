@@ -9,35 +9,50 @@ namespace Microsoft.TypeChat;
 /// Language models have token limits, which means we must do a first pass and route requests to the appropriate target
 /// It may also be necessary to bind to these translators dynamically
 /// 
-/// A DynamicJsonTranslator is a simple aggregate translator that routes a request to child JsonTranslators. 
+/// A HierarchicalJsonTranslator is a simple aggregate translator that routes a request to child JsonTranslators. 
 /// </summary>
 public class HierarchicalJsonTranslator : IJsonTranslator
 {
-    ITextRequestRouter<IJsonTranslator> _requestRouter;
+    LanguageModel _model;
+    VectorTextIndex<IJsonTranslator> _requestRouter;
 
     /// <summary>
     /// Create a new JsonTranslator that routes requests to child translators
     /// </summary>
-    /// <param name="router"></param>
-    public HierarchicalJsonTranslator(ITextRequestRouter<IJsonTranslator> router)
+    /// <param name="model">language model to use for translators</param>
+    /// <param name="embeddingModel">embedding model to use for translators</param>
+    public HierarchicalJsonTranslator(LanguageModel model, TextEmbeddingModel embeddingModel)
     {
-        ArgumentVerify.ThrowIfNull(router, nameof(router));
-        _requestRouter = router;
+        ArgumentVerify.ThrowIfNull(model, nameof(model));
+        ArgumentVerify.ThrowIfNull(embeddingModel, nameof(embeddingModel));
+        _model = model;
+        _requestRouter = new VectorTextIndex<IJsonTranslator>(embeddingModel);
     }
 
     /// <summary>
     /// The router being used by this translator
     /// </summary>
-    public ITextRequestRouter<IJsonTranslator> Router => _requestRouter;
+    public VectorTextIndex<IJsonTranslator> Router => _requestRouter;
+
+    /// <summary>
+    /// Add a JsonTranslator with this description
+    /// </summary>
+    /// <typeparam name="T">type of translator</typeparam>
+    /// <param name="description">description of the translator </param>
+    /// <returns></returns>
+    public virtual Task AddSchemaAsync<T>(string description)
+    {
+        return _requestRouter.AddAsync(new JsonTranslator<T>(_model), description);
+    }
 
     public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken)
     {
         // First, select the translator that is best suited to translate this request
-        IJsonTranslator? translator = await _requestRouter.RouteRequestAsync(request, cancelToken);
+        IJsonTranslator? translator = await _requestRouter.RouteRequestAsync(request, cancelToken).ConfigureAwait(false);
         if (translator == null)
         {
             throw new TypeChatException(TypeChatException.ErrorCode.NoTranslator, request);
         }
-        return await translator.TranslateToObjectAsync(request, cancelToken);
+        return await translator.TranslateToObjectAsync(request, cancelToken).ConfigureAwait(false);
     }
 }

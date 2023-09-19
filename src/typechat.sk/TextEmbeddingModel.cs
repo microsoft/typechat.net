@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Embeddings;
+using Microsoft.TypeChat.Embeddings;
+
+namespace Microsoft.TypeChat;
 
 public class TextEmbeddingModel
 {

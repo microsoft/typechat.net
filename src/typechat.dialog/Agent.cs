@@ -77,7 +77,7 @@ public class Agent<T> : IAgent
         //
         // Prepare the actual message to send to the model
         //
-        Message preparedRequestMessage = await PrepareRequestAsync(requestMessage, cancelToken);
+        Message preparedRequestMessage = await PrepareRequestAsync(requestMessage, cancelToken).ConfigureAwait(false);
         if (!object.ReferenceEquals(preparedRequestMessage, requestMessage))
         {
             preparedRequestText = preparedRequestMessage.GetText();
@@ -85,7 +85,7 @@ public class Agent<T> : IAgent
         //
         // Prepare the context to send. For context building, use the original request text
         //
-        Prompt context = await BuildContextAsync(requestText, preparedRequestText.Length, cancelToken);
+        Prompt context = await BuildContextAsync(requestText, preparedRequestText.Length, cancelToken).ConfigureAwait(false);
         //
         // Translate
         //
@@ -93,7 +93,7 @@ public class Agent<T> : IAgent
 
         Message responseMessage = Message.FromAssistant(response);
 
-        await ReceivedResponseAsync(requestMessage, preparedRequestMessage, responseMessage);
+        await ReceivedResponseAsync(requestMessage, preparedRequestMessage, responseMessage).ConfigureAwait(false);
 
         return responseMessage;
     }
@@ -122,7 +122,7 @@ public class Agent<T> : IAgent
         {
             var context = _contextProvider.GetContextAsync(requestText, cancelToken);
             builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
-            await AppendContextAsync(builder, context);
+            await AppendContextAsync(builder, context).ConfigureAwait(false);
         }
         return builder.Prompt;
     }

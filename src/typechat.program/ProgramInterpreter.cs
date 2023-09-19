@@ -68,7 +68,7 @@ public class ProgramInterpreter
         for (int i = 0; i < steps.Calls.Length; ++i)
         {
             FunctionCall call = steps.Calls[i];
-            dynamic result = await EvalAsync(call);
+            dynamic result = await EvalAsync(call).ConfigureAwait(false);
             _results.Add(result);
         }
         return GetResult();
@@ -96,7 +96,7 @@ public class ProgramInterpreter
 
     async Task<dynamic> EvalAsync(FunctionCall call)
     {
-        dynamic[] args = await EvalAsync(call.Args);
+        dynamic[] args = await EvalAsync(call.Args).ConfigureAwait(false);
         return await _callHandlerAsync(call.Name, args);
     }
 
@@ -134,7 +134,7 @@ public class ProgramInterpreter
                 break;
 
             case FunctionCall call:
-                return await EvalAsync(call);
+                return await EvalAsync(call).ConfigureAwait(false);
 
             case ResultReference result:
                 return Eval(result);
@@ -143,10 +143,10 @@ public class ProgramInterpreter
                 return Eval(value);
 
             case ArrayExpr array:
-                return await EvalAsync(array);
+                return await EvalAsync(array).ConfigureAwait(false);
 
             case ObjectExpr obj:
-                return await EvalAsync(obj);
+                return await EvalAsync(obj).ConfigureAwait(false);
         }
 
         return null;
@@ -226,7 +226,7 @@ public class ProgramInterpreter
         JsonObject jsonObj = new JsonObject();
         foreach (var property in expr.Value)
         {
-            dynamic result = await EvalAsync(property.Value);
+            dynamic result = await EvalAsync(property.Value).ConfigureAwait(false);
             JsonNode node = result;
             jsonObj.Add(property.Key, node);
         }
