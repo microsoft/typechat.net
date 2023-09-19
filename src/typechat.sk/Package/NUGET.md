@@ -1,13 +1,11 @@
-# About TypeChat.SemanticKernel
+# Microsoft.TypeChat.SemanticKernel
 
-TypeChat.SemanticKernel provides bindings for Language Models, Plugins and Embeddings for components in Typechat.NET.
+Microsoft.TypeChat.SemanticKernel provides out-of-the-box bindings for language models, plugins and embeddings to Microsoft.TypeChat and TypeChat.NET examples.
 
-The library includes classes for:
-* **Program synthesis with Plugins**: Automatically turns registered plugins into a PluginAPI that programs synthesized by the LLM can call. [Plugins Example](examples/Plugins/Program.cs)
-* Language model bindings using the Semantic Kernel. All TypeChat examples use the Semantic Kernel to call LLMs
-* Embeddings, VectorizedLists
+Microsoft.TypeChat.SemanticKernel include classes for:
+* **Json Programs for Plugins**: generating Json programs (plans) that call Plugins registered with a Semantic Kernel instance.
+* Using language models
+* Embeddings support: Easy to use in-memory embeddings tables with nearest neighbor matching support. 
 
-
-# Getting Started ⚡
-
-- Check out the [GitHub repository](https://github.com/microsoft/typechat.net) for the latest updates.
+# Getting Started
+Learn about TypeChat.NET and get the latest updates on the [TypeChat.NET GitHub repository](https://github.com/microsoft/typechat.net).
