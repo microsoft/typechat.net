@@ -153,9 +153,9 @@ public static class TypeEx
         {
             return Empty<Type>();
         }
-        
+
         Assembly assembly = type.Assembly;
-        
+
         return assembly.GetTypes().Where(t => t.IsClass && t.IsAssignableFrom(type));
     }
 

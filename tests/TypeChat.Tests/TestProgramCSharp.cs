@@ -58,6 +58,25 @@ public class TestProgramCSharp : ProgramTest
     }
 
     [Theory]
+    [MemberData(nameof(GetMathProgramsFail))]
+    public void TestMath_CompileFail(string source, double expectedResults)
+    {
+        Program program = Json.Parse<Program>(source);
+        Api<IMathAPI> api = MathAPI.Default;
+        bool success = true;
+        try
+        {
+            var result = CSharpProgramCompiler.Compile(program, api.Type);
+            success = result.Success;
+        }
+        catch
+        {
+            success = false;
+        }
+        Assert.False(success);
+    }
+
+    [Theory]
     [MemberData(nameof(GetStringPrograms))]
     public void TestString_FailWrongApi(string source, string expectedResult)
     {
