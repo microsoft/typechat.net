@@ -26,7 +26,7 @@ TypeChat.NET consists of the following assemblies:
 
 
 ## TypeChat ##
-TypeChat uses language models to translate user intent into JSON that adheres to a schema. This JSON can then be validate and deserialized into a typed object, with additional constraints validation applied as necessary.
+TypeChat uses language models to translate user intent into JSON that adheres to a schema. This JSON is then validated and deserialized into a typed object, with additional constraint checking applied as needed.
 
 TypeChat include:
 * Json Translators
