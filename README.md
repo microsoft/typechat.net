@@ -1,51 +1,54 @@
 # TypeChat.NET
 
-TypeChat.NET is an experimental project from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
+TypeChat.NET is an **experimental project** from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
-TypeChat.NET helps you build natural language interfaces with LLMs using strong validated types and type-safe programs. 
+TypeChat.NET helps you build natural language interfaces with language models using strong types and type safe programs (plans). It also demonstrates programming model for such strongly typed interactions. 
 
         // Translates user intent into strongly typed Calendar Actions
         var translator = new JsonTranslator<CalendarActions>(
             new LanguageModel(Config.LoadOpenAI())
         );
 
-TypeChat.NET is in **active development** with frequent updates. The framework will evolve as the team explores the space and incorporates feedback. Currently supported scenarios are shown in the examples. Documentation will continue to improve. When in doubt, please look at the code.  
+TypeChat.NET is in **active development** with frequent updates. The framework will evolve as the team explores the space and incorporates feedback. Supported scenarios are shown in the examples. Documentation will continue to improve. When in doubt, please look at the code.  
 
 # Assemblies
 TypeChat.NET consists of the following assemblies:
 
-* **TypeChat**: Classes (JsonTranslator<T>) that translate user intent into strongly typed and validated objects. Additionally includes:
-  * Support for automatically exporting .NET type information as schema expressed using the concise syntax of Typescript. This schema is sent to language models. 
-  * Validation of returned JSON. 
+* **TypeChat**: Classes (JsonTranslator<T>) that translate user intent into strongly typed and validated objects. 
 
 * **TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs***. 
 
-* **TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernell - Language models, Plugins and Embeddings.
+* **TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for Language models, Plugins and Embeddings.
 
 * **TypeChat.Dialog**: Classes for working with interactive Agents that have history. 
 
-* **TypeChat.App**: Support classes and extensions used by Typechat examples, such as Text Classifiers. These classes may be useful for other apps built using Typechat.
+* **TypeChat.App**: Support classes and extensions used by Typechat examples. These classes may be useful for other apps built using Typechat.
 
 
 ## TypeChat ##
-Brings TypeChat to .NET with .NET idiom introduced as appropriate.
+TypeChat uses language models to translate user intent into JSON that adheres to a schema. This JSON is then validated and deserialized into a typed object, with additional constraint checking applied as needed.
+
+TypeChat include:
 * Json Translators
 * Json Validators
 * Schema Exporters from .NET Types to schema expressed using Typescript. Schema export includes support for:
   * Dynamic export at runtime. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team.
-  * Vocabularies: easy unions of string tables, like in Typescript, along with support for dynamic loading. See examples: CoffeeShop and CoffeeShop2.
+  * Vocabularies: easy unions of string tables, like in Typescript, along with support for dynamic loading. 
+  * Auomated schema export supports common scenarios, as shown in the examples. Additional scenarios may be supported in the future. 
+* Extensibility interfaces let you use custom hand (such as hand-authored written) schemas, validators and even prompts.
 * Classifiers used to route requests to child or hierarchical schemas and handlers
 
-## TypeChat.Program ##
-TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. JSON programs can be thought of as a [DSL](https://en.wikipedia.org/wiki/Domain-specific_language), expressed in JSON. 
 
-JSON programs can then be type checked against the APIs they target. They can be then be run using interpreter, or compiled into .NET code - both mechanisms can enforce type safety.
+## TypeChat.Program ##
+TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. 
+
+JSON programs can be thought of as a [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) or [Plan](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/planners/?tabs=Csharp), expressed in JSON, with an associated [**grammar**](src/typechat.program/ProgramSchema.ts) that is enforced. JSON programs can be type checked against the APIs they target. They can be then be run using interpreter, or compiled into .NET code. Both mechanisms can enforce type safety.
 
 TypeChat.Program includes:
 * Program Translator: translates user intent into programs that follow the [Program Grammar](src/typechat.program/ProgramSchema.ts)
-* Program Interpreter: Runs programs generated by ProgramTranslator using an interpreter.
-* Program Compiler: uses the dynamic language runtime (DLR) to compile programs/plans into verifiable typesafe code that can be checked for errors... and ***repaired***. 
-* Program C# Transpiler/Compiler (experimental): Transpile programs into C# and compile them with Roslyn. The compiler does type checking and compilation diagnostics can be used to repair programs.  
+* Program Interpreter: runs programs generated by ProgramTranslator using an interpreter.
+* Program Compiler: demonstrates how to use the dynamic language runtime (DLR) to compile programs/plans into verifiable typesafe code that can be checked for errors... and ***repaired***. 
+* Program C# Transpiler/Compiler (experimental): demonsrates how to transpile programs into C# and compile them with Roslyn. The compiler does type checking and compilation diagnostics can be used to repair programs.  
 
         // Translates user intent into typed Programs that call
         // methods on a Math API
@@ -58,14 +61,13 @@ TypeChat.Program includes:
 ## TypeChat.SemanticKernel ##
 TypeChat.SemanticKernel provides bindings for Language Models, Plugins and Embeddings for components in Typechat.NET.
 
-TypeChat.SemanticKernel includes:
-* **Program synthesis with Plugins**: Automatically turns registered plugins into a PluginAPI that programs synthesized by the LLM can call. [Plugins Example](examples/Plugins/Program.cs)
-* LLM bindings for TypeChat using the Semantic Kernel. All TypeChat examples use the Semantic Kernel to call LLMs
-* Embeddings, VectorizedLists
+TypeChat.SemanticKernel includes classes that demonstrate:
+* **Json Programs for Plugins**: turns registered plugins into a Plugin **API** and then generate Json programs that call these APIs. [Plugins Example](examples/Plugins/Program.cs)
+* Language model and embeddings access. All TypeChat examples use the Semantic Kernel to call models and generate embeddings. 
  
-# TypeChat.Dialog
+## TypeChat.Dialog
 (Early)
-TypeChat.Dialog uses TypeChat.Net to provide strongly typed interactions with message passing Agents that have features such as built in interaction history. 
+TypeChat.Dialog demonstrates how TypeChat.Net can be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
 
 TypeChat.Dialog includes support for:
 * Agents, Agents with History
@@ -74,7 +76,7 @@ TypeChat.Dialog includes support for:
       // Create an agent with history
       _agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
 
-# TypeChat.App
+## TypeChat.App
 A utility library with classes used by Typechat examples. These classes may be generally useful for apps built on top of Typechat. Helper classes include:
 * Program synthesis of programs that call Plugins
 * Console Apps
@@ -91,7 +93,6 @@ A utility library with classes used by Typechat examples. These classes may be g
   * Launch a command prompt
   * Go to the root directory of the project
   * dotnet build Typechat.sln
- 
 
 ## Nuget Packages
 
@@ -99,7 +100,7 @@ A utility library with classes used by Typechat examples. These classes may be g
 
 To see TypeChat in action, explore the [TypeChat example projects](./examples). The list below describes which examples will best introduc which concept
 
-* Typechat, JsonTranslator and schemas: 
+* Typechat, JsonTranslator and Schemas: 
   * Sentiment: the simplest example that demonstrates JsonTranslator and other core features 
   * CoffeeShop: Natural language ordering at a coffee shop
   * Calendar: Transform language into calendar actions

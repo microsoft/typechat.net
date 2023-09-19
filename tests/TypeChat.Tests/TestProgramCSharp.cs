@@ -40,6 +40,23 @@ public class TestProgramCSharp : ProgramTest
         ValidateResult(objResult, expectedResult);
     }
 
+    [Theory]
+    [MemberData(nameof(GetStringPrograms))]
+    public void Test_String(string source, string expectedResult)
+    {
+        Program program = Json.Parse<Program>(source);
+        Api<IStringAPI> api = new TextApis();
+        string code = CSharpProgramTranspiler.GenerateCode(program, api.Type);
+        var lines = code.Lines();
+        ValidateCode(lines);
+
+        Result<ProgramAssembly> result = CSharpProgramCompiler.Compile(program, api.Type);
+        Assert.True(result.Success);
+
+        dynamic objResult = result.Value.Run(api.Implementation);
+        Assert.Equal(objResult, expectedResult);
+    }
+
     void ValidateCode(IEnumerable<string> lines)
     {
         ValidateStandardUsings(lines);
