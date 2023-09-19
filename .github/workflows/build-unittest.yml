@@ -62,7 +62,7 @@ jobs:
           include:
           - { dotnet: '4.7.1-windowsservercore-ltsc2016', os: 'windows', configuration: Debug }
           
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/dotnet/framework/sdk:${{ matrix.dotnet }}
       env:
