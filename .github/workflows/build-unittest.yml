@@ -62,9 +62,9 @@ jobs:
           include:
           - { dotnet: '4.7.1-windowsservercore-ltsc2016', os: 'windows', configuration: Debug }
           
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     container:
-      image: docker pull mcr.microsoft.com/dotnet/framework/sdk:${{ matrix.dotnet }}
+      image: mcr.microsoft.com/dotnet/framework/sdk:${{ matrix.dotnet }}
       env:
         NUGET_CERT_REVOCATION_MODE: offline
         GITHUB_ACTIONS: 'true'
