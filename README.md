@@ -2,7 +2,7 @@
 
 TypeChat.NET is an **experimental project** from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
-TypeChat.NET helps you build natural language interfaces with language models using strong types and type safe programs (plans). It also demonstrates programming model for such strongly typed interactions. 
+TypeChat.NET helps you build natural language interfaces with language models using strong types, type validation and type safe programs (plans). Strong typing may help make software that using language models more deterministic and reliable. TypeChat.NET also demonstrates programming model for such strongly typed interactions.   
 
         // Translates user intent into strongly typed Calendar Actions
         var translator = new JsonTranslator<CalendarActions>(
@@ -14,7 +14,7 @@ TypeChat.NET is in **active development** with frequent updates. The framework w
 # Assemblies
 TypeChat.NET consists of the following assemblies:
 
-* **TypeChat**: Classes (JsonTranslator<T>) that translate user intent into strongly typed and validated objects. 
+* **TypeChat**: Classes that translate user intent into strongly typed and validated objects. 
 
 * **TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs***. 
 
@@ -28,11 +28,11 @@ TypeChat.NET consists of the following assemblies:
 ## TypeChat ##
 TypeChat uses language models to translate user intent into JSON that adheres to a schema. This JSON is then validated and deserialized into a typed object, with additional constraint checking applied as needed.
 
-TypeChat include:
-* Json Translators
+TypeChat includes:
+* Json Translators (JsonTranslator<T>)
 * Json Validators
-* Schema Exporters from .NET Types to schema expressed using Typescript. Schema export includes support for:
-  * Dynamic export at runtime. This is needed for scenarios where the schema must include dynamic lists, such as relevant product names or lists of players in a team.
+* Schema Exporters. Generate schema for .NET Types using the concise syntax of Typescript. Includes support for:
+  * Dynamic export at runtime. This is especially needed for scenarios where the schema must include dynamic lists and vocabularies: e.g. available product names, lists of players in a team.
   * Vocabularies: easy unions of string tables, like in Typescript, along with support for dynamic loading. 
   * Auomated schema export supports common scenarios, as shown in the examples. Additional scenarios may be supported in the future. 
 * Extensibility interfaces let you use custom hand (such as hand-authored written) schemas, validators and even prompts.
@@ -67,7 +67,7 @@ TypeChat.SemanticKernel includes classes that demonstrate:
  
 ## TypeChat.Dialog
 (Early)
-TypeChat.Dialog demonstrates how TypeChat.Net can be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
+TypeChat.Dialog demonstrates how TypeChat.NET may be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
 
 TypeChat.Dialog includes support for:
 * Agents, Agents with History
