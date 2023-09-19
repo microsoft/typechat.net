@@ -53,7 +53,7 @@ jobs:
       
     - name: Run Tests
       run: |
-        export UT_PROJECTS=$(find ./test -type f -name "*.csproj" | tr '\n' ' ')
+        export UT_PROJECTS=$(find ./tests -type f -name "*.csproj" | tr '\n' ' ')
         for project in $UT_PROJECTS; do
           dotnet test -c ${{ matrix.configuration }} $project --no-build -v Normal --logger trx
         done
