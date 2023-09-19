@@ -13,7 +13,6 @@ namespace SchemaHierarchy;
 /// </summary>
 public class SchemaHierarchyApp : ConsoleApp
 {
-    LanguageModel _model;
     HierarchicalJsonTranslator _translator;
 
     public SchemaHierarchyApp()
