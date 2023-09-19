@@ -23,10 +23,8 @@ public class HierarchicalJsonTranslator : IJsonTranslator
     /// <param name="embeddingModel">embedding model to use for translators</param>
     public HierarchicalJsonTranslator(LanguageModel model, TextEmbeddingModel embeddingModel)
     {
-        if (model == null)
-        {
-            throw new ArgumentNullException(nameof(model));
-        }
+        ArgumentVerify.ThrowIfNull(model, nameof(model));
+        ArgumentVerify.ThrowIfNull(embeddingModel, nameof(embeddingModel));
         _model = model;
         _requestRouter = new VectorTextIndex<IJsonTranslator>(embeddingModel);
     }

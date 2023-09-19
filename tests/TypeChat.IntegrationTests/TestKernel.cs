@@ -12,13 +12,11 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
         _config = config;
     }
 
-    [Fact]
+    [SkippableFact]
     public void TestKernelBuild()
     {
-        if (!CanRunEndToEndTest(_config, nameof(TestKernelBuild)))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
+        
         KernelBuilder kb = new KernelBuilder();
         kb.WithChatModels(_config.OpenAI, Config.ModelNames.Gpt35Turbo, Config.ModelNames.Gpt4);
         IKernel kernel = kb.Build();
@@ -32,13 +30,10 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
         Assert.Equal(languageModel.ModelInfo.Name, Config.ModelNames.Gpt4);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task TestLanguageModel()
     {
-        if (!CanRunEndToEndTest(_config, nameof(TestLanguageModel)))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
 
         TextCompletionModel lm = new TextCompletionModel(_config.OpenAI);
         string response = await lm.CompleteAsync("Is Venus a planet?");
@@ -46,13 +41,10 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
         Assert.NotEmpty(response);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task TestChatModel()
     {
-        if (!CanRunEndToEndTest(_config, nameof(TestLanguageModel)))
-        {
-            return;
-        }
+        Skip.If(!CanRunEndToEndTest(_config));
 
         LanguageModel cm = new LanguageModel(_config.OpenAI);
         Prompt prompt = "Is Venus a planet?";

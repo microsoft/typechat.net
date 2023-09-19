@@ -128,9 +128,13 @@ public abstract class ConsoleApp : IInputHandler
         return _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
     }
 
-    public async Task<string?> ReadLineAsync(CancellationToken cancelToken)
+    public async Task<string?> ReadLineAsync(CancellationToken cancelToken = default)
     {
+#if NET7_0_OR_GREATER
         string? line = await Console.In.ReadLineAsync(cancelToken).ConfigureAwait(false);
+#else
+        string? line = await Console.In.ReadLineAsync().ConfigureAwait(false);
+#endif
         return (line != null) ? line.Trim() : line;
     }
 

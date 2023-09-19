@@ -24,19 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TypeChat.TestLib\TypeChat.TestLib.csproj" />
     <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
-    <!-- <ProjectReference Include="..\TypeChat.Tests\TypeChat.Tests.csproj" /> -->
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="appSettings.json" Link="appSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup Condition="Exists('appSettings.Development.json')">
-    <Content Include="appSettings.Development.json" Link="appSettings.Development.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>

@@ -324,6 +324,7 @@ public class Location
     }
 }
 
+#if NET7_0_OR_GREATER
 [JsonPolymorphic]
 [JsonDerivedType(typeof(Rectangle), typeDiscriminator: nameof(Rectangle))]
 [JsonDerivedType(typeof(Circle), typeDiscriminator: nameof(Circle))]
@@ -368,3 +369,4 @@ public class Drawing
         return null;
     }
 }
+#endif
