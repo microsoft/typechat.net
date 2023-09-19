@@ -8,7 +8,7 @@ public class TestProgramCSharp : ProgramTest
 {
     [Theory]
     [MemberData(nameof(GetMathPrograms))]
-    public void Test_Math(string source, double expectedResult)
+    public void TestMath(string source, double expectedResult)
     {
         Program program = Json.Parse<Program>(source);
         Api<IMathAPI> api = new MathAPI();
@@ -25,7 +25,7 @@ public class TestProgramCSharp : ProgramTest
 
     [Theory]
     [MemberData(nameof(GetObjectPrograms))]
-    public void Test_Object(string source, string expectedResult)
+    public void TestObject(string source, string expectedResult)
     {
         Program program = Json.Parse<Program>(source);
         Api<IPersonApi> api = new PersonAPI();
@@ -38,6 +38,52 @@ public class TestProgramCSharp : ProgramTest
 
         dynamic objResult = result.Value.Run(api.Implementation);
         ValidateResult(objResult, expectedResult);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetStringPrograms))]
+    public void TestString(string source, string expectedResult)
+    {
+        Program program = Json.Parse<Program>(source);
+        Api<IStringAPI> api = new TextApis();
+        string code = CSharpProgramTranspiler.GenerateCode(program, api.Type);
+        var lines = code.Lines();
+        ValidateCode(lines);
+
+        Result<ProgramAssembly> result = CSharpProgramCompiler.Compile(program, api.Type);
+        Assert.True(result.Success);
+
+        dynamic objResult = result.Value.Run(api.Implementation);
+        Assert.Equal(objResult, expectedResult);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetMathProgramsFail))]
+    public void TestMath_CompileFail(string source, double expectedResults)
+    {
+        Program program = Json.Parse<Program>(source);
+        Api<IMathAPI> api = MathAPI.Default;
+        bool success = true;
+        try
+        {
+            var result = CSharpProgramCompiler.Compile(program, api.Type);
+            success = result.Success;
+        }
+        catch
+        {
+            success = false;
+        }
+        Assert.False(success);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetStringPrograms))]
+    public void TestString_FailWrongApi(string source, string expectedResult)
+    {
+        // Try to compile against the wrong api
+        Program program = Json.Parse<Program>(source);
+        Api<IMathAPI> api = MathAPI.Default;
+        Assert.ThrowsAny<Exception>(() => CSharpProgramTranspiler.GenerateCode(program, api.Type));
     }
 
     void ValidateCode(IEnumerable<string> lines)

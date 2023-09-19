@@ -158,7 +158,10 @@ public class CSharpProgramCompiler
     {
         var transpiler = new CSharpProgramTranspiler(apiType);
         string code = transpiler.Compile(program);
-
+        if (string.IsNullOrEmpty(code))
+        {
+            throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson, "Program transpiled to empty string");
+        }
         CSharpProgramCompiler compiler = new CSharpProgramCompiler();
         AssemblyReferences refs = new AssemblyReferences();
         refs.AddStandard();

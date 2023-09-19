@@ -3,6 +3,7 @@
 using System.Text.Json;
 using System.Linq.Expressions;
 using LinqExpression = System.Linq.Expressions.Expression;
+using System.Globalization;
 
 namespace Microsoft.TypeChat.Tests;
 
@@ -23,15 +24,6 @@ public class TestProgramCompiler : ProgramTest
         Delegate compiledProgram = lambda.Compile();
         var result = (double)compiledProgram.DynamicInvoke();
         Assert.Equal(expectedResult, result);
-    }
-
-    [Theory]
-    [MemberData(nameof(GetMathProgramsFail))]
-    public void TestMath_CompileFail(string source, double expectedResults)
-    {
-        Program program = Json.Parse<Program>(source);
-        ProgramCompiler compiler = new ProgramCompiler(typeof(IMathAPI));
-        Assert.ThrowsAny<Exception>(() => compiler.CompileToExpressionTree(program, MathAPI.Default));
     }
 
     [Theory]
@@ -67,6 +59,35 @@ public class TestProgramCompiler : ProgramTest
         var result = compiledProgram.DynamicInvoke();
         Assert.NotNull(result);
         ValidateResult(result, expectedResults);
+    }
+
+    [Theory]
+    [MemberData(nameof(GetMathProgramsFail))]
+    public void TestMath_CompileFail(string source, double expectedResults)
+    {
+        Program program = Json.Parse<Program>(source);
+        ProgramCompiler compiler = new ProgramCompiler(typeof(IMathAPI));
+        Assert.ThrowsAny<Exception>(() => compiler.CompileToExpressionTree(program, MathAPI.Default));
+    }
+
+    [Theory]
+    [MemberData(nameof(GetMathPrograms))]
+    public void TestMath_FailWrongApi(string source, double expectedResults)
+    {
+        // Here we simply try to use valid programs to call the WRONG API, which should cause compliation 
+        Program program = Json.Parse<Program>(source);
+        ProgramCompiler compiler = new ProgramCompiler(typeof(IStringAPI));
+        Assert.ThrowsAny<Exception>(() => compiler.CompileToExpressionTree(program, TextApis.Default));
+    }
+
+    [Theory]
+    [MemberData(nameof(GetStringPrograms))]
+    public void TestString_FailWrongApi(string source, string expectedResults)
+    {
+        // Here we simply try to use valid programs to call the WRONG API, which should cause compliation 
+        Program program = Json.Parse<Program>(source);
+        ProgramCompiler compiler = new ProgramCompiler(typeof(IMathAPI));
+        Assert.ThrowsAny<Exception>(() => compiler.CompileToExpressionTree(program, MathAPI.Default));
     }
 
     [Fact]

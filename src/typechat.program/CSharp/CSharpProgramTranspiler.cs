@@ -162,8 +162,7 @@ public class CSharpProgramTranspiler
         }
         if (paramsInfo.Length != expressions.Length)
         {
-            writer.Append(CompileArrayArg(function, expressions, paramsInfo));
-            return;
+            ProgramException.ThrowArgCountMismatch(function, paramsInfo.Length, expressions.Length);
         }
 
         for (int i = 0; i < expressions.Length; ++i)
@@ -187,6 +186,11 @@ public class CSharpProgramTranspiler
 
                 case ObjectExpr objExpr:
                     var jsonObjExpr = Compile(objExpr);
+                    if (!param.CanBeDeserialized())
+                    {
+                        // Can't deserialize an object to a primitive type
+                        ProgramException.ThrowTypeMismatch(function, param, objExpr.Type);
+                    }
                     CastFromJsonObject(writer, jsonObjExpr, paramsInfo[i].ParameterType);
                     break;
             }
@@ -228,9 +232,9 @@ public class CSharpProgramTranspiler
             case JsonValueKind.False:
                 return CSharpLang.Types.False;
             case JsonValueKind.String:
-                return expr.Value.GetString();
+                return CSharpLang.String(expr.Value.GetString());
             case JsonValueKind.Number:
-                return expr.Value.GetDouble().ToString();
+                return CSharpLang.Double(expr.Value.GetDouble());
         }
     }
 
@@ -268,17 +272,6 @@ public class CSharpProgramTranspiler
             }
         }
         writer.EndArray();
-    }
-
-    string CompileArrayArg(FunctionCall call, Expression[] expressions, ParameterInfo[] paramsInfo)
-    {
-        if (paramsInfo.Length != 1)
-        {
-            ProgramException.ThrowArgCountMismatch(call, paramsInfo.Length, expressions.Length);
-        }
-        Debug.Assert(paramsInfo[0].ParameterType.IsArray);
-        Type itemType = paramsInfo[0].ParameterType.GetElementType();
-        return Compile(expressions, itemType.Name);
     }
 
     /// <summary>
@@ -347,11 +340,8 @@ public class CSharpProgramTranspiler
             writer.Literal(key).ArgSep();
             if (valueType != null)
             {
-                if (valueType.IsString())
-                {
-                    writer.Literal(value);
-                }
-                else if (valueType.IsValueType)
+                if (valueType.IsString() ||
+                    valueType.IsValueType)
                 {
                     writer.Append(value);
                 }
