@@ -2,6 +2,9 @@
 
 The Calendar example shows how you can capture user intent as a sequence of actions, such as adding event to a calendar or searching for an event as defined by the [`CalendarActions`](CalendarActionsSchema.cs) type.
 
+## Target models
+Works with gpt-35-turbo and gpt-4.
+
 # Usage
 
 Example prompts can be found in [`input.txt`](input.txt).

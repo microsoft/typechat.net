@@ -6,8 +6,11 @@ For best and consistent results, use **GPT-4**.
 
 Sample plugins:
 * ShellPlugin (file system operations)
-* StringPlugin (Simple string manipulation)
+* StringPlugin (String manipulation)
 * TimePlugin (Time operations)
+
+## Target models
+For best and consistent results, use **gpt-4**. 
 
 # Usage
 

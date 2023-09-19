@@ -1,7 +1,7 @@
 # CoffeeShop
 Demonstrates **JsonTranslator** with a [complex schema](CoffeeShopSchema.cs) for a coffee shop. It shows how GPT 3.5 and 4.0 can effectively be used to translate a broad range of user intent into strongly typed objects that can then be processed with conventional software.
 
-CoffeeShop Emulates natural language ordering at a Coffee Shop that serves:
+CoffeeShop emulates natural language ordering at a Coffee Shop serving:
 - Coffee
 - Espresso
 - Lattes
@@ -13,6 +13,9 @@ Also demonstrates how to use the ***[JsonVocab]*** attribute to:
 * Specify string vocabularies like:
   ```[JsonVocab(whole milk | two percent milk | nonfat milk | soy milk | almond milk | oat milk)]```
 * Automatic validation and repair of strings using these vocabularies
+
+## Target models
+Works with gpt-35-turbo and gpt-4.
 
 # Usage
 
