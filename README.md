@@ -115,7 +115,7 @@ To see TypeChat in action, explore the [TypeChat example projects](./examples). 
 
 * JsonTranslator and Schemas: 
   * Sentiment: the simplest example that demonstrates JsonTranslator and other core features 
-  * CoffeeShop1: Natural language ordering at a coffee shop
+  * CoffeeShop: Natural language ordering at a coffee shop
   * Calendar: Transform language into calendar actions
   * Restaurant: Order at a pizza restaurant
 
@@ -131,20 +131,32 @@ To see TypeChat in action, explore the [TypeChat example projects](./examples). 
   * Healthdata
   
 ### Api Key
-To run the examples, you will need an **API key** for an Open AI service. Both Azure Open AI and the Open AI service are supported.
+To run the examples, you will need an **API key** for an Open AI service. Azure Open AI and the Open AI service are both supported.
 
 * Go to the ***examples*** folder in the solution
 * Make a copy of the appSettings.json file. Name it **appSettings.Development.json**. Ensure it is in the same folder as the appSettings.json
-* appSettings.Development.json is a local override of the settings in appSettings.json
+  * appSettings.Development.json is a local development only override of the settings in appSettings.json
 * Add your Api Key to **appSettings.Development.json**. 
 
 A typical appSettings.Development.json will look like this:
 ```
+// For Azure Open AI service
 {
   "OpenAI": {
+    "Azure": true,
     "ApiKey": "YOUR API KEY",
-    "Endpoint": "API ENDPOINT - Open AI or Azure",
-    "Model": "gpt-35-turbo"
+    "Endpoint": "https://YOUR_RESOURCE_NAME.openai.azure.com",
+    "Model": "gpt-35-turbo"  // Name of Azure deployment
+  }
+}
+
+// For Open AI Service:
+{
+  "OpenAI": {
+    "Azure": false,
+    "ApiKey": "YOUR API KEY",
+    "Endpoint": "https://api.openai.com/v1/chat/completions",
+    "Model": "gpt-3.5-turbo"  // Name of Open AI model
   }
 }
 ```
