@@ -5,6 +5,9 @@ This example can act as a "stress test" for language models, illustrating the li
 This example also shows how we can create a "user intent summary" to display to a user.
 It uses a natural language experience for placing an order with the [`Order`](RestaurantSchema.cs) type.
 
+## Target models
+Works with gpt-35-turbo and gpt-4.
+
 # Usage
 
 Example prompts can be found in [`input.txt`](input.txt).

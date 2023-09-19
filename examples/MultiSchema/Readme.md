@@ -9,6 +9,12 @@ In this example, the child apps are existng Typechat chat examples:
 * Sentiment
 * Math
 * Plugins
+* HealthData
+* 
+## Target models
+Works with gpt-35-turbo and gpt-4.
+
+Sub-apps like HealthData and Plugins work best with gpt-4
 
 # Usage
 Example prompts can be found in [`input.txt`](input.txt).

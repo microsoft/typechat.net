@@ -6,6 +6,9 @@ CoffeeShop2 implements the same features as [CoffeeShop](../CoffeeShop/Readme.md
 - Each request could use a different translator and associated vocabulary (with associated schema generated on the fly). 
 -- e.g. Premium Coffee Shop users could be offered more complex Syrups or Toppings. Vegan users would only see non-dairy milks. Etc.
 
+## Target models
+Works with gpt-35-turbo and gpt-4.
+
 # Usage
 
 Example prompts can be found in [`input.txt`](input.txt).

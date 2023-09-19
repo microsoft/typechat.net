@@ -9,5 +9,8 @@ The HierarchicalJsonTranslator automatically picks the best child schema for a r
 * Sentiment
 * HealthDataResponse
 
+## Target models
+Works with gpt-35-turbo and gpt-4.
+
 # Usage
 Example prompts can be found in [`input.txt`](input.txt).

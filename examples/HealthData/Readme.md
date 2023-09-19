@@ -5,6 +5,9 @@ Demonstrates a ***strongly typed*** Chat. Here, you work with an Agent to intera
 
 Shows how to use **Agents (Chat) with history** to ***interactively*** acquire information needed for one or more Types from the user: **form filling**. 
 
+## Target models
+For best and consistent results, use **gpt-4**. 
+
 # Usage
 
 Example prompts can be found in [`input.txt`](input.txt).
