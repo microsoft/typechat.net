@@ -228,9 +228,9 @@ public class CSharpProgramTranspiler
             case JsonValueKind.False:
                 return CSharpLang.Types.False;
             case JsonValueKind.String:
-                return expr.Value.GetString();
+                return CSharpLang.String(expr.Value.GetString());
             case JsonValueKind.Number:
-                return expr.Value.GetDouble().ToString();
+                return CSharpLang.Double(expr.Value.GetDouble());
         }
     }
 
@@ -347,11 +347,8 @@ public class CSharpProgramTranspiler
             writer.Literal(key).ArgSep();
             if (valueType != null)
             {
-                if (valueType.IsString())
-                {
-                    writer.Literal(value);
-                }
-                else if (valueType.IsValueType)
+                if (valueType.IsString() ||
+                    valueType.IsValueType)
                 {
                     writer.Append(value);
                 }

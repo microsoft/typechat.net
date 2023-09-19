@@ -24,6 +24,16 @@ internal class CSharpLang : CodeLanguage
         return $"typeof({type})";
     }
 
+    public static string String(string value)
+    {
+        return $"\"{value}\"";
+    }
+
+    public static string Double(double value)
+    {
+        return value.ToString();
+    }
+
     public static class Operators
     {
         public const string Assign = "=";
