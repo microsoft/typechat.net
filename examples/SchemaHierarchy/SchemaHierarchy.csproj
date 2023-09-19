@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <RollForward>LatestMajor</RollForward>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>annotations</Nullable>
+    <StartupObject>SchemaHierarchy.SchemaHierarchyApp</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\CoffeeShop\*.cs" LinkBase="CoffeeShop" />
+    <Compile Include="..\Calendar\*.cs" LinkBase="Calendar" />
+    <Compile Include="..\Restaurant\*.cs" LinkBase="Restaurant" />
+    <Compile Include="..\Sentiment\*.cs" LinkBase="Sentiment" />
+    <Compile Include="..\HealthData\*.cs" LinkBase="HealthData" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="..\Calendar\Program.cs" />
+    <Compile Remove="..\CoffeeShop\Program.cs" />
+    <Compile Remove="..\HealthData\Program.cs" />
+    <Compile Remove="..\Restaurant\Program.cs" />
+    <Compile Remove="..\Sentiment\Program.cs" />
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <Content Include="..\appSettings.json" Link="appSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('..\appSettings.Development.json')">
+    <Content Include="..\appSettings.Development.json" Link="appSettings.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\typechat.app\TypeChat.App.csproj" />
+    <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
+    <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+</Project>
