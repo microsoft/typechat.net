@@ -78,8 +78,11 @@ public class Config
             {
                 continue;
             }
-
-            string[] envVars = line.Split('=', (char)StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray(); ;
+#if NET6_0_OR_GREATER
+            string[] envVars = line.Split('=', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+#else
+            string[] envVars = line.Split('=', (char)StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray();
+#endif
             if (envVars != null)
             {
                 UpdateVariable(envVars);
