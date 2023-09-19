@@ -65,7 +65,7 @@ TypeChat.SemanticKernel includes classes that demonstrate:
 * **Json Programs for Plugins**: turns registered plugins into a Plugin **API** and then generate Json programs that call these APIs. [Plugins Example](examples/Plugins/Program.cs)
 * Language model and embeddings access. All TypeChat examples use the Semantic Kernel to call models and generate embeddings. 
  
-# TypeChat.Dialog
+## TypeChat.Dialog
 (Early)
 TypeChat.Dialog demonstrates how TypeChat.Net can be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
 
@@ -76,7 +76,7 @@ TypeChat.Dialog includes support for:
       // Create an agent with history
       _agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
 
-# TypeChat.App
+## TypeChat.App
 A utility library with classes used by Typechat examples. These classes may be generally useful for apps built on top of Typechat. Helper classes include:
 * Program synthesis of programs that call Plugins
 * Console Apps
