@@ -183,7 +183,7 @@ See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list of :
 // Your configuration 
 OpenAIConfig config = Config.LoadOpenAI();
 // Or Json file
-OpenAIConfig config = Config.LoadFromJsonFile(...);
+OpenAIConfig config = OpenAIConfig.LoadFromJsonFile(...);
 // Or from config
 config = OpenAIConfig.FromEnvironment();
 
