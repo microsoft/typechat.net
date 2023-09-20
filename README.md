@@ -198,7 +198,7 @@ new LanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
 ```
 
 ### Using your own client
-TypeChat acesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat.sk/LanguageModel.cs) implements ILanguageModel. 
+TypeChat accesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat.sk/LanguageModel.cs) implements ILanguageModel. 
 
 You can use your own model client by implementing ILanguageModel.
 
