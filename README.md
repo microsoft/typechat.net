@@ -84,7 +84,7 @@ A utility library with classes used by TypeChat examples. These classes may be g
 
 # Getting Started 
 
-## Prequisite: Open AI
+## Prerequisite: Open AI
 * **Open AI Language Models**: TypeChat.NET and its examples currently require familiarity with and access to language models from Open AI. 
 * TypeChat.NET has been tested with and supports the following models: 
     * gpt-35-turbo
@@ -113,7 +113,7 @@ A utility library with classes used by TypeChat examples. These classes may be g
 
 To see TypeChat in action, explore the [TypeChat example projects](./examples). The list below describes which examples will best introduc which concept. Some examples or scenarios may work best with gpt-4.
 
-* Hello World: The Sentiment example is TypeChat's Hello World. It is a minimal introduction to JsonTranslator. 
+* Hello World: The [Sentiment](./examples/Sentiment) example is TypeChat's Hello World and minimal introduction to JsonTranslator. 
 
 * JsonTranslator and Schemas: 
   
@@ -125,17 +125,17 @@ To see TypeChat in action, explore the [TypeChat example projects](./examples). 
   * MultiSchema: dynamically route user intent to other 'sub-apps'
   * SchemaHierarchy: A Json Translator than uses multiple child JsonTranslators
 
-* TypeChat.Program:
+* Json Programs and TypeChat.Program:
   * Math: Turn user requests into calculator programs
   * Plugins (program synthesis that target Semantic Kernel Plugins)
 
-* TypeChat.Dialog:
+* Typed Agents:
   * Healthdata
   
 Each example includes an **input.txt** with sample input. Pass the input file as an argument to run the example in **batch mode**. 
 
 ## Api Key and Configuration
-To use TypeChat.net or run the examples, you will need an **API key** for an Open AI service. Azure Open AI and the Open AI service are both supported.
+To use TypeChat.net or run the examples, you need an **API key** for an Open AI service. Azure Open AI and the Open AI service are both supported.
 
 ### Configure Api Key for examples
 * Go to the **[examples](./examples)** folder in the solution
@@ -167,9 +167,9 @@ A typical appSettings.Development.json will look like this:
 ```
 
 ## OpenAIConfig
-TypeChat accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class provides settings used to initialize it.  
+TypeChat accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class provides the configuration it needs.  
 
-You can initialize OpenAIConfig via your application's configuration system (see examples for how) or via environment variables. 
+You can initialize OpenAIConfig via your application's configuration system (see examples for how) or from environment variables. 
 
 See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list full list of :
   * Configurable properties
@@ -183,8 +183,8 @@ config = OpenAIConfig.FromEnvironment();
 var model = new LanguageModel(config);
 ```
 
-### Using an Semantick Kernel directly
-You can also initialize LanguageModel using a existing Microsoft Semantic IKernel you created using a KernelBuilder.
+### Using Semantic Kernel directly
+You can also initialize LanguageModel using an IKernel object you created using a KernelBuilder.
 ```
 const string modelName = "gpt-35-turbo";
 new LanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
