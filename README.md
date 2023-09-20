@@ -79,7 +79,12 @@ TypeChat.Dialog includes support for:
 agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
 agent.Instructions.Append("Help me enter my health data step by step");
 
-HealthDataResponse response = await _agent.GetResponseAsync(input);
+// Run a chat loop
+while (true)
+{
+    var userInput = Console.ReadLine();
+    HealthDataResponse response = await agent.GetResponseAsync(userInput);
+}
 ```
 
 # Getting Started 
