@@ -18,9 +18,8 @@
     <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>
 
-  <Import Project="../typechat/Package/nuget.props" />
+  <Import Project="../package/nuget.props" />
   <PropertyGroup>
-    <PackageId>$(AssemblyName)</PackageId>
     <Description>TypeChat.Dialog uses TypeChat.Net to perform strongly typed interactions with message passing Agents</Description>
   </PropertyGroup>
 

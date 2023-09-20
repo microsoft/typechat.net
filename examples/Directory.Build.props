@@ -1,0 +1,6 @@
+﻿<Project>
+  <PropertyGroup>
+    <!-- Disable NuGet packaging by default. Projects can override. -->
+    <IsPackable>disable</IsPackable>
+  </PropertyGroup>
+</Project>
