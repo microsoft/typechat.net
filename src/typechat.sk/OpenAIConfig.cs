@@ -128,4 +128,19 @@ public class OpenAIConfig
         config.Validate();
         return config;
     }
+
+    /// <summary>
+    /// Load configuration from a json file. A trivial wrapper around the Json serializer
+    /// </summary>
+    /// <param name="jsonFilePath">json text</param>
+    /// <returns>config object</returns>
+    public static OpenAIConfig LoadFromJsonFile(string jsonFilePath)
+    {
+        string json = File.ReadAllText(jsonFilePath);
+        if (string.IsNullOrEmpty(json))
+        {
+            throw new ArgumentException($"{jsonFilePath} is empty");
+        }
+        return Json.Parse<OpenAIConfig>(json);
+    }
 }

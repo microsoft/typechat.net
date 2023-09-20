@@ -31,9 +31,10 @@ TypeChat uses language models to translate user intent into JSON that conforms t
 TypeChat provides:
 * Json translation and validation.
 * Extensibility: interfaces for customizing schemas, validators and prompts.
-* Schema export: generate schema for .NET Types using **Typescript**, a language that concisely expresses the schema for JSON objects.
-  * Support for common scenarios shown in TypeChat examples.
+* Schema export: generate schema for the .NET Type you want to translate to. Exported schema includes dependencies and base classes. The exported schema is specified using **Typescript**, which can concisely express schema for JSON objects. 
+  * Support for common scenarios shown in TypeChat examples. For cases where you encounter limitations in the current export, you can use other schema generators or author the schema by hand. 
   * Helper attributes for Vocabularies and Comments. Vocabularies are string tables that constrain the values that can be assigned to string properties. Dynamic loading of vocabularies enables scenarios where they vary at runtime.
+  * Note: Like TypeChat, TypeChat.NET has only been tested with schema specified in Typescript. 
 ```
 [Comment("Milks currently in stock")]
 public class Milks
@@ -173,7 +174,7 @@ A typical appSettings.Development.json will look like this:
 ```
 
 ## OpenAIConfig
-TypeChat accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class is configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration or from environment variables. 
+TypeChat accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class is configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
 
 See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list of :
   * Configurable properties
@@ -181,6 +182,8 @@ See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list of :
 ```
 // Your configuration 
 OpenAIConfig config = Config.LoadOpenAI();
+// Or Json file
+OpenAIConfig config = Config.LoadFromJsonFile(...);
 // Or from config
 config = OpenAIConfig.FromEnvironment();
 
