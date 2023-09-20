@@ -57,49 +57,4 @@ public class Config
 
     public bool HasOpenAI => (_openAI != null);
     public bool HasOpenAIEmbeddings => (_openAIEmbeddings != null);
-
-    /// <summary>
-    /// Load a file in .env format. Apply contained variables as process specific environment
-    /// variables
-    /// </summary>
-    /// <param name="filePath">Path to env file</param>
-    public static void ApplyEnvFile(string filePath)
-    {
-        if (!File.Exists(filePath))
-        {
-            return;
-        }
-
-        using StreamReader reader = new StreamReader(filePath);
-        string line = null;
-        while ((line = reader.ReadLine()) != null)
-        {
-            if (line.StartsWith("#"))
-            {
-                continue;
-            }
-#if NET6_0_OR_GREATER
-            string[] envVars = line.Split('=', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-#else
-            string[] envVars = line.Split('=', (char)StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).ToArray();
-#endif
-            if (envVars != null)
-            {
-                UpdateVariable(envVars);
-            }
-        }
-    }
-
-    static void UpdateVariable(string[] nvPairs)
-    {
-        if (nvPairs != null && nvPairs.Length > 0)
-        {
-            Environment.SetEnvironmentVariable(
-                nvPairs[0], // name
-                (nvPairs.Length > 1) ? nvPairs[1] : null, // value
-                EnvironmentVariableTarget.Process
-            );
-        }
-    }
-
 }

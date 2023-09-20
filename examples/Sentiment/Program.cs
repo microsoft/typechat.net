@@ -13,7 +13,10 @@ public class SentimentApp : ConsoleApp
 
     public SentimentApp()
     {
-        _translator = new JsonTranslator<SentimentResponse>(new LanguageModel(Config.LoadOpenAI()));
+        OpenAIConfig config = Config.LoadOpenAI();
+        // Although this sample uses config files, you can also load config from environment variables
+        // OpenAIConfig config = OpenAIConfig.FromEnvironment();
+        _translator = new JsonTranslator<SentimentResponse>(new LanguageModel(config));
     }
 
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
