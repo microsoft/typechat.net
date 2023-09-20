@@ -26,15 +26,15 @@ TypeChat.NET consists of the following assemblies:
 * **Microsoft.TypeChat.Dialog**: Classes for working with interactive Agents that have history. 
 
 ## Microsoft.TypeChat ##
-TypeChat uses language models to translate user intent into JSON that conforms to a schema. This JSON is then validated and deserialized into a typed object. Additional constraint checking is applied as needed.
+TypeChat uses language models to translate user intent into JSON that conforms to a schema. This JSON is then validated and deserialized into a typed object. Additional constraint checking is applied as needed. Validation errors are sent back to the language model, which uses them to **repair** the Json it originally returned. 
 
 TypeChat provides:
 * Json translation and validation.
 * Extensibility: interfaces for customizing schemas, validators and prompts.
 * Schema export: generate schema for the .NET Type you want to translate to. Exported schema includes dependencies and base classes. The exported schema is specified using **Typescript**, which can concisely express schema for JSON objects. 
-  * Support for common scenarios shown in TypeChat examples. For cases where you encounter limitations in the current export, you can use other schema generators or author the schema by hand. 
+  * Support for common scenarios shown in TypeChat examples. For cases where you encounter limitations in the current export, you can generate the schema yourself or author the schema by hand. 
   * Helper attributes for Vocabularies and Comments. Vocabularies are string tables that constrain the values that can be assigned to string properties. Dynamic loading of vocabularies enables scenarios where they vary at runtime.
-  * Note: Like TypeChat, TypeChat.NET has only been tested with schema specified in Typescript. 
+  * **Note**: Like TypeChat, TypeChat.NET has been tested with schema specified in Typescript. 
 ```
 [Comment("Milks currently in stock")]
 public class Milks
