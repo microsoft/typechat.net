@@ -21,7 +21,7 @@ extend-ignore-re = [
     '"[A-Fa-f0-9]{8}"', # cell id strings
 ]
 
-[type.example]
+[type.csharp]
 extend-ignore-re = [
     '"caf"', # intentional typo in the examples
 ]
