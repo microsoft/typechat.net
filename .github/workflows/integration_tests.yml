@@ -39,8 +39,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       if: ${{ github.event_name != 'pull_request' }}
-        with:
-          clean: true
     
     - name: Build dotnet solutions
       if: ${{ github.event_name != 'pull_request' }}
