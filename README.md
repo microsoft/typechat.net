@@ -106,7 +106,7 @@ _agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadO
 
 To see TypeChat in action, explore the [TypeChat example projects](./examples). The list below describes which examples will best introduc which concept. Some examples or scenarios may work best with gpt-4.
 
-* Hello World: The [Sentiment](./examples/Sentiment) example is TypeChat's Hello World and minimal introduction to JsonTranslator. 
+* Hello World: The [Sentiment](./examples/Sentiment) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
 
 * JsonTranslator and Schemas: 
   
