@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\typechat.app\TypeChat.App.csproj" />
+    <ProjectReference Include="..\..\src\typechat.app\TypeChat.AppLib.csproj" />
     <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
     <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
   </ItemGroup>
