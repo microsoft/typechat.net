@@ -15,7 +15,7 @@ public class ProgramException : Exception
         // Program JSON does not contain a valid program
         InvalidProgramJson,
         JsonValueTypeNotSupported,
-        TypeMistmatch,      // There was a type mismatch when attempting to call a function
+        TypeMismatch,      // There was a type mismatch when attempting to call a function
         InvalidResultRef,   // Invalid Reference to a result returned by a program step
         ArgCountMismatch,   // 
         FunctionNotFound,   // No such function in the target Api
@@ -56,7 +56,7 @@ public class ProgramException : Exception
     internal static void ThrowTypeMismatch(string name, ParameterInfo param, Type actual)
     {
         throw new ProgramException(
-            ProgramException.ErrorCode.TypeMistmatch,
+            ProgramException.ErrorCode.TypeMismatch,
             $"TypeMismatch: @func {name} @arg {param.Name}: Expected {param.ParameterType.Name}, Got {actual.Name}"
             );
     }

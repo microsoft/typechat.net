@@ -33,7 +33,7 @@ public class ProgramTranslator : JsonTranslator<Program>
     /// <summary>
     /// Create a program translator that uses the given language model to create programs
     /// that can call the given API. The API is the interface or class definition, whose methods
-    /// and method sigatures define the API surface. 
+    /// and method signatures define the API surface. 
     /// </summary>
     /// <param name="model">language model</param>
     /// <param name="validator">Validator that verifies the returned program</param>

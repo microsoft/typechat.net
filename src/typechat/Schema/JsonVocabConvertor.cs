@@ -38,7 +38,7 @@ internal class JsonVocabConvertor : JsonConverter<string?>
         }
         else if (HasVocabName)
         {
-            // Dynamicaly bind to a vocabulary if possible
+            // Dynamically bind to a vocabulary if possible
             var converter = options.GetConverter(typeof(VocabString)) as VocabStringJsonConvertor;
             if (converter == null)
             {

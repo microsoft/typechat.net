@@ -15,7 +15,7 @@ namespace Microsoft.TypeChat;
 /// - JsonTranslator can automatically generate Typescript schema for T. But you can also create schema in other ways.
 /// - The model returns JSON.
 /// - JsonTranslator uses Validators to validate and deserialize the returned JSON into a valid object of type T
-/// - Optional ConstraintsValidators can also futher valdidate the object
+/// - Optional ConstraintsValidators can also further valdidate the object
 /// 
 /// Since language models are stochastic, the returned JSON can have errors or fail type checks.
 /// When this happens, JsonTranslator tries to REPAIR the JSON by sending translation errors back to the language model.

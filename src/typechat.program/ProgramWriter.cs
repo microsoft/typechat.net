@@ -3,7 +3,7 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Simple Program writer: writes out Program as a psuedo C# like function
+/// Simple Program writer: writes out Program as a pseudo C# like function
 /// Useful for displaying programs to a user
 /// </summary>
 public class ProgramWriter

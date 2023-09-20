@@ -5,7 +5,7 @@ namespace Microsoft.TypeChat;
 /// <summary>
 /// Prompts have a maximum length. Prompt lengths are be limited by model capacity or policy
 /// PromptBuilder builds prompts consisting of multiple prompt sections in a way that the prompt
-/// length does not exceeed a given maximum
+/// length does not exceed a given maximum
 /// </summary>
 public class PromptBuilder
 {
@@ -30,7 +30,7 @@ public class PromptBuilder
     /// boundaries and so on.
     /// </summary>
     /// <param name="maxLength">Prompt will not exceed this maxLengthin characters</param>
-    /// <param name="substringExtractor">optinal extractor</param>
+    /// <param name="substringExtractor">optional extractor</param>
     public PromptBuilder(int maxLength, Func<string, int, string>? substringExtractor = null)
     {
         _prompt = new Prompt();

@@ -74,7 +74,7 @@ public class TestProgramCompiler : ProgramTest
     [MemberData(nameof(GetMathPrograms))]
     public void TestMath_FailWrongApi(string source, double expectedResults)
     {
-        // Here we simply try to use valid programs to call the WRONG API, which should cause compliation 
+        // Here we simply try to use valid programs to call the WRONG API, which should cause compilation 
         Program program = Json.Parse<Program>(source);
         ProgramCompiler compiler = new ProgramCompiler(typeof(IStringAPI));
         Assert.ThrowsAny<Exception>(() => compiler.CompileToExpressionTree(program, TextApis.Default));
@@ -84,7 +84,7 @@ public class TestProgramCompiler : ProgramTest
     [MemberData(nameof(GetStringPrograms))]
     public void TestString_FailWrongApi(string source, string expectedResults)
     {
-        // Here we simply try to use valid programs to call the WRONG API, which should cause compliation 
+        // Here we simply try to use valid programs to call the WRONG API, which should cause compilation 
         Program program = Json.Parse<Program>(source);
         ProgramCompiler compiler = new ProgramCompiler(typeof(IMathAPI));
         Assert.ThrowsAny<Exception>(() => compiler.CompileToExpressionTree(program, MathAPI.Default));

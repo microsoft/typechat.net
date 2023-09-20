@@ -98,7 +98,7 @@ public class Api
         {
             return EmptyArgs;
         }
-        // If any of input paramters are JsonObjects, deserialize them
+        // If any of input parameters are JsonObjects, deserialize them
         ConvertObjects(jsonArgs, paramsInfo);
         return jsonArgs;
     }

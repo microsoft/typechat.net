@@ -3,7 +3,7 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Json Translators use a request Prompt and a repair Prompt. This interface lets you custoize both.
+/// Json Translators use a request Prompt and a repair Prompt. This interface lets you customize both.
 /// A repair prompt 
 /// </summary>
 public interface IJsonTranslatorPrompts

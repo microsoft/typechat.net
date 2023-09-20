@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Microsoft.TypeChat.Tests.Netstandard20;
 
-#pragma warning disable CS8618 // Non-nullable propert must container a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable property must container a non-null value when exiting constructor. Consider declaring as nullable.
 public enum Coffees
 {
     [Comment("Drip coffee")]
@@ -321,4 +321,4 @@ public class Location
         }
     }
 }
-#pragma warning restore CS8618 // Non-nullable propert must container a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable property must container a non-null value when exiting constructor. Consider declaring as nullable.

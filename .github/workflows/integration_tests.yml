@@ -3,7 +3,7 @@
 # each targeting a single version of the dotnet SDK.
 #
 
-name: dotnet-build-test
+name: build-integrationtest
 
 on:
   workflow_dispatch:
@@ -11,6 +11,8 @@ on:
     branches: [ "main" ]
   merge_group:
     branches: ["main"]
+  schedule:
+    - cron: "0 7 * * *" # Run at midnight PDT every day
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -20,20 +22,13 @@ permissions:
   contents: read
 
 jobs:
-  dotnet-build-test:
+  build-integrationtest:
     strategy:
         fail-fast: false
         matrix:
           include:
-#          - { dotnet: '6.0-jammy', os: 'ubuntu', configuration: Debug }
-          - { dotnet: '7.0-jammy', os: 'ubuntu', configuration: Debug }
           - { dotnet: '7.0-jammy', os: 'ubuntu', configuration: Release }
-          - { dotnet: '8.0-preview-jammy', os: 'ubuntu', configuration: Release }
-#          - { dotnet: '6.0', os: 'windows', configuration: Release }
-          - { dotnet: '7.0', os: 'windows', configuration: Debug }
-          - { dotnet: '7.0', os: 'windows', configuration: Release }
-          - { dotnet: '8.0-preview', os: 'windows', configuration: Release }
-          
+
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/dotnet/sdk:${{ matrix.dotnet }}
@@ -43,8 +38,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      if: ${{ github.event_name != 'pull_request' }}
+        with:
+          clean: true
     
     - name: Build dotnet solutions
+      if: ${{ github.event_name != 'pull_request' }}
       run: |
         export SOLUTIONS=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
         for solution in $SOLUTIONS; do
@@ -52,8 +51,12 @@ jobs:
         done
       
     - name: Run Tests
+      shell: bash
+      if: ${{ github.event_name != 'pull_request' }}
+      env: # Set Azure credentials secret as an input
+        AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_ENDPOINT }}
+        AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_API_KEY }}
+        OPENAI_MODEL: ${{ secrets.AZURE_COMPLETION_MODEL }}
+        OPENAI_EMBEDDINGMODEL: ${{ secrets.AZURE_COMPLETION_MODEL }}
       run: |
-        export UT_PROJECTS=$(find ./ -type f -name "*.UnitTests.csproj" | tr '\n' ' ')
-        for project in $UT_PROJECTS; do
-          dotnet test -c ${{ matrix.configuration }} $project --no-build -v Normal --logger trx
-        done
+        dotnet test -c ${{ matrix.configuration }} tests/TypeChat.IntegrationTests/TypeChat.IntegrationTests.csproj --no-build -v Normal --logger trx

@@ -26,7 +26,7 @@ public class ProgramInterpreter
 
     /// <summary>
     /// Runs the given program by evaluating each node in the Program AST
-    /// Evaulates any FunctionCalls by invoking the callHandler callback
+    /// Evaluates any FunctionCalls by invoking the callHandler callback
     /// </summary>
     /// <param name="program">program to run</param>
     /// <param name="callHandler">handler that will actually make function calls</param>
@@ -51,7 +51,7 @@ public class ProgramInterpreter
 
     /// <summary>
     /// Asynchronously run the given program by evaluating each node in the Program AST
-    /// Evaulates any FunctionCalls by invoking the callHandler callback
+    /// Evaluates any FunctionCalls by invoking the callHandler callback
     /// </summary>
     /// <param name="program">program to run</param>
     /// <param name="callHandlerAsync">handler that will actually make function calls</param>

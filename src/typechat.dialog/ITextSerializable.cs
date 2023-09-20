@@ -9,7 +9,7 @@ namespace Microsoft.TypeChat.Dialog;
 public interface ITextSerializable
 {
     /// <summary>
-    /// Turn this object into a string. The string output may be differen from what ToString() produces
+    /// Turn this object into a string. The string output may be different from what ToString() produces
     /// </summary>
     /// <returns>string</returns>
     string Stringify();
