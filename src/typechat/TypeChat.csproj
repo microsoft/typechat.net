@@ -5,12 +5,12 @@
     <LangVersion>10</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
-    <AssemblyName>TypeChat</AssemblyName>
+    <AssemblyName>Microsoft.TypeChat</AssemblyName>
     <RootNamespace>Microsoft.TypeChat</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
-  <Import Project="Package/nuget.props" />
+  <Import Project="../package/nuget.props" />
 
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />

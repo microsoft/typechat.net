@@ -5,7 +5,7 @@
     <LangVersion>10</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
-    <AssemblyName>TypeChat.Dialog</AssemblyName>
+    <AssemblyName>Microsoft.TypeChat.Dialog</AssemblyName>
     <RootNamespace>Microsoft.TypeChat.Dialog</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -18,9 +18,8 @@
     <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>
 
-  <Import Project="../typechat/Package/nuget.props" />
+  <Import Project="../package/nuget.props" />
   <PropertyGroup>
-    <PackageId>$(AssemblyName)</PackageId>
     <Description>TypeChat.Dialog uses TypeChat.Net to perform strongly typed interactions with message passing Agents</Description>
   </PropertyGroup>
 

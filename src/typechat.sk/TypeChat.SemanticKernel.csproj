@@ -5,7 +5,7 @@
     <LangVersion>10</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
-    <AssemblyName>TypeChat.SemanticKernel</AssemblyName>
+    <AssemblyName>Microsoft.TypeChat.SemanticKernel</AssemblyName>
     <RootNamespace>Microsoft.TypeChat</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -23,7 +23,7 @@
     <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>
 
-  <Import Project="../typechat/Package/nuget.props" />
+  <Import Project="../package/nuget.props" />
   <PropertyGroup>
     <PackageId>$(AssemblyName)</PackageId>
     <Description>TypeChat.SemanticKernel supplies bindings for Language models, Plugins and Embeddings to TypeChat.NET</Description>

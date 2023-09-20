@@ -5,7 +5,7 @@
     <LangVersion>10</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
-    <AssemblyName>TypeChat.Program</AssemblyName>
+    <AssemblyName>Microsoft.TypeChat.Program</AssemblyName>
     <RootNamespace>Microsoft.TypeChat</RootNamespace>
   </PropertyGroup>
 
@@ -28,9 +28,8 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
 
-  <Import Project="../typechat/Package/nuget.props" />
+  <Import Project="../package/nuget.props" />
   <PropertyGroup>
-    <PackageId>$(AssemblyName)</PackageId>
     <Description>TypeChat.Program translates natural language requests into simple programs (Plans) that are dynamically typed checked, compiled and run</Description>
   </PropertyGroup>
 
