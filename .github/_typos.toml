@@ -8,7 +8,6 @@
 [files]
 extend-exclude = [
     "_typos.toml",
-    "CoffeeShopVocab.json",
 ]
 
 [default.extend-words]
@@ -20,6 +19,11 @@ ags = "ags" # Azure Graph Service
 [type.jupyter]
 extend-ignore-re = [
     '"[A-Fa-f0-9]{8}"', # cell id strings
+]
+
+[type.example]
+extend-ignore-re = [
+    '"caf"', # intentional typo in the examples
 ]
 
 [type.msbuild]

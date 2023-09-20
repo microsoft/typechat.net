@@ -12,4 +12,4 @@ TypeChat.NET provides **cross platform** libraries that help you build natural l
 
 # Getting Started
 
-Learn about and get the latest updates on the TypeChat.NET porject on the [TypeChat.NET GitHub repository](https://github.com/microsoft/typechat.net).
+Learn about and get the latest updates on the TypeChat.NET project on the [TypeChat.NET GitHub repository](https://github.com/microsoft/typechat.net).
