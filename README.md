@@ -5,9 +5,11 @@ TypeChat.NET is an **experimental project** from the [Microsoft Semantic Kernel]
 TypeChat.NET provides **cross platform** libraries that help you build natural language interfaces with language models using strong types, type validation and simple type safe programs (plans). Strong typing may help make software that uses language models more deterministic and reliable.    
 ```
 // Translates user intent into strongly typed Calendar Actions
-var translator = new JsonTranslator<CalendarActions>(
-    new LanguageModel(Config.LoadOpenAI())
-);
+var model = new LanguageModel(Config.LoadOpenAI());
+var translator = new JsonTranslator<CalendarActions>(model);
+
+// Translate natural language request 
+CalendarActions actions = await translator.TranslateAsync(requestText);
 ```
 
 TypeChat.NET is in **active development** with frequent updates. The framework and programming model will evolve as the team explores the space and incorporates feedback. Supported scenarios are shown in the included [Examples](./examples). Documentation will also continue to improve. When in doubt, please look at the code.  
@@ -46,13 +48,15 @@ TypeChat.Program includes:
 * Program Compiler: uses the dynamic language runtime (DLR) to compile programs/plans with type checking. Compilation diagnostics are used to repair programs. 
 * Program C# Transpiler/Compiler (experimental): transpiles programs into C# and compile them into assemblies. Compilation diagnostics are used to repair programs.  
 ```
-// Translates user intent into typed Programs that call
-// methods on a Math API
-_api = new MathAPI();
-_translator = new ProgramTranslator<IMathAPI>(
-    new LanguageModel(Config.LoadOpenAI()),
-    _api
-);
+// Translates user intent into typed Programs that call methods on a Math API
+var model = new LanguageModel(Config.LoadOpenAI());
+api = new MathAPI();
+translator = new ProgramTranslator<IMathAPI>(model, api);
+
+// Translate natural language request
+Program program = await translator.TranslateAsync(requestText);
+// Optionally run the program in an interpreter
+program.Run(api);
  ```
 
 ## Microsoft.TypeChat.SemanticKernel ##
@@ -72,7 +76,10 @@ TypeChat.Dialog includes support for:
 * Messages, Message Streams
 ```
 // Create an agent with history
-_agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
+agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
+agent.Instructions.Append("Help me enter my health data step by step");
+
+HealthDataResponse response = await _agent.GetResponseAsync(input);
 ```
 
 # Getting Started 
