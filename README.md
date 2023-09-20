@@ -67,10 +67,10 @@ program.Run(api);
 ```
 
 ## Microsoft.TypeChat.SemanticKernel ##
-TypeChat.SemanticKernel provides bindings for language models, plugins and embeddings to Typechat.NET and TypeChat.NET examples.
+TypeChat.SemanticKernel provides default bindings for language models, plugins and embeddings to Typechat.NET and TypeChat.NET examples.
 
 TypeChat.SemanticKernel include classes for:
-* **Json Programs for Plugins**: turn registered plugins into **APIs** that Json programs can target See the [Plugins Example](examples/Plugins/Program.cs).
+* **Json Programs for Plugins**: turn registered plugins into **APIs** that Json programs can target. See the [Plugins Example](examples/Plugins/Program.cs).
 * Language model and embeddings access: all TypeChat examples use the Semantic Kernel to call models and generate embeddings. 
  
 ## Microsoft.TypeChat.Dialog
@@ -118,7 +118,7 @@ while (true)
 
 ## Examples
 
-To see TypeChat in action, explore the [TypeChat example projects](./examples). The list below describes which examples will best introduc which concept. Some examples or scenarios may work best with gpt-4.
+To see TypeChat in action, explore the [TypeChat example projects](./examples). The list below describes which examples will best introduce which concept. Some examples or scenarios may work best with gpt-4.
 
 * Hello World: The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
 
@@ -173,8 +173,8 @@ A typical appSettings.Development.json will look like this:
 }
 ```
 
-## OpenAIConfig
-TypeChat accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class is configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
+### OpenAIConfig
+TypeChat examples accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class supplies configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
 
 See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list of :
   * Configurable properties
@@ -196,6 +196,11 @@ You can also initialize LanguageModel using an IKernel object you created using 
 const string modelName = "gpt-35-turbo";
 new LanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
 ```
+
+### Using your own client
+TypeChat acesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. Classes like [LanguageModel](src/typechat.sk/LanguageModel.cs) implement this interface. 
+
+You can use your own model client by implementing ILanguageModel.
 
 # License
 
