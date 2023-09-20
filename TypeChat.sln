@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{17
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sentiment", "examples\Sentiment\Sentiment.csproj", "{68E9AF34-7982-4BA4-864D-D24DF937A6A2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.AppLib", "src\typechat.app\TypeChat.AppLib.csproj", "{4F6278AB-D48C-43B8-BEF5-F28B1150B3C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.ExamplesLib", "src\typechat.app\TypeChat.ExamplesLib.csproj", "{4F6278AB-D48C-43B8-BEF5-F28B1150B3C7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoffeeShop", "examples\CoffeeShop\CoffeeShop.csproj", "{AB618076-FA46-4014-871A-B78179E248FF}"
 EndProject
