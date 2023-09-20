@@ -15,12 +15,36 @@ public class OpenAIConfig
     /// </summary>
     public static class VariableNames
     {
+        /// <summary>
+        /// Api key to use with the Open AI service
+        /// </summary>
         public const string OPENAI_API_KEY = "OPENAI_API_KEY";
+        /// <summary>
+        /// The Open AI endpoint. This follows semantic kernel conventions
+        /// https://api.openai.com/v1/chat/completions
+        /// </summary>
         public const string OPENAI_ENDPOINT = "OPENAI_ENDPOINT";
+        /// <summary>
+        /// Optional: OpenAI organization
+        /// </summary>
         public const string OPENAI_ORGANIZATION = "OPENAI_ORGANIZATION";
+        /// <summary>
+        /// Name of the language model to use
+        /// </summary>
         public const string OPENAI_MODEL = "OPENAI_MODEL";
+        /// <summary>
+        /// Name of the embedding model to use
+        /// </summary>
         public const string OPENAI_EMBEDDINGMODEL = "OPENAI_EMBEDDINGMODEL";
+        /// <summary>
+        /// Api key to use for Azure Open AI service
+        /// </summary>
         public const string AZURE_OPENAI_API_KEY = "AZURE_OPENAI_API_KEY";
+        /// <summary>
+        /// Endpoint to use for Azure OpenAI service.
+        /// This follows the Semantic Kernel convention
+        /// https://YOUR_RESOURCE_NAME.openai.azure.com
+        /// </summary>
         public const string AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT";
     }
 

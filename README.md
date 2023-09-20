@@ -113,8 +113,10 @@ A utility library with classes used by TypeChat examples. These classes may be g
 
 To see TypeChat in action, explore the [TypeChat example projects](./examples). The list below describes which examples will best introduc which concept. Some examples or scenarios may work best with gpt-4.
 
+* Hello World: The Sentiment example is TypeChat's Hello World. It is a minimal introduction to JsonTranslator. 
+
 * JsonTranslator and Schemas: 
-  * Sentiment: the simplest example that demonstrates JsonTranslator and other core features 
+  
   * CoffeeShop: Natural language ordering at a coffee shop
   * Calendar: Transform language into calendar actions
   * Restaurant: Order at a pizza restaurant
@@ -130,12 +132,15 @@ To see TypeChat in action, explore the [TypeChat example projects](./examples). 
 * TypeChat.Dialog:
   * Healthdata
   
-### Api Key
-To run the examples, you will need an **API key** for an Open AI service. Azure Open AI and the Open AI service are both supported.
+Each example includes an **input.txt** with sample input. Pass the input file as an argument to run the example in **batch mode**. 
 
-* Go to the ***examples*** folder in the solution
-* Make a copy of the appSettings.json file. Name it **appSettings.Development.json**. Ensure it is in the same folder as the appSettings.json
-  * appSettings.Development.json is a local development only override of the settings in appSettings.json
+## Api Key and Configuration
+To use TypeChat.net or run the examples, you will need an **API key** for an Open AI service. Azure Open AI and the Open AI service are both supported.
+
+### Configure Api Key for examples
+* Go to the **[examples](./examples)** folder in the solution
+* Make a copy of the [appSettings.json](./examples/appSettings.json) file and name it **appSettings.Development.json**. Ensure it is in the same folder as appSettings.json
+* appSettings.Development.json is a local development only override of the settings in appSettings.json and is **never** checked in.
 * Add your Api Key to **appSettings.Development.json**. 
 
 A typical appSettings.Development.json will look like this:
@@ -160,9 +165,31 @@ A typical appSettings.Development.json will look like this:
   }
 }
 ```
-### Inputs
-- Each example includes an **input.txt** with sample input. 
-- Pass the input file as an argument to run the example in **batch mode**. 
+
+## OpenAIConfig
+TypeChat accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class provides settings used to initialize it.  
+
+You can initialize OpenAIConfig via your application's configuration system (see examples for how) or via environment variables. 
+
+See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list full list of :
+  * Configurable properties
+  * Supported environment variables.
+```
+// Your configuration 
+OpenAIConfig config = Config.LoadOpenAI();
+// Or from config
+config = OpenAIConfig.FromEnvironment();
+
+var model = new LanguageModel(config);
+```
+
+### Using an Semantick Kernel directly
+You can also initialize LanguageModel using a existing Microsoft Semantic IKernel you created using a KernelBuilder.
+```
+const string modelName = "gpt-35-turbo";
+new LanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
+```
+
 # License
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
