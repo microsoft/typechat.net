@@ -15,6 +15,7 @@ public class SentimentApp : ConsoleApp
     {
         OpenAIConfig config = Config.LoadOpenAI();
         // Although this sample uses config files, you can also load config from environment variables
+        // OpenAIConfig config = OpenAIConfig.LoadFromJsonFile("your path");
         // OpenAIConfig config = OpenAIConfig.FromEnvironment();
         _translator = new JsonTranslator<SentimentResponse>(new LanguageModel(config));
     }
