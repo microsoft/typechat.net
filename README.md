@@ -29,12 +29,12 @@ TypeChat.NET consists of the following assemblies:
 TypeChat uses language models to translate user intent into JSON that conforms to a schema. This JSON is then validated and deserialized into a typed object. Additional constraint checking is applied as needed. Validation errors are sent back to the language model, which uses them to **repair** the Json it originally returned. 
 
 TypeChat provides:
-* Json translation and validation.
+* Json translation, validation, repair and deserialization.
 * Extensibility: interfaces for customizing schemas, validators and prompts.
-* Schema export: generate schema for the .NET Type you want to translate to. Exported schema includes dependencies and base classes. The exported schema is specified using **Typescript**, which can concisely express schema for JSON objects. 
-  * Support for common scenarios shown in TypeChat examples. For cases where you encounter limitations in the current export, you can generate the schema yourself or author the schema by hand. 
+* Schema export: classes to generate schema for the .NET Type you want to translate to. Exported schema includes dependencies and base classes. The exported schema is specified using **Typescript**, which can concisely express schema for JSON objects. 
+  * Support for common scenarios shown in TypeChat examples. When you encounter limitations, you can supply schema text, such as Typescript authored by hand. 
   * Helper attributes for Vocabularies and Comments. Vocabularies are string tables that constrain the values that can be assigned to string properties. Dynamic loading of vocabularies enables scenarios where they vary at runtime.
-  * **Note**: Like TypeChat, TypeChat.NET has been tested with schema specified in Typescript. 
+  * **Note**: Like TypeChat, TypeChat.NET has only been tested with schema specified in Typescript. 
 ```
 [Comment("Milks currently in stock")]
 public class Milks
@@ -120,13 +120,13 @@ while (true)
 
 To see TypeChat in action, explore the [TypeChat example projects](./examples). The list below describes which examples will best introduc which concept. Some examples or scenarios may work best with gpt-4.
 
-* Hello World: The [Sentiment](./examples/Sentiment) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
+* Hello World: The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
 
-* JsonTranslator and Schemas: 
+* JsonTranslator, Schemas and Vocabularies: 
   
-  * CoffeeShop: Natural language ordering at a coffee shop
+  * CoffeeShop: Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialzation.
   * Calendar: Transform language into calendar actions
-  * Restaurant: Order at a pizza restaurant
+  * Restaurant: Order processing at a pizza restaurant
 
 * Hierarchical schemas and routing:
   * MultiSchema: dynamically route user intent to other 'sub-apps'
@@ -134,9 +134,9 @@ To see TypeChat in action, explore the [TypeChat example projects](./examples). 
 
 * Json Programs and TypeChat.Program:
   * Math: Turn user requests into calculator programs
-  * Plugins (program synthesis that target Semantic Kernel Plugins)
+  * Plugins: Generate programs that use Semantic Kernel Plugins
 
-* Typed Agents:
+* Typed Interactive Agents (bots):
   * Healthdata
   
 Each example includes an **input.txt** with sample input. Pass the input file as an argument to run the example in **batch mode**. 
