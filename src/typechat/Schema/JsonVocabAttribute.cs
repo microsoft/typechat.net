@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
 /// Json objects contain string properties that can be assigned values from a known set of strings: vocabularies.
-/// The JsonVocab atribute lets you specify these values as easily as you would in Typescript.
+/// The JsonVocab attribute lets you specify these values as easily as you would in Typescript.
 /// During deserialization, the custom JsonVocabConverter verifies that the string property only contains
 /// values that belong to the vocabulary
 /// 
@@ -26,7 +26,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
     /// <summary>
     /// Define a JsonVocab attribute
     /// </summary>
-    /// <param name="entries">The entires in the vocabulary , each separated by a '|'</param>
+    /// <param name="entries">The entries in the vocabulary , each separated by a '|'</param>
     /// <param name="propertyName">The json property name for which this is a vocabulary</param>
     public JsonVocabAttribute(string entries, string? propertyName = null)
     {

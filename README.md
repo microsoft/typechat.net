@@ -84,7 +84,7 @@ A utility library with classes used by TypeChat examples. These classes may be g
 
 # Getting Started 
 
-## Prequisite: Open AI
+## Prerequisite: Open AI
 * **Open AI Language Models**: TypeChat.NET and its examples currently require familiarity with and access to language models from Open AI. 
 * TypeChat.NET has been tested with and supports the following models: 
     * gpt-35-turbo

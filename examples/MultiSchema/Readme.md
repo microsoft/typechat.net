@@ -2,7 +2,7 @@
 
 This application demonstrates a simple way to write a **super-app** that automatically routes user requests to child apps. 
 
-In this example, the child apps are existng Typechat chat examples:
+In this example, the child apps are existing Typechat chat examples:
 * CoffeeShop
 * Restaurant
 * Calendar

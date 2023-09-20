@@ -69,7 +69,7 @@ public struct Embedding
     /// Compute the cosine similarity between this and other
     /// </summary>
     /// <param name="other">other embedding</param>
-    /// <returns>cosine similiarity</returns>
+    /// <returns>cosine similarity</returns>
     public double CosineSimilarity(Embedding other)
     {
         return _vector.CosineSimilarity(other._vector);

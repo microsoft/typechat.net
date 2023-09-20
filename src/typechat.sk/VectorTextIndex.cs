@@ -76,7 +76,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     /// If the associated embedding model supports batching, this can be much faster
     /// </summary>
     /// <param name="items">items to add to the collection</param>
-    /// <param name="textRepresentations">the text represenations of these items</param>
+    /// <param name="textRepresentations">the text representations of these items</param>
     /// <param name="cancelToken">optional cancel token</param>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="InvalidOperationException"></exception>

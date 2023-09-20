@@ -14,7 +14,7 @@ public class TypeChatException : Exception
     }
 
     /// <summary>
-    /// Error code associted with the exception
+    /// Error code associated with the exception
     /// </summary>
     public enum ErrorCode
     {

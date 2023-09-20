@@ -10,7 +10,7 @@ public interface IPromptSection
 {
     /// <summary>
     /// The source of this prompt section
-    /// Typical sources - user, system and assitant - are defined in PromptSection.Sources
+    /// Typical sources - user, system and assistant - are defined in PromptSection.Sources
     /// </summary>
     public string? Source { get; }
     /// <summary>

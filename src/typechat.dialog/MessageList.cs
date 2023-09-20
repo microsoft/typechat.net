@@ -22,7 +22,7 @@ public class MessageList : List<Message>, IMessageStream, IContextProvider
     /// <returns>count</returns>
     public int GetCount() => Count;
     /// <summary>
-    /// All messsages in this message stream
+    /// All messages in this message stream
     /// </summary>
     /// <returns>An enumeration of messages</returns>
     public IEnumerable<Message> All() => this;

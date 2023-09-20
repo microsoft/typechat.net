@@ -5,7 +5,7 @@ using Microsoft.TypeChat.Classification;
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Some scenarios have schemas that can be partioned into sub-schemas or translators.
+/// Some scenarios have schemas that can be partitioned into sub-schemas or translators.
 /// Language models have token limits, which means we must do a first pass and route requests to the appropriate target
 /// It may also be necessary to bind to these translators dynamically
 /// 

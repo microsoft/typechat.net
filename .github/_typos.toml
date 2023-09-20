@@ -8,6 +8,7 @@
 [files]
 extend-exclude = [
     "_typos.toml",
+    "CoffeeShopVocab.json",
 ]
 
 [default.extend-words]

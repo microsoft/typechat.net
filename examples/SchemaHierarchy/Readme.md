@@ -1,6 +1,6 @@
 ﻿# Schema Hierarchy
 
-This application demonstrates how to implement hierarchical schema usin g a [HierarchicalJsonTranslator](HierarchicalJsonTranslator.cs). 
+This application demonstrates how to implement hierarchical schema using a [HierarchicalJsonTranslator](HierarchicalJsonTranslator.cs). 
 
 The HierarchicalJsonTranslator automatically picks the best child schema for a request using embedings. Sub-schemas are:
 * CoffeeShop

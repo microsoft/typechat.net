@@ -39,7 +39,7 @@ public class TextRequestRouter<T> : ITextRequestRouter<T>
     /// <summary>
     /// Add a route
     /// : nameOfTarget should be unique and typically short
-    /// : description describes what kind of natural rquests should be routed to this target
+    /// : description describes what kind of natural requests should be routed to this target
     /// </summary>
     /// <param name="target">potential target for requests. Can be null for ignore routes</param>
     /// <param name="nameOfTarget">short, unique name of the target</param>

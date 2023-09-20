@@ -67,7 +67,7 @@ public class CodeWriter
     }
 
     /// <summary>
-    /// Write the contents of the strig builder
+    /// Write the contents of the string builder
     /// </summary>
     /// <param name="sb">string builder that contains the string to write</param>
     /// <returns>CodeWriter</returns>
