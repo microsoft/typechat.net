@@ -40,6 +40,7 @@ public class Config
     {
         sectionName ??= "OpenAI";
         OpenAIConfig config = LoadConfig<OpenAIConfig>(DefaultConfigFile, DefaultConfigFile_Dev, sectionName);
+
         return config;
     }
 
@@ -48,8 +49,16 @@ public class Config
 
     public Config()
     {
-        _openAI = LoadOpenAI();
-        _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
+        if (File.Exists(DefaultConfigFile) || File.Exists(DefaultConfigFile_Dev))
+        {
+            _openAI = LoadOpenAI();
+            _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
+        }
+        else
+        {
+            _openAI = OpenAIConfig.FromEnvironment();
+            _openAIEmbeddings = OpenAIConfig.FromEnvironment(isEmbedding: true);
+        }
     }
 
     public OpenAIConfig OpenAI => _openAI;
