@@ -23,8 +23,6 @@ TypeChat.NET consists of the following assemblies:
 
 * **Microsoft.TypeChat.Dialog**: Classes for working with interactive Agents that have history. 
 
-* **Microsoft.TypeChat.App**: Support classes and extensions used by Typechat examples. These classes may be useful for other apps built using Typechat.
-
 ## Microsoft.TypeChat ##
 TypeChat uses language models to translate user intent into JSON that conforms to a schema. This JSON is then validated and deserialized into a typed object. Additional constraint checking is applied as needed.
 
@@ -76,11 +74,6 @@ TypeChat.Dialog includes support for:
 // Create an agent with history
 _agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
 ```
-
-## Microsoft.TypeChat.App
-A utility library with classes used by TypeChat examples. These classes may be generally useful for apps built on top of TypeChat. Helper classes include:
-* Program synthesis of programs that call Plugins
-* Console Apps
 
 # Getting Started 
 

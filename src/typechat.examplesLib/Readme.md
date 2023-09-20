@@ -1,4 +1,4 @@
-﻿# Typechat.App
+﻿# Typechat.ExamplesLib
 Classes and extension methods used by Typechat examples. These classes may be generally useful for apps built on top of Typechat. 
  
 * PluginProgramTranslator: Sample program translator that translates user requests into programs for APIs defined by Microsoft Semantic Kernel Plugins
