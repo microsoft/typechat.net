@@ -49,7 +49,7 @@ public class Config
 
     public Config()
     {
-        if (File.Exists(DefaultConfigFile) || File.Exists(DefaultConfigFile_Dev))
+        if (File.Exists(DefaultConfigFile) && File.Exists(DefaultConfigFile_Dev))
         {
             _openAI = LoadOpenAI();
             _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
