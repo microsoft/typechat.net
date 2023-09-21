@@ -56,7 +56,7 @@ jobs:
         dotnet test -c ${{ matrix.configuration }} tests/TypeChat.UnitTests/TypeChat.UnitTests.csproj --no-build -v Normal --logger trx
         dotnet test -c ${{ matrix.configuration }} tests/TypeChat.Tests.Pre6/TypeChat.Tests.Pre6.csproj --no-build -v Normal --logger trx
 
-  build-unittest:
+  build-unittest-framework:
     strategy:
         fail-fast: false
         matrix:
