@@ -65,6 +65,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Build dotnet solutions
+      shell: bash
       run: |
         export SOLUTIONS=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
         for solution in $SOLUTIONS; do
@@ -72,5 +73,6 @@ jobs:
         done
       
     - name: Run Tests
+      shell: bash
       run: |
         dotnet test -c ${{ matrix.configuration }} tests/TypeChat.Tests.Pre6/TypeChat.Tests.Pre6.csproj --no-build -v Normal --logger trx
