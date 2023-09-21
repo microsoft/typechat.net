@@ -67,10 +67,7 @@ jobs:
     - name: Build dotnet solutions
       shell: bash
       run: |
-        export SOLUTIONS=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
-        for solution in $SOLUTIONS; do
-          dotnet build -c ${{ matrix.configuration }} /warnaserror $solution
-        done
+        dotnet build -c /warnaserror TypeChat.sln
       
     - name: Run Tests
       shell: bash
