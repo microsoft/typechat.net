@@ -7,12 +7,16 @@ public class TestConfig : TypeChatTest
     [Fact]
     public void TestEnvOpenAI()
     {
+        string? prevAzureKey = null;
+        string? prevAzureEndpoint = null;
         string? prevEndpoint = null;
         string? prevKey = null;
         string? prevOrg = null;
         string? prevModel = null;
         try
         {
+            prevAzureKey = SetEnv(OpenAIConfig.VariableNames.AZURE_OPENAI_API_KEY, string.Empty);
+            prevAzureEndpoint = SetEnv(OpenAIConfig.VariableNames.AZURE_OPENAI_ENDPOINT, string.Empty);
             prevEndpoint = SetEnv(OpenAIConfig.VariableNames.OPENAI_ENDPOINT, "O_ENDPOINT");
             prevKey = SetEnv(OpenAIConfig.VariableNames.OPENAI_API_KEY, "O_API");
             prevOrg = SetEnv(OpenAIConfig.VariableNames.OPENAI_ORGANIZATION, "O_ORG");
@@ -27,6 +31,8 @@ public class TestConfig : TypeChatTest
         }
         finally
         {
+            SetEnv(OpenAIConfig.VariableNames.AZURE_OPENAI_API_KEY, prevAzureKey);
+            SetEnv(OpenAIConfig.VariableNames.AZURE_OPENAI_ENDPOINT, prevAzureEndpoint);
             SetEnv(OpenAIConfig.VariableNames.OPENAI_ENDPOINT, prevEndpoint);
             SetEnv(OpenAIConfig.VariableNames.OPENAI_API_KEY, prevKey);
             SetEnv(OpenAIConfig.VariableNames.OPENAI_ORGANIZATION, prevOrg);
@@ -37,12 +43,16 @@ public class TestConfig : TypeChatTest
     [Fact]
     public void TestEnvOpenAIEmbedding()
     {
+        string? prevAzureKey = null;
+        string? prevAzureEndpoint = null;
         string? prevEndpoint = null;
         string? prevKey = null;
         string? prevOrg = null;
         string? prevModel = null;
         try
         {
+            prevAzureKey = SetEnv(OpenAIConfig.VariableNames.AZURE_OPENAI_API_KEY, string.Empty);
+            prevAzureEndpoint = SetEnv(OpenAIConfig.VariableNames.AZURE_OPENAI_ENDPOINT, string.Empty);
             prevEndpoint = SetEnv(OpenAIConfig.VariableNames.OPENAI_ENDPOINT, "O_ENDPOINT");
             prevKey = SetEnv(OpenAIConfig.VariableNames.OPENAI_API_KEY, "O_API");
             prevOrg = SetEnv(OpenAIConfig.VariableNames.OPENAI_ORGANIZATION, "O_ORG");
@@ -57,6 +67,8 @@ public class TestConfig : TypeChatTest
         }
         finally
         {
+            SetEnv(OpenAIConfig.VariableNames.AZURE_OPENAI_API_KEY, prevAzureKey);
+            SetEnv(OpenAIConfig.VariableNames.AZURE_OPENAI_ENDPOINT, prevAzureEndpoint);
             SetEnv(OpenAIConfig.VariableNames.OPENAI_ENDPOINT, prevEndpoint);
             SetEnv(OpenAIConfig.VariableNames.OPENAI_API_KEY, prevKey);
             SetEnv(OpenAIConfig.VariableNames.OPENAI_ORGANIZATION, prevOrg);
