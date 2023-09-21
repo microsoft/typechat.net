@@ -1,8 +1,8 @@
 ﻿# Schema Hierarchy
 
-This application demonstrates how to implement hierarchical schema using a [HierarchicalJsonTranslator](HierarchicalJsonTranslator.cs). 
+This application demonstrates how to implement hierarchical schema using an example [HierarchicalJsonTranslator](../../src/typechat.examplesLib/HierarchicalJsonTranslator.cs). 
 
-The HierarchicalJsonTranslator automatically picks the best child schema for a request using embedings. Sub-schemas are:
+The HierarchicalJsonTranslator uses embeddings to automatically picks the best child schema for a request using embedings. Sub-schemas are:
 * CoffeeShop
 * Restaurant
 * Calendar
