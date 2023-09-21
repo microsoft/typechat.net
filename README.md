@@ -114,7 +114,19 @@ while (true)
 
 ## Nuget Packages
 
-(Coming)
+* Microsoft.Typechat
+```
+dotnet add package Microsoft.TypeChat --prerelease
+dotnet add package Microsoft.TypeChat.SemanticKernel --prerelease
+```
+* Microsoft.TypeChat.Program
+```
+dotnet add package Microsoft.TypeChat.Program --prerelease
+```
+* Microsoft.TypeChat.Dialog
+```
+dotnet add package Microsoft.TypeChat.Dialog --prerelease
+```
 
 ## Examples
 
