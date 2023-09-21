@@ -53,11 +53,11 @@ jobs:
       
     - name: Run Tests
       run: |
-        apt-get update && apt-get install -y gnupg2
+        apt-get update -y && apt-get install -y gnupg2
         apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
         apt install apt-transport-https ca-certificates
         echo "deb https://download.mono-project.com/repo/ubuntu stable-xenial main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-        apt update
-        apt install mono-devel
+        apt update -y
+        apt install mono-devel -y
         dotnet test -c ${{ matrix.configuration }} tests/TypeChat.UnitTests/TypeChat.UnitTests.csproj --no-build -v Normal --logger trx
         dotnet test -c ${{ matrix.configuration }} tests/TypeChat.Tests.Pre6/TypeChat.Tests.Pre6.csproj --no-build -v Normal --logger trx
