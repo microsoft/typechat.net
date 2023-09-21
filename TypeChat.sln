@@ -61,6 +61,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "package", "package", "{D23A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.ExamplesLib", "src\typechat.examplesLib\TypeChat.ExamplesLib.csproj", "{80304E1F-5B1A-4142-B950-78383E1D1877}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.Tests.Pre6", "tests\TypeChat.Tests.Pre6\TypeChat.Tests.Pre6.csproj", "{BA4BE38F-D653-476C-8C12-6ED0C02AB6BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,10 @@ Global
 		{80304E1F-5B1A-4142-B950-78383E1D1877}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80304E1F-5B1A-4142-B950-78383E1D1877}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80304E1F-5B1A-4142-B950-78383E1D1877}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA4BE38F-D653-476C-8C12-6ED0C02AB6BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA4BE38F-D653-476C-8C12-6ED0C02AB6BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA4BE38F-D653-476C-8C12-6ED0C02AB6BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA4BE38F-D653-476C-8C12-6ED0C02AB6BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -158,6 +164,7 @@ Global
 		{6FDA463B-4A1E-4E3E-B508-A14910FAF579} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
 		{C585B613-3BAF-4999-8FA5-7BF425AEB1E2} = {EAEA9E40-7370-407E-B2DA-3F6E265262BF}
 		{80304E1F-5B1A-4142-B950-78383E1D1877} = {179655A3-3581-45F4-BE46-1BF4FABA7F97}
+		{BA4BE38F-D653-476C-8C12-6ED0C02AB6BE} = {EAEA9E40-7370-407E-B2DA-3F6E265262BF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A9AF678-E669-4AF2-9644-7EBB970DAC41}
