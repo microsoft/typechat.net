@@ -87,9 +87,9 @@ internal class EmojiProgram : IEmojiService
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         EmojiProgram p = new EmojiProgram();
-        //await p.TestTranslate();
+        await p.TestTranslate();
         //await p.TestProgram();
-        await p.TestAgent();
+        //await p.TestAgent();
         return 0;
     }
 }
