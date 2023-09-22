@@ -116,18 +116,18 @@ while (true)
 
 * Microsoft.Typechat
 ```
-dotnet add package Microsoft.TypeChat --version 0.1.230922.2-preview
-dotnet add package Microsoft.TypeChat.SemanticKernel --version 0.1.230922.2-preview
+dotnet add package Microsoft.TypeChat --version 0.1.230922.3-preview
+dotnet add package Microsoft.TypeChat.SemanticKernel --version 0.1.230922.3-preview
 ```
 Please ensure that you have installed both packages above. 
 
 * Microsoft.TypeChat.Program
 ```
-dotnet add package Microsoft.TypeChat.Program --version 0.1.230922.2-preview
+dotnet add package Microsoft.TypeChat.Program --version 0.1.230922.3-preview
 ```
 * Microsoft.TypeChat.Dialog
 ```
-dotnet add package Microsoft.TypeChat.Dialog --version 0.1.230922.2-preview
+dotnet add package Microsoft.TypeChat.Dialog --version 0.1.230922.3-preview
 ```
 
 ## Examples
