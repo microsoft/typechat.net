@@ -156,7 +156,7 @@ To see TypeChat in action, explore the [TypeChat example projects](./examples). 
 Each example includes an **input.txt** with sample input. Pass the input file as an argument to run the example in **batch mode**. 
 
 ## Api Key and Configuration
-To use TypeChat.net or run the examples, you need an **API key** for an Open AI service. Azure Open AI and the Open AI service are both supported.
+To use TypeChat.net or run the examples, you need an **API key** for an Open AI service. Azure OpenAI and the Open AI service are both supported.
 
 ### Configure Api Key for examples
 * Go to the **[examples](./examples)** folder in the solution
@@ -166,7 +166,7 @@ To use TypeChat.net or run the examples, you need an **API key** for an Open AI 
 
 A typical appSettings.Development.json will look like this:
 ```
-// For Azure Open AI service
+// For Azure OpenAI Service
 {
   "OpenAI": {
     "Azure": true,
