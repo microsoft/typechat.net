@@ -92,8 +92,8 @@ while (true)
 
 # Getting Started 
 
-## Prerequisite: Open AI
-* **Open AI Language Models**: TypeChat.NET and its examples currently require familiarity with and access to language models from Open AI. 
+## Prerequisite: OpenAI
+* **OpenAI Language Models**: TypeChat.NET and its examples currently require familiarity with and access to language models from OpenAI. 
 * TypeChat.NET has been tested with and supports the following models: 
     * gpt-35-turbo
     * gpt-4
@@ -156,7 +156,7 @@ To see TypeChat in action, explore the [TypeChat example projects](./examples). 
 Each example includes an **input.txt** with sample input. Pass the input file as an argument to run the example in **batch mode**. 
 
 ## Api Key and Configuration
-To use TypeChat.net or run the examples, you need an **API key** for an Open AI service. Azure OpenAI and the Open AI service are both supported.
+To use TypeChat.net or run the examples, you need an **API key** for an OpenAI service. Azure OpenAI and the OpenAI service are both supported.
 
 ### Configure Api Key for examples
 * Go to the **[examples](./examples)** folder in the solution
@@ -176,13 +176,13 @@ A typical appSettings.Development.json will look like this:
   }
 }
 
-// For Open AI Service:
+// For OpenAI Service:
 {
   "OpenAI": {
     "Azure": false,
     "ApiKey": "YOUR API KEY",
     "Endpoint": "https://api.openai.com/v1/chat/completions",
-    "Model": "gpt-3.5-turbo"  // Name of Open AI model
+    "Model": "gpt-3.5-turbo"  // Name of OpenAI model
   }
 }
 ```
