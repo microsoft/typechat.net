@@ -1,6 +1,8 @@
 ﻿# Plugins
 
-Demonstrates how to to generate programs (plans) that target Semantic Kernel and Open API plugins
+Demonstrates how to generate programs (plans) that target Semantic Kernel and Open API plugins. The Plugins example also shows how to:
+* Use a Program Interpreter to invoke plugins
+* Produce Schema from metadata that originates from outside of the .NET type system. Sources could include plugin manifests, Open API specs and other sources.
 
 For best and consistent results, use **GPT-4**. 
 
