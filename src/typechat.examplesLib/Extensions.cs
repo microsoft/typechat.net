@@ -40,7 +40,7 @@ public static class Extensions
     }
 
     /// <summary>
-    /// Print the given program as psuedo C# like code
+    /// Print the given program as pseudo C# like code
     /// </summary>
     /// <param name="program"></param>
     /// <param name="apiType"></param>
