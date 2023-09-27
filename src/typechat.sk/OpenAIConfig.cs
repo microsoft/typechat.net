@@ -5,7 +5,7 @@ using Microsoft.SemanticKernel.Reliability;
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Open AI configuration
+/// OpenAI configuration
 /// Can be initialized either from environment variables or from config files
 /// </summary>
 public class OpenAIConfig
@@ -16,11 +16,11 @@ public class OpenAIConfig
     public static class VariableNames
     {
         /// <summary>
-        /// Api key to use with the Open AI service
+        /// Api key to use with the OpenAI service
         /// </summary>
         public const string OPENAI_API_KEY = "OPENAI_API_KEY";
         /// <summary>
-        /// The Open AI endpoint. This follows semantic kernel conventions
+        /// The OpenAI endpoint. This follows semantic kernel conventions
         /// https://api.openai.com/v1/chat/completions
         /// </summary>
         public const string OPENAI_ENDPOINT = "OPENAI_ENDPOINT";
@@ -37,7 +37,7 @@ public class OpenAIConfig
         /// </summary>
         public const string OPENAI_EMBEDDINGMODEL = "OPENAI_EMBEDDINGMODEL";
         /// <summary>
-        /// Api key to use for Azure Open AI service
+        /// Api key to use for Azure OpenAI service
         /// </summary>
         public const string AZURE_OPENAI_API_KEY = "AZURE_OPENAI_API_KEY";
         /// <summary>
@@ -51,7 +51,7 @@ public class OpenAIConfig
     public OpenAIConfig() { }
 
     /// <summary>
-    /// Use Azure Open AI?
+    /// Use Azure OpenAI?
     /// </summary>
     public bool Azure { get; set; } = true;
     /// <summary>
@@ -63,7 +63,7 @@ public class OpenAIConfig
     /// </summary>
     public string ApiKey { get; set; }
     /// <summary>
-    /// Organization: only used by Open AI service. 
+    /// Organization: only used by OpenAI service. 
     /// </summary>
     public string? Organization { get; set; }
     /// <summary>

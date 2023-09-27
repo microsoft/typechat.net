@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Simplifies loading configuration for examples from settings files
+/// </summary>
 public class Config
 {
     public const string DefaultConfigFile = "appSettings.json";
@@ -61,7 +64,13 @@ public class Config
         }
     }
 
+    /// <summary>
+    /// Configuration for OpenAI language models
+    /// </summary>
     public OpenAIConfig OpenAI => _openAI;
+    /// <summary>
+    /// Configuration for OpenAI embeddings models
+    /// </summary>
     public OpenAIConfig? OpenAIEmbeddings => _openAIEmbeddings;
 
     public bool HasOpenAI => (_openAI != null);

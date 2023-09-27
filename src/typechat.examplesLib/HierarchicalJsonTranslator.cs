@@ -9,7 +9,7 @@ namespace Microsoft.TypeChat;
 /// Language models have token limits, which means we must do a first pass and route requests to the appropriate target
 /// It may also be necessary to bind to these translators dynamically
 /// 
-/// A HierarchicalJsonTranslator is a simple aggregate translator that routes a request to child JsonTranslators. 
+/// HierarchicalJsonTranslator demonstrates how a translator can use an in-memory vector index to semantically route request to child translators 
 /// </summary>
 public class HierarchicalJsonTranslator : IJsonTranslator
 {

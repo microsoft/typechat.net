@@ -166,7 +166,7 @@ To use TypeChat.net or run the examples, you need an **API key** for an OpenAI s
 
 A typical appSettings.Development.json will look like this:
 ```
-// For Azure OpenAI Service
+// For Azure OpenAI service
 {
   "OpenAI": {
     "Azure": true,

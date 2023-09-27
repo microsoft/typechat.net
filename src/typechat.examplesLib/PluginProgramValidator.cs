@@ -6,6 +6,10 @@ using Microsoft.TypeChat.Schema;
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Validates programs produced by PluginProgramTranslator.
+/// Ensures that function calls are to existing plugins with matching parameters
+/// </summary>
 public class PluginProgramValidator : ProgramVisitor, IProgramValidator
 {
     PluginApiTypeInfo _typeInfo;
@@ -26,15 +30,6 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         {
             return Result<Program>.Error(program, ex.Message);
         }
-    }
-
-    public void CSharpValidate(Program program)
-    {
-        using StringWriter sw = new StringWriter();
-        new ProgramWriter(sw).Write(program, "IPlugin");
-        CSharpProgramCompiler compiler = new CSharpProgramCompiler();
-        compiler.AddCode(sw.ToString());
-        string diagnostics = compiler.GetDiagnostics();
     }
 
     protected override void VisitFunction(FunctionCall functionCall)

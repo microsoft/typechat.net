@@ -9,8 +9,6 @@ using HealthData;
 
 namespace SchemaHierarchy;
 
-/// <summary>
-/// </summary>
 public class SchemaHierarchyApp : ConsoleApp
 {
     HierarchicalJsonTranslator _translator;

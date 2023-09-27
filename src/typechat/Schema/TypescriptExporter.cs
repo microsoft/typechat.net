@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat.Schema;
 /// JsonTranslators
 /// 
 /// Typescript is a concise and expressive schema definition language, making it easy to to express the
-/// shape and structure of Json easily. We want language models to translate user requests into JSON
+/// shape and structure of Json. We want language models to translate user requests into JSON
 /// of a particular shape that is defined by a schema. We then want to deserialize this JSON into strong
 /// types and validate the types for correctness.
 ///
@@ -17,11 +17,10 @@ namespace Microsoft.TypeChat.Schema;
 /// The exporter has limitations because Type systems are complex. It aims to support common scenarios.
 ///  - Will export classes, enums, value types, properties, fields etc.. including inheritance, mapped to their Typescript base types
 ///  - Obeys nullable and '?' annotations in C#
-///  - Incorporates Serialazation attributes such as JsonPropertyName and JsonIgnore
+///  - Incorporates Serialization attributes such as JsonPropertyName and JsonIgnore
 ///  - Vocabularies: this is a new concept that greatly simplifies Json programming
 ///  - Json Polymorphism is supported. But polymorphism Json serialiezer attributes are currently not looked at
 ///  By default, the discriminator used to support polymorphism must be the same as the typename
-/// the same as the type name
 /// 
 /// You can always author the Typescript schema by hand and give it to the JsonTranslator using a suitable
 /// constructor overload
@@ -289,6 +288,7 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.EndInterface();
 
         AddExported(type);
+        ExportPending();
 
         return this;
     }
@@ -532,6 +532,7 @@ public class TypescriptExporter : TypeExporter<Type>
             type.IsArray,
             isNullable
             );
+        AddPending(type);
         return this;
     }
 

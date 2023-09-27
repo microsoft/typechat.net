@@ -6,7 +6,7 @@ namespace Microsoft.TypeChat.Dialog;
 /// A Message List.
 /// Is also a message stream, and can be used to maintain interaction history for an agent
 /// </summary>
-public class MessageList : List<Message>, IMessageStream, IContextProvider
+public class MessageList : List<Message>, IMessageStream
 {
     /// <summary>
     /// Create a new message list

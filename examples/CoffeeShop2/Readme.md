@@ -1,10 +1,9 @@
 # CoffeeShop2
 
-CoffeeShop2 implements the same features as [CoffeeShop](../CoffeeShop/Readme.md), but with dynamic vocabularies - how to use IVocabCollection and IVocab. 
-- Vocab Strings are loaded from a file and bound dynamically. 
-- Your vocabularies could be loaded from a database or any other source. This lets you alter vocabularies WITHOUT recompiling your code.  
-- Each request could use a different translator and associated vocabulary (with associated schema generated on the fly). 
--- e.g. Premium Coffee Shop users could be offered more complex Syrups or Toppings. Vegan users would only see non-dairy milks. Etc.
+CoffeeShop2 implements the same features as [CoffeeShop](../CoffeeShop/Readme.md). But all vocabularies are dynamically loaded. CoffeeShop2 demonstrates how to use [IVocab](../../src/typechat/Schema/IVocab.cs) and [IVocabCollection](../../src/typechat/Schema/IVocabCollection.cs). 
+* Vocab Strings are loaded from a file and bound dynamically. The same vocabularies could also be loaded from a database or any other source. This lets you alter vocabularies without recompiling your code.
+* Each request could use a different translator and associated vocabulary. 
+  * E.g. Premium Coffee Shop users could be offered more complex Syrups or Toppings. Vegan users would only see non-dairy milks. Etc.
 
 ## Target models
 Works with gpt-35-turbo and gpt-4.
