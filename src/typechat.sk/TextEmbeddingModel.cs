@@ -10,10 +10,10 @@ public class TextEmbeddingModel
     ModelInfo _modelInfo;
 
     /// <summary>
-    /// Create a new text embedding model from the Open AI config
+    /// Create a new text embedding model from the OpenAI config
     /// By default, uses model in config.Model
     /// </summary>
-    /// <param name="config">Open AI configuration</param>
+    /// <param name="config">OpenAI configuration</param>
     /// <param name="modelInfo">information about the model to create</param>
     public TextEmbeddingModel(OpenAIConfig config, ModelInfo? modelInfo = null)
     {

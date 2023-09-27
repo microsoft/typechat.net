@@ -9,7 +9,7 @@ namespace Microsoft.TypeChat;
 public static class KernelEx
 {
     /// <summary>
-    /// Create a Semantic Kernel using the given Open AI configuration
+    /// Create a Semantic Kernel using the given OpenAI configuration
     /// Automatically sets up retries
     /// </summary>
     /// <param name="config">OpenAI configuration</param>
@@ -49,7 +49,7 @@ public static class KernelEx
     /// </summary>
     /// <param name="builder">kernel builder</param>
     /// <param name="modelName">name of the model to use</param>
-    /// <param name="config">Open AI configuration for the model</param>
+    /// <param name="config">OpenAI configuration for the model</param>
     /// <returns>builder</returns>
     public static KernelBuilder WithChatModel(this KernelBuilder builder, string modelName, OpenAIConfig config)
     {
@@ -73,10 +73,10 @@ public static class KernelEx
     }
 
     /// <summary>
-    /// Configure the kernel with retry settings defined in the Open AI config
+    /// Configure the kernel with retry settings defined in the OpenAI config
     /// </summary>
     /// <param name="builder">builder</param>
-    /// <param name="config">Open AI configuration</param>
+    /// <param name="config">OpenAI configuration</param>
     /// <returns>builder</returns>
     public static KernelBuilder WithRetry(this KernelBuilder builder, OpenAIConfig config)
     {
@@ -95,7 +95,7 @@ public static class KernelEx
     /// </summary>
     /// <param name="builder">builder</param>
     /// <param name="modelName">model to use</param>
-    /// <param name="config">Open AI configuration</param>
+    /// <param name="config">OpenAI configuration</param>
     /// <returns>builder</returns>
     public static KernelBuilder WithEmbeddingModel(this KernelBuilder builder, string modelName, OpenAIConfig config)
     {
