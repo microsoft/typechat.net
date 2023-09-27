@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.VisualBasic;
-
 namespace Microsoft.TypeChat.Dialog;
 
 /// <summary>
@@ -91,8 +89,10 @@ public class Message : IPromptSection
 }
 
 /// <summary>
-/// Headers to add to a message
+/// Headers you can optionally add to a message
 /// Header names are case-insensitive
+/// Headers yinclude timestamps, tags and other information you want to use
+/// when searching for contextually relevant messages in a chat. 
 /// </summary>
 public class MessageHeaders : Dictionary<string, string>
 {

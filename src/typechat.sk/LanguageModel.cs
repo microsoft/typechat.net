@@ -11,7 +11,7 @@ public class LanguageModel : ILanguageModel
     ModelInfo _model;
 
     /// <summary>
-    /// Create a new language model from the Open AI config
+    /// Create a new language model from the OpenAI config
     /// By default, uses model in config.Model
     /// </summary>
     /// <param name="config"></param>
