@@ -59,7 +59,7 @@ public class VectorizedMessageList : IMessageStream
     }
 
     /// <summary>
-    /// Automatically creates an embedding for teh message using message.GetText()
+    /// Automatically creates an embedding for the message using message.GetText()
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>
