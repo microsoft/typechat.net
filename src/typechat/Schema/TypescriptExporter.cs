@@ -288,6 +288,7 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.EndInterface();
 
         AddExported(type);
+        ExportPending();
 
         return this;
     }
@@ -531,6 +532,7 @@ public class TypescriptExporter : TypeExporter<Type>
             type.IsArray,
             isNullable
             );
+        AddPending(type);
         return this;
     }
 

@@ -38,20 +38,37 @@ public class TestSchema : TypeChatTest
     }
 
     [Fact]
-    public void ExportAPI()
+    public void ExportMathAPI()
     {
         var schema = TypescriptExporter.GenerateAPI(typeof(IMathAPI));
         // Need better verifier
         var lines = schema.Schema.Text.Lines();
         Assert.True(lines.ContainsSubstring("interface", "IMathAPI"));
         Assert.True(lines.ContainsSubstring("number", "add", "x", "y"));
+    }
 
-        schema = TypescriptExporter.GenerateAPI(typeof(IStringAPI));
+    [Fact]
+    public void ExportStringAPI()
+    {
+        var schema = TypescriptExporter.GenerateAPI(typeof(IStringAPI));
         // Need better verifier
-        lines = schema.Schema.Text.Lines();
+        var lines = schema.Schema.Text.Lines();
         Assert.True(lines.ContainsSubstring("interface", "IStringAPI"));
         Assert.True(lines.ContainsSubstring("string", "concat", "args", "any"));
         Assert.True(lines.ContainsSubstring("string", "lowercase", "string"));
+    }
+
+    [Fact]
+    public void ExportObjectAPI()
+    {
+        var schema = TypescriptExporter.GenerateAPI(typeof(IPersonApi));
+        // Need better verifier
+        var lines = schema.Schema.Text.Lines();
+        Assert.True(lines.ContainsSubstring("interface", "IPersonApi"));
+        Assert.True(lines.ContainsSubstring("toJsonArray", "Person[]"));
+        Assert.True(lines.ContainsSubstring("interface", "Person"));
+        Assert.True(lines.ContainsSubstring("interface", "Name"));
+        Assert.True(lines.ContainsSubstring("interface", "Location"));
     }
 }
 
