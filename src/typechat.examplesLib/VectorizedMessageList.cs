@@ -85,7 +85,7 @@ public class VectorizedMessageList : IMessageStream
     /// <summary>
     /// Return messages that are nearest neighbors of the given request text
     /// </summary>
-    /// <param name="request">find messges nearest to this text</param>
+    /// <param name="request">find messages nearest to this text</param>
     /// <param name="cancelToken">cancel token</param>
     /// <returns></returns>
     public async IAsyncEnumerable<IPromptSection> GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancelToken = default)
