@@ -6,14 +6,21 @@ namespace Microsoft.TypeChat;
 
 public static class Extensions
 {
-    public static string? GetOrNull(this string[] args, int index)
+    /// <summary>
+    /// Get the array item at position 'index'. If index is beyond the length of args
+    /// or args is null, return null
+    /// </summary>
+    /// <param name="array">array</param>
+    /// <param name="index">position to retrieve item at</param>
+    /// <returns>string or null</returns>
+    public static string? GetOrNull(this string[] array, int index)
     {
-        if (args == null ||
-            index >= args.Length)
+        if (array == null ||
+            index >= array.Length)
         {
             return null;
         }
-        return args[index];
+        return array[index];
     }
 
     public static void Print(this TypeChatException ex)
@@ -32,6 +39,11 @@ public static class Extensions
         }
     }
 
+    /// <summary>
+    /// Print the given program as psuedo C# like code
+    /// </summary>
+    /// <param name="program"></param>
+    /// <param name="apiType"></param>
     public static void Print(this Program program, string apiType)
     {
         if (program == null)
@@ -46,4 +58,13 @@ public static class Extensions
         new ProgramWriter(Console.Out).Write(program, apiType);
     }
 
+    internal static void WaitForResult(this Task task)
+    {
+        task.ConfigureAwait(false).GetAwaiter().GetResult();
+    }
+
+    internal static T WaitForResult<T>(this Task<T> task)
+    {
+        return task.ConfigureAwait(false).GetAwaiter().GetResult();
+    }
 }

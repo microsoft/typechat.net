@@ -15,8 +15,8 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TestEmbeddings()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
-        
+        Skip.If(!CanRunEndToEndTest_Embeddings(_config));
+
         //
         // Get the same embedding twice. Should have same result
         //
@@ -45,7 +45,7 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TestVectorTextIndex()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest_Embeddings(_config));
 
         VectorTextIndex<int> index = CreateIndex<int>();
 
@@ -95,6 +95,43 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
         }
         string match = await index.RouteRequestAsync("Want to buy a book about artificial intelligence");
         Assert.True(index.Items.Contains(match));
+    }
+
+    [SkippableFact]
+    public async Task TestMessageIndex()
+    {
+        Skip.If(!CanRunEndToEndTest_Embeddings(_config));
+
+        VectorizedMessageList messages = new VectorizedMessageList(new TextEmbeddingModel(_config.OpenAIEmbeddings));
+        Assert.Equal(VectorizedMessageList.DefaultMaxMatches, messages.MaxContextMatches);
+
+        messages.MaxContextMatches = 2;
+        string[] desserts = new string[]
+        {
+            "Strawberry Shortcake, Tiramisu",
+            "Donuts and Eclairs",
+        };
+        string[] books = new string[]
+        {
+            "Popular Science, Biographies, Textbooks",
+            "Mysteries, Thrillers, Science Fiction",
+        };
+        for (int i = 0; i < books.Length; ++i)
+        {
+            messages.Append(books[i]);
+        }
+        for (int i = 0; i < desserts.Length; ++i)
+        {
+            await messages.AppendAsync(desserts[i]);
+        }
+        await foreach (var match in messages.GetContextAsync("Chocolate Cake"))
+        {
+            Assert.True(desserts.Contains(match.GetText()));
+        }
+        await foreach (var match in messages.GetContextAsync("Literary fiction"))
+        {
+            Assert.True(books.Contains(match.GetText()));
+        }
     }
 
     VectorTextIndex<T> CreateIndex<T>()
