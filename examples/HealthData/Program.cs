@@ -73,6 +73,8 @@ public class HealthDataAgent : ConsoleApp
 
             case "clear":
                 _agent.History.Clear();
+                Console.Clear();
+                PrintHelp();
                 break;
         }
         return Task.CompletedTask;
