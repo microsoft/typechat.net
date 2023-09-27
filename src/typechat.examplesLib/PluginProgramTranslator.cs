@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Program translator that translates user requests into programs that call APIs defined by Microsoft Semantic Kernel Plugins
+/// </summary>
 public class PluginProgramTranslator
 {
     IKernel _kernel;
@@ -9,6 +12,12 @@ public class PluginProgramTranslator
     PluginApi _pluginApi;
     SchemaText _pluginSchema;
 
+    /// <summary>
+    /// Create a new translator that will produce programs that can call all skills and
+    /// plugins registered with the given semantic kernel
+    /// </summary>
+    /// <param name="kernel"></param>
+    /// <param name="model"></param>
     public PluginProgramTranslator(IKernel kernel, ModelInfo model)
     {
         _kernel = kernel;
@@ -20,8 +29,17 @@ public class PluginProgramTranslator
             _pluginSchema
         );
     }
-
+    /// <summary>
+    /// Translator being used
+    /// </summary>
     public ProgramTranslator Translator => _translator;
+    /// <summary>
+    /// Kernel this translator is working with
+    /// </summary>
+    public IKernel Kernel => _kernel;
+    /// <summary>
+    /// The "API" formed by the various plugins registered with the kernel 
+    /// </summary>
     public PluginApi Api => _pluginApi;
     public SchemaText Schema => _pluginSchema;
 

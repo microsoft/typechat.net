@@ -1,12 +1,15 @@
-﻿# Typechat.ExamplesLib
-Classes and extension methods used by Typechat examples.
+﻿# Microsoft.TypeChat.ExamplesLib
+TypeChat.ExamplesLib provides:
+* Example classes that show how to use TypeChat for several use cases
+* Extension methods and utilities used by TypeChat examples.
  
-* PluginProgramTranslator: Sample program translator that translates user requests into programs for APIs defined by Microsoft Semantic Kernel Plugins
+Example classes include:
+* **HierarchicalJsonTranslator**: demonstrates how a  translator can use an in-memory vector index to semantically route request to child translators
 
-* PluginProgramValidator: Typecheck programs produced by PluginProgramValidator
+* **PluginProgramTranslator**: Program translator that translates user requests into programs that call APIs defined by Microsoft Semantic Kernel Plugins
 
-* Config helpers
+* **PluginProgramValidator**: Validates programs produced by PluginProgramTranslator
 
-* ConsoleApp: Base class used by all command line examples
+* **VectorizedMessageList**: Demonstrates how to use embeddings to select semantically relevant messages as ***context*** in Agent interactions
 
-* Extension methods
+* **Config**: Simplifies loading configuration for examples from settings files.
