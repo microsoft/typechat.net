@@ -1,9 +1,7 @@
-﻿# Typechat.Dialog
-TypeChat.Dialog is an **early** version of framework desiged for strongly typed interactions with Agents with built in interaction history and other features. 
+﻿# TypeChat.Dialog
+TypeChat.Dialog is an **early** version of a framework that demonstrates how TypeChat.NET may be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
 
-* Agents pass messages to each other.
-* Agents work with models to process user requests.
-
-The framework also includes helclasses for:
-* Maintaining message history.
-* Building context prompts that remain within character/token limits.
+TypeChat.Dialog includes classes and interfaces for:
+* Agents
+* Messages and message history.
+* Collecting relevant context that remains within character/token limits.
