@@ -74,7 +74,7 @@ TypeChat.SemanticKernel include classes for:
 * Language model and embeddings access: all TypeChat examples use the Semantic Kernel to call models and generate embeddings. 
  
 ## Microsoft.TypeChat.Dialog
-TypeChat.Dialog demonstrates how TypeChat.NET may be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
+TypeChat.Dialog is an **early** version of a framework that demonstrates how TypeChat.NET may be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
 
 ```
 // Create an agent with history
