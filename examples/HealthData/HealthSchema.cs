@@ -93,7 +93,7 @@ public class HealthDataResponse
     [Comment("Return this if JSON has ALL required information. Else ask questions")]
     public HealthData? Data { get; set; }
 
-    [Comment("Use this to ask questions and give pertient responses")]
+    [Comment("Use this to ask questions and give pertinent responses")]
     public string? Message { get; set; }
 
     [Comment("Use this parts of the user request not translateed, off topic, etc")]

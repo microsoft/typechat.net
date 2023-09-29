@@ -85,7 +85,8 @@ public class TypescriptExporter : TypeExporter<Type>
             typeof(object),
             typeof(string),
             typeof(Array),
-            typeof(Nullable<>)
+            typeof(Nullable<>),
+            typeof(Task)
         };
 #if NET6_0_OR_GREATER
         _nullableInfo = new NullabilityInfoContext();
@@ -129,6 +130,10 @@ public class TypescriptExporter : TypeExporter<Type>
     /// You can customize this using 
     /// </summary>
     public bool IncludeDiscriminator { get; set; } = true;
+    /// <summary>
+    /// Ignore these types during export
+    /// </summary>
+    public HashSet<Type> TypesToIgnore => _nonExportTypes;
 
     public IVocabCollection Vocabs
     {
@@ -711,15 +716,28 @@ public class TypescriptExporter : TypeExporter<Type>
 
     protected override bool ShouldExport(Type type)
     {
+        if (type.IsTask())
+        {
+            Type? genericType = type.GetGenericType();
+            if (genericType == null)
+            {
+                // Just a regular task. 
+                return false;
+            }
+            type = genericType;
+        }
+
         if (type.IsPrimitive ||
             type.IsNullableValueType())
         {
             return false;
         }
+
         if (type.IsArray)
         {
             type = type.GetElementType();
         }
+
         return !type.IsPrimitive && !_nonExportTypes.Contains(type);
     }
 }

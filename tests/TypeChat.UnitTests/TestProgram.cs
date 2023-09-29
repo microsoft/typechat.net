@@ -99,4 +99,13 @@ public class TestProgram : ProgramTest
         result = await invoker.CallAsync("add", result, 9);
         Assert.Equal(18, result);
     }
+
+    [Fact]
+    public Task TestEmoji()
+    {
+        Api<IEmojiService> api = new EmojiApi();
+        ILanguageModel model = new MockLanguageModel();
+        ProgramTranslator<IEmojiService> service = new ProgramTranslator<IEmojiService>(model, api);
+        return Task.CompletedTask;
+    }
 }

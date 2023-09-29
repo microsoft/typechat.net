@@ -79,3 +79,9 @@ public interface IPersonApi
     string toJsonArray(Person[] persons);
     bool isPerson(Person person, Name name, int age);
 }
+
+public interface IEmojiService
+{
+    Task<string> ToEmoji(string userText);
+}
+
