@@ -646,6 +646,11 @@ public class TypescriptExporter : TypeExporter<Type>
 
     string DataType(Type type)
     {
+        if (type.IsTask())
+        {
+            type = type.GetGenericType() ?? typeof(void);
+        }
+
         if (type.IsArray)
         {
             return DataType(type.GetElementType());
@@ -719,13 +724,7 @@ public class TypescriptExporter : TypeExporter<Type>
         typeToExport = type;
         if (type.IsTask())
         {
-            Type? genericType = type.GetGenericType();
-            if (genericType == null)
-            {
-                // Just a regular task. 
-                return false;
-            }
-            type = genericType;
+            type = type.GetGenericType() ?? typeof(void);
         }
 
         if (type.IsPrimitive ||

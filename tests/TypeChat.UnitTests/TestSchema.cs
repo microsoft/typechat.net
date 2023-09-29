@@ -76,7 +76,9 @@ public class TestSchema : TypeChatTest
     {
         var schema = TypescriptExporter.GenerateAPI(typeof(IAsyncService));
         var lines = schema.Schema.Text.Lines();
+        Assert.False(lines.ContainsSubstring("Task"));
         Assert.True(lines.ContainsSubstring("interface", "IAsyncService"));
+        Assert.True(lines.ContainsSubstring("DoWork", "void"));
         Assert.True(lines.ContainsSubstring("Name", "GetNameOf"));
         Assert.True(lines.ContainsSubstring("interface", "Name"));
         Assert.False(lines.ContainsSubstring("interface", "string"));
