@@ -714,8 +714,9 @@ public class TypescriptExporter : TypeExporter<Type>
 #endif
     }
 
-    protected override bool ShouldExport(Type type)
+    protected override bool ShouldExport(Type type, out Type typeToExport)
     {
+        typeToExport = type;
         if (type.IsTask())
         {
             Type? genericType = type.GetGenericType();
@@ -738,6 +739,7 @@ public class TypescriptExporter : TypeExporter<Type>
             type = type.GetElementType();
         }
 
+        typeToExport = type;
         return !type.IsPrimitive && !_nonExportTypes.Contains(type);
     }
 }

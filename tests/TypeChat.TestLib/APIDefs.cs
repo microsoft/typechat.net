@@ -80,8 +80,10 @@ public interface IPersonApi
     bool isPerson(Person person, Name name, int age);
 }
 
-public interface IEmojiService
+public interface IAsyncService
 {
-    Task<string> ToEmoji(string userText);
+    Task<string> Transform(string userText);
+    Task DoWork(string userText, Name name);
+    Task<Name> GetNameOf(string userText, Person person);
 }
 

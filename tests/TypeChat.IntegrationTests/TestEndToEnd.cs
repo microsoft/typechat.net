@@ -26,7 +26,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     public async Task TranslateSentiment_CompletionModel()
     {
         Skip.If(!CanRunEndToEndTest(_config));
-        
+
         await TranslateSentiment(new TextCompletionModel(_config.OpenAI));
     }
 
@@ -94,7 +94,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     public async Task ProgramMath()
     {
         Skip.If(!CanRunEndToEndTest(_config));
-        
+
         await ProgramMath(new LanguageModel(_config.OpenAI));
     }
 
@@ -102,7 +102,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     public async Task ProgramMath_Completion()
     {
         Skip.If(!CanRunEndToEndTest(_config));
-        
+
         await ProgramMath(new TextCompletionModel(_config.OpenAI));
     }
 

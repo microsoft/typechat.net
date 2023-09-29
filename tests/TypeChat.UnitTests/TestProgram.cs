@@ -101,11 +101,11 @@ public class TestProgram : ProgramTest
     }
 
     [Fact]
-    public Task TestEmoji()
+    public void TestAsyncApi()
     {
-        Api<IEmojiService> api = new EmojiApi();
+        Api<IAsyncService> api = new EmojiApi();
         ILanguageModel model = new MockLanguageModel();
-        ProgramTranslator<IEmojiService> service = new ProgramTranslator<IEmojiService>(model, api);
-        return Task.CompletedTask;
+        // This should not throw
+        ProgramTranslator<IAsyncService> service = new ProgramTranslator<IAsyncService>(model, api);
     }
 }

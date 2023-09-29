@@ -34,10 +34,10 @@ public abstract class TypeExporter<T>
     /// <param name="type"></param>
     public void AddPending(T type)
     {
-        if (!IsExported(type) && ShouldExport(type))
+        if (!IsExported(type) && ShouldExport(type, out T typeToExport))
         {
             _pendingTypes ??= new Queue<T>();
-            _pendingTypes.Enqueue(type);
+            _pendingTypes.Enqueue(typeToExport);
         }
     }
 
@@ -90,8 +90,13 @@ public abstract class TypeExporter<T>
     /// Should a type be exported? E.g primitive types may not be.
     /// </summary>
     /// <param name="t"></param>
+    /// <param name="typeToExport">type to actually export</param>
     /// <returns></returns>
-    protected virtual bool ShouldExport(T t) => true;
+    protected virtual bool ShouldExport(T t, out T typeToExport)
+    {
+        typeToExport = t;
+        return true;
+    }
     /// <summary>
     /// Update the exported list... 
     /// </summary>
