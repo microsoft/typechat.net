@@ -153,7 +153,16 @@ public abstract class ConsoleApp : IInputHandler
     public abstract Task ProcessInputAsync(string input, CancellationToken cancelToken);
     public virtual Task ProcessCommandAsync(string cmd, IList<string> args)
     {
-        Console.WriteLine($"Command {cmd} not handled");
+        switch(cmd)
+        {
+            default:
+                Console.WriteLine($"Command {cmd} not handled");
+                break;
+
+            case "clear":
+                Console.Clear();
+                break;
+        }
         return Task.CompletedTask;
     }
 

@@ -4,6 +4,7 @@
     <TargetFrameworks>net470;net60;net70</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <NoWarn>CS8632</NoWarn>
+    <RootNamespace>Microsoft.TypeChat.Tests</RootNamespace>
   </PropertyGroup>
   
   <ItemGroup>

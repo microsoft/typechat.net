@@ -70,5 +70,17 @@ public class TestSchema : TypeChatTest
         Assert.True(lines.ContainsSubstring("interface", "Name"));
         Assert.True(lines.ContainsSubstring("interface", "Location"));
     }
+
+    [Fact]
+    public void ExportAsyncApi()
+    {
+        var schema = TypescriptExporter.GenerateAPI(typeof(IAsyncService));
+        var lines = schema.Schema.Text.Lines();
+        Assert.True(lines.ContainsSubstring("interface", "IAsyncService"));
+        Assert.True(lines.ContainsSubstring("Name", "GetNameOf"));
+        Assert.True(lines.ContainsSubstring("interface", "Name"));
+        Assert.False(lines.ContainsSubstring("interface", "string"));
+    }
+
 }
 
