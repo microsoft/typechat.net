@@ -40,7 +40,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             var name = PluginFunctionName.Parse(functionCall.Name);
             FunctionView typeInfo = _typeInfo[name];
             // Verify that parameter counts etc match
-            ValidateArgCounts(functionCall, typeInfo, functionCall.Args);
+            ValidateArgs(functionCall, typeInfo, functionCall.Args);
             // Continue visiting to handle any nested function calls
             base.VisitFunction(functionCall);
             return;
@@ -53,22 +53,11 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         ProgramException.ThrowFunctionNotFound(functionCall.Name);
     }
 
-    void ValidateArgCounts(FunctionCall call, FunctionView typeInfo, Expression[] args)
+    void ValidateArgs(FunctionCall call, FunctionView typeInfo, Expression[] args)
     {
-        // Just checks if the right number of parameters were supplied
-        // When
-        int requiredArgCount = (typeInfo.Parameters != null) ? GetRequiredArgCount(typeInfo.Parameters) : 0;
-        int actualCount = (args != null) ? args.Length : 0;
-        if (actualCount < requiredArgCount)
-        {
-            ProgramException.ThrowArgCountMismatch(call, requiredArgCount, actualCount);
-        }
-        int totalArgCount = (typeInfo.Parameters != null) ? typeInfo.Parameters.Count : 0;
-        if (actualCount > totalArgCount)
-        {
-            ProgramException.ThrowArgCountMismatch(call, totalArgCount, actualCount);
-        }
-        // Verify arguments
+        // Verify arg counts
+        CheckArgCount(call, typeInfo, args);
+        // Verify arg types
         TypeCheckArgs(call, typeInfo.Parameters, args);
     }
 
@@ -85,6 +74,22 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             requiredCount++;
         }
         return requiredCount;
+    }
+
+    void CheckArgCount(FunctionCall call, FunctionView typeInfo, Expression[] args)
+    {
+        // Just checks if the right number of parameters were supplied
+        int requiredArgCount = (typeInfo.Parameters != null) ? GetRequiredArgCount(typeInfo.Parameters) : 0;
+        int actualCount = (args != null) ? args.Length : 0;
+        if (actualCount < requiredArgCount)
+        {
+            ProgramException.ThrowArgCountMismatch(call, requiredArgCount, actualCount);
+        }
+        int totalArgCount = (typeInfo.Parameters != null) ? typeInfo.Parameters.Count : 0;
+        if (actualCount > totalArgCount)
+        {
+            ProgramException.ThrowArgCountMismatch(call, totalArgCount, actualCount);
+        }
     }
 
     void TypeCheckArgs(FunctionCall call, IList<ParameterView> parameters, Expression[] args)
