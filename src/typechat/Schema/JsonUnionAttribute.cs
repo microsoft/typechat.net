@@ -1,37 +1,37 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 namespace Microsoft.TypeChat.Schema;
+
 /// <summary>
 /// Lets you specifiy a union of Types, like Typescript
 /// </summary>
 public class JsonUnionAttribute : JsonConverterAttribute
 {
-    Type[] _types;
+    UnionType _type;
 
     public JsonUnionAttribute(params Type[] types)
     {
-        ArgumentVerify.ThrowIfNullOrEmpty(types, nameof(types));
-        _types = types;
+        _type = new UnionType(types);
     }
 
     public override JsonConverter? CreateConverter(Type typeToConvert)
     {
-        return new JsonUnionConverter(_types);
+        if (_type.IsSupported(typeToConvert))
+        {
+            return new JsonUnionConverter(_type);
+        }
+        return null;
     }
 }
 
-public class JsonUnionConverter : JsonConverter<object>
+internal class JsonUnionConverter : JsonConverter<object>
 {
     UnionType _type;
 
-    public JsonUnionConverter(Type[] types)
+    public JsonUnionConverter(UnionType type)
     {
-        UnionTypeDef[] typeDef = new UnionTypeDef[types.Length];
-        for (int i = 0; i < types.Length; ++i)
-        {
-            typeDef[i] = new UnionTypeDef(types[i]);
-        }
-        _type = new UnionType(typeDef);
+        ArgumentVerify.ThrowIfNull(type, nameof(type));
+        _type = type;
     }
 
     public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -45,7 +45,7 @@ public class JsonUnionConverter : JsonConverter<object>
     }
 }
 
-public struct UnionTypeDef
+internal struct UnionTypeDef
 {
     Type _type;
     string _typeDiscriminator;
@@ -65,12 +65,22 @@ public struct UnionTypeDef
     public string TypeDiscriminator => _typeDiscriminator;
 }
 
-public class UnionType
+internal class UnionType
 {
     public const string TypeDiscriminatorPropertyName = "$type";
 
     UnionTypeDef[] _types;
     string _allTypes;
+
+    public UnionType(Type[] types)
+    {
+        ArgumentVerify.ThrowIfNullOrEmpty(types, nameof(types));
+        _types = new UnionTypeDef[types.Length];
+        for (int i = 0; i < types.Length; ++i)
+        {
+            _types[i] = new UnionTypeDef(types[i]);
+        }
+    }
 
     public UnionType(UnionTypeDef[] types)
     {
@@ -80,6 +90,8 @@ public class UnionType
     }
 
     public UnionTypeDef[] Types => _types;
+
+    public bool IsSupported(Type type) => (IndexOfType(type) >= 0);
 
     public object? Deserialize(ref Utf8JsonReader reader, JsonSerializerOptions options)
     {
@@ -98,26 +110,36 @@ public class UnionType
 
     UnionTypeDef ResolveType(Type type)
     {
-        for (int i = 0; i < _types.Length; ++i)
+        int i = IndexOfType(type);
+        if (i >= 0)
         {
-            if (_types[i].Type == type)
-            {
-                return _types[i];
-            }
+            return _types[i];
         }
         throw new JsonException($"{type.Name} is not recognized. Permitted values: {_allTypes}");
     }
 
-    UnionTypeDef ResolveType(string typeName)
+    int IndexOfType(Type type)
     {
         for (int i = 0; i < _types.Length; ++i)
         {
-            if (_types[i].TypeDiscriminator == typeName)
+            if (_types[i].Type == type)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    UnionTypeDef ResolveType(string typeDiscriminator)
+    {
+        for (int i = 0; i < _types.Length; ++i)
+        {
+            if (_types[i].TypeDiscriminator == typeDiscriminator)
             {
                 return _types[i];
             }
         }
-        throw new JsonException($"{typeName} is not recognized. Permitted values: {_allTypes}");
+        throw new JsonException($"{typeDiscriminator} is not recognized. Permitted values: {_allTypes}");
     }
 
     string AllTypeNames()
