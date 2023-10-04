@@ -55,11 +55,91 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
 
     void ValidateArgCounts(FunctionCall call, FunctionView typeInfo, Expression[] args)
     {
-        int expectedCount = (typeInfo.Parameters != null) ? typeInfo.Parameters.Count : 0;
+        // Just checks if the right number of parameters were supplied
+        // When
+        int requiredArgCount = (typeInfo.Parameters != null) ? GetRequiredArgCount(typeInfo.Parameters) : 0;
         int actualCount = (args != null) ? args.Length : 0;
-        if (actualCount != expectedCount)
+        if (actualCount < requiredArgCount)
         {
-            ProgramException.ThrowArgCountMismatch(call, expectedCount, actualCount);
+            ProgramException.ThrowArgCountMismatch(call, requiredArgCount, actualCount);
         }
+        int totalArgCount = (typeInfo.Parameters != null) ? typeInfo.Parameters.Count : 0;
+        if (actualCount > totalArgCount)
+        {
+            ProgramException.ThrowArgCountMismatch(call, totalArgCount, actualCount);
+        }
+        // Verify arguments
+        TypeCheckArgs(call, typeInfo.Parameters, args);
+    }
+
+    int GetRequiredArgCount(IList<ParameterView> parameters)
+    {
+        int requiredCount = 0;
+        for (int i = 0; i < parameters.Count; ++i)
+        {
+            if (IsOptional(parameters[i]))
+            {
+                // Optional parameters follow required ones
+                break;
+            }
+            requiredCount++;
+        }
+        return requiredCount;
+    }
+
+    void TypeCheckArgs(FunctionCall call, IList<ParameterView> parameters, Expression[] args)
+    {
+        Debug.Assert(args.Length <= parameters.Count);
+        for (int i = 0; i < args.Length; ++i)
+        {
+            ParameterViewType expectedType = parameters[i].Type;
+            if (expectedType != null)
+            {
+                ParameterViewType exprType = ParameterTypeFromExpr(args[i]);
+                if (expectedType != exprType)
+                {
+                    ThrowTypeMismatch(call, parameters[i].Name, expectedType, exprType);
+                }
+            }
+        }
+    }
+
+    ParameterViewType ParameterTypeFromExpr(Expression expr)
+    {
+        switch (expr.ValueType)
+        {
+            default:
+                return ParameterViewType.String;
+
+            case JsonValueKind.True:
+            case JsonValueKind.False:
+                return ParameterViewType.Boolean;
+
+            case JsonValueKind.String:
+                return ParameterViewType.String;
+
+            case JsonValueKind.Number:
+                return ParameterViewType.Number;
+
+            case JsonValueKind.Array:
+                return ParameterViewType.Array;
+
+            case JsonValueKind.Object:
+                return ParameterViewType.Object;
+        }
+    }
+
+    bool IsOptional(ParameterView parameter)
+    {
+        return (!string.IsNullOrEmpty(parameter.DefaultValue));
+    }
+
+    void ThrowTypeMismatch(FunctionCall call, string paramName, ParameterViewType expectedType, ParameterViewType actualType)
+    {
+        throw new ProgramException(
+            ProgramException.ErrorCode.TypeMismatch,
+            $"TypeMismatch: @func {call.Name} @arg {paramName}: Expected {expectedType.Name}, Got {actualType.Name}"
+            );
+
     }
 }
