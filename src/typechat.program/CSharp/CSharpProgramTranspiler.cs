@@ -313,7 +313,7 @@ public class CSharpProgramTranspiler
                             break;
 
                         case ArrayExpr array:
-                            AddJsonProperty(writer, jsonObj, property.Key, Compile(array));
+                            AddJsonProperty(writer, jsonObj, property.Key, Compile(array), typeof(Array));
                             break;
 
                         case ObjectExpr obj:
@@ -341,7 +341,7 @@ public class CSharpProgramTranspiler
             if (valueType != null)
             {
                 if (valueType.IsString() ||
-                    valueType.IsValueType)
+                    valueType.IsPrimitive)
                 {
                     writer.Append(value);
                 }
@@ -350,8 +350,7 @@ public class CSharpProgramTranspiler
                     //
                     // Direct cast not available. Serialize to JsonNode first
                     //
-                    writer.Cast(nameof(JsonNode));
-                    writer.StaticCall("JsonSerializer.Serialize", value, CSharpLang.TypeOf(valueType.Name));
+                    writer.StaticCall("JsonSerializer.SerializeToNode", value, CSharpLang.TypeOf(valueType.Name));
                 }
             }
             else

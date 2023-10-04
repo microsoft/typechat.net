@@ -286,7 +286,7 @@ public class ProgramCompiler
                         break;
 
                     case ArrayExpr arrayExpr:
-                        addJsonPropertyExpr = AddJsonProperty(jsonObjExpr, property.Key, Compile(arrayExpr));
+                        addJsonPropertyExpr = AddJsonProperty(jsonObjExpr, property.Key, CastToJsonNode(Compile(arrayExpr), typeof(Array)));
                         block.Add(addJsonPropertyExpr);
                         break;
 
@@ -343,7 +343,7 @@ public class ProgramCompiler
 
     UnaryExpression CastToJsonNode(LinqExpression srcExpr, Type srcType)
     {
-        if (!(srcType.IsValueType || srcType.IsString()))
+        if (!(srcType.IsPrimitive || srcType.IsString()))
         {
             //
             // Direct cast not available. Serialize to JsonNode
@@ -432,9 +432,9 @@ public class ProgramCompiler
             return JsonSerializer.Deserialize(obj, type);
         }
 
-        public static JsonObject Serialize(object obj)
+        public static JsonNode Serialize(object obj)
         {
-            return (JsonObject)JsonSerializer.Serialize(obj);
+            return JsonSerializer.SerializeToNode(obj);
         }
 
         public static JsonObject AddNode(JsonObject obj, string name, JsonNode node)

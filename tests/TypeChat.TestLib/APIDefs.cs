@@ -78,6 +78,7 @@ public interface IPersonApi
     string toJson(Person person);
     string toJsonArray(Person[] persons);
     bool isPerson(Person person, Name name, int age);
+    string listBooks(AuthorPerson author);
 }
 
 public interface IAsyncService
@@ -86,4 +87,3 @@ public interface IAsyncService
     Task DoWork(string userText, Name name);
     Task<Name> GetNameOf(string userText, Person person);
 }
-
