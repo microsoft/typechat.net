@@ -9,6 +9,20 @@ public static class Extensions
         return (list == null || list.Count == 0);
     }
 
+    /// <summary>
+    /// Get a completion for the given prompt
+    /// </summary>
+    /// <param name="model">model</param>
+    /// <param name="prompt">prompt</param>
+    /// <param name="maxTokens">maximum tokens to emit</param>
+    /// <param name="temperature">respose temperature</param>
+    /// <returns></returns>
+    public static async Task<string> CompleteAsync(this ILanguageModel model, Prompt prompt, int maxTokens = -1, double temperature = 0.0)
+    {
+        TranslationSettings settings = new TranslationSettings { MaxTokens = maxTokens, Temperature = temperature };
+        return await model.CompleteAsync(prompt, settings, CancellationToken.None);
+    }
+
     internal static void Trim<T>(this List<T> list, int trimCount)
         where T : IPromptSection
     {
