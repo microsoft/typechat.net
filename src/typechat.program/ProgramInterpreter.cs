@@ -245,7 +245,7 @@ public class ProgramInterpreter
     /// <summary>
     /// obj can be one of:
     /// - dynamic[]  (returned by ArrayExpr)
-    /// - dynamic (returned by valueExpr and ResulRef)
+    /// - dynamic (returned by valueExpr and ResultReference)
     /// - JsonObject (returned by ObjectExpr)
     ///
     /// dynamic[] must be converted to a JsonArray
