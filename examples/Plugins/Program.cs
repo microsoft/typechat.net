@@ -67,7 +67,7 @@ public class PluginApp : ConsoleApp
         {
             PluginApp app = new PluginApp();
             // Uncomment to view auto-generated schema
-            Console.WriteLine(app.Schema);
+            //Console.WriteLine(app.Schema);
 
             await app.RunAsync("🤖> ", args.GetOrNull(0));
         }

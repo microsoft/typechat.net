@@ -3,7 +3,7 @@ What is my user name?
 What is my OS?
 Which processor am I running on? How many cores?
 Print my machine name. Then print the architecture
-What is my user name? What is this machine's OS? What is the CPU architecture? Print each
+What is my user name? What is this machine's OS? What is the CPU architecture?
 Is "VS Code" on my path?
 What is in my pictures folder?
 List all my documents

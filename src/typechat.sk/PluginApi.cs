@@ -65,12 +65,6 @@ public class PluginApi
         {
             throw new ArgumentException($"Function {name} does not exist");
         }
-        int argCount = (args != null) ? args.Length : 0;
-        int paramCount = (function.Parameters != null) ? function.Parameters.Count : 0;
-        if (argCount != paramCount)
-        {
-            throw new ArgumentException($"Function {name}: Arg Count mismatch. Expected {paramCount}, Got {argCount}");
-        }
         return (pluginName, function);
     }
 
