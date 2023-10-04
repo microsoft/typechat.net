@@ -24,6 +24,11 @@ public class PersonAPI : IPersonApi
     {
         return Json.Stringify(person);
     }
+    public string listBooks(AuthorPerson author)
+    {
+        string books = string.Join("|", author.Books);
+        return Json.Stringify(books);
+    }
 
     public Person[] changeCase(Person[] persons, bool upper)
     {

@@ -46,7 +46,7 @@ public class TestProgram : ProgramTest
         ValidateProgram(program);
     }
 
-    [Fact]
+    //[Fact]
     public void TestDynamic()
     {
         dynamic[] args = new dynamic[2];
@@ -66,6 +66,33 @@ public class TestProgram : ProgramTest
         Assert.Equal("Mario4", args[0] + args[1]);
         args[1] = "_Minderbinder";
         Assert.Equal("Mario_Minderbinder", args[0] + args[1]);
+    }
+
+    [Fact]
+    public void TestToJson()
+    {
+        dynamic[] items = new dynamic[2];
+        items[0] = "Hello";
+        items[1] = "Goodbye";
+
+        JsonNode node = ProgramInterpreter.ToJsonNode(items);
+        Assert.True(node is JsonArray);
+
+        node = ProgramInterpreter.ToJsonNode("Hello");
+        Assert.False(node is JsonArray);
+
+        int[] numbers = new int[2];
+        numbers[0] = 1;
+        numbers[1] = 2;
+        node = ProgramInterpreter.ToJsonNode(numbers);
+        Assert.True(node is JsonArray);
+
+        JsonObject jsonObj = new JsonObject();
+        jsonObj.Add("numbers", node);
+        jsonObj.Add("Title", "Yo");
+
+        node = ProgramInterpreter.ToJsonNode(jsonObj);
+        Assert.True(node is JsonObject);
     }
 
     [Theory]

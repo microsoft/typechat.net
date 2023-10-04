@@ -169,5 +169,25 @@
         }
       ]
     }
+  },
+  "program6": {
+    "result": "Pride and Prejudice|Mansfield Park|Emma|Sense and Sensibility",
+    "source": {
+      "@steps": [
+        {
+          "@func": "listBooks",
+          "@args": [
+            {
+              "Name": {
+                "FirstName": "Jane",
+                "LastName": "Austen"
+              },
+              "Books": [ "Pride and Prejudice", "Mansfield Park", "Emma", "Sense and Sensibility" ]
+            }
+          ]
+        }
+      ]
+    }
   }
+
 }
