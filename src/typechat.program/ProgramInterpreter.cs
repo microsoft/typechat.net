@@ -215,7 +215,7 @@ public class ProgramInterpreter
         foreach (var property in expr.Value)
         {
             dynamic result = Eval(property.Value);
-            JsonNode node = result;
+            JsonNode node = ToJsonNode(result);
             jsonObject.Add(property.Key, node);
         }
         return jsonObject;
@@ -227,7 +227,7 @@ public class ProgramInterpreter
         foreach (var property in expr.Value)
         {
             dynamic result = await EvalAsync(property.Value).ConfigureAwait(false);
-            JsonNode node = result;
+            JsonNode node = ToJsonNode(result);
             jsonObj.Add(property.Key, node);
         }
         return jsonObj;
@@ -240,5 +240,44 @@ public class ProgramInterpreter
             ProgramException.ThrowInvalidResultRef(expr.Ref, _results.Count);
         }
         return _results[expr.Ref];
+    }
+
+    /// <summary>
+    /// obj can be one of:
+    /// - dynamic[]  (returned by ArrayExpr)
+    /// - dynamic (returned by valueExpr and ResulRef)
+    /// - JsonObject (returned by ObjectExpr)
+    ///
+    /// dynamic[] must be converted to a JsonArray
+    /// </summary>
+    /// <param name="obj">obj to convert</param>
+    /// <returns></returns>
+    public static JsonNode ToJsonNode(dynamic obj)
+    {
+        if (obj == null)
+        {
+            return obj;
+        }
+        if (obj is dynamic[] darray)
+        {
+            JsonArray jsonArray = new JsonArray();
+            for (int i = 0; i < darray.Length; ++i)
+            {
+                dynamic value = darray[i];
+                jsonArray.Add(ToJsonNode(value));
+            }
+            return jsonArray;
+        }
+        else if (obj is Array array)
+        {
+            JsonArray jsonArray = new JsonArray();
+            for (int i = 0; i < array.Length; ++i)
+            {
+                dynamic value = array.GetValue(i);
+                jsonArray.Add(ToJsonNode(value));
+            }
+            return jsonArray;
+        }
+        return obj;
     }
 }
