@@ -137,6 +137,21 @@ public static class TypeEx
         return baseType.IsRoot() ? null : baseType;
     }
 
+    internal static bool IsTask(this Type type)
+    {
+        return typeof(Task).IsAssignableFrom(type);
+    }
+
+    internal static Type? GetGenericType(this Type type)
+    {
+        if (!type.IsGenericType)
+        {
+            return null;
+        }
+        var args = type.GetGenericArguments();
+        return (args.IsNullOrEmpty()) ? null : args[0];
+    }
+
     internal static IEnumerable<Type> Subclasses(this Type type)
     {
         if (!type.IsClass)

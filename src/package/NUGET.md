@@ -1,6 +1,6 @@
-# TypeChat
+# TypeChat.NET
 
-TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
+[TypeChat.NET](https://github.com/microsoft/typechat.net) brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
 TypeChat.NET provides **cross platform** libraries that help you build natural language interfaces with language models using strong types and type validation. TypeChat provides:
 * Json Translation and validation.
