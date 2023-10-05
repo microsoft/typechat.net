@@ -639,7 +639,8 @@ public class TypescriptExporter : TypeExporter<Type>
 
             _writer.SOL();
             _writer.Variable("$type", discriminator);
-            _writer.EOL();
+            _writer.Comment("Always emit first");
+            //_writer.EOL();
         }
         return this;
     }

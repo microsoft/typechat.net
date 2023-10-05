@@ -41,7 +41,7 @@ internal class JsonUnionConverter : JsonConverter<object>
 
     public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
     {
-        JsonSerializer.Serialize(writer, value, options);
+        _type.Serialize(writer, value, options);
     }
 }
 
@@ -95,17 +95,28 @@ internal class UnionType
 
     public object? Deserialize(ref Utf8JsonReader reader, JsonSerializerOptions options)
     {
-        string typeName = reader.GetStringProperty(TypeDiscriminatorPropertyName);
-        UnionTypeDef typeDef = ResolveType(typeName);
+        UnionTypeDef typeDef = ResolveType(ref reader);
         return JsonSerializer.Deserialize(ref reader, typeDef.Type, options);
     }
 
     public void Serialize(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
     {
         UnionTypeDef typeDef = ResolveType(value.GetType());
+        writer.WriteStartObject();
         writer.WritePropertyName(TypeDiscriminatorPropertyName);
         writer.WriteStringValue(typeDef.TypeDiscriminator);
         JsonSerializer.Serialize(writer, value, options);
+        writer.WriteEndObject();
+    }
+
+    UnionTypeDef ResolveType(ref Utf8JsonReader reader)
+    {
+        if (reader.TokenType != JsonTokenType.StartObject)
+        {
+            throw new JsonException("Expected Start of Object");
+        }
+        string typeName = reader.GetStringProperty(TypeDiscriminatorPropertyName);
+        return ResolveType(typeName);
     }
 
     UnionTypeDef ResolveType(Type type)
