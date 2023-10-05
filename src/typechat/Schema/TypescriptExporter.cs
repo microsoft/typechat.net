@@ -210,9 +210,9 @@ public class TypescriptExporter : TypeExporter<Type>
         if (baseClass != null)
         {
             ExportClass(baseClass);
-            baseClassName = baseClass.Name;
+            baseClassName = InterfaceName(baseClass);
         }
-        string typeName = type.Name;
+        string typeName = InterfaceName(type);
 
         ExportComments(type);
         _writer.BeginInterface(typeName, baseClassName);
@@ -667,9 +667,25 @@ public class TypescriptExporter : TypeExporter<Type>
         }
         if (string.IsNullOrEmpty(typeName))
         {
-            typeName = type.Name;
+            typeName = InterfaceName(type, false);
             AddPending(type);
         }
+        return typeName;
+    }
+
+    string InterfaceName(Type type, bool useMapper = true)
+    {
+        string? typeName = null;
+        if (useMapper && TypeNameMapper != null)
+        {
+            typeName = TypeNameMapper(type);
+        }
+
+        if (typeName == null)
+        {
+            typeName = type.GenerateInterfaceName();
+        }
+
         return typeName;
     }
 

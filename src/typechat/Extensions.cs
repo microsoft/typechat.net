@@ -59,16 +59,30 @@ public static class Extensions
         }
     }
 
-    internal static void AppendLineNotEmpty(this StringBuilder sb, string line)
+    internal static StringBuilder AppendLineNotEmpty(this StringBuilder sb, string line)
     {
         if (!string.IsNullOrEmpty(line))
         {
             sb.AppendLine(line);
         }
+        return sb;
     }
 
-    internal static void TrimAndAppendLine(this StringBuilder sb, string line)
+    internal static StringBuilder TrimAndAppendLine(this StringBuilder sb, string line)
     {
         sb.AppendLineNotEmpty(line.Trim());
+        return sb;
+    }
+
+    internal static StringBuilder AppendMultiple(this StringBuilder sb, string sep, IEnumerable<string> substrings)
+    {
+        int i = 0;
+        foreach (var substring in substrings)
+        {
+            if (i > 0) { sb.Append(sep); }
+            sb.Append(substring);
+            ++i;
+        }
+        return sb;
     }
 }

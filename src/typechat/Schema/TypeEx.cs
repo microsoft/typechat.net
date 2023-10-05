@@ -189,9 +189,65 @@ public static class TypeEx
                 member.Name;
     }
 
+    internal static string GenerateInterfaceTypeDef(this Type type)
+    {
+        if (!type.IsGenericType)
+        {
+            return type.Name;
+        }
+
+        string typeName = type.NonGenericName();
+        Type typeDef = type.GetGenericTypeDefinition();
+        Type[] typeParams = typeDef.GetGenericArguments();
+        if (typeParams.IsNullOrEmpty())
+        {
+            return typeName;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.Append(typeName).Append('<');
+        typeParams.CombineArgNames(sb, ",").Append('>');
+        return sb.ToString();
+    }
+
+    internal static string GenerateInterfaceName(this Type type)
+    {
+        if (!type.IsGenericType)
+        {
+            return type.Name;
+        }
+
+        string typeName = type.NonGenericName();
+        Type[] typeArgs = type.GetGenericArguments();
+        if (typeArgs.IsNullOrEmpty())
+        {
+            return typeName;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.Append(typeName).Append('_');
+        typeArgs.CombineArgNames(sb, "_");
+        return sb.ToString();
+    }
+
+    internal static StringBuilder CombineArgNames(this Type[] args, StringBuilder sb, string sep)
+    {
+        var paramNames = from arg in args select arg.Name;
+        sb.AppendMultiple(sep, paramNames);
+        return sb;
+    }
+
+    internal static string NonGenericName(this Type type)
+    {
+        string name = type.Name;
+        int i = name.IndexOf('`');
+        if (i >= 0)
+        {
+            return name.Substring(0, i);
+        }
+        return name;
+    }
+
     internal static IEnumerable<T> Empty<T>()
     {
         yield break;
     }
-
 }
