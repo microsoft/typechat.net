@@ -144,9 +144,10 @@ To see TypeChat in action, explore the [TypeChat example projects](./examples) a
   * Calendar: Transform language into calendar actions
   * Restaurant: Order processing at a pizza restaurant
 
-* Hierarchical schemas and routing:
+* Hierarchical schemas, Classification, Routing:
   * MultiSchema: dynamically route user intent to other 'sub-apps'
   * SchemaHierarchy: A Json Translator than uses multiple child JsonTranslators
+  * Classification: [TextClassification](./src/typechat.examplesLib/Classification) classes
 
 * Json Programs and TypeChat.Program:
   * Math: Turn user requests into calculator programs
