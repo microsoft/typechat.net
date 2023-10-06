@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\typechat.examplesLib\TypeChat.ExamplesLib.csproj" />
+    <ProjectReference Include="..\..\examples\typechat.examplesLib\TypeChat.ExamplesLib.csproj" />
     <ProjectReference Include="..\TypeChat.TestLib\TypeChat.TestLib.csproj" />
     <ProjectReference Include="..\..\src\typechat.dialog\TypeChat.Dialog.csproj" />
     <ProjectReference Include="..\..\src\typechat.program\TypeChat.Program.csproj" />
