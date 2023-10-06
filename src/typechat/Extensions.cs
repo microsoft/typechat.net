@@ -9,6 +9,20 @@ public static class Extensions
         return (list == null || list.Count == 0);
     }
 
+    /// <summary>
+    /// Get a completion for the given prompt
+    /// </summary>
+    /// <param name="model">model</param>
+    /// <param name="prompt">prompt</param>
+    /// <param name="maxTokens">maximum tokens to emit</param>
+    /// <param name="temperature">response temperature</param>
+    /// <returns></returns>
+    public static async Task<string> CompleteAsync(this ILanguageModel model, Prompt prompt, int maxTokens = -1, double temperature = 0.0)
+    {
+        TranslationSettings settings = new TranslationSettings { MaxTokens = maxTokens, Temperature = temperature };
+        return await model.CompleteAsync(prompt, settings, CancellationToken.None);
+    }
+
     internal static void Trim<T>(this List<T> list, int trimCount)
         where T : IPromptSection
     {
@@ -45,16 +59,30 @@ public static class Extensions
         }
     }
 
-    internal static void AppendLineNotEmpty(this StringBuilder sb, string line)
+    internal static StringBuilder AppendLineNotEmpty(this StringBuilder sb, string line)
     {
         if (!string.IsNullOrEmpty(line))
         {
             sb.AppendLine(line);
         }
+        return sb;
     }
 
-    internal static void TrimAndAppendLine(this StringBuilder sb, string line)
+    internal static StringBuilder TrimAndAppendLine(this StringBuilder sb, string line)
     {
         sb.AppendLineNotEmpty(line.Trim());
+        return sb;
+    }
+
+    internal static StringBuilder AppendMultiple(this StringBuilder sb, string sep, IEnumerable<string> substrings)
+    {
+        int i = 0;
+        foreach (var substring in substrings)
+        {
+            if (i > 0) { sb.Append(sep); }
+            sb.Append(substring);
+            ++i;
+        }
+        return sb;
     }
 }

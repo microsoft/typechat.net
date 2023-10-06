@@ -84,5 +84,16 @@ public class TestSchema : TypeChatTest
         Assert.False(lines.ContainsSubstring("interface", "string"));
     }
 
+    [Fact]
+    public void ExportGenerics()
+    {
+        var schema = TypescriptExporter.GenerateSchema(typeof(Parent<Name, Location>));
+        var lines = schema.Schema.Text.Lines();
+        // This is how generics are currently handled. This will be refined as we test out
+        // how the AI does with generic type definitions.
+        Assert.True(lines.ContainsSubstring("interface", "Parent_Name_Location"));
+        Assert.True(lines.ContainsSubstring("Child_Name[]"));
+        Assert.True(lines.ContainsSubstring("Child_Location[]"));
+    }
 }
 

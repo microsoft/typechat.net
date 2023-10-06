@@ -32,4 +32,14 @@ internal static class ArgumentVerify
             throw new ArgumentException("The value cannot be an empty string.", paramName);
         }
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void ThrowIfNullOrEmpty<T>(IList<T> array, string paramName)
+    {
+        ThrowIfNull(array, paramName);
+        if (array.Count == 0)
+        {
+            throw new ArgumentException("The list cannot be empty.", paramName);
+        }
+    }
 }

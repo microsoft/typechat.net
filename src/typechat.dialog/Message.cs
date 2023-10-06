@@ -85,7 +85,12 @@ public class Message : IPromptSection
     /// <param name="body">message body</param>
     /// <returns>message</returns>
     public static Message FromAssistant(object body) => new Message(PromptSection.Sources.Assistant, body);
-
+    /// <summary>
+    /// Create a new message from the system
+    /// </summary>
+    /// <param name="body">message body</param>
+    /// <returns>message</returns>
+    public static Message FromSystem(object body) => new Message(PromptSection.Sources.System, body);
 }
 
 /// <summary>

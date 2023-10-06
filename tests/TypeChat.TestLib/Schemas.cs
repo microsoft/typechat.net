@@ -335,6 +335,21 @@ public class FriendsOfPerson
     public Name Name { get; set; }
     public Name[] FriendNames { get; set; }
 }
+
+// For testing Generics
+public class Child<T>
+{
+    public string Name { get; set; }
+    public T Value { get; set; }
+}
+
+// For testing Generics
+public class Parent<X, Y>
+{
+    public Child<X>[] ChildrenX { get; set; }
+    public Child<Y>[] ChildrenY { get; set; }
+}
+
 #if NET7_0_OR_GREATER
 [JsonPolymorphic]
 [JsonDerivedType(typeof(Rectangle), typeDiscriminator: nameof(Rectangle))]

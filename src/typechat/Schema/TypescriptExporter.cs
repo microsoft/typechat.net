@@ -69,6 +69,7 @@ public class TypescriptExporter : TypeExporter<Type>
     NullabilityInfoContext _nullableInfo;
 #endif
     VocabCollection _usedVocabs;
+    JsonPolymorphismSettings _polymorphism;
 
     public TypescriptExporter(TextWriter writer)
         : this(new TypescriptWriter(writer))
@@ -88,6 +89,7 @@ public class TypescriptExporter : TypeExporter<Type>
             typeof(Nullable<>),
             typeof(Task)
         };
+        _polymorphism = new JsonPolymorphismSettings();
 #if NET6_0_OR_GREATER
         _nullableInfo = new NullabilityInfoContext();
 #endif
@@ -103,9 +105,9 @@ public class TypescriptExporter : TypeExporter<Type>
     //
     public Func<Type, string?> TypeNameMapper { get; set; }
     /// <summary>
-    /// Use this to customize how type discriminators are produced. 
+    /// Customize how Json Polymorphism is supported in schemas
     /// </summary>
-    public Func<Type, string> DiscriminatorGenerator { get; set; }
+    public JsonPolymorphismSettings PolymorphismSettings { get; set; }
     /// <summary>
     /// Should export subclasses of a given type: automatically exporting type hierarchies?
     /// Default is true
@@ -122,14 +124,6 @@ public class TypescriptExporter : TypeExporter<Type>
     /// Default is false
     /// </summary>
     public bool EnumsAsLiterals { get; set; } = false;
-    /// <summary>
-    /// Discriminators are needed for Json Polymorphism: so the Json Deserializer can distinguish which 
-    /// object should be deserialized to instances of which sub-class
-    /// By default discriminators are emitted and in a format recognized by System.Text.Json serilization
-    ///   "$type": "{type.Name}"
-    /// You can customize this using 
-    /// </summary>
-    public bool IncludeDiscriminator { get; set; } = true;
     /// <summary>
     /// Ignore these types during export
     /// </summary>
@@ -210,16 +204,16 @@ public class TypescriptExporter : TypeExporter<Type>
         if (baseClass != null)
         {
             ExportClass(baseClass);
-            baseClassName = baseClass.Name;
+            baseClassName = InterfaceName(baseClass);
         }
-        string typeName = type.Name;
+        string typeName = InterfaceName(type);
 
         ExportComments(type);
         _writer.BeginInterface(typeName, baseClassName);
         {
             _writer.PushIndent();
 
-            if (this.IncludeDiscriminator && baseClass != null)
+            if (_polymorphism.IncludeDiscriminator && baseClass != null)
             {
                 ExportDiscriminator(type);
             }
@@ -633,13 +627,20 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         if (!type.IsAbstract)
         {
-            string discriminator = (DiscriminatorGenerator != null) ?
-                                    DiscriminatorGenerator(type) :
+            string discriminator = (_polymorphism.DiscriminatorGenerator != null) ?
+                                    _polymorphism.DiscriminatorGenerator(type) :
                                     $"'{type.Name}'";
 
             _writer.SOL();
             _writer.Variable("$type", discriminator);
-            _writer.EOL();
+            if (_polymorphism.IncludeComment)
+            {
+                _writer.Comment("Always emit first");
+            }
+            else
+            {
+                _writer.EOL();
+            }
         }
         return this;
     }
@@ -667,9 +668,25 @@ public class TypescriptExporter : TypeExporter<Type>
         }
         if (string.IsNullOrEmpty(typeName))
         {
-            typeName = type.Name;
+            typeName = InterfaceName(type, false);
             AddPending(type);
         }
+        return typeName;
+    }
+
+    string InterfaceName(Type type, bool useMapper = true)
+    {
+        string? typeName = null;
+        if (useMapper && TypeNameMapper != null)
+        {
+            typeName = TypeNameMapper(type);
+        }
+
+        if (typeName == null)
+        {
+            typeName = type.GenerateInterfaceName();
+        }
+
         return typeName;
     }
 

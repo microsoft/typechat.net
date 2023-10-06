@@ -32,7 +32,7 @@ TypeChat provides:
 * Json translation, validation, repair and deserialization.
 * Extensibility: interfaces for customizing schemas, validators and prompts.
 * Schema export: classes to generate schema for the .NET Type you want to translate to. Exported schema includes dependencies and base classes. The exported schema is specified using **Typescript**, which can concisely express schema for JSON objects. 
-  * Support for common scenarios shown in TypeChat examples. When you encounter limitations, you can supply schema text, such as Typescript authored by hand. 
+  * Support for common scenarios shown in TypeChat examples. When you encounter limitations (such as how generics are currently exported), you can supply schema text, such as Typescript authored by hand.  
   * Helper attributes for Vocabularies and Comments. Vocabularies are string tables that constrain the values that can be assigned to string properties. Dynamic loading of vocabularies enables scenarios where they vary at runtime.
   * **Note**: Like TypeChat, TypeChat.NET has only been tested with schema specified in Typescript. 
 ```
