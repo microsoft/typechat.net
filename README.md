@@ -15,7 +15,7 @@ CalendarActions actions = await translator.TranslateAsync(requestText);
 TypeChat.NET is in **active development** with frequent updates. The framework will evolve as the team explores the space and incorporates feedback. Supported scenarios are shown in the included [Examples](./examples). Documentation will also continue to improve. When in doubt, please look at the code.  
 
 # Assemblies
-TypeChat.NET consists of the following assemblies:
+TypeChat.NET currently consists of the following assemblies:
 
 * **Microsoft.TypeChat**: Classes that translate user intent into strongly typed and validated objects. 
 
@@ -24,6 +24,8 @@ TypeChat.NET consists of the following assemblies:
 * **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for language models, plugins and embeddings.
 
 * **Microsoft.TypeChat.Dialog**: Classes for working with interactive Agents that have history. 
+
+This structure will evolve as we gather feedback and harmonize features with [TypeChat](https://github.com/microsoft/TypeChat) itself. 
 
 ## Microsoft.TypeChat ##
 TypeChat uses language models to translate user intent into JSON that conforms to a schema. This JSON is then validated and deserialized into a typed object. Additional constraint checking is applied as needed. Validation errors are sent back to the language model, which uses them to **repair** the Json it originally returned. 
@@ -74,7 +76,7 @@ TypeChat.SemanticKernel include classes for:
 * Language model and embeddings access: all TypeChat examples use the Semantic Kernel to call models and generate embeddings. 
  
 ## Microsoft.TypeChat.Dialog
-TypeChat.Dialog is an **early** version of a framework that demonstrates how TypeChat.NET may be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
+TypeChat.Dialog is an **example** of a framework that demonstrates how TypeChat.NET may be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
 
 ```
 // Create an agent with history
@@ -132,7 +134,7 @@ dotnet add package Microsoft.TypeChat.Dialog
 
 ## Examples
 
-To see TypeChat in action, explore the [TypeChat example projects](./examples). The list below describes which examples will best introduce which concept. Some examples or scenarios may work best with gpt-4.
+To see TypeChat in action, explore the [TypeChat example projects](./examples) and [TypeChat Examples Lib](./src/typechat.examplesLib). The list below describes which examples will best introduce which concept. Some examples or scenarios may work best with gpt-4.
 
 * Hello World: The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
 
