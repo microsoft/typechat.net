@@ -134,7 +134,7 @@ dotnet add package Microsoft.TypeChat.Dialog
 
 ## Examples
 
-To see TypeChat in action, explore the [TypeChat example projects](./examples) and [TypeChat Examples Lib](./src/typechat.examplesLib). The list below describes which examples will best introduce which concept. Some examples or scenarios may work best with gpt-4.
+To see TypeChat in action, explore the [TypeChat example projects](./examples) and [TypeChat Examples Lib](./examples/typechat.examplesLib). The list below describes which examples will best introduce which concept. Some examples or scenarios may work best with gpt-4.
 
 * Hello World: The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
 
@@ -147,7 +147,7 @@ To see TypeChat in action, explore the [TypeChat example projects](./examples) a
 * Hierarchical schemas, Classification, Routing:
   * MultiSchema: dynamically route user intent to other 'sub-apps'
   * SchemaHierarchy: A Json Translator than uses multiple child JsonTranslators
-  * Classification: [TextClassification](./src/typechat.examplesLib/Classification) classes
+  * Classification: [TextClassification](./examples/typechat.examplesLib/Classification) classes
 
 * Json Programs and TypeChat.Program:
   * Math: Turn user requests into calculator programs
