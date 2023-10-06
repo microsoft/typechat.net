@@ -15,7 +15,7 @@ public static class Extensions
     /// <param name="model">model</param>
     /// <param name="prompt">prompt</param>
     /// <param name="maxTokens">maximum tokens to emit</param>
-    /// <param name="temperature">respose temperature</param>
+    /// <param name="temperature">response temperature</param>
     /// <returns></returns>
     public static async Task<string> CompleteAsync(this ILanguageModel model, Prompt prompt, int maxTokens = -1, double temperature = 0.0)
     {
