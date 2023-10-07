@@ -23,8 +23,6 @@ TypeChat.NET currently consists of the following assemblies:
 
 * **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for language models, plugins and embeddings.
 
-* **Microsoft.TypeChat.Dialog**: Classes for working with interactive Agents that have history. 
-
 This structure will evolve as we gather feedback and harmonize features with [TypeChat](https://github.com/microsoft/TypeChat) itself. 
 
 ## Microsoft.TypeChat ##
@@ -75,23 +73,6 @@ TypeChat.SemanticKernel include classes for:
 * **Json Programs for Plugins**: turn registered plugins into **APIs** that Json programs can target. See the [Plugins Example](examples/Plugins/Program.cs).
 * Language model and embeddings access: all TypeChat examples use the Semantic Kernel to call models and generate embeddings. 
  
-## Microsoft.TypeChat.Dialog
-TypeChat.Dialog is an **example** of a framework that demonstrates how TypeChat.NET may be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
-
-```
-// Create an agent with history
-agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
-agent.Instructions.Append("Help me enter my health data step by step");
-
-// Run a chat loop
-while (true)
-{
-   ...
-    var userInput = Console.ReadLine();
-    HealthDataResponse response = await agent.GetResponseAsync(userInput);
-}
-```
-
 # Getting Started 
 
 ## Prerequisite: OpenAI
@@ -127,36 +108,40 @@ Please ensure that you have installed both packages above.
 ```
 dotnet add package Microsoft.TypeChat.Program
 ```
-* Microsoft.TypeChat.Dialog
-```
-dotnet add package Microsoft.TypeChat.Dialog
-```
 
 ## Examples
 
-To see TypeChat in action, explore the [TypeChat example projects](./examples) and [TypeChat Examples Lib](./examples/typechat.examplesLib). The list below describes which examples will best introduce which concept. Some examples or scenarios may work best with gpt-4.
-
-* Hello World: The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
-
-* JsonTranslator, Schemas and Vocabularies: 
-  
-  * CoffeeShop: Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialzation.
-  * Calendar: Transform language into calendar actions
-  * Restaurant: Order processing at a pizza restaurant
-
-* Hierarchical schemas, Classification, Routing:
-  * MultiSchema: dynamically route user intent to other 'sub-apps'
-  * SchemaHierarchy: A Json Translator than uses multiple child JsonTranslators
-  * Classification: [TextClassification](./examples/typechat.examplesLib/Classification) classes
-
-* Json Programs and TypeChat.Program:
-  * Math: Turn user requests into calculator programs
-  * Plugins: Generate programs that use Semantic Kernel Plugins
-
-* Typed Interactive Agents (bots):
-  * Healthdata
+To see TypeChat.NET in action, explore the [Example projects](./examples) and [TypeChat.Examples Library](./examples/typechat.examplesLib). 
   
 Each example includes an **input.txt** with sample input. Pass the input file as an argument to run the example in **batch mode**. 
+
+The sections below describe which examples will best introduce which concept. Some examples or scenarios may work ***best with gpt-4***.
+
+### Hello World
+The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
+
+### JsonTranslator
+  
+The following examples demonstrate how to use JsonTranslator, Schemas and Vocabularies: 
+
+* [CoffeeShop](./examples/CoffeeShop): Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialzation.
+* [Calendar](./examples/Calendar): Transform language into calendar actions
+* [Restaurant](./examples/Restaurant): Order processing at a pizza restaurant
+
+### Hierarchical schemas
+* [MultiSchema](./examples/MultiSchema): dynamically route user intent to other 'sub-apps'
+* [SchemaHierarchy](./examples/SchemaHierarchy): A Json Translator than uses multiple child JsonTranslators
+  
+These examples also how [TextClassification](./examples/typechat.examplesLib/Classification) classes can be used to route text inputs to handlers.
+
+### Json Programs
+
+* [Math](./examples/Math): How to turn user requests into simple calculator programs
+* [Plugins](./examples/Plugins): How to translate user intent into programs programs that call Semantic Kernel Plugins
+
+### Interactive agents
+  * [HealthData](./examples/HealthData): how to use an interactive bot to collect a user's health information. 
+  * [Agent Classes](./examples/typechat.ExamplesLib/Dialog) for working with interactive agents that have history. These classes emonstrate how TypeChat.NET may be used for strongly typed interactions with message passing agents or bots. These agents can include features such as built in interaction history. 
 
 ## Api Key and Configuration
 To use TypeChat.net or run the examples, you need an **API key** for an OpenAI service. Azure OpenAI and the OpenAI service are both supported.
@@ -207,19 +192,19 @@ config = OpenAIConfig.FromEnvironment();
 var model = new LanguageModel(config);
 ```
 
-### Using Semantic Kernel directly
+## Using Semantic Kernel directly
 You can also initialize LanguageModel using an IKernel object you created using a KernelBuilder.
 ```
 const string modelName = "gpt-35-turbo";
 new LanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
 ```
 
-### Using your own client
+## Using your own client
 TypeChat accesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat.sk/LanguageModel.cs) implements ILanguageModel. 
 
 You can use your own model client by implementing ILanguageModel.
 
-## Code of Conduct
+# Code of Conduct
 
 This project has adopted the
 [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
@@ -228,13 +213,13 @@ For more information see the
 or contact [opencode@microsoft.com](mailto:opencode@microsoft.com)
 with any additional questions or comments.
 
-## License
+# License
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
 Licensed under the [MIT](LICENSE) license.
 
-## Trademarks
+# Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
 trademarks or logos is subject to and must follow 

@@ -36,8 +36,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugins", "examples\Plugins
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiSchema", "examples\MultiSchema\MultiSchema.csproj", "{9598D98A-3688-45E5-9C51-1C4F385BD693}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.Dialog", "src\typechat.dialog\TypeChat.Dialog.csproj", "{DDE39125-BE33-41DC-B536-7185CD374797}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthData", "examples\HealthData\HealthData.csproj", "{F4B127FE-CAB9-483E-AA79-6A2F8665C5FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat", "src\typechat\TypeChat.csproj", "{EF1231C5-56C4-439F-84F0-FE5D5315D4AA}"
@@ -107,10 +105,6 @@ Global
 		{9598D98A-3688-45E5-9C51-1C4F385BD693}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9598D98A-3688-45E5-9C51-1C4F385BD693}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9598D98A-3688-45E5-9C51-1C4F385BD693}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDE39125-BE33-41DC-B536-7185CD374797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDE39125-BE33-41DC-B536-7185CD374797}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDE39125-BE33-41DC-B536-7185CD374797}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDE39125-BE33-41DC-B536-7185CD374797}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F4B127FE-CAB9-483E-AA79-6A2F8665C5FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F4B127FE-CAB9-483E-AA79-6A2F8665C5FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4B127FE-CAB9-483E-AA79-6A2F8665C5FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
