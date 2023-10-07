@@ -141,7 +141,7 @@ These examples also how [TextClassification](./examples/typechat.examplesLib/Cla
 
 ### Interactive agents
   * [HealthData](./examples/HealthData): how to use an interactive bot to collect a user's health information. 
-  * [Agent Classes](./examples/typechat.ExamplesLib/Dialog) for working with interactive agents that have history. These classes emonstrate how TypeChat.NET may be used for strongly typed interactions with message passing agents or bots. These agents can include features such as built in interaction history. 
+  * [Agent Classes](./examples/typechat.examplesLib/Dialog) for working with interactive agents that have history. These classes emonstrate how TypeChat.NET may be used for strongly typed interactions with message passing agents or bots. These agents can include features such as built in interaction history. 
 
 ## Api Key and Configuration
 To use TypeChat.net or run the examples, you need an **API key** for an OpenAI service. Azure OpenAI and the OpenAI service are both supported.
