@@ -8,6 +8,8 @@ Example classes include:
 
 * **HierarchicalJsonTranslator**: demonstrates how a  translator can use an in-memory vector index to semantically route request to child translators
 
+* **VectorizedTextIndex**: Demonstrates how to use an in-memory vectorized text index to route text requests
+
 * **PluginProgramTranslator**: Program translator that translates user requests into programs that call APIs defined by Microsoft Semantic Kernel Plugins
 
 * **PluginProgramValidator**: Validates programs produced by PluginProgramTranslator
