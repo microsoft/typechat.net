@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat.Schema;
-
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
 /// Terminals, Operators etc, used to export Typescript
@@ -56,7 +54,7 @@ public class Typescript : CodeLanguage
         {
             if (type.IsString())
             {
-                return Types.String;
+                return String;
             }
             else if (type.IsEnum)
             {
@@ -64,23 +62,23 @@ public class Typescript : CodeLanguage
             }
             else if (type.IsNumber())
             {
-                return Types.Number;
+                return Number;
             }
             else if (type.IsBoolean())
             {
-                return Types.Boolean;
+                return Boolean;
             }
             else if (type.IsDateTime())
             {
-                return Types.String; // Json does not have a primitive DateTime
+                return String; // Json does not have a primitive DateTime
             }
             else if (type.IsObject())
             {
-                return Types.Any;
+                return Any;
             }
             else if (type.IsVoid())
             {
-                return Types.Void;
+                return Void;
             }
             return null;
         }

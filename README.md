@@ -128,9 +128,8 @@ The following examples demonstrate how to use JsonTranslator, Schemas and Vocabu
 
 ### Hierarchical schemas
 * [MultiSchema](./examples/MultiSchema): dynamically route user intent to other 'sub-apps'
-* [SchemaHierarchy](./examples/SchemaHierarchy): A Json Translator than uses multiple child JsonTranslators
-  
-These examples also how [TextClassification](./examples/typechat.examplesLib/Classification) classes can be used to route text inputs to handlers.
+* [SchemaHierarchy](./examples/SchemaHierarchy): A Json Translator than uses multiple child JsonTranslators. For each user request, it picks the semantically ***nearest*** child translator and routes the input to it. 
+* [TextClassification](./examples/typechat.examplesLib/Classification) and [VectorTextIndex](./examples/typechat.examplesLib/VectorTextIndex.cs) show how to build a simple classifiers to route input.
 
 ### Json Programs
 
