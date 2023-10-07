@@ -9,7 +9,6 @@
 //------------------------------------------------------
 
 using Microsoft.TypeChat;
-using Microsoft.TypeChat.Dialog;
 
 namespace Emoji;
 
@@ -69,27 +68,12 @@ internal class EmojiProgram : IEmojiService
         }
     }
 
-    public async Task TestAgent()
-    {
-        Agent<EmojiResponse> agent = new AgentWithHistory<EmojiResponse>(_model);
-        agent.Instructions.Append("Respond to me in emojis");
-        string? line;
-        Console.Write(">");
-        while ((line = Console.ReadLine()) != null)
-        {
-            var response = await agent.GetResponseAsync(line);
-            Console.WriteLine(response.EmojiTranslation);
-            Console.Write(">");
-        }
-    }
-
     public static async Task<int> Main(string[] args)
     {
         Console.OutputEncoding = System.Text.Encoding.UTF8;
         EmojiProgram p = new EmojiProgram();
         await p.TestTranslate();
         //await p.TestProgram();
-        //await p.TestAgent();
         return 0;
     }
 }
