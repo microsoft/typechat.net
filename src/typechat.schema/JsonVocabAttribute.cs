@@ -13,6 +13,7 @@ namespace Microsoft.TypeChat.Schema;
 /// 
 /// Or you can specify the name of vocabulary that is resolved at runtime. 
 /// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public class JsonVocabAttribute : JsonConverterAttribute
 {
     string _entries;

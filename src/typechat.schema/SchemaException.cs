@@ -33,12 +33,12 @@ public class SchemaException : Exception
         return $"Error: {Code}\n{Message}";
     }
 
-    internal static void ThrowVocabNotFound(string vocabName)
+    public static void ThrowVocabNotFound(string vocabName)
     {
         throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, $"Vocabulary {vocabName} is not a known value");
     }
 
-    internal static void ThrowVocabNotFound(string vocabName, string value)
+    public static void ThrowVocabNotFound(string vocabName, string value)
     {
         throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, $"{value} is from an unknown vocabulary {vocabName}");
     }

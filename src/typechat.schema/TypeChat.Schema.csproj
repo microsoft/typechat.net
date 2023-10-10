@@ -5,7 +5,7 @@
     <LangVersion>10</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
-    <AssemblyName>Microsoft.TypeChat.Program</AssemblyName>
+    <AssemblyName>Microsoft.TypeChat.Schema</AssemblyName>
     <RootNamespace>Microsoft.TypeChat</RootNamespace>
   </PropertyGroup>
 

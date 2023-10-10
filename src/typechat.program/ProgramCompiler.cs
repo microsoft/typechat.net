@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Linq.Expressions;
+using System.Text.Json;
 using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Microsoft.TypeChat;

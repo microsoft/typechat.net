@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-internal struct VocabString : IStringType
+public struct VocabString : IStringType
 {
     public VocabString()
     {

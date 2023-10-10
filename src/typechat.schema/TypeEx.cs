@@ -69,7 +69,7 @@ public static class TypeEx
         }
     }
 
-    internal static bool IsObject(this Type type)
+    public static bool IsObject(this Type type)
     {
         return type == typeof(object);
     }
@@ -89,7 +89,7 @@ public static class TypeEx
         return type.IsObject() || type.IsValueType() || type.IsEnum();
     }
 
-    internal static bool IsVoid(this Type type)
+    public static bool IsVoid(this Type type)
     {
         return type == typeof(void);
     }

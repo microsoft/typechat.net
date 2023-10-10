@@ -3,6 +3,8 @@
 using Microsoft.SemanticKernel.SkillDefinition;
 using Microsoft.TypeChat.CSharp;
 using Microsoft.TypeChat.Schema;
+using Microsoft.TypeChat;
+
 
 namespace Microsoft.TypeChat;
 

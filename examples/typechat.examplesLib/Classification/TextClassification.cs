@@ -13,8 +13,8 @@ public class TextClassification
     /// The class assigned to the request
     /// </summary>
     [JsonPropertyName("class")]
-    [JsonVocab(Name = "Classes", PropertyName = "class")]
-    [Comment("Use this for the classification")]
+    [JsonVocabAttribute(Name = "Classes", PropertyName = "class")]
+    [CommentAttribute("Use this for the classification")]
     public string Class { get; set; }
 
     [JsonIgnore]
