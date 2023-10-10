@@ -1,7 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net60;net70</TargetFrameworks>
+    <LangVersion>10</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>annotations</Nullable>
+    <AssemblyName>Microsoft.TypeChat.Program</AssemblyName>
+    <RootNamespace>Microsoft.TypeChat</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\typechat\ArgumentVerify.cs" Link="ArgumentVerify.cs" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.8" />
+  </ItemGroup>
+
+  <Import Project="../package/nuget.props" />
+  <PropertyGroup>
+    <Description>TypeChat.Program translates natural language requests into simple programs (Plans) that are dynamically typed checked, compiled and run</Description>
   </PropertyGroup>
 
 </Project>
