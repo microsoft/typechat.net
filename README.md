@@ -202,7 +202,7 @@ new ChatLanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName)
 ## Using your own client
 TypeChat accesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat/LanguageModel.cs) implements ILanguageModel. 
 
-You can use your own model client by implementing ILanguageModel.
+You can use your own model client by implementing ILanguageModel. If you don't use one of the Open AI models listed above, you will likely also need to supply [JsonTranslatorPrompts](./src/typechat/IJsonTranslatorPrompts.cs) that work best with your model.
 
 # Code of Conduct
 
