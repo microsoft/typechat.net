@@ -30,12 +30,60 @@ public class TestLanguageModel : TypeChatTest
     [Fact]
     public async Task TestResponse()
     {
+        var config = MockOpenAIConfig();
         var (jsonResponse, expected) = CannedResponse();
         var handler = new MockHttpHandler(jsonResponse);
-        var config = MockOpenAIConfig();
         using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
         var modelResponse = await model.CompleteAsync("Hello");
         Assert.Equal(expected, modelResponse.Trim());
+    }
+
+    [Fact]
+    public async Task TestConfig_Azure()
+    {
+        OpenAIConfig config = MockOpenAIConfig();
+        config.Endpoint = "https://yourresourcename.openai.azure.com/openai/deployments/deploymentid/chat/completions?api-version=";
+        config.Model = "YOUR_MODEL";
+        config.ApiVersion = "53";
+
+        var (jsonResponse, expected) = CannedResponse();
+        var handler = new MockHttpHandler(jsonResponse);
+        LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
+        await model.CompleteAsync("Hello");
+
+        Assert.Equal(config.Endpoint.ToLower(), handler.LastRequest.RequestUri.AbsoluteUri.ToLower());
+
+        model.Dispose();
+
+        config.Endpoint = "https://yourresourcename.openai.azure.com/";
+        model = new LanguageModel(config, null, new HttpClient(handler));
+        await model.CompleteAsync("Hello");
+
+        string requestUrl = handler.LastRequest.RequestUri.AbsoluteUri.ToLower();
+        string expectedUrl = $"{config.Endpoint}openai/deployments/{config.Model}/chat/completions?api-version={config.ApiVersion}".ToLower();
+        Assert.Equal(expectedUrl, requestUrl);
+    }
+
+    [Fact]
+    public async Task TestConfig_OAI()
+    {
+        OpenAIConfig config = MockOpenAIConfig();
+        config.Azure = false;
+        config.Endpoint = "https://api.openai.com/v1/chat/completions";
+        config.Model = "yourmodel";
+        config.Organization = "yourorg";
+
+        var (jsonResponse, expected) = CannedResponse();
+        var handler = new MockHttpHandler(jsonResponse);
+        using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
+        await model.CompleteAsync("Hello");
+
+        HttpRequestMessage lastRequest = handler.LastRequest;
+        lastRequest.Headers.Contains("OpenAI-Organization");
+        lastRequest.Headers.Contains("Bearer");
+
+        string requestUrl = handler.LastRequest.RequestUri.AbsoluteUri.ToLower();
+        Assert.Equal(config.Endpoint.ToLower(), requestUrl);
     }
 
     (string, string) CannedResponse()

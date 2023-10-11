@@ -4,33 +4,53 @@ namespace Microsoft.TypeChat.Tests;
 
 public class MockHttpHandler : HttpMessageHandler
 {
-    public MockHttpHandler(string jsonResponse)
+    public MockHttpHandler(string? jsonResponse = null)
     {
-        Response = new HttpResponseMessage();
-        Response.SetJson(jsonResponse);
-    }
-    public MockHttpHandler(HttpResponseMessage response = null)
-    {
-        Response = response;
+        JsonResponse = jsonResponse;
     }
 
+    public MockHttpHandler(int statusCode = 0)
+    {
+        StatusCode = statusCode;
+    }
+
+    public int StatusCode { get; set; } = 0;
+    public string? JsonResponse { get; set; } = null;
+    public HttpResponseMessage? Response { get; set; }
+
+
     public int RequestCount { get; set; } = 0;
-    public HttpResponseMessage Response { get; set; }
+    public HttpRequestMessage? LastRequest { get; set; }
 
     public void Clear()
     {
         RequestCount = 0;
+        LastRequest = null;
     }
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
+        LastRequest = request;
         RequestCount++;
-        return Task.FromResult(Response);
+        HttpResponseMessage response = Response;
+        if (response == null)
+        {
+            response = new HttpResponseMessage();
+            if (!string.IsNullOrEmpty(JsonResponse))
+            {
+                response.SetJson(JsonResponse);
+            }
+            if (StatusCode > 0)
+            {
+                response.StatusCode = (HttpStatusCode)StatusCode;
+            }
+        }
+
+        return Task.FromResult(response);
     }
 
     public static MockHttpHandler ErrorResponder(int statusCode)
     {
-        HttpResponseMessage response = new HttpResponseMessage { StatusCode =(HttpStatusCode) statusCode };
-        return new MockHttpHandler(response);
+        return new MockHttpHandler(statusCode);
     }
 }

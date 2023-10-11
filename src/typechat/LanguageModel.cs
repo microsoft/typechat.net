@@ -3,7 +3,7 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// A lightweight ILanguageModel implementation over OpenAI or Azure OpenAI REST API endpoint
+/// A lightweight ILanguageModel implementation over OpenAI or Azure OpenAI Chat Completion REST API endpoint
 /// </summary>
 public class LanguageModel : ILanguageModel, IDisposable
 {
@@ -16,6 +16,7 @@ public class LanguageModel : ILanguageModel, IDisposable
 
     /// <summary>
     /// Create an OpenAILanguageModel object using the given OpenAIConfig
+    /// config.EndPoint must support the Chat Completion API
     /// </summary>
     /// <param name="config">configuration to use</param>
     /// <param name="model">information about the target model</param>
