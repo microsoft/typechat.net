@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Validation;
 
 /// <summary>
 /// A simple and fast program validator that ensures that any function calls
@@ -60,8 +60,8 @@ public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
 
     void ValidateArgs(FunctionCall call, ApiMethod methodInfo, Expression[] args)
     {
-        int expectedCount = (methodInfo.Params != null) ? methodInfo.Params.Length : 0;
-        int actualCount = (args != null) ? args.Length : 0;
+        int expectedCount = methodInfo.Params != null ? methodInfo.Params.Length : 0;
+        int actualCount = args != null ? args.Length : 0;
         if (actualCount != expectedCount)
         {
             ProgramException.ThrowArgCountMismatch(call, expectedCount, actualCount);

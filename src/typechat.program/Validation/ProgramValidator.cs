@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat.Validation;
-
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Validation;
 
 /// <summary>
 /// Given a structurally valid Program, this ensures that the Program can

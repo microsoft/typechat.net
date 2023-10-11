@@ -30,6 +30,10 @@
     <PackageReference Include="System.Text.Json" Version="6.0.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
+  </ItemGroup>
+
   <Import Project="../package/nuget.props" />
   <PropertyGroup>
     <Description>TypeChat.Program translates natural language requests into simple programs (Plans) that are dynamically typed checked, compiled and run</Description>
