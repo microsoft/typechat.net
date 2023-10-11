@@ -2,6 +2,9 @@
 
 namespace Microsoft.TypeChat;
 
+/// <summary>
+/// Creates a language model encapsulation of an OpenAI or Azure OpenAI REST API endpoint
+/// </summary>
 public class OpenAILanguageModel : ILanguageModel
 {
     static TranslationSettings s_defaultSettings = new TranslationSettings();
@@ -11,6 +14,11 @@ public class OpenAILanguageModel : ILanguageModel
     HttpClient _client;
     string _endPoint;
 
+    /// <summary>
+    /// Create an OpenAILanguageModel object using the given OpenAIConfig
+    /// </summary>
+    /// <param name="config">configuration to use</param>
+    /// <param name="model">information about the target model</param>
     public OpenAILanguageModel(OpenAIConfig config, ModelInfo? model = null)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
@@ -21,11 +29,17 @@ public class OpenAILanguageModel : ILanguageModel
         _client = new HttpClient();
         ConfigureClient();
     }
-
-    public HttpClient Client => _client;
-
-    public ModelInfo ModelInfo => throw new NotImplementedException();
-
+    /// <summary>
+    /// Information about the language model
+    /// </summary>
+    public ModelInfo ModelInfo => _model;
+    /// <summary>
+    /// Get a completion for the given prompt
+    /// </summary>
+    /// <param name="prompt">prompt</param>
+    /// <param name="settings">translation settings such as temperature</param>
+    /// <param name="cancelToken">cancellation token</param>
+    /// <returns></returns>
     public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings, CancellationToken cancelToken)
     {
         ArgumentVerify.ThrowIfNullOrEmpty<IPromptSection>(prompt, nameof(prompt));
