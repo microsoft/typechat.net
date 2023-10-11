@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Net;
 using Xunit;
 using Xunit.Sdk;
 
@@ -118,5 +119,25 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         Assert.True(program.IsComplete);
         dynamic result = program.Run(api);
         Assert.True(result == expectedResult);
+    }
+
+    [SkippableFact]
+    public async Task TestOpenAILanguageModel()
+    {
+        Skip.If(!CanRunEndToEndTest(_config));
+
+        OpenAILanguageModel lm = new OpenAILanguageModel(_config.OpenAI);
+        string response = await lm.CompleteAsync("Is Venus a planet?");
+        Assert.NotNull(response);
+        Assert.NotEmpty(response);
+    }
+
+    [SkippableFact]
+    public async Task TranslateSentiment_OpenAILanguageModel()
+    {
+        Skip.If(!CanRunEndToEndTest(_config));
+
+        OpenAILanguageModel lm = new OpenAILanguageModel(_config.OpenAI);
+        await TranslateSentiment(lm);
     }
 }

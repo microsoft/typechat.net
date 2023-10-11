@@ -84,4 +84,10 @@ public class Json
     {
         return JsonSerializer.Deserialize(json, type, _options);
     }
+
+    internal static StringContent ToJsonMessage<T>(T value)
+    {
+        string jsonContent = Json.Stringify(value, false);
+        return new StringContent(jsonContent, UnicodeEncoding.UTF8, "application/json");
+    }
 }

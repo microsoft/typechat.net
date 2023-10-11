@@ -16,7 +16,7 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
     public void TestKernelBuild()
     {
         Skip.If(!CanRunEndToEndTest(_config));
-        
+
         KernelBuilder kb = new KernelBuilder();
         kb.WithChatModels(_config.OpenAI, Config.ModelNames.Gpt35Turbo, Config.ModelNames.Gpt4);
         IKernel kernel = kb.Build();

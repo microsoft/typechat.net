@@ -58,7 +58,7 @@ public class CoffeeShopApp : ConsoleApp
         {
             CoffeeShopApp app = new CoffeeShopApp();
             // Un-comment to print auto-generated schema at start:
-            // Console.WriteLine(app.Schema.Schema.Text);
+            Console.WriteLine(app.Schema.Schema.Text);
 
             await app.RunAsync("☕> ", args.GetOrNull(0));
         }
