@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using Microsoft.TypeChat.Validation;
 
 namespace Microsoft.TypeChat.Tests;
 

@@ -3,6 +3,7 @@
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 using Microsoft.TypeChat.Dialog;
+using Microsoft.TypeChat.Validation;
 
 namespace HealthData;
 

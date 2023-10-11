@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat.Schema;
+using Microsoft.TypeChat.Validation;
 
 namespace Microsoft.TypeChat.Classification;
 

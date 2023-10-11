@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Validation;
 
 /// <summary>
 /// Once Json Translator has a valid value of type T, applies additional

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Xunit;
-using Xunit.Sdk;
+using Microsoft.TypeChat.Validation;
 
 namespace Microsoft.TypeChat.Tests;
 

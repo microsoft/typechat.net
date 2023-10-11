@@ -2,12 +2,11 @@
 
 namespace Microsoft.TypeChat;
 
-internal static class MetadataEx
+internal static class MetadataExtensions
 {
-
     internal static bool IsGlobal(this FunctionView fview)
     {
-        return ("_GLOBAL_FUNCTIONS_" == fview.SkillName);
+        return "_GLOBAL_FUNCTIONS_" == fview.SkillName;
     }
 
     internal static bool HasDescription(this ParameterView param)

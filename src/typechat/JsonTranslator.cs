@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Reflection;
 using Microsoft.TypeChat.Schema;
+using Microsoft.TypeChat.Validation;
 
 namespace Microsoft.TypeChat;
 

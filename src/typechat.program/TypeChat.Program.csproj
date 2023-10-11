@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <Compile Include="..\typechat\ArgumentVerify.cs" Link="ArgumentVerify.cs" />
-    <Compile Include="..\typechat\ListExtensions.cs" Link="ListExtensions.cs" />
+    <Compile Include="..\typechat\Extensions\ListExtensions.cs" Link="Extensions\ListExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

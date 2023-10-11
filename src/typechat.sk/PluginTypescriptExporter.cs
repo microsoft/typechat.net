@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.SkillDefinition;
 using Microsoft.TypeChat.Schema;
 
 namespace Microsoft.TypeChat;

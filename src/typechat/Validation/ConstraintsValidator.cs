@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Schema;
+namespace Microsoft.TypeChat.Validation;
 
 /// <summary>
 /// Validates constrains specified using attributes defined in System.ComponentModel.DataAnnotations
@@ -43,17 +43,6 @@ public class ConstraintsValidator
 }
 
 /// <summary>
-/// Place this attribute on properties to recursively validate child objects
-/// </summary>
-public class ValidateObjectAttribute : ValidationAttribute
-{
-    protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
-    {
-        return ConstraintsValidator.Default.ValidateConstraints(value);
-    }
-}
-
-/// <summary>
 /// Validation support using infrastructure from System.Component.DataAnnotations
 /// </summary>
 public class ConstraintsValidator<T> : ConstraintsValidator, IConstraintsValidator<T>
@@ -86,4 +75,3 @@ public class ConstraintsValidator<T> : ConstraintsValidator, IConstraintsValidat
         return sb.ToString();
     }
 }
-

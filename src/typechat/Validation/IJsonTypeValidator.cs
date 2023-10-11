@@ -2,7 +2,7 @@
 
 using Microsoft.TypeChat.Schema;
 
-namespace Microsoft.TypeChat;
+namespace Microsoft.TypeChat.Validation;
 
 /// <summary>
 /// A JsonTypeValidator validates the given json string is according to the supplied schema

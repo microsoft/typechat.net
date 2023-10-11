@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.TypeChat.Validation;
+
 namespace Microsoft.TypeChat.Tests;
 
 internal static class Extensions

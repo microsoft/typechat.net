@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.Reliability;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>

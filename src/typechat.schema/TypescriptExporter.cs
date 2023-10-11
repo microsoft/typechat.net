@@ -292,7 +292,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportEnumAsEnum(Type type)
+    private TypescriptExporter ExportEnumAsEnum(Type type)
     {
         string typeName = type.Name;
         ExportComments(type);
@@ -306,7 +306,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportEnumAsLiterals(Type type)
+    private TypescriptExporter ExportEnumAsLiterals(Type type)
     {
         string typeName = type.Name;
         ExportComments(type);
@@ -318,7 +318,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportEnumLiterals(Type type)
+    private TypescriptExporter ExportEnumLiterals(Type type)
     {
         if (!IncludeComments)
         {
@@ -347,7 +347,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportEnumValues(Type type)
+    private TypescriptExporter ExportEnumValues(Type type)
     {
         string[] names = Enum.GetNames(type);
         var fields = type.GetFields();
@@ -367,13 +367,13 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportMembers(Type type)
+    private TypescriptExporter ExportMembers(Type type)
     {
         return ExportProperties(type).
                ExportFields(type);
     }
 
-    TypescriptExporter ExportProperties(Type type)
+    private TypescriptExporter ExportProperties(Type type)
     {
         ArgumentVerify.ThrowIfNull(type, nameof(type));
 
@@ -381,7 +381,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return ExportProperties(properties);
     }
 
-    TypescriptExporter ExportProperties(IEnumerable<PropertyInfo> properties)
+    private TypescriptExporter ExportProperties(IEnumerable<PropertyInfo> properties)
     {
         ArgumentVerify.ThrowIfNull(properties, nameof(properties));
 
@@ -392,7 +392,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportFields(Type type)
+    private TypescriptExporter ExportFields(Type type)
     {
         ArgumentVerify.ThrowIfNull(type, nameof(type));
 
@@ -400,7 +400,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return ExportFields(fields);
     }
 
-    TypescriptExporter ExportFields(IEnumerable<FieldInfo> fields)
+    private TypescriptExporter ExportFields(IEnumerable<FieldInfo> fields)
     {
         foreach (var field in fields)
         {
@@ -409,7 +409,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportProperty(PropertyInfo property)
+    private TypescriptExporter ExportProperty(PropertyInfo property)
     {
         if (!property.IsAbstract() &&
             !property.IsIgnore())
@@ -420,7 +420,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportField(FieldInfo field)
+    private TypescriptExporter ExportField(FieldInfo field)
     {
         if (!field.IsIgnore())
         {
@@ -430,7 +430,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportMethods(Type type)
+    private TypescriptExporter ExportMethods(Type type)
     {
         MethodInfo[] methods = type.GetMethods(MemberFlags);
         foreach (var method in methods)
@@ -440,7 +440,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportMethod(MethodInfo methodInfo)
+    private TypescriptExporter ExportMethod(MethodInfo methodInfo)
     {
         ExportComments(methodInfo);
         _writer.BeginMethodDeclare(methodInfo.Name);
@@ -456,7 +456,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportComments(MemberInfo member)
+    private TypescriptExporter ExportComments(MemberInfo member)
     {
         if (IncludeComments)
         {
@@ -472,7 +472,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportVariable(MemberInfo member, Type type)
+    private TypescriptExporter ExportVariable(MemberInfo member, Type type)
     {
         Type actualType;
         bool isNullable;
@@ -507,7 +507,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportParameter(ParameterInfo parameter, int i, int count)
+    private TypescriptExporter ExportParameter(ParameterInfo parameter, int i, int count)
     {
         Type type = parameter.ParameterType;
         Type actualType;

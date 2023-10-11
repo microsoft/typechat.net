@@ -3,6 +3,7 @@
 using System.Text;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
+using Microsoft.TypeChat.Validation;
 
 namespace CoffeeShop;
 
