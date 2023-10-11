@@ -3,7 +3,7 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Creates a language model encapsulation of an OpenAI or Azure OpenAI REST API endpoint
+/// A lightweight ILanguageModel implementation over OpenAI or Azure OpenAI REST API endpoint
 /// </summary>
 public class LanguageModel : ILanguageModel, IDisposable
 {
@@ -107,7 +107,15 @@ public class LanguageModel : ILanguageModel, IDisposable
     {
         public Choice[] choices { get; set; }
 
-        public string GetText() => (choices != null && choices.Length > 0) ? choices[0].message.content : string.Empty;
+        public string GetText()
+        {
+            string response = null;
+            if (choices != null && choices.Length > 0)
+            {
+                response = choices[0].message.content;
+            }
+            return response ?? string.Empty;
+        }
     }
 
     struct Message

@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat.Tests;
 
-internal static class Extensions
+public static class Extensions
 {
     public static IEnumerable<string> ReadLines(this string text)
     {
@@ -72,5 +72,11 @@ internal static class Extensions
     public static int RoundToInt(this double value)
     {
         return (int)(value + 0.5);
+    }
+
+    public static HttpResponseMessage SetJson(this HttpResponseMessage message, string json)
+    {
+        message.Content = new StringContent(json, null, "application/json");
+        return message;
     }
 }

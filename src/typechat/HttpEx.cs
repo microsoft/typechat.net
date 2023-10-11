@@ -17,7 +17,7 @@ internal static class HttpEx
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 using Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                return JsonSerializer.Deserialize<Response>(stream);
+                return Json.Parse<Response>(stream);
             }
 
             if (!response.StatusCode.IsTransientError() || retryCount >= maxRetries)

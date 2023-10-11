@@ -4,6 +4,11 @@ namespace Microsoft.TypeChat.Tests;
 
 public class MockHttpHandler : HttpMessageHandler
 {
+    public MockHttpHandler(string jsonResponse)
+    {
+        Response = new HttpResponseMessage();
+        Response.SetJson(jsonResponse);
+    }
     public MockHttpHandler(HttpResponseMessage response = null)
     {
         Response = response;
@@ -11,6 +16,11 @@ public class MockHttpHandler : HttpMessageHandler
 
     public int RequestCount { get; set; } = 0;
     public HttpResponseMessage Response { get; set; }
+
+    public void Clear()
+    {
+        RequestCount = 0;
+    }
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {

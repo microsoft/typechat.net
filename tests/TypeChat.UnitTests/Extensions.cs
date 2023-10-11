@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 namespace Microsoft.TypeChat.Tests;
-
+/*
 internal static class Extensions
 {
     public static IEnumerable<string> ReadLines(this string text)
@@ -74,3 +74,4 @@ internal static class Extensions
         return (int)(value + 0.5);
     }
 }
+*/
