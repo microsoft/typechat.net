@@ -13,7 +13,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class HierarchicalJsonTranslator : IJsonTranslator
 {
-    ChatLanguageModel _model;
+    ILanguageModel _model;
     VectorTextIndex<IJsonTranslator> _requestRouter;
 
     /// <summary>
@@ -21,7 +21,7 @@ public class HierarchicalJsonTranslator : IJsonTranslator
     /// </summary>
     /// <param name="model">language model to use for translators</param>
     /// <param name="embeddingModel">embedding model to use for translators</param>
-    public HierarchicalJsonTranslator(ChatLanguageModel model, TextEmbeddingModel embeddingModel)
+    public HierarchicalJsonTranslator(ILanguageModel model, TextEmbeddingModel embeddingModel)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
         ArgumentVerify.ThrowIfNull(embeddingModel, nameof(embeddingModel));

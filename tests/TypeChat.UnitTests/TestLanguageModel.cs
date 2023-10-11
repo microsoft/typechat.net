@@ -12,6 +12,8 @@ public class TestLanguageModel : TypeChatTest
         var handler = MockHttpHandler.ErrorResponder(429);
         var config = MockOpenAIConfig();
         config.MaxRetries = 2;
+        await RunRetry(config);
+
         config.MaxPauseMs = 0;
         await RunRetry(config);
 

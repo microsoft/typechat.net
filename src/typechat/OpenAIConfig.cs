@@ -76,7 +76,7 @@ public class OpenAIConfig
     /// </summary>
     public int TimeoutMs { get; set; } = 15 * 1000;
     public int MaxRetries { get; set; } = 3;
-    public int MaxPauseMs { get; set; } = 100;
+    public int MaxPauseMs { get; set; } = 1000; // 1000 millseconds
 
     /// <summary>
     /// Validate the configuration

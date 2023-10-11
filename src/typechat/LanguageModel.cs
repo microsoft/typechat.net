@@ -84,6 +84,10 @@ public class LanguageModel : ILanguageModel, IDisposable
                 _client.DefaultRequestHeaders.Add("OpenAI-Organization", _config.Organization);
             }
         }
+        if (_config.TimeoutMs > 0)
+        {
+            _client.Timeout = TimeSpan.FromMilliseconds(_config.TimeoutMs);
+        }
     }
 
     struct Request

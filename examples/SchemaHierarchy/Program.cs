@@ -15,7 +15,7 @@ public class SchemaHierarchyApp : ConsoleApp
 
     public SchemaHierarchyApp()
     {
-        var model = new ChatLanguageModel(Config.LoadOpenAI());
+        var model = new LanguageModel(Config.LoadOpenAI());
         var embeddingModel = new TextEmbeddingModel(Config.LoadOpenAI("OpenAI_Embedding"));
         _translator = new HierarchicalJsonTranslator(model, embeddingModel);
     }
