@@ -11,7 +11,7 @@ public class CalendarApp : ConsoleApp
     public CalendarApp()
     {
         _translator = new JsonTranslator<CalendarActions>(
-            new ChatLanguageModel(Config.LoadOpenAI())
+            new LanguageModel(Config.LoadOpenAI())
         );
 
         // Uncomment to see ALL raw messages to and from the AI

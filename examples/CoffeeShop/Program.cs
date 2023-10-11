@@ -12,7 +12,7 @@ public class CoffeeShopApp : ConsoleApp
     public CoffeeShopApp()
     {
         _translator = new JsonTranslator<Cart>(
-            new ChatLanguageModel(Config.LoadOpenAI())
+            new LanguageModel(Config.LoadOpenAI())
         );
         _translator.MaxRepairAttempts = 3;
         // Uncomment to see ALL raw messages to and from the AI
@@ -58,7 +58,7 @@ public class CoffeeShopApp : ConsoleApp
         {
             CoffeeShopApp app = new CoffeeShopApp();
             // Un-comment to print auto-generated schema at start:
-            Console.WriteLine(app.Schema.Schema.Text);
+            //Console.WriteLine(app.Schema.Schema.Text);
 
             await app.RunAsync("☕> ", args.GetOrNull(0));
         }

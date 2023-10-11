@@ -116,7 +116,7 @@ public static class KernelEx
     /// <param name="kernel">semantic kernel object</param>
     /// <param name="model">information about the model to use</param>
     /// <returns>LanguageModel object</returns>
-    public static ChatLanguageModel LanguageModel(this IKernel kernel, ModelInfo model)
+    public static ChatLanguageModel ChatLanguageModel(this IKernel kernel, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
 

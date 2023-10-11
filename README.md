@@ -65,11 +65,11 @@ program.Run(api);
 ```
 
 ## Microsoft.TypeChat.SemanticKernel ##
-TypeChat.SemanticKernel provides default bindings for language models, plugins and embeddings to Typechat.NET and TypeChat.NET examples.
+TypeChat.SemanticKernel provides bindings for language models, plugins and embeddings to TypeChat.NET examples.
 
 TypeChat.SemanticKernel include classes for:
 * **Json Programs for Plugins**: turn registered plugins into **APIs** that Json programs can target. See the [Plugins Example](examples/Plugins/Program.cs).
-* Language model and embeddings access: all TypeChat examples use the Semantic Kernel to call models and generate embeddings. 
+* Language model and embeddings access using Semantic Kernel. 
  
 # Getting Started 
 
@@ -98,13 +98,16 @@ TypeChat.SemanticKernel include classes for:
 * Microsoft.Typechat
 ```
 dotnet add package Microsoft.TypeChat
-dotnet add package Microsoft.TypeChat.SemanticKernel
 ```
-Please ensure that you have installed both packages above. 
 
 * Microsoft.TypeChat.Program
 ```
 dotnet add package Microsoft.TypeChat.Program
+```
+
+* Microsoft.Typechat.SemanticKernel
+```
+dotnet add package Microsoft.TypeChat.SemanticKernel
 ```
 
 ## Examples

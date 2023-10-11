@@ -25,7 +25,7 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
         Assert.NotNull(model);
         Assert.Equal(model.ModelInfo.Name, Config.ModelNames.Gpt35Turbo);
 
-        var languageModel = kernel.LanguageModel(Config.ModelNames.Gpt4);
+        var languageModel = kernel.ChatLanguageModel(Config.ModelNames.Gpt4);
         Assert.NotNull(languageModel);
         Assert.Equal(languageModel.ModelInfo.Name, Config.ModelNames.Gpt4);
     }
