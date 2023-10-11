@@ -111,4 +111,19 @@ public class TestLanguageModel : TypeChatTest
         }";
         return (jsonResponse, "Hello there!");
     }
+
+    [Fact]
+    public void Test_Prompt()
+    {
+        Prompt prompt = new Prompt();
+        prompt.AppendInstruction("Help the user translate approximate date ranges into precise ones");
+        prompt.Add(PromptLibrary.Now());
+        prompt.AppendResponse("OK, thank you");
+
+        Assert.Equal(PromptSection.Sources.System, prompt[0].Source);
+        Assert.Equal(PromptSection.Sources.User, prompt[1].Source);
+        Assert.Equal(PromptSection.Sources.Assistant, prompt[2].Source);
+
+    }
+
 }

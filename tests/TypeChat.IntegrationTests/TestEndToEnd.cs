@@ -122,24 +122,38 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     }
 
     [SkippableFact]
-    public async Task TestSentiment_LanguageModel()
+    public async Task TestSentiment_ChatModel()
     {
         Skip.If(!CanRunEndToEndTest(_config));
 
-        LanguageModel lm = new LanguageModel(_config.OpenAI);
+        ChatLanguageModel lm = new ChatLanguageModel(_config.OpenAI);
         string response = await lm.CompleteAsync("Is Venus a planet?");
         Assert.NotNull(response);
         Assert.NotEmpty(response);
-
-        lm.Dispose();
     }
 
     [SkippableFact]
-    public async Task TranslateSentiment_OpenAILanguageModel()
+    public async Task TranslateSentiment_LanguageModel()
     {
         Skip.If(!CanRunEndToEndTest(_config));
 
-        LanguageModel lm = new LanguageModel(_config.OpenAI);
+        using LanguageModel lm = new LanguageModel(_config.OpenAI);
         await TranslateSentiment(lm);
+    }
+
+    [Fact]
+    public async Task Test_Preamble()
+    {
+        Skip.If(!CanRunEndToEndTest(_config));
+
+        Prompt prompt = new Prompt();
+        prompt.AppendInstruction("Help the user translate approximate date ranges into precise ones");
+        prompt.Add(PromptLibrary.Now());
+        prompt.AppendResponse("Give me a time range, like fortnight");
+        prompt.Append("What is the date in a fortnight?");
+
+        LanguageModel lm = new LanguageModel(_config.OpenAI);
+        var response = await lm.CompleteAsync(prompt, 1000, 0.5);
+        Assert.NotEmpty(response);
     }
 }

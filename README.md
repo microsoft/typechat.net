@@ -21,7 +21,7 @@ TypeChat.NET currently consists of the following assemblies:
 
 * **Microsoft.TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs***. 
 
-* **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for language models, plugins and embeddings.
+* **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for chat models, plugins, embeddings and other features.
 
 ## Microsoft.TypeChat ##
 TypeChat uses language models to translate user intent into JSON that conforms to a schema. This JSON is then validated and deserialized into a typed object. Additional constraint checking is applied as needed. Validation errors are sent back to the language model, which uses them to **repair** the Json it originally returned. 

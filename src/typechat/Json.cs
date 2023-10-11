@@ -82,7 +82,7 @@ public class Json
     /// <returns></returns>
     public static T Parse<T>(Stream jsonStream)
     {
-        return (T) Default.Deserialize(jsonStream, typeof(T));
+        return (T)Default.Deserialize(jsonStream, typeof(T));
     }
 
     string Serialize<T>(T value)
