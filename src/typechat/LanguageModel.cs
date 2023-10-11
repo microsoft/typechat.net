@@ -5,7 +5,7 @@ namespace Microsoft.TypeChat;
 /// <summary>
 /// Creates a language model encapsulation of an OpenAI or Azure OpenAI REST API endpoint
 /// </summary>
-public class OpenAILanguageModel : ILanguageModel, IDisposable
+public class LanguageModel : ILanguageModel, IDisposable
 {
     static TranslationSettings s_defaultSettings = new TranslationSettings();
 
@@ -19,14 +19,15 @@ public class OpenAILanguageModel : ILanguageModel, IDisposable
     /// </summary>
     /// <param name="config">configuration to use</param>
     /// <param name="model">information about the target model</param>
-    public OpenAILanguageModel(OpenAIConfig config, ModelInfo? model = null)
+    /// <param name="client">http client to use</param>
+    public LanguageModel(OpenAIConfig config, ModelInfo? model = null, HttpClient? client = null)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
         config.Validate();
 
         _config = config;
         _model = model ?? _config.Model;
-        _client = new HttpClient();
+        _client = client ?? new HttpClient();
         ConfigureClient();
     }
     /// <summary>
@@ -62,8 +63,15 @@ public class OpenAILanguageModel : ILanguageModel, IDisposable
     {
         if (_config.Azure)
         {
-            string path = $"openai/deployments/{_model.Name}/chat/completions?api-version={_config.ApiVersion}";
-            _endPoint = new Uri(new Uri(_config.Endpoint), path).AbsoluteUri;
+            if (_config.Endpoint.IndexOf(@"chat/completions", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                _endPoint = _config.Endpoint;
+            }
+            else
+            {
+                string path = $"openai/deployments/{_model.Name}/chat/completions?api-version={_config.ApiVersion}";
+                _endPoint = new Uri(new Uri(_config.Endpoint), path).AbsoluteUri;
+            }
             _client.DefaultRequestHeaders.Add("api-key", _config.ApiKey);
         }
         else

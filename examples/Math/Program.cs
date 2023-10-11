@@ -13,7 +13,7 @@ public class MathApp : ConsoleApp
     {
         _api = new MathAPI();
         _translator = new ProgramTranslator<IMathAPI>(
-            new LanguageModel(Config.LoadOpenAI()),
+            new ChatLanguageModel(Config.LoadOpenAI()),
             _api
         );
         _translator.MaxRepairAttempts = 3;

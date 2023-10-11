@@ -46,7 +46,7 @@ internal static class Extensions
     public static JsonTranslator<T> CreateTranslator<T>(this Config config)
     {
         return new JsonTranslator<T>(
-            new LanguageModel(config.OpenAI),
+            new ChatLanguageModel(config.OpenAI),
             new TypeValidator<T>(TestVocabs.All()));
     }
 

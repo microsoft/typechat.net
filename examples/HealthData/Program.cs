@@ -13,7 +13,7 @@ public class HealthDataAgent : ConsoleApp
     public HealthDataAgent()
     {
         // Create an agent with history
-        _agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
+        _agent = new AgentWithHistory<HealthDataResponse>(new ChatLanguageModel(Config.LoadOpenAI()));
         // Instruct the agent on how it should act
         GiveAgentInstructions();
         // We only capture the questions that the model asked us into history

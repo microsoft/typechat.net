@@ -24,7 +24,7 @@ public class MultiSchemaApp : ConsoleApp
 
     public MultiSchemaApp()
     {
-        _model = new LanguageModel(Config.LoadOpenAI());
+        _model = new ChatLanguageModel(Config.LoadOpenAI());
         _childApps = new TextRequestRouter<IInputHandler>(_model);
         InitApps();
     }

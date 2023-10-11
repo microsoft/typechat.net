@@ -1,6 +1,6 @@
 # TypeChat.NET
 
-TypeChat.NET is an **experimental project** from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
+TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
 TypeChat.NET provides **cross platform** libraries that help you build natural language interfaces with language models using strong types, type validation and simple type safe programs (plans). Strong typing may help make software that uses language models more deterministic and reliable.    
 ```
@@ -173,7 +173,7 @@ A typical appSettings.Development.json will look like this:
 ```
 
 ### OpenAIConfig
-TypeChat examples accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class supplies configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
+TypeChat examples accesses language models using the [LanguageModel](./src/typechat/LanguageModel.cs) class. The OpenAIConfig class supplies configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
 
 See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list of :
   * Configurable properties
@@ -193,11 +193,11 @@ var model = new LanguageModel(config);
 You can also initialize LanguageModel using an IKernel object you created using a KernelBuilder.
 ```
 const string modelName = "gpt-35-turbo";
-new LanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
+new ChatLanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
 ```
 
 ## Using your own client
-TypeChat accesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat.sk/LanguageModel.cs) implements ILanguageModel. 
+TypeChat accesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat/LanguageModel.cs) implements ILanguageModel. 
 
 You can use your own model client by implementing ILanguageModel.
 

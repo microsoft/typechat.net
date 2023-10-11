@@ -41,7 +41,6 @@ public class OpenAIConfig
         /// <summary>
         /// Endpoint to use for Azure OpenAI service.
         /// https://YOUR_RESOURCE_NAME.openai.azure.com
-        /// https://YOUR_RESOURCE_NAME.openai.azure.com/openai/deployments/{your-deployment-name}/chat/completions?api-version={API-version}
         /// </summary>
         public const string AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT";
     }

@@ -46,7 +46,7 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
     {
         Skip.If(!CanRunEndToEndTest(_config));
 
-        LanguageModel cm = new LanguageModel(_config.OpenAI);
+        ChatLanguageModel cm = new ChatLanguageModel(_config.OpenAI);
         Prompt prompt = "Is Venus a planet?";
         Assert.Equal(prompt.Last().Source, PromptSection.Sources.User);
 
