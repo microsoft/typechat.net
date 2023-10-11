@@ -130,6 +130,8 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         string response = await lm.CompleteAsync("Is Venus a planet?");
         Assert.NotNull(response);
         Assert.NotEmpty(response);
+
+        lm.Dispose();
     }
 
     [SkippableFact]

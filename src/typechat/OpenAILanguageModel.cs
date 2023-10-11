@@ -5,7 +5,7 @@ namespace Microsoft.TypeChat;
 /// <summary>
 /// Creates a language model encapsulation of an OpenAI or Azure OpenAI REST API endpoint
 /// </summary>
-public class OpenAILanguageModel : ILanguageModel
+public class OpenAILanguageModel : ILanguageModel, IDisposable
 {
     static TranslationSettings s_defaultSettings = new TranslationSettings();
 
@@ -121,5 +121,21 @@ public class OpenAILanguageModel : ILanguageModel
     struct Choice
     {
         public Message message { get; set; }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _client?.Dispose();
+            _client = null;
+        }
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }
