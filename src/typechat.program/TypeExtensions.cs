@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-internal static class Extensions
+internal static class TypeExtensions
 {
     internal static bool IsAsync(this ParameterInfo returnType)
     {

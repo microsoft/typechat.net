@@ -2,24 +2,48 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-public static class TypeExtensions
+public static class TypeEx
 {
+    public static IEnumerable<CommentAttribute> CommentAttributes(this MemberInfo member)
+    {
+        object[] attributes = member.GetCustomAttributes(typeof(CommentAttribute), false);
+        foreach (var attribute in attributes)
+        {
+            if (attribute is CommentAttribute comment)
+            {
+                yield return comment;
+            }
+        }
+    }
+
+    public static IEnumerable<string> Comments(this MemberInfo member)
+    {
+        return from comment in member.CommentAttributes()
+               where comment.HasText
+               select comment.Text;
+    }
+
+    public static JsonVocabAttribute? JsonVocabAttribute(this MemberInfo member)
+    {
+        return member.GetCustomAttribute(typeof(JsonVocabAttribute)) as JsonVocabAttribute;
+    }
+
     public static bool IsString(this Type type)
     {
         return type == typeof(string) || typeof(IStringType).IsAssignableFrom(type);
     }
 
-    internal static bool IsBoolean(this Type type)
+    public static bool IsBoolean(this Type type)
     {
         return type == typeof(bool);
     }
 
-    internal static bool IsDateTime(this Type type)
+    public static bool IsDateTime(this Type type)
     {
         return type == typeof(DateTime) || type == typeof(TimeSpan);
     }
 
-    internal static bool IsNumber(this Type type)
+    public static bool IsNumber(this Type type)
     {
         switch (Type.GetTypeCode(type))
         {
@@ -64,6 +88,32 @@ public static class TypeExtensions
     internal static bool IsVoid(this Type type)
     {
         return type == typeof(void);
+    }
+
+    internal static bool IsAbstract(this PropertyInfo property)
+    {
+        var methods = property.GetAccessors();
+        for (int i = 0; i < methods.Length; ++i)
+        {
+            if (methods[i].IsAbstract)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    internal static bool IsRequired(this MemberInfo property)
+    {
+#if NET7_0_OR_GREATER
+        var json_attrib = property.GetCustomAttribute(typeof(JsonRequiredAttribute));
+        if (json_attrib != null)
+        {
+            return true;
+        }
+#endif
+        var attrib = property.GetCustomAttribute(typeof(RequiredAttribute));
+        return attrib != null;
     }
 
     internal static bool IsNullableValueType(this Type type)
@@ -119,6 +169,21 @@ public static class TypeExtensions
         Assembly assembly = type.Assembly;
 
         return assembly.GetTypes().Where(t => t.IsClass && t.IsAssignableFrom(type));
+    }
+
+
+    internal static bool IsIgnore(this MemberInfo member)
+    {
+        JsonIgnoreAttribute? attr = (JsonIgnoreAttribute)member.GetCustomAttribute(typeof(JsonIgnoreAttribute), true);
+        return attr != null;
+    }
+
+    internal static string PropertyName(this MemberInfo member)
+    {
+        JsonPropertyNameAttribute? attr = (JsonPropertyNameAttribute)member.GetCustomAttribute(typeof(JsonPropertyNameAttribute), true);
+        return attr != null ?
+                attr.Name :
+                member.Name;
     }
 
     internal static string GenerateInterfaceTypeDef(this Type type)

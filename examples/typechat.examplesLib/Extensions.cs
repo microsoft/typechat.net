@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-public static class Extensions
+public static class ProgramExtensions
 {
     /// <summary>
     /// Get the array item at position 'index'. If index is beyond the length of args

@@ -1,11 +1,27 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace Microsoft.TypeChat;
 
 internal static class ListEx
 {
-    public static bool IsNullOrEmpty<T>(this IList<T> list)
+    internal static bool IsNullOrEmpty<T>(this IList<T> list)
     {
-        return list == null || list.Count == 0;
+        return (list == null || list.Count == 0);
+    }
+
+    internal static void Trim<T>(this List<T> list, int trimCount)
+    {
+        if (trimCount > list.Count)
+        {
+            list.Clear();
+        }
+        else
+        {
+            list.RemoveRange(list.Count - trimCount, trimCount);
+        }
     }
 }
