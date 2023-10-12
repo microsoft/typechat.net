@@ -145,4 +145,15 @@ public static class VocabEx
         return from entry in vocab
                select entry.Text;
     }
+
+    /// <summary>
+    /// Add a convertor that can process vocabularies in the vocabs collection
+    /// </summary>
+    /// <param name="vocabs">vocabularies to create convertors for</param>
+    /// <param name="options">serializer options to register convertors in</param>
+    public static void AddJsonConvertorsTo(this IVocabCollection vocabs, JsonSerializerOptions options)
+    {
+        ArgumentVerify.ThrowIfNull(options, nameof(options));
+        options.Converters.Add(new VocabStringJsonConvertor(vocabs));
+    }
 }
