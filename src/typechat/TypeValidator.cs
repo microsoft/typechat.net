@@ -2,7 +2,7 @@
 
 using Microsoft.TypeChat.Schema;
 
-namespace Microsoft.TypeChat.Validation;
+namespace Microsoft.TypeChat;
 
 /// <summary>
 /// A TypeValidator that:

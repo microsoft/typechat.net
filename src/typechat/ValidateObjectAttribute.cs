@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-namespace Microsoft.TypeChat.Validation;
+namespace Microsoft.TypeChat;
 
 /// <summary>
 /// Place this attribute on properties to recursively validate child objects

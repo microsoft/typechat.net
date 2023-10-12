@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat.Validation;
-
 namespace Microsoft.TypeChat.Tests;
 
 public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
