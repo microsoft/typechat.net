@@ -42,7 +42,7 @@ public class LanguageModel : ILanguageModel, IDisposable
     /// <param name="settings">translation settings such as temperature</param>
     /// <param name="cancelToken">cancellation token</param>
     /// <returns></returns>
-    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings, CancellationToken cancelToken)
+    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNullOrEmpty<IPromptSection>(prompt, nameof(prompt));
 
@@ -51,7 +51,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         return response.GetText();
     }
 
-    Request CreateRequest(Prompt prompt, TranslationSettings? settings)
+    Request CreateRequest(Prompt prompt, TranslationSettings? settings = null)
     {
         var request = Request.Create(prompt, settings ?? s_defaultSettings);
         if (!_config.Azure)

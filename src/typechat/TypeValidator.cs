@@ -37,7 +37,7 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
         _jsonValidator = new JsonSerializerTypeValidator<T>(_schema);
         if (_schema.HasVocabs)
         {
-            _jsonValidator.Options.Converters.Add(new VocabStringJsonConvertor(_schema.Vocabs));
+            _schema.Vocabs.AddJsonConvertorsTo(_jsonValidator.Options);
         }
     }
 

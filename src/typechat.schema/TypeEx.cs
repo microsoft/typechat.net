@@ -2,9 +2,6 @@
 
 namespace Microsoft.TypeChat.Schema;
 
-internal interface IStringType
-{
-}
 public static class TypeEx
 {
     public static IEnumerable<CommentAttribute> CommentAttributes(this MemberInfo member)

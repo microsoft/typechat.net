@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net60;net70</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>10</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../typechat/TypeChat.csproj" />
+    <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Compile Include="..\typechat\ArgumentVerify.cs" Link="ArgumentVerify.cs" />
+    <Compile Include="..\typechat\ListEx.cs" Link="ListEx.cs" />
   </ItemGroup>
 
   <ItemGroup>
