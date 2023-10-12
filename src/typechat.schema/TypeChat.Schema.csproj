@@ -23,7 +23,7 @@
 
   <Import Project="../package/nuget.props" />
   <PropertyGroup>
-    <Description>TypeChat.Program translates natural language requests into simple programs (Plans) that are dynamically typed checked, compiled and run</Description>
+    <Description>TypeChat.Schema generates TypeScript-style schema definitions of simple and complex types.</Description>
   </PropertyGroup>
 
 </Project>
