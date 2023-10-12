@@ -39,7 +39,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\typechat.examplesLib\TypeChat.ExamplesLib.csproj" />
-    <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
     <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
   </ItemGroup>
 

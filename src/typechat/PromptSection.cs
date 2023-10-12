@@ -77,6 +77,7 @@ public class PromptSection : IPromptSection
     /// <summary>
     /// Is the section empty?
     /// </summary>
+    [JsonIgnore]
     public bool IsEmpty => string.IsNullOrEmpty(_text);
 
     /// <summary>

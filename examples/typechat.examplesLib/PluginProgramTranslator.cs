@@ -26,7 +26,7 @@ public class PluginProgramTranslator
         _pluginApi = new PluginApi(_kernel);
         _pluginSchema = _pluginApi.TypeInfo.ExportSchema(_pluginApi.TypeName);
         _translator = new ProgramTranslator(
-            _kernel.LanguageModel(model),
+            _kernel.ChatLanguageModel(model),
             new ProgramValidator(new PluginProgramValidator(_pluginApi.TypeInfo)),
             _pluginSchema
         );
