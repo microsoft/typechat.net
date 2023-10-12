@@ -65,7 +65,7 @@ program.Run(api);
 ```
 
 ## Microsoft.TypeChat.SemanticKernel ##
-TypeChat.SemanticKernel provides bindings for language models, plugins and embeddings to TypeChat.NET examples.
+TypeChat.SemanticKernel provides bindings for plugins, and models to TypeChat.NET examples.
 
 TypeChat.SemanticKernel include classes for:
 * **Json Programs for Plugins**: turn registered plugins into **APIs** that Json programs can target. See the [Plugins Example](examples/Plugins/Program.cs).
@@ -80,7 +80,6 @@ TypeChat.SemanticKernel include classes for:
     * gpt-4
     * ada-002
 * Some examples and scenarios will work best with gpt-4
-* Since TypeChat.NET uses the Semantic Kernel, models from other providers ***may*** be used for experimentation.
 
 ## Building
 
@@ -192,8 +191,8 @@ config = OpenAIConfig.FromEnvironment();
 var model = new LanguageModel(config);
 ```
 
-## Using Semantic Kernel directly
-You can also initialize LanguageModel using an IKernel object you created using a KernelBuilder.
+## Using Semantic Kernel
+You can also access a LanguageModel using the SemanticKernel IKernel object you created using a KernelBuilder.
 ```
 const string modelName = "gpt-35-turbo";
 new ChatLanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
