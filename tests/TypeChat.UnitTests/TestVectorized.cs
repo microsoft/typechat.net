@@ -1,8 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.Memory.Collections;
-using Microsoft.TypeChat.Embeddings;
-
 namespace Microsoft.TypeChat.Tests;
 
 public class TestVectorized

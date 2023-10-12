@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Microsoft.SemanticKernel.Orchestration;
-using Microsoft.CSharp;
 
 namespace Microsoft.TypeChat;
 

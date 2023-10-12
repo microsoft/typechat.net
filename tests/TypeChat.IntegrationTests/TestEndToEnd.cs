@@ -1,9 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Net;
-using Xunit;
-using Xunit.Sdk;
-
 namespace Microsoft.TypeChat.Tests;
 
 public class TestEndToEnd : TypeChatTest, IClassFixture<Config>

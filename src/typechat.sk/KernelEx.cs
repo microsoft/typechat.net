@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.AI.TextCompletion;
-using Microsoft.SemanticKernel.Reliability;
 using Microsoft.SemanticKernel.Reliability.Basic;
 
 namespace Microsoft.TypeChat;
