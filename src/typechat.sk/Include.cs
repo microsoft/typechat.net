@@ -9,6 +9,7 @@ global using System.Text;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;
 global using Microsoft.TypeChat;
+global using Microsoft.TypeChat.Schema;
 global using Microsoft.SemanticKernel;
 global using Microsoft.SemanticKernel.AI.TextCompletion;
 global using Microsoft.SemanticKernel.AI.ChatCompletion;
