@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Net;
 using Xunit;
 using Xunit.Sdk;
 
@@ -16,10 +17,10 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     }
 
     [SkippableFact]
-    public async Task TranslateSentiment()
+    public async Task TranslateSentiment_ChatModel()
     {
         Skip.If(!CanRunEndToEndTest(_config));
-        await TranslateSentiment(new LanguageModel(_config.OpenAI));
+        await TranslateSentiment(new ChatLanguageModel(_config.OpenAI));
     }
 
     [SkippableFact]
@@ -50,7 +51,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     {
         Skip.If(!CanRunEndToEndTest(_config));
 
-        var translator = new JsonTranslator<Drawing>(new LanguageModel(_config.OpenAI));
+        var translator = new JsonTranslator<Drawing>(new ChatLanguageModel(_config.OpenAI));
         string request = "Add a circle of radius 4.5 at 30, 30 and\n" +
                          "Add a retangle at 5, 5 with height 10 and width 15";
 
@@ -78,7 +79,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
 
         SchemaText schema = SchemaText.Load("./SentimentSchema.ts");
         var translator = new JsonTranslator<SentimentResponse>(
-            new LanguageModel(_config.OpenAI),
+            new ChatLanguageModel(_config.OpenAI),
             schema
         );
         SentimentResponse response = await translator.TranslateAsync("Tonights gonna be a good night! A good good night!");
@@ -95,7 +96,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     {
         Skip.If(!CanRunEndToEndTest(_config));
 
-        await ProgramMath(new LanguageModel(_config.OpenAI));
+        await ProgramMath(new ChatLanguageModel(_config.OpenAI));
     }
 
     [SkippableFact]
@@ -118,5 +119,41 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         Assert.True(program.IsComplete);
         dynamic result = program.Run(api);
         Assert.True(result == expectedResult);
+    }
+
+    [SkippableFact]
+    public async Task TestSentiment_ChatModel()
+    {
+        Skip.If(!CanRunEndToEndTest(_config));
+
+        ChatLanguageModel lm = new ChatLanguageModel(_config.OpenAI);
+        string response = await lm.CompleteAsync("Is Venus a planet?");
+        Assert.NotNull(response);
+        Assert.NotEmpty(response);
+    }
+
+    [SkippableFact]
+    public async Task TranslateSentiment_LanguageModel()
+    {
+        Skip.If(!CanRunEndToEndTest(_config));
+
+        using LanguageModel lm = new LanguageModel(_config.OpenAI);
+        await TranslateSentiment(lm);
+    }
+
+    [Fact]
+    public async Task Test_Preamble()
+    {
+        Skip.If(!CanRunEndToEndTest(_config));
+
+        Prompt prompt = new Prompt();
+        prompt.AppendInstruction("Help the user translate approximate date ranges into precise ones");
+        prompt.Add(PromptLibrary.Now());
+        prompt.AppendResponse("Give me a time range, like fortnight");
+        prompt.Append("What is the date in a fortnight?");
+
+        LanguageModel lm = new LanguageModel(_config.OpenAI);
+        var response = await lm.CompleteAsync(prompt, 1000, 0.5);
+        Assert.NotEmpty(response);
     }
 }

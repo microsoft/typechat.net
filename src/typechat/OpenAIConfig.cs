@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.Reliability;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -20,7 +18,7 @@ public class OpenAIConfig
         /// </summary>
         public const string OPENAI_API_KEY = "OPENAI_API_KEY";
         /// <summary>
-        /// The OpenAI endpoint. This follows semantic kernel conventions
+        /// The OpenAI endpoint, such as:
         /// https://api.openai.com/v1/chat/completions
         /// </summary>
         public const string OPENAI_ENDPOINT = "OPENAI_ENDPOINT";
@@ -42,7 +40,6 @@ public class OpenAIConfig
         public const string AZURE_OPENAI_API_KEY = "AZURE_OPENAI_API_KEY";
         /// <summary>
         /// Endpoint to use for Azure OpenAI service.
-        /// This follows the Semantic Kernel convention
         /// https://YOUR_RESOURCE_NAME.openai.azure.com
         /// </summary>
         public const string AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT";
@@ -71,17 +68,21 @@ public class OpenAIConfig
     /// </summary>
     public string? Model { get; set; }
     /// <summary>
+    /// Api version
+    /// </summary>
+    public string ApiVersion { get; set; } = "2023-05-15";
+    /// <summary>
     /// Http Settings
     /// </summary>
     public int TimeoutMs { get; set; } = 15 * 1000;
     public int MaxRetries { get; set; } = 3;
-    public int MaxPauseMs { get; set; } = 100;
+    public int MaxPauseMs { get; set; } = 1000; // 1000 milliseconds
 
     /// <summary>
     /// Validate the configuration
     /// </summary>
-    /// <param name="configFileName"></param>
-    internal void Validate(string configFileName = default)
+    /// <param name="configFileName">(optional) Config file the settings came from</param>
+    public void Validate(string configFileName = default)
     {
         configFileName ??= string.Empty;
 

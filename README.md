@@ -1,6 +1,6 @@
 # TypeChat.NET
 
-TypeChat.NET is an **experimental project** from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
+TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
 TypeChat.NET provides **cross platform** libraries that help you build natural language interfaces with language models using strong types, type validation and simple type safe programs (plans). Strong typing may help make software that uses language models more deterministic and reliable.    
 ```
@@ -21,7 +21,7 @@ TypeChat.NET currently consists of the following assemblies:
 
 * **Microsoft.TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs***. 
 
-* **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for language models, plugins and embeddings.
+* **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for chat models, plugins, embeddings and other features.
 
 ## Microsoft.TypeChat ##
 TypeChat uses language models to translate user intent into JSON that conforms to a schema. This JSON is then validated and deserialized into a typed object. Additional constraint checking is applied as needed. Validation errors are sent back to the language model, which uses them to **repair** the Json it originally returned. 
@@ -65,11 +65,11 @@ program.Run(api);
 ```
 
 ## Microsoft.TypeChat.SemanticKernel ##
-TypeChat.SemanticKernel provides default bindings for language models, plugins and embeddings to Typechat.NET and TypeChat.NET examples.
+TypeChat.SemanticKernel provides bindings for language models, plugins and embeddings to TypeChat.NET examples.
 
 TypeChat.SemanticKernel include classes for:
 * **Json Programs for Plugins**: turn registered plugins into **APIs** that Json programs can target. See the [Plugins Example](examples/Plugins/Program.cs).
-* Language model and embeddings access: all TypeChat examples use the Semantic Kernel to call models and generate embeddings. 
+* Language model and embeddings access using Semantic Kernel. 
  
 # Getting Started 
 
@@ -98,13 +98,16 @@ TypeChat.SemanticKernel include classes for:
 * Microsoft.Typechat
 ```
 dotnet add package Microsoft.TypeChat
-dotnet add package Microsoft.TypeChat.SemanticKernel
 ```
-Please ensure that you have installed both packages above. 
 
 * Microsoft.TypeChat.Program
 ```
 dotnet add package Microsoft.TypeChat.Program
+```
+
+* Microsoft.Typechat.SemanticKernel
+```
+dotnet add package Microsoft.TypeChat.SemanticKernel
 ```
 
 ## Examples
@@ -129,7 +132,7 @@ The following examples demonstrate how to use JsonTranslator, Schemas and Vocabu
 ### Hierarchical schemas
 * [MultiSchema](./examples/MultiSchema): dynamically route user intent to other 'sub-apps'
 * [SchemaHierarchy](./examples/SchemaHierarchy): A Json Translator than uses multiple child JsonTranslators. For each user request, it picks the semantically ***nearest*** child translator and routes the input to it. 
-* [TextClassification](./examples/typechat.examplesLib/Classification) and [VectorTextIndex](./examples/typechat.examplesLib/VectorTextIndex.cs) show how to build a simple classifiers to route input.
+* [TextClassifier](./examples/typechat.examplesLib/Classification/TextClassifier.cs) and [VectorTextIndex](./examples/typechat.examplesLib/VectorTextIndex.cs) show how to build a simple classifiers to route input.
 
 ### Json Programs
 
@@ -173,7 +176,7 @@ A typical appSettings.Development.json will look like this:
 ```
 
 ### OpenAIConfig
-TypeChat examples accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class supplies configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
+TypeChat examples accesses language models using the [LanguageModel](./src/typechat/LanguageModel.cs) class. The OpenAIConfig class supplies configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
 
 See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list of :
   * Configurable properties
@@ -193,13 +196,13 @@ var model = new LanguageModel(config);
 You can also initialize LanguageModel using an IKernel object you created using a KernelBuilder.
 ```
 const string modelName = "gpt-35-turbo";
-new LanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
+new ChatLanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
 ```
 
 ## Using your own client
-TypeChat accesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat.sk/LanguageModel.cs) implements ILanguageModel. 
+TypeChat accesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat/LanguageModel.cs) implements ILanguageModel. 
 
-You can use your own model client by implementing ILanguageModel.
+You can use your own model client by implementing ILanguageModel. If you don't use one of the Open AI models listed above, you will likely also need to supply [JsonTranslatorPrompts](./src/typechat/IJsonTranslatorPrompts.cs) that work best with your model.
 
 # Code of Conduct
 

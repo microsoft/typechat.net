@@ -41,7 +41,7 @@ public class TestClassification : TypeChatTest, IClassFixture<Config>
 
     TextRequestRouter<string> CreateRouter()
     {
-        TextRequestRouter<string> router = new TextRequestRouter<string>(new LanguageModel(_config.OpenAI));
+        TextRequestRouter<string> router = new TextRequestRouter<string>(new ChatLanguageModel(_config.OpenAI));
         AddRoutes(router, out _);
         return router;
     }

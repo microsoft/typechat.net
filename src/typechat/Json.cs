@@ -74,6 +74,16 @@ public class Json
     {
         return (T)Parse(json, typeof(T));
     }
+    /// <summary>
+    /// Parse Json from a stream into an object of the given type
+    /// </summary>
+    /// <typeparam name="T">destination type</typeparam>
+    /// <param name="jsonStream">stream to read from</param>
+    /// <returns></returns>
+    public static T Parse<T>(Stream jsonStream)
+    {
+        return (T)Default.Deserialize(jsonStream, typeof(T));
+    }
 
     string Serialize<T>(T value)
     {
@@ -83,5 +93,16 @@ public class Json
     object? Deserialize(string json, Type type)
     {
         return JsonSerializer.Deserialize(json, type, _options);
+    }
+
+    object? Deserialize(Stream jsonStream, Type type)
+    {
+        return JsonSerializer.Deserialize(jsonStream, type, _options);
+    }
+
+    internal static StringContent ToJsonMessage<T>(T value)
+    {
+        string jsonContent = Json.Stringify(value, false);
+        return new StringContent(jsonContent, UnicodeEncoding.UTF8, "application/json");
     }
 }

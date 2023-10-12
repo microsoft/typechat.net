@@ -116,11 +116,11 @@ public static class KernelEx
     /// <param name="kernel">semantic kernel object</param>
     /// <param name="model">information about the model to use</param>
     /// <returns>LanguageModel object</returns>
-    public static LanguageModel LanguageModel(this IKernel kernel, ModelInfo model)
+    public static ChatLanguageModel ChatLanguageModel(this IKernel kernel, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
 
-        return new LanguageModel(kernel.GetService<IChatCompletion>(model.Name), model);
+        return new ChatLanguageModel(kernel.GetService<IChatCompletion>(model.Name), model);
     }
 
     /// <summary>

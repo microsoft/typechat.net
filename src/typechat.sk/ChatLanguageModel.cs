@@ -5,7 +5,7 @@ namespace Microsoft.TypeChat;
 /// <summary>
 /// A LanguageModel that uses IChatCompletion AI models
 /// </summary>
-public class LanguageModel : ILanguageModel
+public class ChatLanguageModel : ILanguageModel
 {
     IChatCompletion _service;
     ModelInfo _model;
@@ -16,7 +16,7 @@ public class LanguageModel : ILanguageModel
     /// </summary>
     /// <param name="config"></param>
     /// <param name="model">information about the model to create</param>
-    public LanguageModel(OpenAIConfig config, ModelInfo? model = null)
+    public ChatLanguageModel(OpenAIConfig config, ModelInfo? model = null)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
         config.Validate();
@@ -32,7 +32,7 @@ public class LanguageModel : ILanguageModel
     /// </summary>
     /// <param name="service"></param>
     /// <param name="model"></param>
-    public LanguageModel(IChatCompletion service, ModelInfo model)
+    public ChatLanguageModel(IChatCompletion service, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;

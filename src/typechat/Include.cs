@@ -10,4 +10,7 @@ global using System.Reflection;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;
 global using System.ComponentModel.DataAnnotations;
+global using System.Net;
+global using System.Net.Http;
+global using System.Net.Http.Headers;
 

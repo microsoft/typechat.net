@@ -114,5 +114,25 @@ public class TypeChatTest
         }
         return null;
     }
+
+    public OpenAIConfig MockOpenAIConfig(bool azure = true)
+    {
+        OpenAIConfig config = new OpenAIConfig
+        {
+            Azure = azure,
+            ApiKey = "NOT_A_KEY",
+            Model = "gpt-35-turbo"
+        };
+        if (azure)
+        {
+            config.Endpoint = "https://YOUR_RESOURCE_NAME.openai.azure.com";
+        }
+        else
+        {
+            config.Endpoint = "https://api.openai.com/v1/chat/completions";
+            config.Organization = "NOT_AN_ORG";
+        }
+        return config;
+    }
 }
 
