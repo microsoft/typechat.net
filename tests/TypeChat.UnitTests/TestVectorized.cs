@@ -1,5 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using LinqExpression = System.Linq.Expressions.Expression;
+using System.Globalization;
+
 namespace Microsoft.TypeChat.Tests;
 
 public class TestVectorized

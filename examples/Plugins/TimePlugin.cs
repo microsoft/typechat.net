@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
+using System.IO;
 using System.ComponentModel;
 using Microsoft.SemanticKernel.SkillDefinition;
 

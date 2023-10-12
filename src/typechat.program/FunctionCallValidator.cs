@@ -60,8 +60,8 @@ public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
 
     void ValidateArgs(FunctionCall call, ApiMethod methodInfo, Expression[] args)
     {
-        int expectedCount = methodInfo.Params != null ? methodInfo.Params.Length : 0;
-        int actualCount = args != null ? args.Length : 0;
+        int expectedCount = (methodInfo.Params != null) ? methodInfo.Params.Length : 0;
+        int actualCount = (args != null) ? args.Length : 0;
         if (actualCount != expectedCount)
         {
             ProgramException.ThrowArgCountMismatch(call, expectedCount, actualCount);

@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.TypeChat.Classification;
+
 namespace Microsoft.TypeChat;
 
 /// <summary>

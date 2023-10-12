@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Threading.Tasks;
+
 namespace Microsoft.TypeChat.Tests;
 
 public class MathAPI : IMathAPI

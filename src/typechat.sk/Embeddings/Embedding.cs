@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Diagnostics;
+
 namespace Microsoft.TypeChat.Embeddings;
 
 /// <summary>
