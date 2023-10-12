@@ -131,6 +131,7 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
     /// Schema for T
     /// </summary>
     public TypeSchema Schema => _schema;
+
     /// <summary>
     /// Serialization options
     /// </summary>
