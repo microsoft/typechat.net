@@ -11,8 +11,8 @@
 
   <ItemGroup>
     <Compile Include="..\typechat\ArgumentVerify.cs" Link="ArgumentVerify.cs" />
-    <Compile Include="..\typechat\Extensions\StringExtensions.cs" Link="Extensions\StringExtensions.cs" />
-    <Compile Include="..\typechat\Extensions\ListExtensions.cs" Link="Extensions\ListExtensions.cs" />
+    <Compile Include="..\typechat\StringEx.cs" Link="StringEx.cs" />
+    <Compile Include="..\typechat\ListEx.cs" Link="ListEx.cs" />
   </ItemGroup>
   
   <ItemGroup>

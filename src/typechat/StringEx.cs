@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-internal static class StringExtensions
+internal static class StringEx
 {
     internal static void ExtractLine(this string text, long lineNumber, StringBuilder sb)
     {

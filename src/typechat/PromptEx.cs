@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-internal static class PromptExtensions
+internal static class PromptEx
 {
     /// <summary>
     /// Get a completion for the given prompt

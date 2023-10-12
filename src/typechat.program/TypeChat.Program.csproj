@@ -15,23 +15,19 @@
     </None>
   </ItemGroup>
   
-    <ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\typechat\TypeChat.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\typechat\ArgumentVerify.cs" Link="ArgumentVerify.cs" />
-    <Compile Include="..\typechat\Extensions\ListExtensions.cs" Link="Extensions\ListExtensions.cs" />
+    <Compile Include="..\typechat\ListEx.cs" Link="ListEx.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Text.Json" Version="6.0.8" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="NewFolder\" />
   </ItemGroup>
 
   <Import Project="../package/nuget.props" />

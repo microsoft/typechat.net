@@ -2,7 +2,7 @@
 
 namespace Microsoft.TypeChat;
 
-internal static class ListExtensions
+internal static class ListEx
 {
     public static bool IsNullOrEmpty<T>(this IList<T> list)
     {

@@ -31,10 +31,12 @@ public class LanguageModel : ILanguageModel, IDisposable
         _client = client ?? new HttpClient();
         ConfigureClient();
     }
+
     /// <summary>
     /// Information about the language model
     /// </summary>
     public ModelInfo ModelInfo => _model;
+
     /// <summary>
     /// Get a completion for the given prompt
     /// </summary>
@@ -42,7 +44,7 @@ public class LanguageModel : ILanguageModel, IDisposable
     /// <param name="settings">translation settings such as temperature</param>
     /// <param name="cancelToken">cancellation token</param>
     /// <returns></returns>
-    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings, CancellationToken cancelToken)
+    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNullOrEmpty<IPromptSection>(prompt, nameof(prompt));
 
@@ -60,6 +62,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
         return request;
     }
+
     void ConfigureClient()
     {
         if (_config.Azure)
