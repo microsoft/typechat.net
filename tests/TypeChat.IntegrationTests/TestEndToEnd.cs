@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat;
+using System.Net;
+using Xunit;
+using Xunit.Sdk;
 
 namespace Microsoft.TypeChat.Tests;
 
@@ -151,7 +153,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         prompt.Append("What is the date in a fortnight?");
 
         LanguageModel lm = new LanguageModel(_config.OpenAI);
-        TranslationSettings settings = new()
+        TranslationSettings settings = new TranslationSettings
         {
             MaxTokens = 1000,
             Temperature = 0.5,

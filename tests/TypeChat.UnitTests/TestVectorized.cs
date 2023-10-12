@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using LinqExpression = System.Linq.Expressions.Expression;
-using System.Globalization;
+using Microsoft.SemanticKernel.Memory.Collections;
+using Microsoft.TypeChat.Embeddings;
 
 namespace Microsoft.TypeChat.Tests;
 

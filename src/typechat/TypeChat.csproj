@@ -8,7 +8,6 @@
     <AssemblyName>Microsoft.TypeChat</AssemblyName>
     <RootNamespace>Microsoft.TypeChat</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <UserSecretsId>6c1b04e3-d9bb-49a6-89e6-b55ce2b47e30</UserSecretsId>
   </PropertyGroup>
 
   <Import Project="../package/nuget.props" />

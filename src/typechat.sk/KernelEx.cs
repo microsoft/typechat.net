@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.SemanticKernel.AI.TextCompletion;
+using Microsoft.SemanticKernel.Reliability;
 using Microsoft.SemanticKernel.Reliability.Basic;
 
 namespace Microsoft.TypeChat;
 
-public static class KernelExtensions
+public static class KernelEx
 {
     /// <summary>
     /// Create a Semantic Kernel using the given OpenAI configuration
