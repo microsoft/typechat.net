@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Threading.Tasks;
-
 namespace Microsoft.TypeChat.Tests;
 
 [Comment("This is a schema for writing programs that evaluate Math expressions")]

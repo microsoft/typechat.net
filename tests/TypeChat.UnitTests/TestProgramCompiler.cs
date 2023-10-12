@@ -2,8 +2,6 @@
 
 using System.Text.Json;
 using System.Linq.Expressions;
-using LinqExpression = System.Linq.Expressions.Expression;
-using System.Globalization;
 
 namespace Microsoft.TypeChat.Tests;
 

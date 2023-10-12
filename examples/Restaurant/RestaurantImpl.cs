@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using System.Text;
 using System.Text.Json.Serialization;
-using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
 namespace Restaurant;

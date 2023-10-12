@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
-using System.IO;
 using System.ComponentModel;
 using Microsoft.SemanticKernel.SkillDefinition;
-using Microsoft.SemanticKernel.AI.TextCompletion;
-using Microsoft.TypeChat;
 
 namespace Plugins;
 
