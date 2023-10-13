@@ -116,7 +116,7 @@ public class Agent<T> : IAgent
         builder.AddRange(_instructions);
 
         // If a context provider is available, inject additional context
-        if (_contextProvider != null)
+        if (_contextProvider is not null)
         {
             var context = _contextProvider.GetContextAsync(requestText, cancellationToken);
             builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));

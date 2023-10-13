@@ -35,17 +35,17 @@ public class Prompt : List<IPromptSection>
     /// <param name="postamble"></param>
     public Prompt(IEnumerable<IPromptSection>? preamble, PromptSection? text = null, IEnumerable<IPromptSection>? postamble = null)
     {
-        if (preamble != null)
+        if (preamble is not null)
         {
             AddRange(preamble);
         }
 
-        if (text != null)
+        if (text is not null)
         {
             Add(text);
         }
 
-        if (postamble != null)
+        if (postamble is not null)
         {
             AddRange(postamble);
         }

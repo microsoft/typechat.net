@@ -51,7 +51,7 @@ public abstract class ConsoleApp : IInputHandler
         using var reader = new StreamReader(batchFilePath);
         string line = null;
         while (!cancellationToken.IsCancellationRequested &&
-              (line = reader.ReadLine()) != null)
+              (line = reader.ReadLine()) is not null)
         {
             line = line.Trim();
             if (line.Length == 0 ||
@@ -126,7 +126,7 @@ public abstract class ConsoleApp : IInputHandler
 
     bool IsStop(string? line)
     {
-        if (line == null)
+        if (line is null)
         {
             return true;
         }
@@ -141,7 +141,7 @@ public abstract class ConsoleApp : IInputHandler
 #else
         string? line = await Console.In.ReadLineAsync().ConfigureAwait(false);
 #endif
-        return (line != null) ? line.Trim() : line;
+        return (line is not null) ? line.Trim() : line;
     }
 
     public async Task WriteLineAsync(string? value)

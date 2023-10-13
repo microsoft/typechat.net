@@ -11,7 +11,7 @@ internal static class JsonNodeEx
 
     public static JsonNode ToJsonNode(dynamic obj)
     {
-        if (obj == null)
+        if (obj is null)
         {
             return obj;
         }

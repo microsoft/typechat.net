@@ -220,7 +220,7 @@ public class ProgramCompiler
         for (int i = 0; i < expressions.Length; ++i)
         {
             items[i] = Compile(expressions[i]);
-            if (itemType != null)
+            if (itemType is not null)
             {
                 items[i] = CastFromJsonObject(items[i], itemType);
             }

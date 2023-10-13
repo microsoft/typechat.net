@@ -66,7 +66,7 @@ public class ChatLanguageModel : ILanguageModel
 
     ChatRequestSettings? ToRequestSettings(TranslationSettings? settings)
     {
-        if (settings == null)
+        if (settings is null)
         {
             return null;
         }

@@ -31,7 +31,7 @@ public class Config
         var config = configBuilder.Build();
 
         var configSection = config.GetSection(sectionName);
-        if (configSection == null)
+        if (configSection is null)
         {
             throw new ArgumentException($"{sectionName} not found");
         }
@@ -76,7 +76,7 @@ public class Config
     /// </summary>
     public OpenAIConfig? OpenAIEmbeddings => _openAIEmbeddings;
 
-    public bool HasOpenAI => (_openAI != null);
+    public bool HasOpenAI => (_openAI is not null);
 
-    public bool HasOpenAIEmbeddings => (_openAIEmbeddings != null);
+    public bool HasOpenAIEmbeddings => (_openAIEmbeddings is not null);
 }

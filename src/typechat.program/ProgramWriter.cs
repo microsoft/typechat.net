@@ -46,7 +46,7 @@ public class ProgramWriter
     {
         ArgumentVerify.ThrowIfNull(program, nameof(program));
 
-        if (program.Steps == null || program.Steps.Calls.IsNullOrEmpty())
+        if (program.Steps is null || program.Steps.Calls.IsNullOrEmpty())
         {
             return this;
         }
@@ -63,7 +63,7 @@ public class ProgramWriter
     ProgramWriter Write(Steps steps)
     {
         FunctionCall[] calls = steps.Calls;
-        if (calls != null && calls.Length > 0)
+        if (calls is not null && calls.Length > 0)
         {
             for (int i = 0; i < calls.Length; ++i)
             {
@@ -86,7 +86,7 @@ public class ProgramWriter
 
     ProgramWriter Write(Expression[] args)
     {
-        if (args != null)
+        if (args is not null)
         {
             for (int i = 0; i < args.Length; ++i)
             {
@@ -138,7 +138,7 @@ public class ProgramWriter
     }
 
     private ProgramWriter BeginCall(string name, string api = null)
-        => Write(api != null ? $"{api}.{name}(" : $"{name}(");
+        => Write(api is not null ? $"{api}.{name}(" : $"{name}(");
 
     private string ResultVar(int resultNumber) => (_resultVarPrefix + (resultNumber + 1));
 

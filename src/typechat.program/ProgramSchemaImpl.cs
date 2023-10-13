@@ -38,7 +38,7 @@ public partial class Program : IDisposable
     /// Did the LLM actually return steps?
     /// </summary>
     [JsonIgnore]
-    public bool HasSteps => (Steps != null && !Steps.Calls.IsNullOrEmpty());
+    public bool HasSteps => (Steps is not null && !Steps.Calls.IsNullOrEmpty());
 
     /// <summary>
     /// A program is deemed Complete only if it has Steps and the language model claims to have
@@ -75,7 +75,7 @@ public partial class Program : IDisposable
             throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson);
         }
 
-        if (Delegate != null)
+        if (Delegate is not null)
         {
             return Delegate.DynamicInvoke();
         }

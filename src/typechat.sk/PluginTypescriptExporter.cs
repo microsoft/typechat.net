@@ -64,7 +64,7 @@ public class PluginTypescriptExporter
 
     private void Export(IList<ParameterView> parameters)
     {
-        if (parameters == null)
+        if (parameters is null)
         {
             return;
         }
@@ -136,7 +136,7 @@ public class PluginTypescriptExporter
     private string DataType(ParameterViewType? pType)
     {
         string type = Typescript.Types.String;
-        if (pType != null)
+        if (pType is not null)
         {
             if (pType == ParameterViewType.String)
             {

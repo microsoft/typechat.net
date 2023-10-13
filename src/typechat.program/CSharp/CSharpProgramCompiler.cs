@@ -121,10 +121,11 @@ public class CSharpProgramCompiler
 
     string CollectDiagnostics(ImmutableArray<Diagnostic> diagnostics)
     {
-        if (diagnostics == null || diagnostics.Length == 0)
+        if (diagnostics.Length == 0)
         {
             return null;
         }
+
         StringBuilder sb = new StringBuilder();
         foreach (var diagnostic in diagnostics)
         {

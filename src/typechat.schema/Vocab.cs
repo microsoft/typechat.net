@@ -129,7 +129,7 @@ public class Vocab : List<VocabEntry>, IVocab
 #else
         string[] entries = text.Split(separator).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
 #endif
-        if (entries == null || entries.Length == 0)
+        if (entries is null || entries.Length == 0)
         {
             return null;
         }

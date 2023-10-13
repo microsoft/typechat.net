@@ -6,7 +6,7 @@ internal static class ListEx
 {
     internal static bool IsNullOrEmpty<T>(this IList<T> list)
     {
-        return (list == null || list.Count == 0);
+        return (list is null || list.Count == 0);
     }
 
     internal static void Trim<T>(this List<T> list, int trimCount)

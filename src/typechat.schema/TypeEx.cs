@@ -108,13 +108,13 @@ public static class TypeEx
     {
 #if NET7_0_OR_GREATER
         var json_attrib = property.GetCustomAttribute(typeof(JsonRequiredAttribute));
-        if (json_attrib != null)
+        if (json_attrib is not null)
         {
             return true;
         }
 #endif
         var attrib = property.GetCustomAttribute(typeof(RequiredAttribute));
-        return attrib != null;
+        return attrib is not null;
     }
 
     internal static bool IsNullableValueType(this Type type)
@@ -178,13 +178,13 @@ public static class TypeEx
     internal static bool IsIgnore(this MemberInfo member)
     {
         JsonIgnoreAttribute? attr = (JsonIgnoreAttribute)member.GetCustomAttribute(typeof(JsonIgnoreAttribute), true);
-        return attr != null;
+        return attr is not null;
     }
 
     internal static string PropertyName(this MemberInfo member)
     {
         JsonPropertyNameAttribute? attr = (JsonPropertyNameAttribute)member.GetCustomAttribute(typeof(JsonPropertyNameAttribute), true);
-        return attr != null ?
+        return attr is not null ?
                 attr.Name :
                 member.Name;
     }

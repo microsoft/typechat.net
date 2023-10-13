@@ -75,7 +75,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
 
     internal bool HasName => !string.IsNullOrEmpty(Name);
 
-    internal bool HasVocab => Vocab != null;
+    internal bool HasVocab => Vocab is not null;
 
     internal bool HasPropertyName => !string.IsNullOrEmpty(PropertyName);
 

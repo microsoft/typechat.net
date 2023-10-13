@@ -80,14 +80,14 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
     void CheckArgCount(FunctionCall call, FunctionView typeInfo, Expression[] args)
     {
         // Just checks if the right number of parameters were supplied
-        int requiredArgCount = (typeInfo.Parameters != null) ? GetRequiredArgCount(typeInfo.Parameters) : 0;
-        int actualCount = (args != null) ? args.Length : 0;
+        int requiredArgCount = (typeInfo.Parameters is not null) ? GetRequiredArgCount(typeInfo.Parameters) : 0;
+        int actualCount = (args is not null) ? args.Length : 0;
         if (actualCount < requiredArgCount)
         {
             ProgramException.ThrowArgCountMismatch(call, requiredArgCount, actualCount);
         }
 
-        int totalArgCount = (typeInfo.Parameters != null) ? typeInfo.Parameters.Count : 0;
+        int totalArgCount = (typeInfo.Parameters is not null) ? typeInfo.Parameters.Count : 0;
         if (actualCount > totalArgCount)
         {
             ProgramException.ThrowArgCountMismatch(call, totalArgCount, actualCount);
@@ -100,7 +100,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         for (int i = 0; i < args.Length; ++i)
         {
             ParameterViewType expectedType = parameters[i].Type;
-            if (expectedType != null)
+            if (expectedType is not null)
             {
                 ParameterViewType exprType = ParameterTypeFromExpr(args[i]);
                 if (expectedType != exprType)

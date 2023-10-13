@@ -72,7 +72,7 @@ public abstract class TypeExporter<T>
     public virtual void ExportPending()
     {
         T? type;
-        while ((type = GetPending()) != null)
+        while ((type = GetPending()) is not null)
         {
             ExportType(type);
         }
@@ -112,7 +112,7 @@ public abstract class TypeExporter<T>
     /// <returns></returns>
     T? GetPending()
     {
-        if (_pendingTypes != null && _pendingTypes.Count > 0)
+        if (_pendingTypes is not null && _pendingTypes.Count > 0)
         {
             return _pendingTypes.Dequeue();
         }

@@ -15,7 +15,7 @@ public class ProgramVisitor
     /// <param name="program"></param>
     public void Visit(Program program)
     {
-        if (program.Steps != null)
+        if (program.Steps is not null)
         {
             VisitSteps(program.Steps);
         }

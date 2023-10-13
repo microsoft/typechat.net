@@ -115,7 +115,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         public string GetText()
         {
             string response = null;
-            if (choices != null && choices.Length > 0)
+            if (choices is not null && choices.Length > 0)
             {
                 response = choices[0].message.content;
             }

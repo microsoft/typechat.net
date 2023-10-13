@@ -25,7 +25,7 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
     public PluginApiTypeInfo(FunctionsView plugins = null)
         : base()
     {
-        if (plugins != null)
+        if (plugins is not null)
         {
             Add(plugins);
         }
@@ -39,12 +39,12 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
     {
         ArgumentVerify.ThrowIfNull(plugins, nameof(plugins));
 
-        if (plugins.SemanticFunctions != null)
+        if (plugins.SemanticFunctions is not null)
         {
             Add(plugins.SemanticFunctions.Values);
         }
 
-        if (plugins.NativeFunctions != null)
+        if (plugins.NativeFunctions is not null)
         {
             Add(plugins.NativeFunctions.Values);
         }
