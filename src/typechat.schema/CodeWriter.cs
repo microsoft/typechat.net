@@ -102,7 +102,9 @@ public class CodeWriter
     /// <param name="token"></param>
     /// <returns>CodeWriter</returns>
     public CodeWriter Append(string token) => Write(token);
+
     public CodeWriter Append(StringBuilder tokens) => Write(tokens);
+
     public CodeWriter Append(char ch)
     {
         _writer.Write(ch);

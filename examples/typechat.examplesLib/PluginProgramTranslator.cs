@@ -33,14 +33,17 @@ public class PluginProgramTranslator
     /// Translator being used
     /// </summary>
     public ProgramTranslator Translator => _translator;
+
     /// <summary>
     /// Kernel this translator is working with
     /// </summary>
     public IKernel Kernel => _kernel;
+
     /// <summary>
     /// The "API" formed by the various plugins registered with the kernel 
     /// </summary>
     public PluginApi Api => _pluginApi;
+
     public SchemaText Schema => _pluginSchema;
 
     public Task<Program> TranslateAsync(string input, CancellationToken cancelToken)

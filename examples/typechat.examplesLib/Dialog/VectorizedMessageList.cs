@@ -96,11 +96,13 @@ public class VectorizedMessageList : IMessageStream
             yield return _messageList[matches[i]];
         }
     }
+
     /// <summary>
     /// Return newest messages
     /// </summary>
     /// <returns>an enumerable of messages</returns>
     public IEnumerable<Message> Newest() => _messageList.Newest();
+
     /// <summary>
     /// Return newest messages
     /// </summary>

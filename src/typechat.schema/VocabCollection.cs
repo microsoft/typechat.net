@@ -31,6 +31,7 @@ public class VocabCollection : IVocabCollection
         ArgumentVerify.ThrowIfNull(vocab, nameof(vocab));
         _vocabs.Add(vocab.Name, vocab);
     }
+
     /// <summary>
     /// Add a named vocab
     /// </summary>
@@ -40,6 +41,7 @@ public class VocabCollection : IVocabCollection
     {
         Add(new NamedVocab(name, vocab));
     }
+
     /// <summary>
     /// Add a named vocab. The vocab text is dynamically parsed using Vocab.Parse
     /// </summary>
@@ -58,8 +60,9 @@ public class VocabCollection : IVocabCollection
     /// <param name="vocabName"></param>
     /// <returns></returns>
     public bool Contains(string vocabName) => _vocabs.ContainsKey(vocabName);
+
     /// <summary>
-    /// 
+    /// Does the vocabulary contain the given item
     /// </summary>
     /// <param name="item"></param>
     /// <returns></returns>

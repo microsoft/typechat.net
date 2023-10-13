@@ -44,10 +44,12 @@ public class Result<T>
     /// Success or failure
     /// </summary>
     public bool Success { get; private set; }
+
     /// <summary>
     /// Result value.
     /// </summary>
     public T Value { get; private set; }
+
     /// <summary>
     /// Diagnostic message in case of failure
     /// </summary>
@@ -61,6 +63,7 @@ public class Result<T>
     {
         return result.Value;
     }
+
     /// <summary>
     /// Create an error result
     /// </summary>
@@ -70,6 +73,7 @@ public class Result<T>
     {
         return new Result<T>(false, message);
     }
+
     /// <summary>
     /// Create an Error result
     /// </summary>

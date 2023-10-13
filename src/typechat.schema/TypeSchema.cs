@@ -21,6 +21,7 @@ public class TypeSchema
         _schema = schema;
         _type = type;
     }
+
     /// <summary>
     /// Create TypeSchema
     /// </summary>

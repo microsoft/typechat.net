@@ -11,6 +11,7 @@ public class TranslationSettings
     /// Temperature to use. We recommend using 0
     /// </summary>
     public double Temperature { get; set; } = 0;
+
     /// <summary>
     /// Maximum number of tokens to emit. 
     /// </summary>

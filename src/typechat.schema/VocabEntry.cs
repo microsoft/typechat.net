@@ -35,8 +35,10 @@ public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
     public bool Equals(VocabEntry other) => _text.Equals(other._text);
 
     public override int GetHashCode() => _text.GetHashCode();
+
     public override string? ToString() => _text;
 
     public static implicit operator string(VocabEntry entry) => entry._text;
+
     public static implicit operator VocabEntry(string text) => new VocabEntry(text);
 }

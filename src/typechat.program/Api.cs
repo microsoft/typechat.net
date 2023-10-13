@@ -23,6 +23,7 @@ public class Api
     {
 
     }
+
     /// <summary>
     /// Create an Api using the supplied methods + type info implemented in the given object instance
     /// </summary>
@@ -40,6 +41,7 @@ public class Api
     /// Type information for this Api
     /// </summary>
     public ApiTypeInfo TypeInfo => _typeInfo;
+
     /// <summary>
     /// The object that implements the Api
     /// </summary>

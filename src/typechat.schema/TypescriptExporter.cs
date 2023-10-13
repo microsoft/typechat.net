@@ -99,31 +99,37 @@ public class TypescriptExporter : TypeExporter<Type>
     /// Typescript writer the exporter is using
     /// </summary>
     public TypescriptWriter Writer => _writer;
+
     //
     // Use this to *customize* how a .NET Type Name is mapped to a Typescript type name
     // Return null if you can't map and defaults are used.
     //
     public Func<Type, string?> TypeNameMapper { get; set; }
+
     /// <summary>
     /// Customize how Json Polymorphism is supported in schemas
     /// </summary>
     public JsonPolymorphismSettings PolymorphismSettings { get; set; }
+
     /// <summary>
     /// Should export subclasses of a given type: automatically exporting type hierarchies?
     /// Default is true
     /// </summary>
     public bool IncludeSubclasses { get; set; } = true;
+
     /// <summary>
     /// Include comments? You can provide includable comments using the [Comment] attribute
     /// Default is true
     /// </summary>
     public bool IncludeComments { get; set; } = true;
+
     /// <summary>
     /// Export enums as string literals? Typescript allows that and in some situations, this works
     /// better with the some models
     /// Default is false
     /// </summary>
     public bool EnumsAsLiterals { get; set; } = false;
+
     /// <summary>
     /// Ignore these types during export
     /// </summary>

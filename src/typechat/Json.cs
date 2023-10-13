@@ -40,6 +40,7 @@ public class Json
                Indented.Serialize(value) :
                Default.Serialize(value);
     }
+
     /// <summary>
     /// Stringify value of type T
     /// </summary>
@@ -64,6 +65,7 @@ public class Json
     {
         return Default.Deserialize(json, type);
     }
+
     /// <summary>
     /// Parse Json into an object of the given type
     /// </summary>
@@ -74,6 +76,7 @@ public class Json
     {
         return (T)Parse(json, typeof(T));
     }
+
     /// <summary>
     /// Parse Json from a stream into an object of the given type
     /// </summary>

@@ -69,31 +69,37 @@ public class Prompt : List<IPromptSection>
     {
         Add(new PromptSection(source, section));
     }
+
     /// <summary>
     /// Append the given text whose source is the user
     /// </summary>
     /// <param name="section"></param>
     public void Append(string section) => Append(PromptSection.Sources.User, section);
+
     /// <summary>
     /// Append an instruction. The source of instructions is System 
     /// </summary>
     /// <param name="section"></param>
     public void AppendInstruction(string section) => Append(PromptSection.Sources.System, section);
+
     /// <summary>
     /// Append a response the prompt. The source of responses is Assistant
     /// </summary>
     /// <param name="section"></param>
     public void AppendResponse(string section) => Append(PromptSection.Sources.Assistant, section);
+
     /// <summary>
     /// Append the given prompt section to this prompt
     /// </summary>
     /// <param name="section"></param>
     public void Append(IPromptSection section) => Add(section);
+
     /// <summary>
     /// Append the given prompt sections to this prompt
     /// </summary>
     /// <param name="prompts">enumerable of sections to append</param>
     public void Append(IEnumerable<IPromptSection> prompts) => base.AddRange(prompts);
+
     /// <summary>
     /// Append the given prompt to this one
     /// </summary>
@@ -169,7 +175,9 @@ public class Prompt : List<IPromptSection>
     }
 
     public static implicit operator Prompt(string text) => new Prompt(text);
+
     public static implicit operator string(Prompt prompt) => prompt.ToString();
+
     /// <summary>
     /// Append the supplied section to this prompt
     /// </summary>

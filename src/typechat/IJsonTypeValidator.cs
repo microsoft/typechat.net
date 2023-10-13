@@ -13,6 +13,7 @@ public interface IJsonTypeValidator<T>
     /// Validation Schema
     /// </summary>
     TypeSchema Schema { get; }
+
     /// <summary>
     /// Parses and validates the given JSON string according to the associated schema. Returns a
     /// Result containing the JSON object if validation was successful.Otherwise, returns

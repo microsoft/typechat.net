@@ -34,6 +34,7 @@ public class PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<Pl
     /// Plugin
     /// </summary>
     public string? PluginName { get; private set; }
+
     /// <summary>
     /// A function contained in a plugin
     /// </summary>
@@ -42,6 +43,7 @@ public class PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<Pl
     public bool IsGlobal => (string.IsNullOrEmpty(PluginName));
 
     public override string ToString() => ToString(DefaultSeparator);
+
     /// <summary>
     /// Returns the plugin function name programs can use to reference this plugin function.
     /// By default is {pluginName}.{functionName}
@@ -60,6 +62,7 @@ public class PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<Pl
         }
         return $"{PluginName}{separator}{FunctionName}";
     }
+
     /// <summary>
     /// Parse the plugin function string
     /// </summary>
