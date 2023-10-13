@@ -42,10 +42,12 @@ public class PromptBuilder
     /// The prompt being built
     /// </summary>
     public Prompt Prompt => _prompt;
+
     /// <summary>
     /// Current length of the prompt in characters
     /// </summary>
     public int Length => _currentLength;
+
     /// <summary>
     /// Maximum allowed prompt length
     /// </summary>

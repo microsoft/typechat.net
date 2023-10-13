@@ -153,10 +153,12 @@ public class JsonTranslator<T> : IJsonTranslator
     /// Sending a prompt to the model
     /// </summary>
     public event Action<Prompt> SendingPrompt;
+
     /// <summary>
     /// Raw response from the model
     /// </summary>
     public event Action<string> CompletionReceived;
+
     /// <summary>
     /// Attempting repair with the given validation errors
     /// </summary>

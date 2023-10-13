@@ -24,10 +24,12 @@ public class ApiMethod
     /// Api method
     /// </summary>
     public MethodInfo Method { get; private set; }
+
     /// <summary>
     /// Method parameters
     /// </summary>
     public ParameterInfo[] Params { get; private set; }
+
     /// <summary>
     /// Method return type
     /// </summary>

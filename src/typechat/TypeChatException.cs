@@ -52,10 +52,12 @@ public class TypeChatException : Exception
     /// Error code
     /// </summary>
     public ErrorCode Code => _errorCode;
+
     /// <summary>
     /// The request string that caused the error
     /// </summary>
     public string Request => _request;
+
     /// <summary>
     /// The response, if any, that caused the error
     /// </summary>

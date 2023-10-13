@@ -58,10 +58,12 @@ public class JsonVocabAttribute : JsonConverterAttribute
     /// The Json property name for which this is a vocabulary
     /// </summary>
     public string? PropertyName { get; set; }
+
     /// <summary>
     /// Should the vocabulary be emitted inline, or as a standalone type
     /// </summary>
     public bool Inline { get; set; } = true;
+
     /// <summary>
     /// If true, validates properties for membership in this vocabulary
     /// </summary>
@@ -70,8 +72,11 @@ public class JsonVocabAttribute : JsonConverterAttribute
     internal IVocab? Vocab => _vocab;
 
     internal bool HasEntries => !string.IsNullOrEmpty(_entries);
+
     internal bool HasName => !string.IsNullOrEmpty(Name);
+
     internal bool HasVocab => _vocab != null;
+
     internal bool HasPropertyName => !string.IsNullOrEmpty(PropertyName);
 
     /// <summary>

@@ -17,6 +17,7 @@ public interface IJsonTranslatorPrompts
     /// <param name="preamble">Preamble/additional instructions to send to the model</param>
     /// <returns></returns>
     Prompt CreateRequestPrompt(TypeSchema schema, Prompt request, IList<IPromptSection> preamble);
+
     /// <summary>
     /// Creates a repair prompt to append to an original prompt/response in order to repair a JSON object that
     /// failed to validate.

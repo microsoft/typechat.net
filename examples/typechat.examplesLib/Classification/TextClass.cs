@@ -25,6 +25,7 @@ public struct TextClass
     /// Class name
     /// </summary>
     public string Name { get; private set; }
+
     /// <summary>
     /// Class description
     /// The description of a class has strong influence on how the model classifies a user's input

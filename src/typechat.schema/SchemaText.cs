@@ -44,6 +44,7 @@ public struct SchemaText
     /// </summary>
     [JsonPropertyName("lang")]
     public string Lang => _lang;
+
     /// <summary>
     /// The schema text
     /// </summary>

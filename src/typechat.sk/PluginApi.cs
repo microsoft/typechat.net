@@ -45,6 +45,7 @@ public class PluginApi
     /// Api name
     /// </summary>
     public string TypeName => _typeName;
+
     /// <summary>
     /// Plugins that make up this Api
     /// </summary>

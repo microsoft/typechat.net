@@ -39,14 +39,18 @@ public class Message : IPromptSection
     /// Common message sources can include "User", "Assistant". See FromUser and FromAssistant methods
     /// </summary>
     public string Source => _source;
+
     /// <summary>
     /// Message body
     /// </summary>
     public object Body => _body;
+
     /// <summary>
     /// Message body type
     /// </summary>
+
     public Type BodyType => _body.GetType();
+
     /// <summary>
     /// Optional, headers/properties to add to the message. These are useful when messages are routed or persisted
     /// </summary>

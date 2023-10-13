@@ -23,6 +23,7 @@ public class Vocab : List<VocabEntry>, IVocab
             Add(entry);
         }
     }
+
     /// <summary>
     /// Initialize a vocabulary
     /// </summary>

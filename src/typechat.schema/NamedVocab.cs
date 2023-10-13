@@ -35,6 +35,7 @@ public class NamedVocab : IComparable<NamedVocab>
     /// The name of this vocab
     /// </summary>
     public string Name => _name;
+
     /// <summary>
     /// The vocabulary associated with this vocab
     /// </summary>
@@ -49,17 +50,20 @@ public class NamedVocab : IComparable<NamedVocab>
     {
         return _name.CompareTo(other._name);
     }
+
     /// <summary>
     /// Checks if obj matches the vocab name
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
     public override bool Equals(object? obj) => _name.Equals(obj);
+
     /// <summary>
     /// Hashcode for the vocab name
     /// </summary>
     /// <returns></returns>
     public override int GetHashCode() => _name.GetHashCode();
+
     /// <summary>
     /// Return the vocab name
     /// </summary>

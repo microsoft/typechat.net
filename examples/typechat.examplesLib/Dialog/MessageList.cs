@@ -21,6 +21,7 @@ public class MessageList : List<Message>, IMessageStream
     /// </summary>
     /// <returns>count</returns>
     public int GetCount() => Count;
+
     /// <summary>
     /// All messages in this message stream
     /// </summary>

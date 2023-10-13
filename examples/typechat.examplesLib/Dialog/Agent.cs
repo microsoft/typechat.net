@@ -23,6 +23,7 @@ public class Agent<T> : IAgent
         : this(new JsonTranslator<T>(model), contextProvider)
     {
     }
+
     /// <summary>
     /// Create a new Agent that uses the given language model
     /// By default, the agent will use an in-memory transient message history.
@@ -45,10 +46,12 @@ public class Agent<T> : IAgent
     /// Instructions to the model: these let you customize how the Agent will behave
     /// </summary>
     public Prompt Instructions => _instructions;
+
     /// <summary>
     /// The translator being used by the Agent to go to strongly typed messages
     /// </summary>
     public JsonTranslator<T> Translator => _translator;
+
     /// <summary>
     /// The maximum number of characters to put in a request prompt. The prompt contains
     /// - the user's request
@@ -137,6 +140,7 @@ public class Agent<T> : IAgent
     {
         return Task.FromResult(request);
     }
+
     /// <summary>
     /// Override to customize how user context is added to the given prompt builder
     /// Since the builder will limit the # of characters, you may want to do some pre processing
@@ -148,6 +152,7 @@ public class Agent<T> : IAgent
     {
         return builder.AddRangeAsync(context);
     }
+
     /// <summary>
     /// Invoked when a valid response was received - the response is placed in the message body
     /// </summary>
