@@ -1,4 +1,5 @@
 # To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+
 ###############################
 # Core EditorConfig Options   #
 ###############################
@@ -97,7 +98,7 @@ dotnet_code_quality_unused_parameters = all:suggestion
 
 [*.cs]
 
-# TODO: enable this but stop "dotnet format" from applying incorrect fixes and introducing a lot of unwanted changes.
+# TODO: enable this but when we are ready to make tests style compliant.
 dotnet_analyzer_diagnostic.severity = none
 
 # Note: these settings cause "dotnet format" to fix the code. You should review each change if you uses "dotnet format".
@@ -127,6 +128,7 @@ dotnet_diagnostic.RCS1232.severity = warning # Order elements in documentation c
 dotnet_diagnostic.CA1050.severity = warning # Declare types in namespaces
 dotnet_diagnostic.CA1063.severity = warning # Implement IDisposable correctly
 dotnet_diagnostic.CA1064.severity = warning # Exceptions should be public
+dotnet_diagnostic.CA1310.severity = none # Exceptions should be public
 dotnet_diagnostic.CA1416.severity = warning # Validate platform compatibility
 dotnet_diagnostic.CA1508.severity = warning # Avoid dead conditional code
 # dotnet_diagnostic.CA1852.severity = warning # Sealed classes
@@ -142,7 +144,6 @@ dotnet_diagnostic.IDE0018.severity = warning # Inline variable declaration
 dotnet_diagnostic.IDE0032.severity = warning # Use auto-implemented property
 dotnet_diagnostic.IDE0034.severity = warning # Simplify 'default' expression
 dotnet_diagnostic.IDE0035.severity = warning # Remove unreachable code
-# dotnet_diagnostic.IDE0040.severity = warning # Add accessibility modifiers
 dotnet_diagnostic.IDE0049.severity = warning # Use language keywords instead of framework type names for type references
 dotnet_diagnostic.IDE0050.severity = warning # Convert anonymous type to tuple
 dotnet_diagnostic.IDE0051.severity = warning # Remove unused private member
@@ -152,25 +153,36 @@ dotnet_diagnostic.IDE0070.severity = warning # Use 'System.HashCode.Combine'
 dotnet_diagnostic.IDE0071.severity = warning # Simplify interpolation
 dotnet_diagnostic.IDE0073.severity = warning # Require file header
 dotnet_diagnostic.IDE0082.severity = warning # Convert typeof to nameof
-# dotnet_diagnostic.IDE0090.severity = warning # Simplify new expression
 # dotnet_diagnostic.IDE0130.severity = warning # Namespace does not match folder structure
 dotnet_diagnostic.IDE0161.severity = warning # Use file-scoped namespace
 
 # Suppressed diagnostics
 dotnet_diagnostic.IDE0009.severity = none # Add this or Me qualification
 dotnet_diagnostic.IDE0017.severity = none # Add this or Me qualification
+dotnet_diagnostic.IDE0040.severity = none # Add accessibility modifiers
 dotnet_diagnostic.IDE0090.severity = none # Simplify new expression
+dotnet_diagnostic.IDE0044.severity = none # Add this or Me qualification
 
 dotnet_diagnostic.CA1002.severity = none # Change 'List<string>' in '...' to use 'Collection<T>' ...
 dotnet_diagnostic.CA1032.severity = none # We're using RCS1194 which seems to cover more ctors
 dotnet_diagnostic.CA1034.severity = none # Do not nest type. Alternatively, change its accessibility so that it is not externally visible
 dotnet_diagnostic.CA1062.severity = none # Disable null check, C# already does it for us
 dotnet_diagnostic.CA1303.severity = none # Do not pass literals as localized parameters
+dotnet_diagnostic.CA1304.severity = none # 
+dotnet_diagnostic.CA1305.severity = none # Specify IFormatProvide
+dotnet_diagnostic.CA1311.severity = none # 
 dotnet_diagnostic.CS1591.severity = none # Missing XML comment for publicly visible type or member
+dotnet_diagnostic.CA1707.severity = none # Identifiers should not contain underscores
+dotnet_diagnostic.CA1711.severity = none # 
+dotnet_diagnostic.CA1716.severity = none # 
+dotnet_diagnostic.CA1720.severity = none # 
+dotnet_diagnostic.CA1725.severity = none # 
 dotnet_diagnostic.CA1805.severity = none # Member is explicitly initialized to its default value
 dotnet_diagnostic.CA1822.severity = none # Member does not access instance data and can be marked as static
 dotnet_diagnostic.CA1848.severity = none # For improved performance, use the LoggerMessage delegates
+dotnet_diagnostic.CA1852.severity = none # 
 dotnet_diagnostic.CA2007.severity = none # Do not directly await a Task
+dotnet_diagnostic.CA2208.severity = none # 
 dotnet_diagnostic.CA2225.severity = none # Operator overloads have named alternates
 dotnet_diagnostic.CA2227.severity = none # Change to be read-only by removing the property setter
 dotnet_diagnostic.CA2253.severity = none # Named placeholders in the logging message template should not be comprised of only numeric characters
@@ -227,6 +239,8 @@ dotnet_diagnostic.IDE0100.severity = none # Remove unnecessary equality operator
 dotnet_diagnostic.IDE0110.severity = none # Remove unnecessary discards
 dotnet_diagnostic.IDE0032.severity = none # Use auto property
 dotnet_diagnostic.IDE0160.severity = none # Use block-scoped namespace
+
+dotnet_diagnostic.xUnit*.severity = none
 
 ###############################
 # Naming Conventions          #

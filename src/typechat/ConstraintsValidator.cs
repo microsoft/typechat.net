@@ -38,6 +38,7 @@ public class ConstraintsValidator
         {
             sb.AppendLine(result.ErrorMessage);
         }
+
         return sb.ToString();
     }
 }
@@ -72,6 +73,7 @@ public class ConstraintsValidator<T> : ConstraintsValidator, IConstraintsValidat
         {
             sb.AppendLine(result.ErrorMessage);
         }
+
         return sb.ToString();
     }
 }
