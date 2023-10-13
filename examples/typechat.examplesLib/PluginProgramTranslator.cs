@@ -29,6 +29,7 @@ public class PluginProgramTranslator
             _pluginSchema
         );
     }
+
     /// <summary>
     /// Translator being used
     /// </summary>

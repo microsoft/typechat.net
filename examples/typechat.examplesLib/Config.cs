@@ -68,11 +68,13 @@ public class Config
     /// Configuration for OpenAI language models
     /// </summary>
     public OpenAIConfig OpenAI => _openAI;
+
     /// <summary>
     /// Configuration for OpenAI embeddings models
     /// </summary>
     public OpenAIConfig? OpenAIEmbeddings => _openAIEmbeddings;
 
     public bool HasOpenAI => (_openAI != null);
+
     public bool HasOpenAIEmbeddings => (_openAIEmbeddings != null);
 }

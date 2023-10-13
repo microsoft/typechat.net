@@ -37,8 +37,10 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             // Verify function exists
             var name = PluginFunctionName.Parse(functionCall.Name);
             FunctionView typeInfo = _typeInfo[name];
+
             // Verify that parameter counts etc match
             ValidateArgs(functionCall, typeInfo, functionCall.Args);
+
             // Continue visiting to handle any nested function calls
             base.VisitFunction(functionCall);
             return;
@@ -55,6 +57,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
     {
         // Verify arg counts
         CheckArgCount(call, typeInfo, args);
+
         // Verify arg types
         TypeCheckArgs(call, typeInfo.Parameters, args);
     }
@@ -62,6 +65,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
     int GetRequiredArgCount(IList<ParameterView> parameters)
     {
         int requiredCount = 0;
+
         for (int i = 0; i < parameters.Count; ++i)
         {
             if (IsOptional(parameters[i]))
@@ -69,8 +73,10 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
                 // Optional parameters follow required ones
                 break;
             }
+
             requiredCount++;
         }
+
         return requiredCount;
     }
 
@@ -79,10 +85,12 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         // Just checks if the right number of parameters were supplied
         int requiredArgCount = (typeInfo.Parameters != null) ? GetRequiredArgCount(typeInfo.Parameters) : 0;
         int actualCount = (args != null) ? args.Length : 0;
+
         if (actualCount < requiredArgCount)
         {
             ProgramException.ThrowArgCountMismatch(call, requiredArgCount, actualCount);
         }
+
         int totalArgCount = (typeInfo.Parameters != null) ? typeInfo.Parameters.Count : 0;
         if (actualCount > totalArgCount)
         {
@@ -93,6 +101,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
     void TypeCheckArgs(FunctionCall call, IList<ParameterView> parameters, Expression[] args)
     {
         Debug.Assert(args.Length <= parameters.Count);
+
         for (int i = 0; i < args.Length; ++i)
         {
             ParameterViewType expectedType = parameters[i].Type;

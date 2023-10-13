@@ -68,6 +68,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
         ArgumentVerify.ThrowIfNullOrEmpty(textRepresentation, nameof(textRepresentation));
 
         var embedding = await GetNormalizedEmbeddingAsync(textRepresentation, cancelToken).ConfigureAwait(false);
+
         _list.Add(item, embedding);
     }
 
@@ -84,15 +85,18 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     {
         ArgumentVerify.ThrowIfNull(items, nameof(items));
         ArgumentVerify.ThrowIfNull(textRepresentations, nameof(textRepresentations));
+
         if (items.Length != textRepresentations.Length)
         {
             throw new ArgumentException("items and their representations must of the same length");
         }
+
         Embedding[] embeddings = await GetNormalizedEmbeddingAsync(textRepresentations, cancelToken).ConfigureAwait(false);
         if (embeddings.Length != items.Length)
         {
             throw new InvalidOperationException($"Embedding length {embeddings.Length} does not match items length {items.Length}");
         }
+
         for (int i = 0; i < items.Length; ++i)
         {
             _list.Add(items[i], embeddings[i]);
@@ -108,6 +112,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     public async Task<T> NearestAsync(string text, CancellationToken cancelToken = default)
     {
         var embedding = await GetNormalizedEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
+
         return _list.Nearest(embedding, EmbeddingDistance.Dot);
     }
 
@@ -121,6 +126,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     public async Task<List<T>> NearestAsync(string text, int maxMatches, CancellationToken cancelToken = default)
     {
         var embedding = await GetNormalizedEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
+
         return _list.Nearest(embedding, maxMatches, EmbeddingDistance.Dot).ToList();
     }
 
@@ -128,16 +134,19 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     {
         var embedding = await _model.GenerateEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
         embedding.NormalizeInPlace();
+
         return embedding;
     }
 
     async Task<Embedding[]> GetNormalizedEmbeddingAsync(string[] texts, CancellationToken cancelToken)
     {
         var embeddings = await _model.GenerateEmbeddingsAsync(texts, cancelToken).ConfigureAwait(false);
+
         for (int i = 0; i < embeddings.Length; ++i)
         {
             embeddings[i].NormalizeInPlace();
         }
+
         return embeddings;
     }
 }

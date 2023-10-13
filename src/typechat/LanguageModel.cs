@@ -36,6 +36,7 @@ public class LanguageModel : ILanguageModel, IDisposable
     /// Information about the language model
     /// </summary>
     public ModelInfo ModelInfo => _model;
+
     /// <summary>
     /// Get a completion for the given prompt
     /// </summary>

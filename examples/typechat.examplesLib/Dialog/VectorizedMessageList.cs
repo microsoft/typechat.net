@@ -50,8 +50,15 @@ public class VectorizedMessageList : IMessageStream
         }
     }
 
-    public IEnumerable<Message> All() => _messageList.All();
-    public IAsyncEnumerable<Message> AllAsync(CancellationToken cancelToken) => _messageList.AllAsync(cancelToken);
+    public IEnumerable<Message> All()
+    {
+        return _messageList.All();
+    }
+
+    public IAsyncEnumerable<Message> AllAsync(CancellationToken cancelToken)
+    {
+        return _messageList.AllAsync(cancelToken);
+    }
 
     public void Append(Message message)
     {
@@ -101,11 +108,16 @@ public class VectorizedMessageList : IMessageStream
     /// Return newest messages
     /// </summary>
     /// <returns>an enumerable of messages</returns>
-    public IEnumerable<Message> Newest() => _messageList.Newest();
-
+    public IEnumerable<Message> Newest()
+    {
+        return _messageList.Newest();
+    }
     /// <summary>
     /// Return newest messages
     /// </summary>
     /// <returns>an async enumerable of messages</returns>
-    public IAsyncEnumerable<Message> NewestAsync(CancellationToken cancelToken) => _messageList.NewestAsync(cancelToken);
+    public IAsyncEnumerable<Message> NewestAsync(CancellationToken cancelToken)
+    {
+        return _messageList.NewestAsync(cancelToken);
+    }
 }
