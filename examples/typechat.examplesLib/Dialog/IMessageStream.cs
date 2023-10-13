@@ -17,7 +17,7 @@ public interface IMessageStream : IContextProvider
     /// Append a message to the stream
     /// </summary>
     /// <param name="message">message to append</param>
-    Task AppendAsync(Message message);
+    Task AppendAsync(Message message, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Return all messages in the stream

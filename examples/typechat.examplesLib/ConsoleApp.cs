@@ -17,17 +17,17 @@ public abstract class ConsoleApp : IInputHandler
     public string CommentPrefix { get; set; } = "#";
     public string CommandPrefix { get; set; } = "@";
 
-    public async Task RunAsync(string consolePrompt, string? inputFilePath = null)
+    public async Task RunAsync(string consolePrompt, string? inputFilePath = null, CancellationToken cancellationToken = default)
     {
         ConsolePrompt = consolePrompt;
-        await InitApp().ConfigureAwait(false);
+        await InitAppAsync(cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(inputFilePath))
         {
-            await RunAsync().ConfigureAwait(false);
+            await RunAsync(cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            await RunBatchAsync(inputFilePath).ConfigureAwait(false);
+            await RunBatchAsync(inputFilePath, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -144,7 +144,7 @@ public abstract class ConsoleApp : IInputHandler
         return (line is not null) ? line.Trim() : line;
     }
 
-    public async Task WriteLineAsync(string? value)
+    public async Task WriteLineAsync(string? value, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrEmpty(value))
         {
@@ -174,7 +174,7 @@ public abstract class ConsoleApp : IInputHandler
         return Task.CompletedTask;
     }
 
-    protected virtual Task InitApp() => Task.CompletedTask;
+    protected virtual Task InitAppAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
     protected void SubscribeAllEvents<T>(JsonTranslator<T> translator)
     {

@@ -30,16 +30,16 @@ public class SchemaHierarchyApp : ConsoleApp
         }
     }
 
-    protected override async Task InitApp()
+    protected override async Task InitAppAsync(CancellationToken cancellationToken)
     {
         Console.WriteLine("Initializing app");
         // While this is hardcoded here, you can also do this dynamically
         // targets dynamically
-        await _translator.AddSchemaAsync<Cart>("Order Coffee Drinks (Italian names included) and Baked Goods");
-        await _translator.AddSchemaAsync<CalendarActions>("Actions related to calendars, appointments, meetings, schedules");
-        await _translator.AddSchemaAsync<Order>("Order pizza, beer and salads");
-        await _translator.AddSchemaAsync<SentimentResponse>("Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings");
-        await _translator.AddSchemaAsync<HealthDataResponse>("Health information: enter your medications, conditions");
+        await _translator.AddSchemaAsync<Cart>("Order Coffee Drinks (Italian names included) and Baked Goods", cancellationToken);
+        await _translator.AddSchemaAsync<CalendarActions>("Actions related to calendars, appointments, meetings, schedules", cancellationToken);
+        await _translator.AddSchemaAsync<Order>("Order pizza, beer and salads", cancellationToken);
+        await _translator.AddSchemaAsync<SentimentResponse>("Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings", cancellationToken);
+        await _translator.AddSchemaAsync<HealthDataResponse>("Health information: enter your medications, conditions", cancellationToken);
     }
 
     public static async Task<int> Main(string[] args)

@@ -92,7 +92,7 @@ public class Agent<T> : IAgent
 
         Message responseMessage = Message.FromAssistant(response);
 
-        await ReceivedResponseAsync(requestMessage, preparedRequestMessage, responseMessage).ConfigureAwait(false);
+        await ReceivedResponseAsync(requestMessage, preparedRequestMessage, responseMessage, cancellationToken).ConfigureAwait(false);
 
         return responseMessage;
     }
@@ -120,7 +120,7 @@ public class Agent<T> : IAgent
         {
             var context = _contextProvider.GetContextAsync(requestText, cancellationToken);
             builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
-            await AppendContextAsync(builder, context).ConfigureAwait(false);
+            await AppendContextAsync(builder, context, cancellationToken).ConfigureAwait(false);
         }
 
         return builder.Prompt;
@@ -146,9 +146,9 @@ public class Agent<T> : IAgent
     /// <param name="builder">builder to append to</param>
     /// <param name="context">context to append</param>
     /// <returns></returns>
-    protected virtual Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
+    protected virtual Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context, CancellationToken cancellationToken)
     {
-        return builder.AddRangeAsync(context);
+        return builder.AddRangeAsync(context, cancellationToken);
     }
 
     /// <summary>
@@ -158,7 +158,7 @@ public class Agent<T> : IAgent
     /// <param name="preparedRequest">the prepared request that was actually used in translation</param>
     /// <param name="response">response message</param>
     /// <returns></returns>
-    protected virtual Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response)
+    protected virtual Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response, CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
     }

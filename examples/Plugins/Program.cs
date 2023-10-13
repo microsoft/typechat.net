@@ -33,11 +33,11 @@ public class PluginApp : ConsoleApp
 
         if (program.IsComplete)
         {
-            await RunProgram(program);
+            await RunProgramAsync(program, cancellationToken);
         }
     }
 
-    private async Task RunProgram(Program program)
+    private async Task RunProgramAsync(Program program, CancellationToken cancellationToken)
     {
         if (!program.IsComplete)
         {

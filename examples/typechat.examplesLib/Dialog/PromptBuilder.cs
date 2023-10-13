@@ -133,11 +133,11 @@ public class PromptBuilder
     /// </summary>
     /// <param name="sections"></param>
     /// <returns></returns>
-    public async Task<bool> AddRangeAsync(IAsyncEnumerable<IPromptSection> sections)
+    public async Task<bool> AddRangeAsync(IAsyncEnumerable<IPromptSection> sections, CancellationToken cancellationToken = default)
     {
         ArgumentVerify.ThrowIfNull(sections, nameof(sections));
 
-        await foreach (var section in sections.ConfigureAwait(false))
+        await foreach (var section in sections.WithCancellation(cancellationToken).ConfigureAwait(false))
         {
             if (!Add(section))
             {

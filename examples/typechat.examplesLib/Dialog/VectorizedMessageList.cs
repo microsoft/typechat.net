@@ -65,11 +65,11 @@ public class VectorizedMessageList : IMessageStream
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>
-    public async Task AppendAsync(Message message)
+    public async Task AppendAsync(Message message, CancellationToken cancellationToken = default)
     {
         int position = _messageList.Count;
-        await _messageList.AppendAsync(message).ConfigureAwait(false);
-        await _index.AddAsync(position, message.GetText()).ConfigureAwait(false);
+        await _messageList.AppendAsync(message, cancellationToken).ConfigureAwait(false);
+        await _index.AddAsync(position, message.GetText(), cancellationToken).ConfigureAwait(false);
     }
 
     public void Clear()

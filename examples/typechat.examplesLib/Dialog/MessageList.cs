@@ -50,7 +50,7 @@ public class MessageList : List<Message>, IMessageStream
     /// Append a message to the message stream
     /// </summary>
     /// <param name="message">message to append</param>
-    public Task AppendAsync(Message message)
+    public Task AppendAsync(Message message, CancellationToken cancellationToken = default)
     {
         Add(message);
         return Task.CompletedTask;
