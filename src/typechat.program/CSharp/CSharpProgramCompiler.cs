@@ -39,10 +39,10 @@ public class CSharpProgramCompiler
         return Path.GetDirectoryName(sysLocation);
     }
 
-    static CSharpCompilationOptions s_defaultOptions = DefaultOptions();
+    private static CSharpCompilationOptions s_defaultOptions = DefaultOptions();
 
-    string _assemblyName;
-    CSharpCompilation _compilation;
+    private string _assemblyName;
+    private CSharpCompilation _compilation;
 
     /// <summary>
     /// Create a new compiler
@@ -64,6 +64,7 @@ public class CSharpProgramCompiler
         var apiTree = CSharpSyntaxTree.ParseText(code);
         _compilation = _compilation.AddSyntaxTrees(apiTree);
     }
+
     /// <summary>
     /// Load source code from a file as a compilation unit
     /// </summary>
@@ -92,6 +93,7 @@ public class CSharpProgramCompiler
         {
             return CollectDiagnostics(diagnostics);
         }
+
         return null;
     }
 
@@ -108,6 +110,7 @@ public class CSharpProgramCompiler
         {
             AddCode(code);
         }
+
         using MemoryStream stream = new MemoryStream();
         var result = _compilation.Emit(stream);
         string? message = CollectDiagnostics(result.Diagnostics);
@@ -163,6 +166,7 @@ public class CSharpProgramCompiler
         {
             throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson, "Program transpiled to empty string");
         }
+
         CSharpProgramCompiler compiler = new CSharpProgramCompiler();
         AssemblyReferences refs = new AssemblyReferences();
         refs.AddStandard();
