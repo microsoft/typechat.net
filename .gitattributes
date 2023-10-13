@@ -2,10 +2,6 @@
 
 *.txt     text
 
-# Visual Studio files (use Windows line endings)
-*.csproj  text eol=crlf
-*.sln     text eol=crlf
-
 # Bash scripts
 *.sh      text   eol=lf
 *.cmd     text   eol=crlf
