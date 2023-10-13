@@ -183,5 +183,3 @@ public class CSharpProgramCompiler
         return Result<ProgramAssembly>.Error(result.Message);
     }
 }
-
-

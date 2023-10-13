@@ -1,4 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
+
 using System.Runtime.CompilerServices;
 
 namespace Microsoft.TypeChat;
