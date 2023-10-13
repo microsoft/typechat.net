@@ -20,9 +20,6 @@ public struct SchemaText
         public const string Typescript = "TypeScript";
     }
 
-    string _lang;
-    string _text;
-
     /// <summary>
     /// Create a SchemaText object to hold schema specified in the given language
     /// </summary>
@@ -35,29 +32,30 @@ public struct SchemaText
         ArgumentVerify.ThrowIfNullOrEmpty(text, nameof(text));
         ArgumentVerify.ThrowIfNullOrEmpty(lang, nameof(lang));
 
-        _lang = lang;
-        _text = text;
+        Lang = lang;
+        Text = text;
     }
 
     /// <summary>
     /// The schema language
     /// </summary>
     [JsonPropertyName("lang")]
-    public string Lang => _lang;
+    public string Lang { get; }
+
     /// <summary>
     /// The schema text
     /// </summary>
     [JsonPropertyName("text")]
-    public string Text => _text;
+    public string Text { get; }
 
     public override string ToString()
     {
-        return _text;
+        return Text;
     }
 
     public static implicit operator string(SchemaText schema)
     {
-        return schema._text;
+        return schema.Text;
     }
 
     public static SchemaText Load(string filePath)
@@ -73,6 +71,7 @@ public struct SchemaText
         {
             throw new NotSupportedException($"{lang} is not supported");
         }
+
         return new SchemaText(schemaText, lang);
     }
 }

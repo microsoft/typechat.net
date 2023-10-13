@@ -21,9 +21,9 @@ public class RestaurantApp : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
     {
-        Order order = await _translator.TranslateAsync(input, cancelToken);
+        Order order = await _translator.TranslateAsync(input, cancellationToken);
         PrintOrder(order);
     }
 

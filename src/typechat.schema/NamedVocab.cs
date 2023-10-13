@@ -8,9 +8,6 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class NamedVocab : IComparable<NamedVocab>
 {
-    string _name;
-    IVocab _vocab;
-
     public NamedVocab(IVocab vocab)
         : this(string.Empty, vocab)
     {
@@ -21,8 +18,8 @@ public class NamedVocab : IComparable<NamedVocab>
         ArgumentVerify.ThrowIfNull(name, nameof(name));
         ArgumentVerify.ThrowIfNull(vocab, nameof(vocab));
 
-        _name = name;
-        _vocab = vocab;
+        Name = name;
+        Vocab = vocab;
     }
 
     [JsonConstructor]
@@ -34,11 +31,12 @@ public class NamedVocab : IComparable<NamedVocab>
     /// <summary>
     /// The name of this vocab
     /// </summary>
-    public string Name => _name;
+    public string Name { get; }
+
     /// <summary>
     /// The vocabulary associated with this vocab
     /// </summary>
-    public IVocab Vocab => _vocab;
+    public IVocab Vocab { get; }
 
     /// <summary>
     /// Compares the vocab name
@@ -47,22 +45,25 @@ public class NamedVocab : IComparable<NamedVocab>
     /// <returns></returns>
     public int CompareTo(NamedVocab? other)
     {
-        return _name.CompareTo(other._name);
+        return Name.CompareTo(other.Name);
     }
+
     /// <summary>
     /// Checks if obj matches the vocab name
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public override bool Equals(object? obj) => _name.Equals(obj);
+    public override bool Equals(object? obj) => Name.Equals(obj);
+
     /// <summary>
     /// Hashcode for the vocab name
     /// </summary>
     /// <returns></returns>
-    public override int GetHashCode() => _name.GetHashCode();
+    public override int GetHashCode() => Name.GetHashCode();
+
     /// <summary>
     /// Return the vocab name
     /// </summary>
     /// <returns></returns>
-    public override string? ToString() => _name;
+    public override string? ToString() => Name;
 }

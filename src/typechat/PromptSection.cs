@@ -28,8 +28,8 @@ public class PromptSection : IPromptSection
 
     public static readonly PromptSection Empty = FromUser(string.Empty);
 
-    string _source;
-    string _text;
+    private string _source;
+    private string _text;
 
     /// <summary>
     /// Create an empty prompt section
@@ -69,11 +69,13 @@ public class PromptSection : IPromptSection
     /// The Source of this section. 
     /// </summary>
     public string? Source => _source;
+
     /// <summary>
     /// Return the text for this section
     /// </summary>
     /// <returns>string</returns>
     public string GetText() => _text;
+
     /// <summary>
     /// Is the section empty?
     /// </summary>
@@ -117,24 +119,28 @@ public class PromptSection : IPromptSection
     /// </summary>
     /// <param name="text"></param>
     public static implicit operator PromptSection(string text) => FromUser(text);
+
     /// <summary>
     /// New prompt section whose source is System
     /// </summary>
     /// <param name="text">section text</param>
     /// <returns>PromptSection</returns>
     public static PromptSection FromSystem(string text) => new PromptSection(Sources.System, text);
+
     /// <summary>
     /// New prompt section whose source is User
     /// </summary>
     /// <param name="text">section text</param>
     /// <returns>PromptSection</returns>
     public static PromptSection FromUser(string text) => new PromptSection(Sources.User, text);
+
     /// <summary>
     /// New prompt section whose source is Assistant
     /// </summary>
     /// <param name="text">section text</param>
     /// <returns>PromptSection</returns>
     public static PromptSection FromAssistant(string text) => new PromptSection(Sources.Assistant, text);
+
     /// <summary>
     /// Create a new Instruction
     /// </summary>

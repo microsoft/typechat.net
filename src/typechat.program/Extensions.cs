@@ -38,8 +38,10 @@ internal static class Extensions
             {
                 return false;
             }
+
             return (expectedType.GetElementType() == otherType.GetElementType());
         }
+
         return (expectedType.IsAssignableFrom(otherType));
     }
 

@@ -10,10 +10,12 @@ internal static class SerializationEx
         {
             return str;
         }
+
         if (obj is ITextSerializable textSerializable)
         {
             return textSerializable.Stringify();
         }
+
         return Json.Stringify(obj, false);
     }
 
@@ -33,6 +35,7 @@ internal static class SerializationEx
         {
             builder.Prompt.Reverse(contextStartAt, contextEndAt - contextStartAt);
         }
+
         return retVal;
     }
 
@@ -52,6 +55,7 @@ internal static class SerializationEx
         {
             builder.Prompt.Reverse(contextStartAt, contextEndAt - contextStartAt);
         }
+
         return retVal;
     }
 }

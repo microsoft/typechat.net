@@ -26,12 +26,15 @@ internal static class HttpEx
                 response.EnsureSuccessStatusCode();
                 break;
             }
+
             if (retryPauseMs > 0)
             {
                 await Task.Delay(retryPauseMs).ConfigureAwait(false);
             }
+
             retryCount++;
         }
+
         return default;
     }
 

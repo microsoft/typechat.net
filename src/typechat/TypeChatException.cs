@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class TypeChatException : Exception
 {
-    static class ErrorMessages
+    private static class ErrorMessages
     {
         public const string NoJsonReturned = "The response is not Json";
         public const string IncompleteJson = "Json Object is incomplete";
@@ -36,9 +36,9 @@ public class TypeChatException : Exception
         NoTranslator
     }
 
-    string _request;
-    ErrorCode _errorCode;
-    JsonResponse? _response;
+    private string _request;
+    private ErrorCode _errorCode;
+    private JsonResponse? _response;
 
     public TypeChatException(ErrorCode code, string request, JsonResponse? response = null, string? message = null)
         : base(message)
@@ -52,10 +52,12 @@ public class TypeChatException : Exception
     /// Error code
     /// </summary>
     public ErrorCode Code => _errorCode;
+
     /// <summary>
     /// The request string that caused the error
     /// </summary>
     public string Request => _request;
+
     /// <summary>
     /// The response, if any, that caused the error
     /// </summary>

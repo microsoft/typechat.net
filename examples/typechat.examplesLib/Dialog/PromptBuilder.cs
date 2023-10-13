@@ -9,10 +9,8 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PromptBuilder
 {
-    Prompt _prompt;
-    int _currentLength;
-    int _maxLength;
-    Func<string, int, string>? _substring;
+    private int _maxLength;
+    private Func<string, int, string>? _substring;
 
     /// <summary>
     /// Create a builder to create prompts whose length does not exceed maxLength characters
@@ -33,7 +31,6 @@ public class PromptBuilder
     /// <param name="substringExtractor">optional extractor</param>
     public PromptBuilder(int maxLength, Func<string, int, string>? substringExtractor = null)
     {
-        _prompt = new Prompt();
         _maxLength = maxLength;
         _substring = substringExtractor;
     }
@@ -41,11 +38,13 @@ public class PromptBuilder
     /// <summary>
     /// The prompt being built
     /// </summary>
-    public Prompt Prompt => _prompt;
+    public Prompt Prompt { get; } = new();
+
     /// <summary>
     /// Current length of the prompt in characters
     /// </summary>
-    public int Length => _currentLength;
+    public int Length { get; private set; } = 0;
+
     /// <summary>
     /// Maximum allowed prompt length
     /// </summary>
@@ -54,10 +53,11 @@ public class PromptBuilder
         get => _maxLength;
         set
         {
-            if (value < _currentLength)
+            if (value < Length)
             {
-                throw new ArgumentException($"CurrentLength: {_currentLength} exceeds {value}");
+                throw new ArgumentException($"Current Length: {Length} exceeds {value}");
             }
+
             _maxLength = value;
         }
     }
@@ -90,19 +90,21 @@ public class PromptBuilder
             return true;
         }
 
-        int lengthAvailable = _maxLength - _currentLength;
+        int lengthAvailable = _maxLength - Length;
         if (text.Length <= lengthAvailable)
         {
-            _prompt.Append(section);
-            _currentLength += text.Length;
+            Prompt.Append(section);
+            Length += text.Length;
             return true;
         }
+
         if (_substring != null)
         {
             text = _substring(text, lengthAvailable);
-            _prompt.Append(section.Source, text);
+            Prompt.Append(section.Source, text);
             return true;
         }
+
         return false;
     }
 
@@ -122,6 +124,7 @@ public class PromptBuilder
                 return false;
             }
         }
+
         return true;
     }
 
@@ -141,6 +144,7 @@ public class PromptBuilder
                 return false;
             }
         }
+
         return true;
     }
 
@@ -149,8 +153,8 @@ public class PromptBuilder
     /// </summary>
     public void Clear()
     {
-        _prompt.Clear();
-        _currentLength = 0;
+        Prompt.Clear();
+        Length = 0;
     }
 
     /// <summary>

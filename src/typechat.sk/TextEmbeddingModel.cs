@@ -6,8 +6,7 @@ namespace Microsoft.TypeChat;
 
 public class TextEmbeddingModel
 {
-    ITextEmbeddingGeneration _model;
-    ModelInfo _modelInfo;
+    private ITextEmbeddingGeneration _service;
 
     /// <summary>
     /// Create a new text embedding model from the OpenAI config
@@ -20,14 +19,13 @@ public class TextEmbeddingModel
         ArgumentVerify.ThrowIfNull(config, nameof(config));
         config.Validate();
 
-        KernelBuilder kb = new KernelBuilder();
-        kb.WithEmbeddingModel(config.Model, config)
-          .WithRetry(config);
-
-        IKernel kernel = kb.Build();
+        IKernel kernel = Kernel.Builder
+            .WithEmbeddingModel(config.Model, config)
+            .WithRetry(config)
+            .Build();
         modelInfo ??= config.Model;
-        _model = kernel.GetService<ITextEmbeddingGeneration>(modelInfo.Name);
-        _modelInfo = modelInfo;
+        _service = kernel.GetService<ITextEmbeddingGeneration>(modelInfo.Name);
+        ModelInfo = modelInfo;
     }
 
     /// <summary>
@@ -38,40 +36,41 @@ public class TextEmbeddingModel
     public TextEmbeddingModel(ITextEmbeddingGeneration service, ModelInfo? modelInfo)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
-        _model = service;
-        _modelInfo = modelInfo;
+        _service = service;
+        ModelInfo = modelInfo;
     }
 
     /// <summary>
     /// Information about the model
     /// </summary>
-    public ModelInfo ModelInfo => _modelInfo;
+    public ModelInfo ModelInfo { get; }
 
     /// <summary>
     /// Generate an embedding
     /// </summary>
     /// <param name="text">text to create embeddings for</param>
-    /// <param name="cancelToken">optional cancel token</param>
+    /// <param name="cancellationToken">optional cancel token</param>
     /// <returns></returns>
-    public Task<Embedding> GenerateEmbeddingAsync(string text, CancellationToken cancelToken = default)
+    public Task<Embedding> GenerateEmbeddingAsync(string text, CancellationToken cancellationToken = default)
     {
-        return _model.GenerateEmbeddingAsync(text, cancelToken);
+        return _service.GenerateEmbeddingAsync(text, cancellationToken);
     }
 
     /// <summary>
     /// Generate embeddings in a batch
     /// </summary>
     /// <param name="texts">list of texts to turn into embeddings</param>
-    /// <param name="cancelToken">optional cancel token</param>
+    /// <param name="cancellationToken">optional cancel token</param>
     /// <returns></returns>
-    public async Task<Embedding[]> GenerateEmbeddingsAsync(IList<string> texts, CancellationToken cancelToken = default)
+    public async Task<Embedding[]> GenerateEmbeddingsAsync(IList<string> texts, CancellationToken cancellationToken = default)
     {
-        var results = await _model.GenerateEmbeddingsAsync(texts, cancelToken);
+        var results = await _service.GenerateEmbeddingsAsync(texts, cancellationToken);
         Embedding[] embeddings = new Embedding[results.Count];
         for (int i = 0; i < embeddings.Length; ++i)
         {
             embeddings[i] = new Embedding(results[i]);
         }
+
         return embeddings;
     }
 }

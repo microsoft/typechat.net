@@ -41,6 +41,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             exporter.Vocabs = knownVocabs;
         }
+
         exporter.Export(type);
         string schema = writer.ToString();
         return new TypescriptSchema(type, schema, exporter.UsedVocabs);
@@ -57,19 +58,17 @@ public class TypescriptExporter : TypeExporter<Type>
         TypescriptExporter exporter = new TypescriptExporter(writer);
         exporter.ExportAPI(type);
         string schema = writer.ToString();
+
         return new TypescriptSchema(type, schema, exporter.UsedVocabs);
     }
 
     const BindingFlags MemberFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-    TypescriptWriter _writer;
-    HashSet<Type> _nonExportTypes;
-    TypescriptVocabExporter? _vocabExporter;
+    private TypescriptVocabExporter? _vocabExporter;
 #if NET6_0_OR_GREATER
-    NullabilityInfoContext _nullableInfo;
+    private NullabilityInfoContext _nullableInfo = new();
 #endif
-    VocabCollection _usedVocabs;
-    JsonPolymorphismSettings _polymorphism;
+    private JsonPolymorphismSettings _polymorphism = new();
 
     public TypescriptExporter(TextWriter writer)
         : this(new TypescriptWriter(writer))
@@ -80,8 +79,47 @@ public class TypescriptExporter : TypeExporter<Type>
         : base()
     {
         ArgumentVerify.ThrowIfNull(writer, nameof(writer));
-        _writer = writer;
-        _nonExportTypes = new HashSet<Type>()
+        Writer = writer;
+    }
+
+    /// <summary>
+    /// Typescript writer the exporter is using
+    /// </summary>
+    public TypescriptWriter Writer { get; }
+    //
+    // Use this to *customize* how a .NET Type Name is mapped to a Typescript type name
+    // Return null if you can't map and defaults are used.
+    //
+    public Func<Type, string?> TypeNameMapper { get; set; }
+
+    /// <summary>
+    /// Customize how Json Polymorphism is supported in schemas
+    /// </summary>
+    public JsonPolymorphismSettings PolymorphismSettings { get; set; }
+
+    /// <summary>
+    /// Should export subclasses of a given type: automatically exporting type hierarchies?
+    /// Default is true
+    /// </summary>
+    public bool IncludeSubclasses { get; set; } = true;
+
+    /// <summary>
+    /// Include comments? You can provide includable comments using the [Comment] attribute
+    /// Default is true
+    /// </summary>
+    public bool IncludeComments { get; set; } = true;
+
+    /// <summary>
+    /// Export enums as string literals? Typescript allows that and in some situations, this works
+    /// better with the some models
+    /// Default is false
+    /// </summary>
+    public bool EnumsAsLiterals { get; set; } = false;
+
+    /// <summary>
+    /// Ignore these types during export
+    /// </summary>
+    public HashSet<Type> TypesToIgnore { get; } = new HashSet<Type>()
         {
             typeof(object),
             typeof(string),
@@ -89,45 +127,6 @@ public class TypescriptExporter : TypeExporter<Type>
             typeof(Nullable<>),
             typeof(Task)
         };
-        _polymorphism = new JsonPolymorphismSettings();
-#if NET6_0_OR_GREATER
-        _nullableInfo = new NullabilityInfoContext();
-#endif
-    }
-
-    /// <summary>
-    /// Typescript writer the exporter is using
-    /// </summary>
-    public TypescriptWriter Writer => _writer;
-    //
-    // Use this to *customize* how a .NET Type Name is mapped to a Typescript type name
-    // Return null if you can't map and defaults are used.
-    //
-    public Func<Type, string?> TypeNameMapper { get; set; }
-    /// <summary>
-    /// Customize how Json Polymorphism is supported in schemas
-    /// </summary>
-    public JsonPolymorphismSettings PolymorphismSettings { get; set; }
-    /// <summary>
-    /// Should export subclasses of a given type: automatically exporting type hierarchies?
-    /// Default is true
-    /// </summary>
-    public bool IncludeSubclasses { get; set; } = true;
-    /// <summary>
-    /// Include comments? You can provide includable comments using the [Comment] attribute
-    /// Default is true
-    /// </summary>
-    public bool IncludeComments { get; set; } = true;
-    /// <summary>
-    /// Export enums as string literals? Typescript allows that and in some situations, this works
-    /// better with the some models
-    /// Default is false
-    /// </summary>
-    public bool EnumsAsLiterals { get; set; } = false;
-    /// <summary>
-    /// Ignore these types during export
-    /// </summary>
-    public HashSet<Type> TypesToIgnore => _nonExportTypes;
 
     public IVocabCollection Vocabs
     {
@@ -139,7 +138,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             if (value != null)
             {
-                _vocabExporter = new TypescriptVocabExporter(_writer, value);
+                _vocabExporter = new TypescriptVocabExporter(Writer, value);
             }
             else
             {
@@ -148,12 +147,12 @@ public class TypescriptExporter : TypeExporter<Type>
         }
     }
 
-    public VocabCollection? UsedVocabs => _usedVocabs;
+    public VocabCollection? UsedVocabs { get; private set; }
 
     public override void Clear()
     {
         base.Clear();
-        _writer.Clear();
+        Writer.Clear();
         _vocabExporter?.Clear();
 
 #if NET6_0_OR_GREATER
@@ -209,9 +208,9 @@ public class TypescriptExporter : TypeExporter<Type>
         string typeName = InterfaceName(type);
 
         ExportComments(type);
-        _writer.BeginInterface(typeName, baseClassName);
+        Writer.BeginInterface(typeName, baseClassName);
         {
-            _writer.PushIndent();
+            Writer.PushIndent();
 
             if (_polymorphism.IncludeDiscriminator && baseClass != null)
             {
@@ -219,9 +218,9 @@ public class TypescriptExporter : TypeExporter<Type>
             }
             ExportMembers(type);
 
-            _writer.PopIndent();
+            Writer.PopIndent();
         }
-        _writer.EndInterface();
+        Writer.EndInterface();
 
         AddExported(type);
 
@@ -255,6 +254,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             ExportEnumAsEnum(type);
         }
+
         AddExported(type);
 
         return this;
@@ -278,13 +278,14 @@ public class TypescriptExporter : TypeExporter<Type>
 
         string typeName = type.Name;
         ExportComments(type);
-        _writer.BeginInterface(typeName);
+        Writer.BeginInterface(typeName);
         {
-            _writer.PushIndent();
+            Writer.PushIndent();
             ExportMethods(type);
-            _writer.PopIndent();
+            Writer.PopIndent();
         }
-        _writer.EndInterface();
+
+        Writer.EndInterface();
 
         AddExported(type);
         ExportPending();
@@ -296,13 +297,14 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         string typeName = type.Name;
         ExportComments(type);
-        _writer.Enum(typeName).Space().StartBlock();
+        Writer.Enum(typeName).Space().StartBlock();
         {
-            _writer.PushIndent();
+            Writer.PushIndent();
             ExportEnumValues(type);
-            _writer.PopIndent();
+            Writer.PopIndent();
         }
-        _writer.EndBlock();
+
+        Writer.EndBlock();
         return this;
     }
 
@@ -310,11 +312,11 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         string typeName = type.Name;
         ExportComments(type);
-        _writer.Type(typeName).Space().Assign().EOL();
+        Writer.Type(typeName).Space().Assign().EOL();
         {
             ExportEnumLiterals(type);
         }
-        _writer.EOL();
+        Writer.EOL();
         return this;
     }
 
@@ -322,27 +324,29 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         if (!IncludeComments)
         {
-            _writer.Literals(Enum.GetNames(type)).Semicolon();
+            Writer.Literals(Enum.GetNames(type)).Semicolon();
             return this;
         }
+
         string[] names = Enum.GetNames(type);
         var fields = type.GetFields();
         for (int i = 0; i < names.Length; ++i)
         {
-            _writer.SOL();
+            Writer.SOL();
             {
                 ExportComments(fields[i + 1]);
-                _writer.Literal(names[i]);
+                Writer.Literal(names[i]);
                 if (i < names.Length - 1)
                 {
-                    _writer.Space().Or();
+                    Writer.Space().Or();
                 }
                 else
                 {
-                    _writer.Semicolon();
+                    Writer.Semicolon();
                 }
             }
-            _writer.EOL();
+
+            Writer.EOL();
         }
         return this;
     }
@@ -354,16 +358,17 @@ public class TypescriptExporter : TypeExporter<Type>
         for (int i = 0; i < names.Length; ++i)
         {
             ExportComments(fields[i + 1]);
-            _writer.SOL();
+            Writer.SOL();
             {
-                _writer.Name(names[i]);
+                Writer.Name(names[i]);
                 if (i < names.Length - 1)
                 {
-                    _writer.Comma();
+                    Writer.Comma();
                 }
             }
-            _writer.EOL();
+            Writer.EOL();
         }
+
         return this;
     }
 
@@ -389,6 +394,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             ExportProperty(property);
         }
+
         return this;
     }
 
@@ -406,6 +412,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             ExportField(field);
         }
+
         return this;
     }
 
@@ -417,6 +424,7 @@ public class TypescriptExporter : TypeExporter<Type>
             ExportComments(property);
             ExportVariable(property, property.PropertyType);
         }
+
         return this;
     }
 
@@ -437,13 +445,14 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             ExportMethod(method);
         }
+
         return this;
     }
 
     TypescriptExporter ExportMethod(MethodInfo methodInfo)
     {
         ExportComments(methodInfo);
-        _writer.BeginMethodDeclare(methodInfo.Name);
+        Writer.BeginMethodDeclare(methodInfo.Name);
         {
             ParameterInfo[] parameters = methodInfo.GetParameters();
             for (int i = 0; i < parameters.Length; ++i)
@@ -452,7 +461,8 @@ public class TypescriptExporter : TypeExporter<Type>
                 ExportParameter(parameter, i, parameters.Length);
             }
         }
-        _writer.EndMethodDeclare(DataType(methodInfo.ReturnType), methodInfo.ReturnType.IsNullableValueType());
+
+        Writer.EndMethodDeclare(DataType(methodInfo.ReturnType), methodInfo.ReturnType.IsNullableValueType());
         return this;
     }
 
@@ -462,13 +472,14 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             foreach (var comment in member.Comments())
             {
-                _writer.SOL().Comment(comment);
+                Writer.SOL().Comment(comment);
             }
             if (member.IsRequired())
             {
-                _writer.SOL().Comment("Required");
+                Writer.SOL().Comment("Required");
             }
         }
+
         return this;
     }
 
@@ -494,16 +505,17 @@ public class TypescriptExporter : TypeExporter<Type>
             return this;
         }
 
-        _writer.SOL();
+        Writer.SOL();
         {
-            _writer.Variable(
+            Writer.Variable(
                 member.PropertyName(),
                 DataType(actualType),
                 type.IsArray,
                 isNullable
             );
         }
-        _writer.EOL();
+
+        Writer.EOL();
         return this;
     }
 
@@ -523,14 +535,14 @@ public class TypescriptExporter : TypeExporter<Type>
             actualType = type;
             isNullable = IsNullableRef(parameter);
         }
-        _writer.Parameter(
+
+        Writer.Parameter(
             parameter.Name,
             DataType(type),
             i,
             count,
             type.IsArray,
-            isNullable
-            );
+            isNullable);
         AddPending(type);
         return this;
     }
@@ -543,6 +555,7 @@ public class TypescriptExporter : TypeExporter<Type>
             // No vocab
             return false;
         }
+
         IVocab? vocab = null;
         NamedVocab? vocabType = null;
         if (vocabAttr.HasVocab)
@@ -568,6 +581,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 // No vocab
                 throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, $"Vocabulary {vocabAttr.Name} not found");
             }
+
             ExportVocabInline(member, isNullable, vocab);
         }
         else
@@ -577,6 +591,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 // No vocab
                 SchemaException.ThrowVocabNotFound(vocabAttr.Name);
             }
+
             ExportVocabType(member, type, vocabType, isNullable);
         }
 
@@ -587,8 +602,8 @@ public class TypescriptExporter : TypeExporter<Type>
 
         if (vocabType != null && vocabAttr.Enforce)
         {
-            _usedVocabs ??= new VocabCollection();
-            _usedVocabs.Add(vocabType);
+            UsedVocabs ??= new VocabCollection();
+            UsedVocabs.Add(vocabType);
         }
 
         return true;
@@ -596,29 +611,31 @@ public class TypescriptExporter : TypeExporter<Type>
 
     void ExportVocabInline(MemberInfo member, bool isNullable, IVocab vocab)
     {
-        _writer.SOL();
+        Writer.SOL();
         {
-            _writer.Variable(
+            Writer.Variable(
                 member.PropertyName(),
                 isNullable,
                 vocab.Strings()
             );
         }
-        _writer.EOL();
+
+        Writer.EOL();
     }
 
     void ExportVocabType(MemberInfo member, Type type, NamedVocab vocabType, bool isNullable)
     {
-        _writer.SOL();
+        Writer.SOL();
         {
-            _writer.Variable(
+            Writer.Variable(
                 member.PropertyName(),
                 vocabType.Name,
                 type.IsArray,
                 isNullable
             );
         }
-        _writer.EOL();
+
+        Writer.EOL();
 
         _vocabExporter.AddPending(vocabType);
     }
@@ -631,17 +648,18 @@ public class TypescriptExporter : TypeExporter<Type>
                                     _polymorphism.DiscriminatorGenerator(type) :
                                     $"'{type.Name}'";
 
-            _writer.SOL();
-            _writer.Variable("$type", discriminator);
+            Writer.SOL();
+            Writer.Variable("$type", discriminator);
             if (_polymorphism.IncludeComment)
             {
-                _writer.Comment("Always emit first");
+                Writer.Comment("Always emit first");
             }
             else
             {
-                _writer.EOL();
+                Writer.EOL();
             }
         }
+
         return this;
     }
 
@@ -662,15 +680,18 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             typeName = TypeNameMapper(type);
         }
+
         if (typeName == null)
         {
             typeName = Typescript.Types.ToPrimitive(type);
         }
+
         if (string.IsNullOrEmpty(typeName))
         {
             typeName = InterfaceName(type, false);
             AddPending(type);
         }
+
         return typeName;
     }
 
@@ -696,10 +717,12 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             return IsNullableRef(p);
         }
-        else if (member is FieldInfo f)
+
+        if (member is FieldInfo f)
         {
             return IsNullableRef(f);
         }
+
         return false;
     }
 
@@ -756,6 +779,6 @@ public class TypescriptExporter : TypeExporter<Type>
         }
 
         typeToExport = type;
-        return !type.IsPrimitive && !_nonExportTypes.Contains(type);
+        return !type.IsPrimitive && !TypesToIgnore.Contains(type);
     }
 }

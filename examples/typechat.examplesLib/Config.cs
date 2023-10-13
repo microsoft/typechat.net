@@ -17,17 +17,19 @@ public class Config
         public const string Ad002 = "ada-002";
     }
 
-    public static T LoadConfig<T>(string configFile, string configOverloadFile, string sectionName = default)
+    public static T LoadConfig<T>(string configFile, string configOverloadFile, string? sectionName = default)
         where T : new()
     {
         var configBuilder = new ConfigurationBuilder()
-                    .AddJsonFile(configFile, false, true);
+            .AddJsonFile(configFile, false, true);
 
         if (File.Exists(configOverloadFile))
         {
             configBuilder.AddJsonFile(configOverloadFile, false, true);
         }
+
         var config = configBuilder.Build();
+
         var configSection = config.GetSection(sectionName);
         if (configSection == null)
         {
@@ -47,8 +49,8 @@ public class Config
         return config;
     }
 
-    OpenAIConfig? _openAI;
-    OpenAIConfig? _openAIEmbeddings;
+    private OpenAIConfig? _openAI;
+    private OpenAIConfig? _openAIEmbeddings;
 
     public Config()
     {
@@ -68,11 +70,13 @@ public class Config
     /// Configuration for OpenAI language models
     /// </summary>
     public OpenAIConfig OpenAI => _openAI;
+
     /// <summary>
     /// Configuration for OpenAI embeddings models
     /// </summary>
     public OpenAIConfig? OpenAIEmbeddings => _openAIEmbeddings;
 
     public bool HasOpenAI => (_openAI != null);
+
     public bool HasOpenAIEmbeddings => (_openAIEmbeddings != null);
 }

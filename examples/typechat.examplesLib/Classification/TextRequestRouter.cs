@@ -8,8 +8,8 @@ namespace Microsoft.TypeChat.Classification;
 /// <typeparam name="T"></typeparam>
 public class TextRequestRouter<T> : ITextRequestRouter<T>
 {
-    TextClassifier _classifier;
-    Dictionary<string, T> _routes;
+    private TextClassifier _classifier;
+    private Dictionary<string, T> _routes;
 
     /// <summary>
     /// Create a router that creates a classifier that uses the given language model
@@ -57,16 +57,17 @@ public class TextRequestRouter<T> : ITextRequestRouter<T>
     /// Route the given request
     /// </summary>
     /// <param name="request">natural language request to route</param>
-    /// <param name="cancelToken">optional cancel token</param>
+    /// <param name="cancellationToken">optional cancel token</param>
     /// <returns></returns>
-    public async Task<T> RouteRequestAsync(string request, CancellationToken cancelToken = default)
+    public async Task<T> RouteRequestAsync(string request, CancellationToken cancellationToken = default)
     {
         // Route the user input by using the language model to classify it
-        TextClassification classification = await _classifier.TranslateAsync(request, cancelToken).ConfigureAwait(false);
+        TextClassification classification = await _classifier.TranslateAsync(request, cancellationToken).ConfigureAwait(false);
         if (classification.HasClass && _routes.TryGetValue(classification.Class, out T target))
         {
             return target;
         }
+
         return default;
     }
 
@@ -74,16 +75,16 @@ public class TextRequestRouter<T> : ITextRequestRouter<T>
     /// Classify the given request
     /// </summary>
     /// <param name="request">request</param>
-    /// <param name="cancelToken">optional cancel token</param>
+    /// <param name="cancellationToken">optional cancel token</param>
     /// <returns>The class and route</returns>
-    public async Task<KeyValuePair<string, T>> ClassifyRequestAsync(string request, CancellationToken cancelToken = default)
+    public async Task<KeyValuePair<string, T>> ClassifyRequestAsync(string request, CancellationToken cancellationToken = default)
     {
-        TextClassification classification = await _classifier.TranslateAsync(request, cancelToken).ConfigureAwait(false);
+        TextClassification classification = await _classifier.TranslateAsync(request, cancellationToken).ConfigureAwait(false);
         if (classification.HasClass && _routes.TryGetValue(classification.Class, out T target))
         {
             return new KeyValuePair<string, T>(classification.Class, target);
         }
-        return default;
 
+        return default;
     }
 }

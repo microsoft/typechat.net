@@ -8,21 +8,19 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class TypescriptWriter
 {
-    CodeWriter _writer;
-
     /// <summary>
     /// Create a new TypescriptWrite that writes Typescript to the given text writer
     /// </summary>
     /// <param name="writer"></param>
     public TypescriptWriter(TextWriter writer)
     {
-        _writer = new CodeWriter(writer);
+        Writer = new CodeWriter(writer);
     }
 
     /// <summary>
     /// The underlying Code Writer
     /// </summary>
-    public CodeWriter Writer => _writer;
+    public CodeWriter Writer { get; }
 
     /// <summary>
     /// Increase indent
@@ -30,7 +28,7 @@ public class TypescriptWriter
     /// <returns></returns>
     public TypescriptWriter PushIndent()
     {
-        _writer.PushIndent();
+        Writer.PushIndent();
         return this;
     }
 
@@ -40,7 +38,7 @@ public class TypescriptWriter
     /// <returns></returns>
     public TypescriptWriter PopIndent()
     {
-        _writer.PopIndent();
+        Writer.PopIndent();
         return this;
     }
 
@@ -50,36 +48,50 @@ public class TypescriptWriter
     /// <returns></returns>
     public virtual TypescriptWriter Clear()
     {
-        _writer.Clear();
+        Writer.Clear();
         return this;
     }
+
     /// <summary>
     /// Flush current output
     /// </summary>
-    public void Flush() => _writer.Flush();
+    public void Flush() => Writer.Flush();
 
-    public TypescriptWriter Append(string token) { _writer.Append(token); return this; }
+    public TypescriptWriter Append(string token) { Writer.Append(token); return this; }
 
-    public TypescriptWriter Space() { _writer.Space(); return this; }
-    public TypescriptWriter SOL() { _writer.SOL(); return this; } // Start a line
-    public TypescriptWriter EOL() { _writer.EOL(); return this; } // End of line
+    public TypescriptWriter Space() { Writer.Space(); return this; }
 
-    public TypescriptWriter LBrace() { _writer.LBrace(); return this; }
-    public TypescriptWriter RBrace() { _writer.RBrace(); return this; }
-    public TypescriptWriter LParan() { _writer.LParan(); return this; }
-    public TypescriptWriter RParan() { _writer.RParan(); return this; }
-    public TypescriptWriter Semicolon() { _writer.Semicolon(); return this; }
-    public TypescriptWriter Comma() { _writer.Comma(); return this; }
+    public TypescriptWriter SOL() { Writer.SOL(); return this; } // Start a line
+
+    public TypescriptWriter EOL() { Writer.EOL(); return this; } // End of line
+
+    public TypescriptWriter LBrace() { Writer.LBrace(); return this; }
+
+    public TypescriptWriter RBrace() { Writer.RBrace(); return this; }
+
+    public TypescriptWriter LParan() { Writer.LParan(); return this; }
+
+    public TypescriptWriter RParan() { Writer.RParan(); return this; }
+
+    public TypescriptWriter Semicolon() { Writer.Semicolon(); return this; }
+
+    public TypescriptWriter Comma() { Writer.Comma(); return this; }
+
     public TypescriptWriter EOS() => Semicolon().EOL();
-    public TypescriptWriter Colon() { _writer.Colon(); return this; }
+
+    public TypescriptWriter Colon() { Writer.Colon(); return this; }
+
     public TypescriptWriter Assign() => Append(Typescript.Operators.Assign);
+
     public TypescriptWriter Or() => Append(Typescript.Operators.Or);
+
     public TypescriptWriter Comment(string text)
     {
         if (!string.IsNullOrEmpty(text))
         {
             Append(CodeLanguage.Punctuation.Comment).Space().Append(text).EOL();
         }
+
         return this;
     }
 
@@ -88,6 +100,7 @@ public class TypescriptWriter
     /// </summary>
     /// <returns></returns>
     public TypescriptWriter StartBlock() => LBrace().EOL();
+
     /// <summary>
     /// End a code block
     /// </summary>
@@ -95,23 +108,27 @@ public class TypescriptWriter
     public TypescriptWriter EndBlock() => RBrace().EOL();
 
     public TypescriptWriter Export() => Append(Typescript.Keywords.Export);
+
     public TypescriptWriter Extends() => Append(Typescript.Keywords.Extends);
 
-    public TypescriptWriter Name(string name) => Append(name);
-    public TypescriptWriter Name(string name, bool nullable)
+    public TypescriptWriter Name(string name, bool isNullable = false)
     {
-        Name(name);
-        if (nullable)
+        Append(name);
+        if (isNullable)
         {
-            _writer.Question();
+            Writer.Question();
         }
+
         return this;
     }
+
     public TypescriptWriter DataType(string name) => Colon().Space().Name(name);
+
     public TypescriptWriter Array() => Append(Typescript.Punctuation.Array);
+
     public TypescriptWriter Literal(string value)
     {
-        _writer.SQuote().Append(value).SQuote();
+        Writer.SQuote().Append(value).SQuote();
         return this;
     }
 
@@ -125,9 +142,11 @@ public class TypescriptWriter
             {
                 Space().Or().Space();
             }
+
             Literal(value);
             ++i;
         }
+
         return this;
     }
 
@@ -135,14 +154,14 @@ public class TypescriptWriter
         string name,
         string dataType,
         bool isArray = false,
-        bool nullable = false)
+        bool isNullable = false)
     {
-        return DeclareVariable(name, dataType, isArray, nullable).Semicolon();
+        return DeclareVariable(name, dataType, isArray, isNullable).Semicolon();
     }
 
-    public TypescriptWriter Variable(string name, bool nullable, IEnumerable<string> literals)
+    public TypescriptWriter Variable(string name, bool isNullable, IEnumerable<string> literals)
     {
-        Name(name, nullable).Colon().Space().Literals(literals).Semicolon();
+        Name(name, isNullable).Colon().Space().Literals(literals).Semicolon();
         return this;
     }
 
@@ -150,13 +169,14 @@ public class TypescriptWriter
         string name,
         string dataType,
         bool isArray = false,
-        bool nullable = false)
+        bool isNullable = false)
     {
-        Name(name, nullable).Colon().Space().Name(dataType);
+        Name(name, isNullable).Colon().Space().Name(dataType);
         if (isArray)
         {
             Array();
         }
+
         return this;
     }
 
@@ -166,17 +186,19 @@ public class TypescriptWriter
         int argNumber,
         int argCount,
         bool isArray = false,
-        bool nullable = false)
+        bool isNullable = false)
     {
         if (argNumber > 0)
         {
             Space();
         }
-        DeclareVariable(name, dataType, isArray, nullable);
+
+        DeclareVariable(name, dataType, isArray, isNullable);
         if (argNumber < argCount - 1)
         {
             Comma();
         }
+
         return this;
     }
 
@@ -201,22 +223,20 @@ public class TypescriptWriter
         return EndBlock();
     }
 
-    public TypescriptWriter Interface(string name, bool space = true)
+    public TypescriptWriter Interface(string name)
     {
         return Append(Typescript.Keywords.Interface).Space().Name(name);
     }
 
     public TypescriptWriter BeginInterface(string name, string baseType = null)
     {
-        if (string.IsNullOrEmpty(baseType))
+        Interface(name).Space();
+        if (!string.IsNullOrEmpty(baseType))
         {
-            Interface(name).Space().StartBlock();
+            Extends().Space().Name(baseType).Space();
         }
-        else
-        {
-            Interface(name).Space().Extends().Space().Name(baseType).Space().StartBlock();
-        }
-        return this;
+
+        return StartBlock();
     }
 
     public TypescriptWriter EndInterface()
@@ -237,9 +257,10 @@ public class TypescriptWriter
             Colon().Space().Name(returnType);
             if (nullable)
             {
-                _writer.Question();
+                Writer.Question();
             }
         }
+
         return EOS();
     }
 

@@ -12,12 +12,13 @@ public interface ILanguageModel
     /// Information about the language model
     /// </summary>
     ModelInfo ModelInfo { get; }
+
     /// <summary>
     /// Get a completion for the given prompt
     /// </summary>
     /// <param name="prompt">prompt</param>
     /// <param name="settings">translation settings such as temperature</param>
-    /// <param name="cancelToken">cancellation token</param>
+    /// <param name="cancellationToken">cancellation token</param>
     /// <returns></returns>
-    Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings, CancellationToken cancelToken);
+    Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancellationToken = default);
 }

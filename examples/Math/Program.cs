@@ -25,9 +25,9 @@ public class MathApp : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
     {
-        using Program program = await _translator.TranslateAsync(input, cancelToken);
+        using Program program = await _translator.TranslateAsync(input, cancellationToken);
 
         // Print whatever program was returned
         program.Print(_api.Type.Name);

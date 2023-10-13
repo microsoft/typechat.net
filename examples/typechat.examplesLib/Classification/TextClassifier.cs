@@ -10,7 +10,7 @@ namespace Microsoft.TypeChat.Classification;
 /// </summary>
 public class TextClassifier : JsonTranslator<TextClassification>
 {
-    TextClasses _classes;
+    private TextClasses _classes;
 
     /// <summary>
     /// Create a classifier that will make classification decisions using the given language model
@@ -19,7 +19,6 @@ public class TextClassifier : JsonTranslator<TextClassification>
     public TextClassifier(ILanguageModel languageModel)
         : this(languageModel, new TextClasses())
     {
-
     }
 
     /// <summary>
@@ -34,6 +33,7 @@ public class TextClassifier : JsonTranslator<TextClassification>
         {
             throw new ArgumentNullException(nameof(classes));
         }
+
         _classes = classes;
     }
 

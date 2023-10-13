@@ -21,6 +21,7 @@ public class MessageList : List<Message>, IMessageStream
     /// </summary>
     /// <returns>count</returns>
     public int GetCount() => Count;
+
     /// <summary>
     /// All messages in this message stream
     /// </summary>
@@ -34,10 +35,8 @@ public class MessageList : List<Message>, IMessageStream
     /// <exception cref="ArgumentNullException">if message is null</exception>
     public new void Add(Message message)
     {
-        if (message == null)
-        {
-            throw new ArgumentNullException(nameof(message));
-        }
+        ArgumentVerify.ThrowIfNull(message, nameof(message));
+
         base.Add(message);
     }
 
@@ -86,9 +85,9 @@ public class MessageList : List<Message>, IMessageStream
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="cancelToken"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns>async enumeration</returns>
-    public async IAsyncEnumerable<Message> AllAsync([EnumeratorCancellation] CancellationToken cancelToken = default)
+    public async IAsyncEnumerable<Message> AllAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         for (int i = 0; i < Count; ++i)
         {
@@ -99,9 +98,9 @@ public class MessageList : List<Message>, IMessageStream
     /// <summary>
     /// Enumerate messages asynchronously - newest first
     /// </summary>
-    /// <param name="cancelToken"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns>async enumeration</returns>
-    public async IAsyncEnumerable<Message> NewestAsync([EnumeratorCancellation] CancellationToken cancelToken = default)
+    public async IAsyncEnumerable<Message> NewestAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         for (int i = Count - 1; i >= 0; --i)
         {
@@ -113,9 +112,9 @@ public class MessageList : List<Message>, IMessageStream
     /// Just returns messages in order of newest first. You can build other message lists that support semantic and
     /// </summary>
     /// <param name="request">find messages nearest to this</param>
-    /// <param name="cancelToken">optional cancel token</param>
+    /// <param name="cancellationToken">optional cancel token</param>
     /// <returns></returns>
-    public async IAsyncEnumerable<IPromptSection>? GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancelToken)
+    public async IAsyncEnumerable<IPromptSection>? GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         for (int i = Count - 1; i >= 0; --i)
         {

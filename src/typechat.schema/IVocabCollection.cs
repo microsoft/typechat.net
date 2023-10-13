@@ -10,4 +10,3 @@ public interface IVocabCollection : IEnumerable<NamedVocab>
 {
     NamedVocab? Get(string name);
 }
-

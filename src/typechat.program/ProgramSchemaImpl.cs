@@ -8,8 +8,6 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public partial class Program : IDisposable
 {
-    JsonDocument? _programSource;
-
     /// <summary>
     /// Create a new Json program from the Json document
     /// </summary>
@@ -19,13 +17,13 @@ public partial class Program : IDisposable
     {
         ArgumentVerify.ThrowIfNull(steps, nameof(steps));
 
-        _programSource = source;
+        Source = source;
         Steps = steps;
     }
 
     internal Program(JsonDocument? source = null)
     {
-        _programSource = source;
+        Source = source;
     }
 
     ~Program()
@@ -34,7 +32,7 @@ public partial class Program : IDisposable
     }
 
     [JsonIgnore]
-    public JsonDocument? Source => _programSource;
+    public JsonDocument? Source { get; private set; }
 
     /// <summary>
     /// Did the LLM actually return steps?
@@ -76,6 +74,7 @@ public partial class Program : IDisposable
         {
             throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson);
         }
+
         if (Delegate != null)
         {
             return Delegate.DynamicInvoke();
@@ -102,9 +101,10 @@ public partial class Program : IDisposable
     {
         if (fromDispose)
         {
-            _programSource?.Dispose();
+            Source?.Dispose();
         }
-        _programSource = null;
+
+        Source = null;
         Delegate = null;
     }
 }
@@ -158,10 +158,7 @@ public partial class FunctionCall : Expression
     [JsonIgnore]
     public override JsonValueKind ValueType => JsonValueKind.Undefined;
 
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 }
 
 public partial class ResultReference : Expression
@@ -187,9 +184,7 @@ public partial class ValueExpr : Expression
     }
 
     public override string ToString()
-    {
-        return Value.ToString();
-    }
+        => Value.ToString();
 
     internal override Type Type
     {
@@ -207,6 +202,7 @@ public partial class ValueExpr : Expression
                 case JsonValueKind.False:
                     return typeof(bool);
             }
+
             return base.Type;
         }
     }

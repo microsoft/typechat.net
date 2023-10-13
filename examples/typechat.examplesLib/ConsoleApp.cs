@@ -4,14 +4,13 @@ namespace Microsoft.TypeChat;
 
 public abstract class ConsoleApp : IInputHandler
 {
-    List<string> _stopStrings;
+    private List<string> _stopStrings;
 
     public ConsoleApp()
     {
         Console.OutputEncoding = Encoding.UTF8;
         _stopStrings = new List<string>(2) { "quit", "exit" };
     }
-
 
     public string? ConsolePrompt { get; set; } = ">";
     public IList<string> StopStrings => _stopStrings;
@@ -21,37 +20,37 @@ public abstract class ConsoleApp : IInputHandler
     public async Task RunAsync(string consolePrompt, string? inputFilePath = null)
     {
         ConsolePrompt = consolePrompt;
-        await InitApp();
+        await InitApp().ConfigureAwait(false);
         if (string.IsNullOrEmpty(inputFilePath))
         {
-            await RunAsync();
+            await RunAsync().ConfigureAwait(false);
         }
         else
         {
-            await RunBatchAsync(inputFilePath);
+            await RunBatchAsync(inputFilePath).ConfigureAwait(false);
         }
     }
 
-    public async Task RunAsync(CancellationToken cancelToken = default)
+    public async Task RunAsync(CancellationToken cancellationToken = default)
     {
-        while (!cancelToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             Console.Write(ConsolePrompt);
-            string? input = await ReadLineAsync(cancelToken).ConfigureAwait(false);
+            string? input = await ReadLineAsync(cancellationToken).ConfigureAwait(false);
             input = input.Trim();
             if (!string.IsNullOrEmpty(input) &&
-                !await EvalInput(input, cancelToken).ConfigureAwait(false))
+                !await EvalInput(input, cancellationToken).ConfigureAwait(false))
             {
                 break;
             }
         }
     }
 
-    public async Task RunBatchAsync(string batchFilePath, CancellationToken cancelToken = default)
+    public async Task RunBatchAsync(string batchFilePath, CancellationToken cancellationToken = default)
     {
         using var reader = new StreamReader(batchFilePath);
         string line = null;
-        while (!cancelToken.IsCancellationRequested &&
+        while (!cancellationToken.IsCancellationRequested &&
               (line = reader.ReadLine()) != null)
         {
             line = line.Trim();
@@ -63,41 +62,45 @@ public abstract class ConsoleApp : IInputHandler
 
             Console.Write(ConsolePrompt);
             Console.WriteLine(line);
-            await EvalInput(line, cancelToken).ConfigureAwait(false);
+            await EvalInput(line, cancellationToken).ConfigureAwait(false);
         }
     }
 
     /// <summary>
     /// Return false if should exit
     /// </summary>
-    async Task<bool> EvalInput(string input, CancellationToken cancelToken)
+    private async Task<bool> EvalInput(string input, CancellationToken cancellationToken)
     {
         try
         {
             if (input.StartsWith(CommandPrefix))
             {
-                return await EvalCommand(input, cancelToken).ConfigureAwait(false);
+                return await EvalCommand(input, cancellationToken).ConfigureAwait(false);
             }
-            return await EvalLine(input, cancelToken).ConfigureAwait(false);
+
+            return await EvalLine(input, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             OnException(input, ex);
         }
+
         return true;
     }
 
-    async Task<bool> EvalLine(string input, CancellationToken cancelToken)
+    private async Task<bool> EvalLine(string input, CancellationToken cancellationToken)
     {
         if (IsStop(input))
         {
             return false;
         }
-        await ProcessInputAsync(input, cancelToken).ConfigureAwait(false);
+
+        await ProcessInputAsync(input, cancellationToken).ConfigureAwait(false);
+
         return true;
     }
 
-    async Task<bool> EvalCommand(string input, CancellationToken cancelToken)
+    private async Task<bool> EvalCommand(string input, CancellationToken cancellationToken)
     {
         // Process a command
         List<string> parts = CommandLineStringSplitter.Instance.Split(input).ToList();
@@ -113,9 +116,11 @@ public abstract class ConsoleApp : IInputHandler
             {
                 return false;
             }
+
             parts.RemoveAt(0);
             await ProcessCommandAsync(cmd, parts).ConfigureAwait(false);
         }
+
         return true;
     }
 
@@ -125,13 +130,14 @@ public abstract class ConsoleApp : IInputHandler
         {
             return true;
         }
+
         return _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
     }
 
-    public async Task<string?> ReadLineAsync(CancellationToken cancelToken = default)
+    public async Task<string?> ReadLineAsync(CancellationToken cancellationToken = default)
     {
 #if NET7_0_OR_GREATER
-        string? line = await Console.In.ReadLineAsync(cancelToken).ConfigureAwait(false);
+        string? line = await Console.In.ReadLineAsync(cancellationToken).ConfigureAwait(false);
 #else
         string? line = await Console.In.ReadLineAsync().ConfigureAwait(false);
 #endif
@@ -150,7 +156,8 @@ public abstract class ConsoleApp : IInputHandler
         }
     }
 
-    public abstract Task ProcessInputAsync(string input, CancellationToken cancelToken);
+    public abstract Task ProcessInputAsync(string input, CancellationToken cancellationToken = default);
+
     public virtual Task ProcessCommandAsync(string cmd, IList<string> args)
     {
         switch (cmd)
@@ -163,6 +170,7 @@ public abstract class ConsoleApp : IInputHandler
                 Console.Clear();
                 break;
         }
+
         return Task.CompletedTask;
     }
 

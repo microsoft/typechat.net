@@ -13,8 +13,6 @@ public class SchemaException : Exception
         ValueNotInVocab
     }
 
-    ErrorCode _errorCode;
-
     public SchemaException(string? message, Exception? inner = null)
         : base(message, inner)
     {
@@ -23,10 +21,10 @@ public class SchemaException : Exception
     public SchemaException(ErrorCode code, string? message = null, Exception? inner = null)
         : base(message, inner)
     {
-        _errorCode = code;
+        Code = code;
     }
 
-    public ErrorCode Code => _errorCode;
+    public ErrorCode Code { get; }
 
     public override string ToString()
     {

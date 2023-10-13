@@ -29,14 +29,14 @@ public class MultiSchemaApp : ConsoleApp
         InitApps();
     }
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
     {
-        var match = await _childApps.ClassifyRequestAsync(input, cancelToken);
+        var match = await _childApps.ClassifyRequestAsync(input, cancellationToken);
         var processor = match.Value;
         if (processor != null)
         {
             Console.WriteLine($"App Selected: {match.Key}");
-            await processor.ProcessInputAsync(input, cancelToken);
+            await processor.ProcessInputAsync(input, cancellationToken);
         }
         else
         {

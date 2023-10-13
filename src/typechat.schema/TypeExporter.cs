@@ -8,15 +8,14 @@ namespace Microsoft.TypeChat.Schema;
 /// <typeparam name="T">The type of the type information being exported</typeparam>
 public abstract class TypeExporter<T>
 {
-    HashSet<T> _exportedTypes;
-    Queue<T>? _pendingTypes;
+    private HashSet<T> _exportedTypes = new();
+    private Queue<T>? _pendingTypes;
 
     /// <summary>
     /// Create an exporter
     /// </summary>
     public TypeExporter()
     {
-        _exportedTypes = new HashSet<T>();
     }
 
     /// <summary>
@@ -97,6 +96,7 @@ public abstract class TypeExporter<T>
         typeToExport = t;
         return true;
     }
+
     /// <summary>
     /// Update the exported list... 
     /// </summary>

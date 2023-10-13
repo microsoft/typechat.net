@@ -7,9 +7,9 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 internal class JsonVocabConvertor : JsonConverter<string?>
 {
-    string? _propertyName;
-    string? _vocabName;
-    IVocab _vocab;
+    private string? _propertyName;
+    private string? _vocabName;
+    private IVocab _vocab;
 
     public JsonVocabConvertor() { }
 
@@ -44,8 +44,10 @@ internal class JsonVocabConvertor : JsonConverter<string?>
             {
                 throw new SchemaException(SchemaException.ErrorCode.VocabNotFound);
             }
+
             converter.Vocabs.ThrowIfNotInVocab(_vocabName, _propertyName, value);
         }
+
         return value;
     }
 

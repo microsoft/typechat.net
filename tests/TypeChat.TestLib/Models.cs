@@ -13,7 +13,7 @@ public class MockLanguageModel : ILanguageModel
 
     public ModelInfo ModelInfo => _model;
 
-    public Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings, CancellationToken cancelToken)
+    public Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings, CancellationToken cancellationToken = default)
     {
         return Task.FromResult("No comment");
     }

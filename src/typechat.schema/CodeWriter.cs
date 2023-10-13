@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using System.Runtime.CompilerServices;
+
 namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
@@ -8,8 +10,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class CodeWriter
 {
-    TextWriter _writer;
-    List<char> _indent;
+    private TextWriter _writer;
+    private List<char> _indent;
 
     /// <summary>
     /// Create a new CodeWriter
@@ -36,6 +38,7 @@ public class CodeWriter
         {
             _indent.Add(' ');
         }
+
         return this;
     }
 
@@ -49,6 +52,7 @@ public class CodeWriter
         {
             _indent.RemoveRange(_indent.Count - IndentUnit, IndentUnit);
         }
+
         return this;
     }
 
@@ -63,6 +67,7 @@ public class CodeWriter
         {
             _writer.Write(token);
         }
+
         return this;
     }
 
@@ -77,6 +82,7 @@ public class CodeWriter
         {
             _writer.Write(sb);
         }
+
         return this;
     }
 
@@ -93,6 +99,7 @@ public class CodeWriter
                 _writer.Write(_indent[i]);
             }
         }
+
         return this;
     }
 
@@ -102,7 +109,9 @@ public class CodeWriter
     /// <param name="token"></param>
     /// <returns>CodeWriter</returns>
     public CodeWriter Append(string token) => Write(token);
+
     public CodeWriter Append(StringBuilder tokens) => Write(tokens);
+
     public CodeWriter Append(char ch)
     {
         _writer.Write(ch);
@@ -138,20 +147,35 @@ public class CodeWriter
     }
 
     public CodeWriter LBrace() => Write(CodeLanguage.Punctuation.LBrace);
+
     public CodeWriter RBrace() => Write(CodeLanguage.Punctuation.RBrace);
+
     public CodeWriter LParan() => Write(CodeLanguage.Punctuation.LParan);
+
     public CodeWriter RParan() => Write(CodeLanguage.Punctuation.RParan);
+
     public CodeWriter LSquare() => Write(CodeLanguage.Punctuation.LSquare);
+
     public CodeWriter RSquare() => Write(CodeLanguage.Punctuation.RSquare);
+
     public CodeWriter Semicolon() => Write(CodeLanguage.Punctuation.Semicolon);
+
     public CodeWriter Comma() => Write(CodeLanguage.Punctuation.Comma);
+
     public CodeWriter Period() => Write(CodeLanguage.Punctuation.Period);
+
     public CodeWriter Colon() => Write(CodeLanguage.Punctuation.Colon);
+
     public CodeWriter SQuote() => Write(CodeLanguage.Punctuation.SingleQuote);
+
     public CodeWriter DoubleQuote() => Write(CodeLanguage.Punctuation.DoubleQuote);
+
     public CodeWriter Question() => Write(CodeLanguage.Punctuation.Question);
+
     public CodeWriter Space() => Write(CodeLanguage.Punctuation.Space);
+
     public CodeWriter SOL() { WriteIndent(); return this; } // Start a line
+
     public CodeWriter EOL() => Write(CodeLanguage.Punctuation.EOL);
 
     public void Flush()

@@ -12,7 +12,7 @@ namespace Microsoft.TypeChat.Dialog;
 /// </summary>
 public class AgentWithHistory<T> : Agent<T>
 {
-    IMessageStream _history;
+    private IMessageStream _history;
 
     /// <summary>
     /// Create a new Agent that uses the given language model
@@ -53,6 +53,7 @@ public class AgentWithHistory<T> : Agent<T>
     /// context with every request.
     /// </summary>
     public IMessageStream History => _history;
+
     /// <summary>
     /// Customize how a response is transformed into a message written into history
     /// If you return null, the response will not be added to the history

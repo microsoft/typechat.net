@@ -11,15 +11,17 @@ namespace Microsoft.TypeChat.Embeddings;
 /// <typeparam name="T"></typeparam>
 public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
 {
-    List<T> _buffer;
-    List<Embedding> _embeddings;
+    private const int DefaultCapacity = 8;
+
+    private List<T> _buffer = new(DefaultCapacity);
+    private List<Embedding> _embeddings = new(DefaultCapacity);
 
     /// <summary>
     /// Create a new list
     /// </summary>
     public VectorizedList()
-        : this(8)
     { }
+
     /// <summary>
     /// Create a new VectorizedList
     /// </summary>
@@ -36,14 +38,17 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     /// <param name="index"></param>
     /// <returns></returns>
     public T this[int index] => _buffer[index];
+
     /// <summary>
     /// Number of items in this list
     /// </summary>
     public int Count => _buffer.Count;
+
     /// <summary>
     /// Is the collection empty
     /// </summary>
     public bool IsEmpty => Count <= 0;
+
     /// <summary>
     /// Enumerate all items
     /// </summary>
@@ -61,15 +66,13 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
         _buffer.Add(item);
         _embeddings.Add(embedding);
     }
+
     /// <summary>
     /// Add an item and its embedding to the collection
     /// </summary>
     /// <param name="item"></param>
     public void Add(KeyValuePair<T, Embedding> item)
-    {
-        _buffer.Add(item.Key);
-        _embeddings.Add(item.Value);
-    }
+        => Add(item.Key, item.Value);
 
     /// <summary>
     /// Put an item and its embedding at the given position in the collection
@@ -84,6 +87,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
         {
             throw new ArgumentOutOfRangeException();
         }
+
         _buffer[index] = item;
         _embeddings[index] = embedding;
     }
@@ -109,6 +113,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
                 return i;
             }
         }
+
         return -1;
     }
 
@@ -137,6 +142,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
             RemoveAt(i);
             return true;
         }
+
         return false;
     }
 
@@ -174,9 +180,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     /// <param name="index"></param>
     /// <returns>embedding</returns>
     public Embedding GetEmbedding(int index)
-    {
-        return _embeddings[index];
-    }
+        => _embeddings[index];
 
     /// <summary>
     /// Return the position of the nearest neighbor to the given embedding
@@ -185,9 +189,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     /// <param name="distanceType">distance measure to use</param>
     /// <returns>index of nearest item</returns>
     public int IndexOfNearest(Embedding other, EmbeddingDistance distanceType)
-    {
-        return _embeddings.IndexOfNearest(other, distanceType).Value;
-    }
+        => _embeddings.IndexOfNearest(other, distanceType).Value;
 
     /// <summary>
     /// Return the item that is the nearest neighbor to the given embedding
@@ -196,14 +198,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     /// <param name="distanceType">distance measure to use</param>
     /// <returns>nearest item, or default</returns>
     public T Nearest(Embedding other, EmbeddingDistance distanceType)
-    {
-        int i = IndexOfNearest(other, distanceType);
-        if (i >= 0)
-        {
-            return this[i];
-        }
-        return default;
-    }
+        => Nearest(other, 1, distanceType).FirstOrDefault();
 
     /// <summary>
     /// Return the top N nearest neighbors by running a comparison against all embeddings in this list
@@ -213,9 +208,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     /// <param name="distanceType">distance measure to use</param>
     /// <returns></returns>
     public TopNCollection<int> IndexOfNearest(Embedding other, TopNCollection<int> matches, EmbeddingDistance distanceType)
-    {
-        return _embeddings.Nearest(other, matches, distanceType);
-    }
+        => _embeddings.Nearest(other, matches, distanceType);
 
     /// <summary>
     /// Return the topN nearest matches nearest to the given embedding
@@ -246,9 +239,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
     }
 
     IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+        => GetEnumerator();
 
     int IndexOf(KeyValuePair<T, Embedding> item)
     {
@@ -259,6 +250,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
                 return i;
             }
         }
+
         return -1;
     }
 
@@ -283,6 +275,7 @@ public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
             _buffer.RemoveAt(i);
             _embeddings.RemoveAt(i);
         }
+
         return false;
     }
 }

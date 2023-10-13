@@ -16,10 +16,12 @@ public class JsonPolymorphismSettings
     /// You can customize this using 
     /// </summary>
     public bool IncludeDiscriminator { get; set; } = true;
+
     /// <summary>
     /// Include a comment reminding the model to emit the discriminator first
     /// </summary>
     public bool IncludeComment { get; set; } = true;
+
     /// <summary>
     /// Use this to customize how type discriminators are produced.
     /// By default, the name of the type is used

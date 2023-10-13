@@ -11,7 +11,7 @@ namespace SchemaHierarchy;
 
 public class SchemaHierarchyApp : ConsoleApp
 {
-    HierarchicalJsonTranslator _translator;
+    private HierarchicalJsonTranslator _translator;
 
     public SchemaHierarchyApp()
     {
@@ -20,9 +20,9 @@ public class SchemaHierarchyApp : ConsoleApp
         _translator = new HierarchicalJsonTranslator(model, embeddingModel);
     }
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
     {
-        object result = await _translator.TranslateToObjectAsync(input, cancelToken);
+        object result = await _translator.TranslateToObjectAsync(input, cancellationToken);
         if (result != null)
         {
             Console.WriteLine($"{result.GetType()}");

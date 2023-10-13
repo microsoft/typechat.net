@@ -92,7 +92,7 @@ public class EventTimeRange
     public string? EndTime { get; set; }
 
     [JsonPropertyName("duration")]
-    public string? Duration{ get; set; }
+    public string? Duration { get; set; }
 }
 
 public class Event

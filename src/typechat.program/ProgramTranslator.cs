@@ -49,6 +49,7 @@ export type ResultReference = {
     {
         ProgramSchema = GetProgramSchema();
     }
+
     /// <summary>
     /// Return the schema used for program synthesis
     /// The schema is currently written by hand in Typescript and is identical to the one
@@ -56,11 +57,7 @@ export type ResultReference = {
     /// </summary>
     /// <returns></returns>
     internal static TypescriptSchema GetProgramSchema()
-    {
-        return new TypescriptSchema(typeof(Program), SchemaText);
-    }
-
-    SchemaText _apiDef;
+        => new TypescriptSchema(typeof(Program), SchemaText);
 
     /// <summary>
     /// Create a program translator that uses the given language model to create programs
@@ -71,26 +68,24 @@ export type ResultReference = {
     /// <param name="validator">Validator that verifies the returned program</param>
     /// <param name="apiDef">API definition</param>
     public ProgramTranslator(ILanguageModel model, IJsonTypeValidator<Program> validator, SchemaText apiDef)
-        : base(
-            model,
+        : base(model,
             validator,
-            new ProgramTranslatorPrompts(apiDef)
-            )
+            new ProgramTranslatorPrompts(apiDef))
     {
-        _apiDef = apiDef;
+        ApiDef = apiDef;
     }
 
     /// <summary>
     /// Api definition
     /// </summary>
-    public SchemaText ApiDef => _apiDef;
+    public SchemaText ApiDef { get; }
 
     // return true if validation loop should continue
     protected override bool OnValidationComplete(Result<Program> validationResult)
     {
         // If LLM could not translate the user request to begin with, then we can't continue
         Program? program = validationResult.Value;
-        return (program != null) ? program.HasNotTranslated : true;
+        return program?.HasNotTranslated ?? true;
     }
 }
 
@@ -111,11 +106,9 @@ public class ProgramTranslator<TApi> : ProgramTranslator
     /// <param name="model"></param>
     /// <param name="api"></param>
     public ProgramTranslator(ILanguageModel model, Api<TApi> api)
-        : base(
-            model,
+        : base(model,
             new ProgramValidator<TApi>(api),
-            api.GenerateSchema().Schema
-        )
+            api.GenerateSchema().Schema)
     {
     }
 }

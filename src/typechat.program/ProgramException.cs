@@ -22,20 +22,19 @@ public class ProgramException : Exception
         UnknownExpression
     }
 
-    ErrorCode _errorCode;
-
     public ProgramException(ErrorCode code, string? message = null, Exception? inner = null)
         : base(message, inner)
     {
-        _errorCode = code;
+        Code = code;
     }
 
-    public ErrorCode Code => _errorCode;
+    public ErrorCode Code { get; }
 
     public static void ThrowFunctionNotFound(string name)
     {
         throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"@func {name} not found in API");
     }
+
     public static void ThrowArgCountMismatch(FunctionCall call, int expectedCount, int actualCount)
     {
         string json = call.Source.ToString();
@@ -57,18 +56,19 @@ public class ProgramException : Exception
     {
         throw new ProgramException(
             ProgramException.ErrorCode.TypeMismatch,
-            $"TypeMismatch: @func {name} @arg {param.Name}: Expected {param.ParameterType.Name}, Got {actual.Name}"
-            );
+            $"TypeMismatch: @func {name} @arg {param.Name}: Expected {param.ParameterType.Name}, Got {actual.Name}");
     }
 
     internal static void ThrowInvalidResultRef(int refId)
     {
         throw new ProgramException(ProgramException.ErrorCode.InvalidResultRef, $"{refId} is not a valid ResultReference");
     }
+
     internal static void ThrowInvalidResultRef(int resultRef, int maxResults)
     {
         throw new ProgramException(ProgramException.ErrorCode.InvalidResultRef, $"Referencing @ref: {resultRef} that is not available yet. Only {maxResults} results available");
     }
+
     internal static void ThrowVariableNotFound(string name)
     {
         throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Variable {name} not found");

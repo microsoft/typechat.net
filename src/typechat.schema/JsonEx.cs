@@ -11,10 +11,12 @@ internal static class JsonEx
         {
             propertyName = reader.GetString();
         }
+
         if (propertyName == null || propertyName != expectedPropertyName)
         {
             throw new JsonException($"Expected property {expectedPropertyName}");
         }
+
         string? value = reader.GetString();
         return value;
     }

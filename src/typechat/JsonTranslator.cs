@@ -166,23 +166,23 @@ public class JsonTranslator<T> : IJsonTranslator
     /// Translate a natural language request into an object'
     /// </summary>
     /// <param name="request">text request</param>
-    /// <param name="cancelToken">optional cancel token</param>
+    /// <param name="cancellationToken">optional cancel token</param>
     /// <returns></returns>
-    public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken)
+    public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancellationToken = default)
     {
-        return await TranslateAsync(request, cancelToken);
+        return await TranslateAsync(request, cancellationToken);
     }
 
     /// <summary>
     /// Translate a natural language request into an object of type 'T'
     /// </summary>
     /// <param name="request">text request</param>
-    /// <param name="cancelToken">optional cancel token</param>
+    /// <param name="cancellationToken">optional cancel token</param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
-    public Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
+    public Task<T> TranslateAsync(string request, CancellationToken cancellationToken = default)
     {
-        return TranslateAsync(request, null, null, cancelToken);
+        return TranslateAsync(request, null, null, cancellationToken);
     }
 
     /// <summary>
@@ -191,14 +191,14 @@ public class JsonTranslator<T> : IJsonTranslator
     /// <param name="request"></param>
     /// <param name="preamble"></param>
     /// <param name="requestSettings"></param>
-    /// <param name="cancelToken"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public async Task<T> TranslateAsync(
         Prompt request,
         IList<IPromptSection>? preamble,
         TranslationSettings? requestSettings = null,
-        CancellationToken cancelToken = default
+        CancellationToken cancellationToken = default
     )
     {
         ArgumentVerify.ThrowIfNull(request, nameof(request));
@@ -208,7 +208,7 @@ public class JsonTranslator<T> : IJsonTranslator
         int repairAttempts = 0;
         while (true)
         {
-            string responseText = await GetResponseAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+            string responseText = await GetResponseAsync(prompt, requestSettings, cancellationToken).ConfigureAwait(false);
 
             JsonResponse jsonResponse = JsonResponse.Parse(responseText);
             Result<T> validationResult;
@@ -254,10 +254,10 @@ public class JsonTranslator<T> : IJsonTranslator
         return _prompts.CreateRequestPrompt(_validator.Schema, request, preamble);
     }
 
-    protected virtual async Task<string> GetResponseAsync(Prompt prompt, TranslationSettings requestSettings, CancellationToken cancelToken)
+    protected virtual async Task<string> GetResponseAsync(Prompt prompt, TranslationSettings requestSettings, CancellationToken cancellationToken)
     {
         NotifyEvent(SendingPrompt, prompt);
-        string responseText = await _model.CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+        string responseText = await _model.CompleteAsync(prompt, requestSettings, cancellationToken).ConfigureAwait(false);
         NotifyEvent(CompletionReceived, responseText);
         return responseText;
     }

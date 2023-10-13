@@ -16,8 +16,8 @@ public interface IProgramValidator
 /// </summary>
 public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
 {
-    TypeValidator<Program> _typeValidator;
-    IProgramValidator? _programValidator;
+    private TypeValidator<Program> _typeValidator;
+    private IProgramValidator? _programValidator;
 
     public ProgramValidator(IProgramValidator? programValidator = null)
     {
@@ -43,6 +43,7 @@ public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
                 return ValidateProgram(result.Value);
             }
         }
+
         return result;
     }
 
@@ -52,6 +53,7 @@ public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
         {
             return _programValidator.ValidateProgram(program);
         }
+
         return program;
     }
 }
@@ -63,7 +65,7 @@ public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
 /// <typeparam name="TApi"></typeparam>
 public class ProgramValidator<TApi> : ProgramValidator
 {
-    Api<TApi> _api;
+    private Api<TApi> _api;
 
     public ProgramValidator(Api<TApi> api)
         : base()

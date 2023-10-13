@@ -10,6 +10,7 @@ public enum EmbeddingDistance
     /// Cosine similarity
     /// </summary>
     Cosine,
+
     /// <summary>
     /// Dot products
     /// </summary>

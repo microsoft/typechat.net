@@ -7,10 +7,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginProgramTranslator
 {
-    IKernel _kernel;
-    ProgramTranslator _translator;
-    PluginApi _pluginApi;
-    SchemaText _pluginSchema;
+    private IKernel _kernel;
+    private ProgramTranslator _translator;
+    private PluginApi _pluginApi;
+    private SchemaText _pluginSchema;
 
     /// <summary>
     /// Create a new translator that will produce programs that can call all skills and
@@ -20,31 +20,35 @@ public class PluginProgramTranslator
     /// <param name="model"></param>
     public PluginProgramTranslator(IKernel kernel, ModelInfo model)
     {
+        ArgumentVerify.ThrowIfNull(kernel, nameof(kernel));
+        ArgumentVerify.ThrowIfNull(model, nameof(model));
+
         _kernel = kernel;
         _pluginApi = new PluginApi(_kernel);
         _pluginSchema = _pluginApi.TypeInfo.ExportSchema(_pluginApi.TypeName);
         _translator = new ProgramTranslator(
             _kernel.ChatLanguageModel(model),
             new ProgramValidator(new PluginProgramValidator(_pluginApi.TypeInfo)),
-            _pluginSchema
-        );
+            _pluginSchema);
     }
+
     /// <summary>
     /// Translator being used
     /// </summary>
     public ProgramTranslator Translator => _translator;
+
     /// <summary>
     /// Kernel this translator is working with
     /// </summary>
     public IKernel Kernel => _kernel;
+
     /// <summary>
     /// The "API" formed by the various plugins registered with the kernel 
     /// </summary>
     public PluginApi Api => _pluginApi;
+
     public SchemaText Schema => _pluginSchema;
 
-    public Task<Program> TranslateAsync(string input, CancellationToken cancelToken)
-    {
-        return _translator.TranslateAsync(input, cancelToken);
-    }
+    public Task<Program> TranslateAsync(string input, CancellationToken cancellationToken = default)
+        => _translator.TranslateAsync(input, cancellationToken);
 }

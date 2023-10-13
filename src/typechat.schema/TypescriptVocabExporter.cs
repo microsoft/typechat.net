@@ -9,8 +9,7 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class TypescriptVocabExporter : TypeExporter<NamedVocab>
 {
-    TypescriptWriter _writer;
-    IVocabCollection _store;
+    private TypescriptWriter _writer;
 
     public TypescriptVocabExporter(TypescriptWriter writer, IVocabCollection store)
         : base()
@@ -19,10 +18,10 @@ public class TypescriptVocabExporter : TypeExporter<NamedVocab>
         ArgumentVerify.ThrowIfNull(store, nameof(store));
 
         _writer = writer;
-        _store = store;
+        Vocabs = store;
     }
 
-    public IVocabCollection Vocabs => _store;
+    public IVocabCollection Vocabs { get; }
 
     public override void ExportType(NamedVocab type)
     {
@@ -38,11 +37,12 @@ public class TypescriptVocabExporter : TypeExporter<NamedVocab>
         {
             ExportValues(type.Vocab);
         }
+
         _writer.EOS();
         AddExported(type);
     }
 
-    void ExportValues(IVocab vocab)
+    private void ExportValues(IVocab vocab)
     {
         var values = from entry in vocab
                      select entry.Text;

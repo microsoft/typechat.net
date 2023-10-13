@@ -7,10 +7,10 @@ namespace Plugins;
 
 public class PluginApp : ConsoleApp
 {
-    OpenAIConfig _config;
-    IKernel _kernel;
-    PluginProgramTranslator _programTranslator;
-    ProgramInterpreter _interpreter;
+    private OpenAIConfig _config;
+    private IKernel _kernel;
+    private PluginProgramTranslator _programTranslator;
+    private ProgramInterpreter _interpreter;
 
     public PluginApp()
     {
@@ -25,9 +25,9 @@ public class PluginApp : ConsoleApp
     public IKernel Kernel => _kernel;
     public string Schema => _programTranslator.Schema;
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
     {
-        using Program program = await _programTranslator.TranslateAsync(input, cancelToken);
+        using Program program = await _programTranslator.TranslateAsync(input, cancellationToken);
         program.Print(_programTranslator.Api.TypeName);
         Console.WriteLine();
 
@@ -37,7 +37,7 @@ public class PluginApp : ConsoleApp
         }
     }
 
-    async Task RunProgram(Program program)
+    private async Task RunProgram(Program program)
     {
         if (!program.IsComplete)
         {
@@ -51,7 +51,7 @@ public class PluginApp : ConsoleApp
         }
     }
 
-    void InitPlugins()
+    private void InitPlugins()
     {
         _config = Config.LoadOpenAI();
         _kernel = _config.CreateKernel();

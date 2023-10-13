@@ -8,5 +8,5 @@ namespace Microsoft.TypeChat;
 /// <typeparam name="T">Type of target</typeparam>
 public interface ITextRequestRouter<T>
 {
-    Task<T> RouteRequestAsync(string request, CancellationToken cancelToken);
+    Task<T> RouteRequestAsync(string request, CancellationToken cancellationToken = default);
 }

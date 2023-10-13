@@ -7,36 +7,32 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
 {
-    string _text;
-
     [JsonConstructor]
     public VocabEntry(string text)
     {
-        _text = text;
+        ArgumentVerify.ThrowIfNullOrEmpty(text, nameof(text));
+        Text = text;
     }
 
     /// <summary>
     /// Vocabulary text
     /// </summary>
-    public string Text => _text;
+    public string Text { get; }
 
     public int CompareTo(VocabEntry other)
-    {
-        return _text.CompareTo(other._text);
-    }
+        => Text.CompareTo(other.Text);
 
     public int CompareTo(VocabEntry other, StringComparison comparison)
-    {
-        return string.Compare(_text, other._text, comparison);
-    }
+        => string.Compare(Text, other.Text, comparison);
 
-    public override bool Equals(object? obj) => _text.Equals(obj);
+    public override bool Equals(object? obj) => Text.Equals(obj);
 
-    public bool Equals(VocabEntry other) => _text.Equals(other._text);
+    public bool Equals(VocabEntry other) => Text.Equals(other.Text);
 
-    public override int GetHashCode() => _text.GetHashCode();
-    public override string? ToString() => _text;
+    public override int GetHashCode() => Text.GetHashCode();
 
-    public static implicit operator string(VocabEntry entry) => entry._text;
+    public override string ToString() => Text;
+
+    public static implicit operator string(VocabEntry entry) => entry.Text;
     public static implicit operator VocabEntry(string text) => new VocabEntry(text);
 }

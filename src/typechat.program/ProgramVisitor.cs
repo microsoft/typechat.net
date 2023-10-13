@@ -40,8 +40,11 @@ public class ProgramVisitor
     }
 
     protected virtual void VisitResult(ResultReference resultRef) { }
+
     protected virtual void VisitValue(ValueExpr value) { }
+
     protected virtual void VisitArray(ArrayExpr array) => Visit(array.Value);
+
     protected virtual void VisitObject(ObjectExpr obj)
     {
         foreach (var property in obj.Value)
@@ -52,13 +55,9 @@ public class ProgramVisitor
 
     protected void Visit(Expression[] expressions)
     {
-        if (expressions == null || expressions.Length == 0)
+        foreach (Expression expression in expressions ?? Array.Empty<Expression>())
         {
-            return;
-        }
-        for (int i = 0; i < expressions.Length; ++i)
-        {
-            Visit(expressions[i]);
+            Visit(expression);
         }
     }
 

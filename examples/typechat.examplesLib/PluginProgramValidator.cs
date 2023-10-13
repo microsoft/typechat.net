@@ -10,7 +10,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginProgramValidator : ProgramVisitor, IProgramValidator
 {
-    PluginApiTypeInfo _typeInfo;
+    private PluginApiTypeInfo _typeInfo;
 
     public PluginProgramValidator(PluginApiTypeInfo typeInfo)
     {
@@ -48,6 +48,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             throw;
         }
         catch { }
+
         ProgramException.ThrowFunctionNotFound(functionCall.Name);
     }
 
@@ -69,8 +70,10 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
                 // Optional parameters follow required ones
                 break;
             }
+
             requiredCount++;
         }
+
         return requiredCount;
     }
 
@@ -83,6 +86,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         {
             ProgramException.ThrowArgCountMismatch(call, requiredArgCount, actualCount);
         }
+
         int totalArgCount = (typeInfo.Parameters != null) ? typeInfo.Parameters.Count : 0;
         if (actualCount > totalArgCount)
         {
@@ -133,16 +137,12 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
     }
 
     bool IsOptional(ParameterView parameter)
-    {
-        return (!string.IsNullOrEmpty(parameter.DefaultValue));
-    }
+        => !string.IsNullOrEmpty(parameter.DefaultValue);
 
     void ThrowTypeMismatch(FunctionCall call, string paramName, ParameterViewType expectedType, ParameterViewType actualType)
     {
         throw new ProgramException(
             ProgramException.ErrorCode.TypeMismatch,
-            $"TypeMismatch: @func {call.Name} @arg {paramName}: Expected {expectedType.Name}, Got {actualType.Name}"
-            );
-
+            $"TypeMismatch: @func {call.Name} @arg {paramName}: Expected {expectedType.Name}, Got {actualType.Name}");
     }
 }

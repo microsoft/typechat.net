@@ -15,8 +15,7 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class JsonVocabAttribute : JsonConverterAttribute
 {
-    string _entries;
-    IVocab _vocab;
+    private string _entries;
 
     /// <summary>
     /// Default const
@@ -38,6 +37,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
     /// The Name of the vocabulary
     /// </summary>
     public string? Name { get; set; }
+
     /// <summary>
     /// Entries in this vocabulary, if any were provided inline
     /// </summary>
@@ -46,11 +46,11 @@ public class JsonVocabAttribute : JsonConverterAttribute
         get => _entries;
         set
         {
-            _vocab = null;
+            Vocab = null;
             _entries = value;
             if (!string.IsNullOrEmpty(value))
             {
-                _vocab = Schema.Vocab.Parse(_entries);
+                Vocab = Schema.Vocab.Parse(_entries);
             }
         }
     }
@@ -58,20 +58,25 @@ public class JsonVocabAttribute : JsonConverterAttribute
     /// The Json property name for which this is a vocabulary
     /// </summary>
     public string? PropertyName { get; set; }
+
     /// <summary>
     /// Should the vocabulary be emitted inline, or as a standalone type
     /// </summary>
     public bool Inline { get; set; } = true;
+
     /// <summary>
     /// If true, validates properties for membership in this vocabulary
     /// </summary>
     public bool Enforce { get; set; } = true;
 
-    internal IVocab? Vocab => _vocab;
+    internal IVocab? Vocab { get; private set; }
 
     internal bool HasEntries => !string.IsNullOrEmpty(_entries);
+
     internal bool HasName => !string.IsNullOrEmpty(Name);
-    internal bool HasVocab => _vocab != null;
+
+    internal bool HasVocab => Vocab != null;
+
     internal bool HasPropertyName => !string.IsNullOrEmpty(PropertyName);
 
     /// <summary>
@@ -88,12 +93,14 @@ public class JsonVocabAttribute : JsonConverterAttribute
 
         if (HasVocab)
         {
-            return new JsonVocabConvertor(_vocab, PropertyName);
+            return new JsonVocabConvertor(Vocab, PropertyName);
         }
+
         if (HasName)
         {
             return new JsonVocabConvertor(Name, PropertyName);
         }
+
         return base.CreateConverter(typeToConvert);
     }
 
@@ -103,7 +110,8 @@ public class JsonVocabAttribute : JsonConverterAttribute
         {
             return null;
         }
-        return new Vocab(_vocab);
+
+        return new Vocab(Vocab);
     }
 
     public NamedVocab? ToVocabType()
@@ -112,7 +120,8 @@ public class JsonVocabAttribute : JsonConverterAttribute
         {
             return null;
         }
-        return new NamedVocab(Name, _vocab);
+
+        return new NamedVocab(Name, Vocab);
     }
 }
 

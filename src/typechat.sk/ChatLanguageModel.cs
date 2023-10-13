@@ -8,7 +8,6 @@ namespace Microsoft.TypeChat;
 public class ChatLanguageModel : ILanguageModel
 {
     IChatCompletion _service;
-    ModelInfo _model;
 
     /// <summary>
     /// Create a new language model from the OpenAI config
@@ -24,7 +23,7 @@ public class ChatLanguageModel : ILanguageModel
         model ??= config.Model;
         IKernel kernel = config.CreateKernel();
         _service = kernel.GetService<IChatCompletion>(model.Name);
-        _model = model;
+        ModelInfo = model;
     }
 
     /// <summary>
@@ -36,27 +35,26 @@ public class ChatLanguageModel : ILanguageModel
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
-        _model = model;
+        ModelInfo = model;
     }
 
     /// <summary>
     /// Information about the model
     /// </summary>
-    public ModelInfo ModelInfo => _model;
+    public ModelInfo ModelInfo { get; }
 
     /// <summary>
     /// Return a completion for the prompt
     /// </summary>
     /// <param name="prompt"></param>
     /// <param name="settings"></param>
-    /// <param name="cancelToken"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    public Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancellationToken = default)
     {
         ChatHistory history = ToHistory(prompt);
         ChatRequestSettings? requestSettings = ToRequestSettings(settings);
-        string textResponse = await _service.GenerateMessageAsync(history, requestSettings, cancelToken).ConfigureAwait(false);
-        return textResponse;
+        return _service.GenerateMessageAsync(history, requestSettings, cancellationToken);
     }
 
     ChatHistory ToHistory(Prompt prompt)
@@ -72,15 +70,18 @@ public class ChatLanguageModel : ILanguageModel
         {
             return null;
         }
+
         var requestSettings = new ChatRequestSettings();
         if (settings.Temperature >= 0)
         {
             requestSettings.Temperature = settings.Temperature;
         }
+
         if (settings.MaxTokens > 0)
         {
             requestSettings.MaxTokens = settings.MaxTokens;
         }
+
         return requestSettings;
     }
 }

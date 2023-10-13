@@ -11,9 +11,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginApi
 {
-    IKernel _kernel;
-    string _typeName;
-    PluginApiTypeInfo _typeInfo;
+    private IKernel _kernel;
 
     /// <summary>
     /// Create an Api using all registered kernel plugins
@@ -37,18 +35,19 @@ public class PluginApi
         ArgumentVerify.ThrowIfNull(typeInfo, nameof(typeInfo));
 
         _kernel = kernel;
-        _typeName = typeName;
-        _typeInfo = typeInfo;
+        TypeName = typeName;
+        TypeInfo = typeInfo;
     }
 
     /// <summary>
     /// Api name
     /// </summary>
-    public string TypeName => _typeName;
+    public string TypeName { get; }
+
     /// <summary>
     /// Plugins that make up this Api
     /// </summary>
-    public PluginApiTypeInfo TypeInfo => _typeInfo;
+    public PluginApiTypeInfo TypeInfo { get; }
 
     /// <summary>
     /// Bind the given function name and args to the plugin that implements the call
@@ -60,10 +59,11 @@ public class PluginApi
     public (PluginFunctionName, FunctionView) BindFunction(string name, dynamic[] args)
     {
         var pluginName = PluginFunctionName.Parse(name);
-        if (!_typeInfo.TryGetValue(pluginName, out FunctionView function))
+        if (!TypeInfo.TryGetValue(pluginName, out FunctionView function))
         {
             throw new ArgumentException($"Function {name} does not exist");
         }
+
         return (pluginName, function);
     }
 
@@ -84,7 +84,9 @@ public class PluginApi
         {
             context.Variables[parameters[i].Name] = args[i].ToString();
         }
-        await function.InvokeAsync(context);
+
+        await function.InvokeAsync(context).ConfigureAwait(false);
+
         return context.Variables.Input;
     }
 }

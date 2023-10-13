@@ -7,29 +7,28 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class TextCompletionModel : ILanguageModel
 {
-    ITextCompletion _service;
-    ModelInfo _model;
+    private ITextCompletion _service;
 
     public TextCompletionModel(OpenAIConfig config, ModelInfo? model = null)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
-
         config.Validate();
 
         model ??= config.Model;
         IKernel kernel = config.CreateKernel();
         _service = kernel.GetService<ITextCompletion>(model.Name);
-        _model = model;
+        ModelInfo = model;
     }
 
     public TextCompletionModel(ITextCompletion service, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
-        _model = model;
+        ModelInfo = model;
     }
 
-    public ModelInfo ModelInfo => _model;
+    public ModelInfo ModelInfo { get; }
+
     /// <summary>
     /// If true, will include the source of the prompt section
     /// user:\n Hello
@@ -37,12 +36,11 @@ public class TextCompletionModel : ILanguageModel
     /// </summary>
     public bool IncludeSectionSource { get; set; } = true;
 
-    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    public Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancellationToken = default)
     {
         CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
         string request = prompt.ToString(IncludeSectionSource);
-        string response = await _service.CompleteAsync(request, requestSettings, cancelToken).ConfigureAwait(false);
-        return response;
+        return _service.CompleteAsync(request, requestSettings, cancellationToken);
     }
 
     CompleteRequestSettings? ToRequestSettings(TranslationSettings? settings)
@@ -51,15 +49,18 @@ public class TextCompletionModel : ILanguageModel
         {
             return null;
         }
+
         var requestSettings = new CompleteRequestSettings();
         if (settings.Temperature >= 0)
         {
             requestSettings.Temperature = settings.Temperature;
         }
+
         if (settings.MaxTokens > 0)
         {
             requestSettings.MaxTokens = settings.MaxTokens;
         }
+
         return requestSettings;
     }
 }

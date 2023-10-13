@@ -15,6 +15,7 @@ internal static class JsonNodeEx
         {
             return obj;
         }
+
         if (obj is dynamic[] darray)
         {
             JsonArray jsonArray = new JsonArray();
@@ -23,6 +24,7 @@ internal static class JsonNodeEx
                 dynamic value = darray[i];
                 jsonArray.Add(ToJsonNode(value));
             }
+
             return jsonArray;
         }
         else if (obj is Array array)
@@ -33,9 +35,10 @@ internal static class JsonNodeEx
                 dynamic value = array.GetValue(i);
                 jsonArray.Add(ToJsonNode(value));
             }
+
             return jsonArray;
         }
+
         return obj;
     }
-
 }

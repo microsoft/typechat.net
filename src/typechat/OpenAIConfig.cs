@@ -17,27 +17,33 @@ public class OpenAIConfig
         /// Api key to use with the OpenAI service
         /// </summary>
         public const string OPENAI_API_KEY = "OPENAI_API_KEY";
+
         /// <summary>
         /// The OpenAI endpoint, such as:
         /// https://api.openai.com/v1/chat/completions
         /// </summary>
         public const string OPENAI_ENDPOINT = "OPENAI_ENDPOINT";
+
         /// <summary>
         /// Optional: OpenAI organization
         /// </summary>
         public const string OPENAI_ORGANIZATION = "OPENAI_ORGANIZATION";
+
         /// <summary>
         /// Name of the language model to use
         /// </summary>
         public const string OPENAI_MODEL = "OPENAI_MODEL";
+
         /// <summary>
         /// Name of the embedding model to use
         /// </summary>
         public const string OPENAI_EMBEDDINGMODEL = "OPENAI_EMBEDDINGMODEL";
+
         /// <summary>
         /// Api key to use for Azure OpenAI service
         /// </summary>
         public const string AZURE_OPENAI_API_KEY = "AZURE_OPENAI_API_KEY";
+
         /// <summary>
         /// Endpoint to use for Azure OpenAI service.
         /// https://YOUR_RESOURCE_NAME.openai.azure.com
@@ -51,38 +57,46 @@ public class OpenAIConfig
     /// Use Azure OpenAI?
     /// </summary>
     public bool Azure { get; set; } = true;
+
     /// <summary>
     /// Api endpoint
     /// </summary>
     public string Endpoint { get; set; }
+
     /// <summary>
     /// Api key to use
     /// </summary>
     public string ApiKey { get; set; }
+
     /// <summary>
     /// Organization: only used by OpenAI service. 
     /// </summary>
     public string? Organization { get; set; }
+
     /// <summary>
     /// Model name
     /// </summary>
     public string? Model { get; set; }
+
     /// <summary>
     /// Api version
     /// </summary>
     public string ApiVersion { get; set; } = "2023-05-15";
+
     /// <summary>
     /// Http Settings
     /// </summary>
     public int TimeoutMs { get; set; } = 15 * 1000;
+
     public int MaxRetries { get; set; } = 3;
+
     public int MaxPauseMs { get; set; } = 1000; // 1000 milliseconds
 
     /// <summary>
     /// Validate the configuration
     /// </summary>
     /// <param name="configFileName">(optional) Config file the settings came from</param>
-    public void Validate(string configFileName = default)
+    public void Validate(string? configFileName = default)
     {
         configFileName ??= string.Empty;
 
@@ -118,14 +132,11 @@ public class OpenAIConfig
         {
             config.Endpoint = Environment.GetEnvironmentVariable(VariableNames.AZURE_OPENAI_ENDPOINT);
         }
-        if (isEmbedding)
-        {
-            config.Model = Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDINGMODEL);
-        }
-        else
-        {
-            config.Model = Environment.GetEnvironmentVariable(VariableNames.OPENAI_MODEL);
-        }
+
+        config.Model = isEmbedding
+            ? Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDINGMODEL)
+            : Environment.GetEnvironmentVariable(VariableNames.OPENAI_MODEL);
+
         config.Validate();
         return config;
     }
@@ -142,6 +153,7 @@ public class OpenAIConfig
         {
             throw new ArgumentException($"{jsonFilePath} is empty");
         }
+
         return Json.Parse<OpenAIConfig>(json);
     }
 }

@@ -18,6 +18,7 @@ public static class Extensions
         {
             return null;
         }
+
         return array[index];
     }
 
@@ -48,11 +49,13 @@ public static class Extensions
         {
             return;
         }
+
         program.PrintNotTranslated();
         if (program.HasSteps && program.HasNotTranslated)
         {
             Console.WriteLine("Suggested program that may include suggested APIs:");
         }
+
         new ProgramWriter(Console.Out).Write(program, apiType);
     }
 

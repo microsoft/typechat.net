@@ -5,7 +5,7 @@ namespace Sentiment;
 
 public class SentimentApp : ConsoleApp
 {
-    JsonTranslator<SentimentResponse> _translator;
+    private JsonTranslator<SentimentResponse> _translator;
 
     public SentimentApp()
     {
@@ -16,7 +16,7 @@ public class SentimentApp : ConsoleApp
         _translator = new JsonTranslator<SentimentResponse>(new LanguageModel(config));
     }
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
     {
         SentimentResponse response = await _translator.TranslateAsync(input);
         Console.WriteLine($"The sentiment is {response.Sentiment}");

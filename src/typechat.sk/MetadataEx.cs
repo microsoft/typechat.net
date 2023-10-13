@@ -4,7 +4,6 @@ namespace Microsoft.TypeChat;
 
 internal static class MetadataEx
 {
-
     internal static bool IsGlobal(this FunctionView fview)
     {
         return ("_GLOBAL_FUNCTIONS_" == fview.SkillName);
@@ -26,21 +25,18 @@ internal static class MetadataEx
         {
             function = kernel.Skills.GetFunction(plugin.PluginName, plugin.FunctionName);
         }
+
         return function;
     }
 
     internal static PluginFunctionName ToPluginName(this FunctionView fview)
     {
         // Temporary hack to make pretty printing possible
-        if (fview.IsGlobal())
-        {
-            return new PluginFunctionName(fview.Name);
-        }
-        return new PluginFunctionName(fview.SkillName, fview.Name);
+        return fview.IsGlobal()
+            ? new PluginFunctionName(fview.Name)
+            : new PluginFunctionName(fview.SkillName, fview.Name);
     }
 
     internal static bool IsNullable(this ParameterView param)
-    {
-        return !string.IsNullOrEmpty(param.DefaultValue);
-    }
+        => !string.IsNullOrEmpty(param.DefaultValue);
 }

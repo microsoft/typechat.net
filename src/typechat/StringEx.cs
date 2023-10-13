@@ -23,6 +23,7 @@ internal static class StringEx
                     break;
                 }
             }
+
             ++i;
         }
     }
@@ -33,6 +34,7 @@ internal static class StringEx
         {
             sb.AppendLine(line);
         }
+
         return sb;
     }
 
@@ -42,15 +44,6 @@ internal static class StringEx
         return sb;
     }
 
-    internal static StringBuilder AppendMultiple(this StringBuilder sb, string sep, IEnumerable<string> substrings)
-    {
-        int i = 0;
-        foreach (var substring in substrings)
-        {
-            if (i > 0) { sb.Append(sep); }
-            sb.Append(substring);
-            ++i;
-        }
-        return sb;
-    }
+    internal static StringBuilder AppendMultiple(this StringBuilder sb, string separator, IEnumerable<string> substrings)
+        => sb.Append(string.Join(separator, substrings));
 }

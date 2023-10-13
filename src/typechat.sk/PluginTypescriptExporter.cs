@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginTypescriptExporter
 {
-    TypescriptWriter _tsWriter;
+    private TypescriptWriter _tsWriter;
 
     public PluginTypescriptExporter(TextWriter writer)
     {
@@ -41,13 +41,15 @@ public class PluginTypescriptExporter
             {
                 Export(plugin.Key, plugin.Value);
             }
+
             _tsWriter.PopIndent();
         }
+
         _tsWriter.EndInterface();
         _tsWriter.Flush();
     }
 
-    void Export(PluginFunctionName pluginName, FunctionView function)
+    private void Export(PluginFunctionName pluginName, FunctionView function)
     {
         ArgumentVerify.ThrowIfNull(function, nameof(function));
 
@@ -56,15 +58,17 @@ public class PluginTypescriptExporter
         {
             Export(function.Parameters);
         }
+
         _tsWriter.EndMethodDeclare(Typescript.Types.String);
     }
 
-    void Export(IList<ParameterView> parameters)
+    private void Export(IList<ParameterView> parameters)
     {
         if (parameters == null)
         {
             return;
         }
+
         if (IncludeParamDescriptions && HasDescriptions(parameters))
         {
             ExportDetailed(parameters);
@@ -75,7 +79,7 @@ public class PluginTypescriptExporter
         }
     }
 
-    void ExportDetailed(IList<ParameterView> parameters)
+    private void ExportDetailed(IList<ParameterView> parameters)
     {
         _tsWriter.PushIndent();
         _tsWriter.EOL();
@@ -86,19 +90,22 @@ public class PluginTypescriptExporter
             {
                 _tsWriter.SOL().Comment(param.Description);
             }
+
             if (param.IsNullable())
             {
                 _tsWriter.SOL().Comment($"Default: {param.DefaultValue}");
             }
+
             _tsWriter.SOL();
             Export(param, i, parameters.Count);
             _tsWriter.EOL();
         }
+
         _tsWriter.PopIndent();
         _tsWriter.SOL();
     }
 
-    void ExportPlain(IList<ParameterView> parameters)
+    private void ExportPlain(IList<ParameterView> parameters)
     {
         for (int i = 0; i < parameters.Count; ++i)
         {
@@ -106,14 +113,14 @@ public class PluginTypescriptExporter
         }
     }
 
-    void Export(ParameterView param, int argNumber, int argCount)
+    private void Export(ParameterView param, int argNumber, int argCount)
     {
         bool isArray = (param.Type == ParameterViewType.Array);
         bool isNullable = param.IsNullable();
         _tsWriter.Parameter(param.Name, DataType(param.Type), argNumber, argCount, isArray, isNullable);
     }
 
-    bool HasDescriptions(IList<ParameterView> parameters)
+    private bool HasDescriptions(IList<ParameterView> parameters)
     {
         for (int i = 0; i < parameters.Count; ++i)
         {
@@ -122,10 +129,11 @@ public class PluginTypescriptExporter
                 return true;
             }
         }
+
         return false;
     }
 
-    string DataType(ParameterViewType? pType)
+    private string DataType(ParameterViewType? pType)
     {
         string type = Typescript.Types.String;
         if (pType != null)
@@ -147,9 +155,11 @@ public class PluginTypescriptExporter
                 type = Typescript.Types.Any;
             }
         }
+
         return type;
     }
 
-    PluginTypescriptExporter SOL() { _tsWriter.SOL(); return this; }
-    PluginTypescriptExporter EOL() { _tsWriter.EOL(); return this; }
+    private PluginTypescriptExporter SOL() { _tsWriter.SOL(); return this; }
+
+    private PluginTypescriptExporter EOL() { _tsWriter.EOL(); return this; }
 }

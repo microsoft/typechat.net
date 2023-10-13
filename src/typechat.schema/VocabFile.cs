@@ -10,7 +10,7 @@ namespace Microsoft.TypeChat.Schema;
 /// "toppings": ["cinnamon", "almond", "vanilla"]
 /// }
 /// </summary>
-public class VocabFile
+public static class VocabFile
 {
     /// <summary>
     /// Load a vocabulary from a JSON file
@@ -21,9 +21,7 @@ public class VocabFile
     {
         using Stream stream = File.OpenRead(filePath);
         var records = JsonSerializer.Deserialize<Dictionary<string, string[]>>(stream);
-        VocabCollection vocabs = new VocabCollection();
-        Add(vocabs, records);
-        return vocabs;
+        return new VocabCollection(records);
     }
 
     /// <summary>
@@ -47,19 +45,6 @@ public class VocabFile
         ArgumentVerify.ThrowIfNull(stream, nameof(stream));
 
         var records = await JsonSerializer.DeserializeAsync<Dictionary<string, string[]>>(stream).ConfigureAwait(false);
-        VocabCollection vocabs = new VocabCollection();
-        Add(vocabs, records);
-        return vocabs;
-    }
-
-    static void Add(VocabCollection vocabs, IDictionary<string, string[]> vocabRecords)
-    {
-        ArgumentVerify.ThrowIfNull(vocabRecords, nameof(vocabRecords));
-        foreach (var record in vocabRecords)
-        {
-            var vocab = new Vocab(record.Value);
-            vocab.TrimExcess();
-            vocabs.Add(record.Key, vocab);
-        }
+        return new VocabCollection(records);
     }
 }

@@ -22,7 +22,7 @@ public class CoffeeShopApp : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
     {
         Cart cart = await _translator.TranslateAsync(input);
 

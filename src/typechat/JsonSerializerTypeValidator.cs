@@ -27,8 +27,8 @@ public class JsonSerializerTypeValidator
         return options;
     }
 
-    static JsonSerializerOptions _defaultOptions = DefaultOptions();
-    JsonSerializerOptions _options;
+    private static JsonSerializerOptions _defaultOptions = DefaultOptions();
+    private JsonSerializerOptions _options;
 
     /// <summary>
     /// Create a new type validator
@@ -36,8 +36,7 @@ public class JsonSerializerTypeValidator
     /// <param name="options">options to use during serialization</param>
     public JsonSerializerTypeValidator(JsonSerializerOptions? options = null)
     {
-        options ??= _defaultOptions;
-        _options = options;
+        _options = options ?? _defaultOptions;
     }
 
     public JsonSerializerOptions Options => _options;
@@ -65,25 +64,27 @@ public class JsonSerializerTypeValidator
         }
     }
 
-    string ToErrorString(string json, JsonException error)
+    private string ToErrorString(string json, JsonException error)
     {
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine("### JSON ERROR:");
-        sb.AppendLineNotEmpty(error.Message);
+        StringBuilder sb = new StringBuilder("### JSON ERROR:")
+            .AppendLine()
+            .AppendLineNotEmpty(error.Message);
         if (error.Path != null)
         {
             sb.Append("Property with error: ");
             sb.AppendLine(ParsePath(error.Path));
         }
+
         if (error.LineNumber != null)
         {
             sb.AppendLine("### Errors here:");
             json.ExtractLine((long)error.LineNumber, sb);
         }
+
         return sb.ToString();
     }
 
-    string ParsePath(string path)
+    private string ParsePath(string path)
     {
         const string pathPrefix = "$.";
         int iPrefix = path.IndexOf(pathPrefix);
@@ -91,6 +92,7 @@ public class JsonSerializerTypeValidator
         {
             return path.Substring(iPrefix + pathPrefix.Length);
         }
+
         return path;
     }
 }
@@ -101,8 +103,8 @@ public class JsonSerializerTypeValidator
 /// </summary>
 public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
 {
-    TypeSchema _schema;
-    JsonSerializerTypeValidator _validator;
+    private TypeSchema _schema;
+    private JsonSerializerTypeValidator _validator;
 
     /// <summary>
     /// Create a new validator

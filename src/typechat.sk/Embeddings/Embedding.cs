@@ -10,7 +10,7 @@ public struct Embedding
 {
     public static readonly Embedding Empty = new Embedding();
 
-    float[] _vector;
+    private float[] _vector;
 
     /// <summary>
     /// Create an empty embedding
@@ -19,6 +19,7 @@ public struct Embedding
     {
         _vector = Empty;
     }
+
     /// <summary>
     /// Embedding using the given vector. Normalizes the vector before storing it
     /// </summary>
@@ -60,18 +61,15 @@ public struct Embedding
     /// If all embeddings have length 1, you can use DotProducts into of full Cosine Similarity. 
     /// </summary>
     public void NormalizeInPlace()
-    {
-        _vector.NormalizeInPlace();
-    }
+        => _vector.NormalizeInPlace();
+
     /// <summary>
     /// Compute the cosine similarity between this and other
     /// </summary>
     /// <param name="other">other embedding</param>
     /// <returns>cosine similarity</returns>
     public double CosineSimilarity(Embedding other)
-    {
-        return _vector.CosineSimilarity(other._vector);
-    }
+        => _vector.CosineSimilarity(other._vector);
 
     /// <summary>
     /// The Dot Product of this vector with the
@@ -79,9 +77,7 @@ public struct Embedding
     /// <param name="other">other embedding</param>
     /// <returns>dot product</returns>
     public double DotProduct(Embedding other)
-    {
-        return _vector.DotProduct(other._vector);
-    }
+        => _vector.DotProduct(other._vector);
 
     /// <summary>
     /// Score the similarity of the two embeddings using the given distance measure
@@ -95,6 +91,7 @@ public struct Embedding
         {
             return _vector.DotProduct(other._vector);
         }
+
         return _vector.CosineSimilarity(other._vector);
     }
 
@@ -104,6 +101,7 @@ public struct Embedding
         {
             return false;
         }
+
         //
         // This is non-optimal
         //
@@ -114,6 +112,7 @@ public struct Embedding
                 return false;
             }
         }
+
         return true;
     }
 

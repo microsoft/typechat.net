@@ -17,5 +17,6 @@ namespace Microsoft.TypeChat.Schema;
 public interface IVocab : IEnumerable<VocabEntry>
 {
     bool Contains(VocabEntry entry);
+
     bool Contains(VocabEntry entry, StringComparison comparison);
 }

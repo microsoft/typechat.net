@@ -56,30 +56,37 @@ public class Typescript : CodeLanguage
             {
                 return String;
             }
-            else if (type.IsEnum)
+
+            if (type.IsEnum)
             {
                 return null;
             }
-            else if (type.IsNumber())
+
+            if (type.IsNumber())
             {
                 return Number;
             }
-            else if (type.IsBoolean())
+
+            if (type.IsBoolean())
             {
                 return Boolean;
             }
-            else if (type.IsDateTime())
+
+            if (type.IsDateTime())
             {
                 return String; // Json does not have a primitive DateTime
             }
-            else if (type.IsObject())
+
+            if (type.IsObject())
             {
                 return Any;
             }
-            else if (type.IsVoid())
+
+            if (type.IsVoid())
             {
                 return Void;
             }
+
             return null;
         }
     }

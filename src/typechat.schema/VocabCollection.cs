@@ -7,14 +7,27 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class VocabCollection : IVocabCollection
 {
-    Dictionary<string, NamedVocab> _vocabs;
+    private Dictionary<string, NamedVocab> _vocabs = new();
 
     /// <summary>
     /// Create a new vocabulary collection
     /// </summary>
     public VocabCollection()
     {
-        _vocabs = new Dictionary<string, NamedVocab>();
+    }
+
+    /// <summary>
+    /// Create a new vocabulary collection with a set of vocab records
+    /// </summary>
+    internal VocabCollection(IDictionary<string, string[]> vocabRecords)
+    {
+        ArgumentVerify.ThrowIfNull(vocabRecords, nameof(vocabRecords));
+        foreach (var record in vocabRecords)
+        {
+            var vocab = new Vocab(record.Value);
+            vocab.TrimExcess();
+            Add(record.Key, vocab);
+        }
     }
 
     /// <summary>
@@ -31,24 +44,22 @@ public class VocabCollection : IVocabCollection
         ArgumentVerify.ThrowIfNull(vocab, nameof(vocab));
         _vocabs.Add(vocab.Name, vocab);
     }
+
     /// <summary>
     /// Add a named vocab
     /// </summary>
     /// <param name="name"></param>
     /// <param name="vocab"></param>
     public void Add(string name, IVocab vocab)
-    {
-        Add(new NamedVocab(name, vocab));
-    }
+        => Add(new NamedVocab(name, vocab));
+
     /// <summary>
     /// Add a named vocab. The vocab text is dynamically parsed using Vocab.Parse
     /// </summary>
     /// <param name="name"></param>
     /// <param name="vocabText">Text containing vocab entries that are parsed</param>
     public void Add(string name, string vocabText)
-    {
-        Add(name, Vocab.Parse(vocabText));
-    }
+        => Add(name, Vocab.Parse(vocabText));
 
     public void Clear() => _vocabs.Clear();
 
@@ -58,21 +69,12 @@ public class VocabCollection : IVocabCollection
     /// <param name="vocabName"></param>
     /// <returns></returns>
     public bool Contains(string vocabName) => _vocabs.ContainsKey(vocabName);
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="item"></param>
-    /// <returns></returns>
+
     public bool Contains(NamedVocab item) => _vocabs.ContainsKey(item.Name);
 
     public NamedVocab? Get(string name)
     {
         return _vocabs.TryGetValue(name, out NamedVocab vocab) ? vocab : null;
-    }
-
-    public IEnumerator<NamedVocab> GetEnumerator()
-    {
-        return _vocabs.Values.GetEnumerator();
     }
 
     public bool Remove(NamedVocab item)
@@ -81,10 +83,11 @@ public class VocabCollection : IVocabCollection
         return _vocabs.Remove(item.Name);
     }
 
+    public IEnumerator<NamedVocab> GetEnumerator()
+        => _vocabs.Values.GetEnumerator();
+
     IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+        => GetEnumerator();
 }
 
 public static class VocabCollectionEx
@@ -95,4 +98,3 @@ public static class VocabCollectionEx
         return vocabType != null && vocabType.Vocab.Contains(entry);
     }
 }
-

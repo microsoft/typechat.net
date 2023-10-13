@@ -11,10 +11,10 @@ public class VectorizedMessageList : IMessageStream
 {
     public const int DefaultMaxMatches = 10;
 
-    MessageList _messageList;
+    private MessageList _messageList;
     // Maps the text of each message to its position in _messageList;
-    VectorTextIndex<int> _index;
-    int _maxContextMatches;
+    private VectorTextIndex<int> _index;
+    private int _maxContextMatches;
 
     /// <summary>
     /// Create a new VectorizedMessageList
@@ -51,7 +51,9 @@ public class VectorizedMessageList : IMessageStream
     }
 
     public IEnumerable<Message> All() => _messageList.All();
-    public IAsyncEnumerable<Message> AllAsync(CancellationToken cancelToken) => _messageList.AllAsync(cancelToken);
+
+    public IAsyncEnumerable<Message> AllAsync(CancellationToken cancellationToken = default)
+        => _messageList.AllAsync(cancellationToken);
 
     public void Append(Message message)
     {
@@ -86,24 +88,27 @@ public class VectorizedMessageList : IMessageStream
     /// Return messages that are nearest neighbors of the given request text
     /// </summary>
     /// <param name="request">find messages nearest to this text</param>
-    /// <param name="cancelToken">cancel token</param>
+    /// <param name="cancellationToken">cancel token</param>
     /// <returns></returns>
-    public async IAsyncEnumerable<IPromptSection> GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancelToken = default)
+    public async IAsyncEnumerable<IPromptSection> GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        List<int> matches = await _index.NearestAsync(request, _maxContextMatches, cancelToken).ConfigureAwait(false);
+        List<int> matches = await _index.NearestAsync(request, _maxContextMatches, cancellationToken).ConfigureAwait(false);
         for (int i = 0; i < matches.Count; ++i)
         {
             yield return _messageList[matches[i]];
         }
     }
+
     /// <summary>
     /// Return newest messages
     /// </summary>
     /// <returns>an enumerable of messages</returns>
     public IEnumerable<Message> Newest() => _messageList.Newest();
+
     /// <summary>
     /// Return newest messages
     /// </summary>
     /// <returns>an async enumerable of messages</returns>
-    public IAsyncEnumerable<Message> NewestAsync(CancellationToken cancelToken) => _messageList.NewestAsync(cancelToken);
+    public IAsyncEnumerable<Message> NewestAsync(CancellationToken cancellationToken = default)
+        => _messageList.NewestAsync(cancellationToken);
 }
