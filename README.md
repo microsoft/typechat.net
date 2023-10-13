@@ -45,7 +45,7 @@ public class Milks
 ## Microsoft.TypeChat.Program ##
 TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. 
 
-JSON programs can be thought of as a [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) or [Plan](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/planners/?tabs=Csharp), expressed in JSON, with an associated [**grammar**](src/typechat.program/ProgramSchema.ts) that is enforced. JSON programs can be type checked against the APIs they target. They can be then be run using an interpreter, or compiled into .NET code. Both mechanisms enforce type safety.
+JSON programs can be thought of as a [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) or [Plan](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/planners/?tabs=Csharp), expressed in JSON, with an associated [**grammar**](src/typechat.program/ProgramSchema.ts) that is enforced. JSON programs can be type checked against the APIs they target. They can then be run using an interpreter, or compiled into .NET code. 
 
 TypeChat.Program includes:
 * Program Translator: translates user intent into programs that follow the [Program Grammar](src/typechat.program/ProgramSchema.ts)
