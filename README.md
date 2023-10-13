@@ -21,7 +21,7 @@ TypeChat.NET currently consists of the following assemblies:
 
 * **Microsoft.TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs***. 
 
-* **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for chat models, plugins, embeddings and other features.
+* **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for models, plugins, embeddings and other features.
 
 ## Microsoft.TypeChat ##
 TypeChat uses language models to translate user intent into JSON that conforms to a schema. This JSON is then validated and deserialized into a typed object. Additional constraint checking is applied as needed. Validation errors are sent back to the language model, which uses them to **repair** the Json it originally returned. 
@@ -45,7 +45,7 @@ public class Milks
 ## Microsoft.TypeChat.Program ##
 TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. 
 
-JSON programs can be thought of as a [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) or [Plan](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/planners/?tabs=Csharp), expressed in JSON, with an associated [**grammar**](src/typechat.program/ProgramSchema.ts) that is enforced. JSON programs can be type checked against the APIs they target. They can be then be run using an interpreter, or compiled into .NET code. Both mechanisms enforce type safety.
+JSON programs can be thought of as a [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) or [Plan](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/planners/?tabs=Csharp), expressed in JSON, with an associated [**grammar**](src/typechat.program/ProgramSchema.ts) that is enforced. JSON programs can be type checked against the APIs they target. They can then be run using an interpreter, or compiled into .NET code. 
 
 TypeChat.Program includes:
 * Program Translator: translates user intent into programs that follow the [Program Grammar](src/typechat.program/ProgramSchema.ts)
@@ -65,7 +65,6 @@ program.Run(api);
 ```
 
 ## Microsoft.TypeChat.SemanticKernel ##
-TypeChat.SemanticKernel provides bindings for language models, plugins and embeddings to TypeChat.NET examples.
 
 TypeChat.SemanticKernel include classes for:
 * **Json Programs for Plugins**: turn registered plugins into **APIs** that Json programs can target. See the [Plugins Example](examples/Plugins/Program.cs).
@@ -80,7 +79,6 @@ TypeChat.SemanticKernel include classes for:
     * gpt-4
     * ada-002
 * Some examples and scenarios will work best with gpt-4
-* Since TypeChat.NET uses the Semantic Kernel, models from other providers ***may*** be used for experimentation.
 
 ## Building
 
@@ -192,8 +190,8 @@ config = OpenAIConfig.FromEnvironment();
 var model = new LanguageModel(config);
 ```
 
-## Using Semantic Kernel directly
-You can also initialize LanguageModel using an IKernel object you created using a KernelBuilder.
+## Using Semantic Kernel
+You can also access a LanguageModel using the SemanticKernel IKernel object you created using a KernelBuilder.
 ```
 const string modelName = "gpt-35-turbo";
 new ChatLanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
