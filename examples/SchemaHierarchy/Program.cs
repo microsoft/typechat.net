@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat;
-using Sentiment;
-using CoffeeShop;
 using Calendar;
-using Restaurant;
+using CoffeeShop;
 using HealthData;
+using Microsoft.TypeChat;
+using Restaurant;
+using Sentiment;
 
 namespace SchemaHierarchy;
 

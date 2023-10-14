@@ -35,7 +35,7 @@ public class AssemblyReferences : HashSet<string>
     public void Add(string rootPath, string assemblyName)
     {
         string assemblyPath = Path.Combine(rootPath, assemblyName);
-        
+
         if (!File.Exists(assemblyPath))
         {
             throw new ArgumentException($"{assemblyPath} not found");
