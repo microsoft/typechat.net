@@ -18,6 +18,7 @@ public static class Extensions
         {
             return null;
         }
+
         return array[index];
     }
 

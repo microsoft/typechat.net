@@ -49,7 +49,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         ArgumentVerify.ThrowIfNullOrEmpty<IPromptSection>(prompt, nameof(prompt));
 
         var request = CreateRequest(prompt, settings);
-        var response = await _client.GetJsonResponse<Request, Response>(_endPoint, request, _config.MaxRetries, _config.MaxPauseMs);
+        var response = await _client.GetJsonResponseAsync<Request, Response>(_endPoint, request, _config.MaxRetries, _config.MaxPauseMs);
         return response.GetText();
     }
 

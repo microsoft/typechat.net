@@ -134,12 +134,12 @@ public abstract partial class Expression
 
 public partial class Steps : Expression
 {
-    static readonly FunctionCall[] EmptySteps = new FunctionCall[0];
+    static readonly FunctionCall[] s_emptySteps = new FunctionCall[0];
 
     public Steps(JsonElement source, FunctionCall[]? calls)
         : base(source)
     {
-        calls ??= EmptySteps;
+        calls ??= s_emptySteps;
         Calls = calls;
     }
 }

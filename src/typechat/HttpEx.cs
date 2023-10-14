@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 internal static class HttpEx
 {
-    internal static async Task<Response> GetJsonResponse<Request, Response>(this HttpClient client, string endpoint, Request request, int maxRetries, int retryPauseMs)
+    internal static async Task<Response> GetJsonResponseAsync<Request, Response>(this HttpClient client, string endpoint, Request request, int maxRetries, int retryPauseMs)
     {
         var requestMessage = Json.ToJsonMessage(request);
         int retryCount = 0;
