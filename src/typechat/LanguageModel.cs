@@ -31,10 +31,12 @@ public class LanguageModel : ILanguageModel, IDisposable
         _client = client ?? new HttpClient();
         ConfigureClient();
     }
+
     /// <summary>
     /// Information about the language model
     /// </summary>
     public ModelInfo ModelInfo => _model;
+
     /// <summary>
     /// Get a completion for the given prompt
     /// </summary>
@@ -60,6 +62,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
         return request;
     }
+
     void ConfigureClient()
     {
         if (_config.Azure)

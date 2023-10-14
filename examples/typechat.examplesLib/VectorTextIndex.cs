@@ -66,6 +66,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
         ArgumentVerify.ThrowIfNullOrEmpty(textRepresentation, nameof(textRepresentation));
 
         var embedding = await GetNormalizedEmbeddingAsync(textRepresentation, cancellationToken).ConfigureAwait(false);
+
         _list.Add(item, embedding);
     }
 
@@ -109,6 +110,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     public async Task<T> NearestAsync(string text, CancellationToken cancellationToken = default)
     {
         var embedding = await GetNormalizedEmbeddingAsync(text, cancellationToken).ConfigureAwait(false);
+
         return _list.Nearest(embedding, EmbeddingDistance.Dot);
     }
 
@@ -122,6 +124,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     public async Task<List<T>> NearestAsync(string text, int maxMatches, CancellationToken cancellationToken = default)
     {
         var embedding = await GetNormalizedEmbeddingAsync(text, cancellationToken).ConfigureAwait(false);
+
         return _list.Nearest(embedding, maxMatches, EmbeddingDistance.Dot).ToList();
     }
 
@@ -129,12 +132,14 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     {
         var embedding = await _model.GenerateEmbeddingAsync(text, cancellationToken).ConfigureAwait(false);
         embedding.NormalizeInPlace();
+
         return embedding;
     }
 
     private async Task<Embedding[]> GetNormalizedEmbeddingAsync(string[] texts, CancellationToken cancellationToken)
     {
         var embeddings = await _model.GenerateEmbeddingsAsync(texts, cancellationToken).ConfigureAwait(false);
+
         for (int i = 0; i < embeddings.Length; ++i)
         {
             embeddings[i].NormalizeInPlace();

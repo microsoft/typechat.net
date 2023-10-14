@@ -16,10 +16,12 @@ public class PromptSection : IPromptSection
         /// This section contains text supplied by the system
         /// </summary>
         public const string System = "system";
+
         /// <summary>
         /// This section contains text supplied by the user
         /// </summary>
         public const string User = "user";
+
         /// <summary>
         /// This section contains text produced by an AI assistant or model
         /// </summary>

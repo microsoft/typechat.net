@@ -7,6 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.SemanticKernel", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4EE943BA-EA53-4CD2-A2E3-7B2A2C61FAE3}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -59,7 +60,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "package", "package", "{D23A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.ExamplesLib", "examples\typechat.examplesLib\TypeChat.ExamplesLib.csproj", "{80304E1F-5B1A-4142-B950-78383E1D1877}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeChat.Schema", "src\typechat.schema\TypeChat.Schema.csproj", "{3B193D73-6A6F-4666-B377-B08CCCC92A8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeChat.Schema", "src\typechat.schema\TypeChat.Schema.csproj", "{3B193D73-6A6F-4666-B377-B08CCCC92A8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

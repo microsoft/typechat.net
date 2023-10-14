@@ -70,6 +70,11 @@ public class VocabCollection : IVocabCollection
     /// <returns></returns>
     public bool Contains(string vocabName) => _vocabs.ContainsKey(vocabName);
 
+    /// <summary>
+    /// Does the vocabulary contain the given item
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
     public bool Contains(NamedVocab item) => _vocabs.ContainsKey(item.Name);
 
     public NamedVocab? Get(string name)

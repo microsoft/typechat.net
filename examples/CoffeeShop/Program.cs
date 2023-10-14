@@ -24,7 +24,7 @@ public class CoffeeShopApp : ConsoleApp
 
     public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
     {
-        Cart cart = await _translator.TranslateAsync(input);
+        Cart cart = await _translator.TranslateAsync(input, cancellationToken);
 
         Console.WriteLine("##YOUR ORDER");
         string json = Json.Stringify(cart);

@@ -123,6 +123,8 @@ public struct Embedding
     public bool IsEmpty => _vector is null || _vector.Length == 0;
 
     public static implicit operator float[](Embedding vector) => vector._vector;
+
     public static implicit operator Embedding(float[] vector) => new Embedding(vector);
+
     public static implicit operator Embedding(ReadOnlyMemory<float> src) => new Embedding(src);
 }

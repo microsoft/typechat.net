@@ -95,6 +95,7 @@ public class Prompt : List<IPromptSection>
     /// </summary>
     /// <param name="section"></param>
     public void Append(IPromptSection section) => Add(section);
+
     /// <summary>
     /// Append the given prompt sections to this prompt
     /// </summary>
@@ -176,6 +177,7 @@ public class Prompt : List<IPromptSection>
     }
 
     public static implicit operator Prompt(string text) => new Prompt(text);
+
     public static implicit operator string(Prompt prompt) => prompt.ToString();
 
     /// <summary>

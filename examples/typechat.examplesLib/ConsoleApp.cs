@@ -13,8 +13,11 @@ public abstract class ConsoleApp : IInputHandler
     }
 
     public string? ConsolePrompt { get; set; } = ">";
+
     public IList<string> StopStrings => _stopStrings;
+
     public string CommentPrefix { get; set; } = "#";
+
     public string CommandPrefix { get; set; } = "@";
 
     public async Task RunAsync(string consolePrompt, string? inputFilePath = null, CancellationToken cancellationToken = default)
@@ -39,7 +42,7 @@ public abstract class ConsoleApp : IInputHandler
             string? input = await ReadLineAsync(cancellationToken).ConfigureAwait(false);
             input = input.Trim();
             if (!string.IsNullOrEmpty(input) &&
-                !await EvalInput(input, cancellationToken).ConfigureAwait(false))
+                !await EvalInputAsync(input, cancellationToken).ConfigureAwait(false))
             {
                 break;
             }
@@ -62,23 +65,20 @@ public abstract class ConsoleApp : IInputHandler
 
             Console.Write(ConsolePrompt);
             Console.WriteLine(line);
-            await EvalInput(line, cancellationToken).ConfigureAwait(false);
+            await EvalInputAsync(line, cancellationToken).ConfigureAwait(false);
         }
     }
 
     /// <summary>
     /// Return false if should exit
     /// </summary>
-    private async Task<bool> EvalInput(string input, CancellationToken cancellationToken)
+    private async Task<bool> EvalInputAsync(string input, CancellationToken cancellationToken)
     {
         try
         {
-            if (input.StartsWith(CommandPrefix))
-            {
-                return await EvalCommand(input, cancellationToken).ConfigureAwait(false);
-            }
-
-            return await EvalLine(input, cancellationToken).ConfigureAwait(false);
+            return input.StartsWith(CommandPrefix)
+                ? await EvalCommandAsync(input, cancellationToken).ConfigureAwait(false)
+                : await EvalLineAsync(input, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -88,7 +88,7 @@ public abstract class ConsoleApp : IInputHandler
         return true;
     }
 
-    private async Task<bool> EvalLine(string input, CancellationToken cancellationToken)
+    private async Task<bool> EvalLineAsync(string input, CancellationToken cancellationToken)
     {
         if (IsStop(input))
         {
@@ -100,7 +100,7 @@ public abstract class ConsoleApp : IInputHandler
         return true;
     }
 
-    private async Task<bool> EvalCommand(string input, CancellationToken cancellationToken)
+    private async Task<bool> EvalCommandAsync(string input, CancellationToken cancellationToken)
     {
         // Process a command
         List<string> parts = CommandLineStringSplitter.Instance.Split(input).ToList();
@@ -126,12 +126,7 @@ public abstract class ConsoleApp : IInputHandler
 
     bool IsStop(string? line)
     {
-        if (line is null)
-        {
-            return true;
-        }
-
-        return _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
+        return line is null ? true : _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
     }
 
     public async Task<string?> ReadLineAsync(CancellationToken cancellationToken = default)

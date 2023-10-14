@@ -30,6 +30,7 @@ public interface IMessageStream : IContextProvider
     /// </summary>
     /// <returns>An async enumeration of messages</returns>
     IAsyncEnumerable<Message> AllAsync(CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Return the newest messages in the stream in order - most recent messages first
     /// </summary>

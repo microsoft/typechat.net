@@ -34,5 +34,6 @@ public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
     public override string ToString() => Text;
 
     public static implicit operator string(VocabEntry entry) => entry.Text;
+
     public static implicit operator VocabEntry(string text) => new VocabEntry(text);
 }

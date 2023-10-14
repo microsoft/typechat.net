@@ -86,6 +86,7 @@ public class TypescriptExporter : TypeExporter<Type>
     /// Typescript writer the exporter is using
     /// </summary>
     public TypescriptWriter Writer { get; }
+
     //
     // Use this to *customize* how a .NET Type Name is mapped to a Typescript type name
     // Return null if you can't map and defaults are used.

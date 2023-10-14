@@ -49,6 +49,7 @@ public class Message : IPromptSection
     /// <summary>
     /// Message body type
     /// </summary>
+
     public Type BodyType => _body.GetType();
 
     /// <summary>
