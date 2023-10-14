@@ -81,7 +81,7 @@ public class PromptBuilder
     /// <returns>true if added, false if not</returns>
     public bool Add(IPromptSection section)
     {
-        if (section == null)
+        if (section is null)
         {
             throw new ArgumentNullException(nameof(section));
         }
@@ -99,7 +99,7 @@ public class PromptBuilder
             _currentLength += text.Length;
             return true;
         }
-        if (_substring != null)
+        if (_substring is not null)
         {
             text = _substring(text, lengthAvailable);
             _prompt.Append(section.Source, text);

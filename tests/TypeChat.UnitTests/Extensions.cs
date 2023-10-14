@@ -8,7 +8,7 @@ internal static class Extensions
     {
         using var reader = new StringReader(text);
         string line;
-        while ((line = reader.ReadLine()) != null)
+        while ((line = reader.ReadLine()) is not null)
         {
             yield return line;
         }

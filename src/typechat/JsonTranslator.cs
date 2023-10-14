@@ -281,7 +281,7 @@ public class JsonTranslator<T> : IJsonTranslator
         }
         if (result.Success)
         {
-            result = (_constraintsValidator != null) ?
+            result = (_constraintsValidator is not null) ?
                      _constraintsValidator.Validate(result.Value) :
                      result;
         }
@@ -290,7 +290,7 @@ public class JsonTranslator<T> : IJsonTranslator
 
     protected void NotifyEvent(Action<Prompt> evt, Prompt prompt)
     {
-        if (evt != null)
+        if (evt is not null)
         {
             try
             {
@@ -302,7 +302,7 @@ public class JsonTranslator<T> : IJsonTranslator
 
     protected void NotifyEvent(Action<string> evt, string value)
     {
-        if (evt != null)
+        if (evt is not null)
         {
             try
             {

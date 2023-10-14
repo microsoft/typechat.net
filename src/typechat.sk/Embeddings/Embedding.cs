@@ -121,7 +121,7 @@ public struct Embedding
     /// Is the embedding empty
     /// </summary>
     [JsonIgnore]
-    public bool IsEmpty => _vector == null || _vector.Length == 0;
+    public bool IsEmpty => _vector is null || _vector.Length == 0;
 
     public static implicit operator float[](Embedding vector) => vector._vector;
 

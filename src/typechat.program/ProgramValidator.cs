@@ -48,7 +48,7 @@ public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
 
     public virtual Result<Program> ValidateProgram(Program program)
     {
-        if (_programValidator != null)
+        if (_programValidator is not null)
         {
             return _programValidator.ValidateProgram(program);
         }

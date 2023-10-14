@@ -17,7 +17,7 @@ internal static class ArgumentVerify
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfNull(object argument, string paramName)
     {
-        if (argument == null)
+        if (argument is null)
         {
             throw new ArgumentNullException(paramName);
         }

@@ -63,7 +63,7 @@ public class Message : IPromptSection
     /// <returns>body as text</returns>
     public virtual string GetText()
     {
-        if (_body == null)
+        if (_body is null)
         {
             return string.Empty;
         }

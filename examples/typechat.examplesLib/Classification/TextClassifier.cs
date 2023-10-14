@@ -30,7 +30,7 @@ public class TextClassifier : JsonTranslator<TextClassification>
     public TextClassifier(ILanguageModel languageModel, TextClasses classes)
         : base(languageModel, new TypeValidator<TextClassification>(classes.Vocabs))
     {
-        if (classes == null)
+        if (classes is null)
         {
             throw new ArgumentNullException(nameof(classes));
         }

@@ -174,7 +174,7 @@ public class Api
 
     void NotifyCall(string name, dynamic[] args, dynamic result)
     {
-        if (CallCompleted != null)
+        if (CallCompleted is not null)
         {
             try
             {

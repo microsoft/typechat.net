@@ -15,7 +15,7 @@ public class ProgramVisitor
     /// <param name="program"></param>
     public void Visit(Program program)
     {
-        if (program.Steps != null)
+        if (program.Steps is not null)
         {
             VisitSteps(program.Steps);
         }
@@ -52,7 +52,7 @@ public class ProgramVisitor
 
     protected void Visit(Expression[] expressions)
     {
-        if (expressions == null || expressions.Length == 0)
+        if (expressions is null || expressions.Length == 0)
         {
             return;
         }
