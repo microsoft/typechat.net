@@ -6,7 +6,6 @@ root = true
 # All files
 [*]
 indent_style = space
-end_of_line = lf
 
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
