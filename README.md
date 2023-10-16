@@ -176,7 +176,7 @@ A typical appSettings.Development.json will look like this:
 ### OpenAIConfig
 TypeChat examples accesses language models using the [LanguageModel](./src/typechat/LanguageModel.cs) class. The OpenAIConfig class supplies configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
 
-See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list of :
+See [OpenAIConfig.cs](./src/typechat/OpenAIConfig.cs) for a list of :
   * Configurable properties
   * Supported environment variables.
 ```
