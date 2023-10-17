@@ -138,7 +138,9 @@ public class ProgramWriter
     }
 
     private ProgramWriter BeginCall(string name, string api = null)
-        => Write(api is not null ? $"{api}.{name}(" : $"{name}(");
+    {
+        return Write(api is not null ? $"{api}.{name}(" : $"{name}(");
+    }
 
     private string ResultVar(int resultNumber) => (_resultVarPrefix + (resultNumber + 1));
 

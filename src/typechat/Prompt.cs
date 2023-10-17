@@ -139,8 +139,10 @@ public class Prompt : List<IPromptSection>
             {
                 sb.Append(section.Source).Append(":\n");
             }
+
             sb.Append(section.GetText()).Append(sectionSep);
         }
+
         return sb;
     }
 
@@ -168,6 +170,7 @@ public class Prompt : List<IPromptSection>
         {
             total += section.GetText().Length;
         }
+
         return total;
     }
 

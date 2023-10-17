@@ -17,8 +17,8 @@ public class Json
         return JsonSerializerTypeValidator.DefaultOptions();
     }
 
-    private static readonly Json Default = new Json();
-    private static readonly Json Indented = new Json(true);
+    private static readonly Json s_default = new Json();
+    private static readonly Json s_indented = new Json(true);
 
     private JsonSerializerOptions _options;
 
@@ -37,8 +37,8 @@ public class Json
     public static string Stringify(object value, bool indented = true)
     {
         return indented ?
-               Indented.Serialize(value) :
-               Default.Serialize(value);
+               s_indented.Serialize(value) :
+               s_default.Serialize(value);
     }
 
     /// <summary>
@@ -51,8 +51,8 @@ public class Json
     public static string Stringify<T>(T value, bool indented = true)
     {
         return indented ?
-               Indented.Serialize(value) :
-               Default.Serialize<T>(value);
+               s_indented.Serialize(value) :
+               s_default.Serialize<T>(value);
     }
 
     /// <summary>
@@ -63,7 +63,7 @@ public class Json
     /// <returns></returns>
     public static object? Parse(string json, Type type)
     {
-        return Default.Deserialize(json, type);
+        return s_default.Deserialize(json, type);
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public class Json
     /// <returns></returns>
     public static T Parse<T>(Stream jsonStream)
     {
-        return (T)Default.Deserialize(jsonStream, typeof(T));
+        return (T)s_default.Deserialize(jsonStream, typeof(T));
     }
 
     private string Serialize<T>(T value)

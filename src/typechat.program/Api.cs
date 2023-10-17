@@ -9,12 +9,12 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class Api
 {
-    private static readonly object?[] EmptyArgs = Array.Empty<object?>();
+    private static readonly object?[] s_emptyArgs = Array.Empty<object?>();
 
     /// <summary>
     /// Create an Api using ALL Public instance methods of the supplied apiImpl
     /// </summary>
-    /// <param name="apiImpl">object that implements the API</param>
+    /// <param name="apiImpl">object that implements t`he API</param>
     public Api(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
     {
@@ -95,7 +95,7 @@ public class Api
 
         if (paramsInfo.Length == 0)
         {
-            return EmptyArgs;
+            return s_emptyArgs;
         }
 
         // If any of input parameters are JsonObjects, deserialize them

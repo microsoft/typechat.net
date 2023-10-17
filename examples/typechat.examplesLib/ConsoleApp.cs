@@ -126,7 +126,7 @@ public abstract class ConsoleApp : IInputHandler
 
     bool IsStop(string? line)
     {
-        return line is null ? true : _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
+        return line is null || _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
     }
 
     public async Task<string?> ReadLineAsync(CancellationToken cancellationToken = default)

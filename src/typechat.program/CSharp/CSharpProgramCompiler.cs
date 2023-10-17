@@ -124,7 +124,7 @@ public class CSharpProgramCompiler
 
     string CollectDiagnostics(ImmutableArray<Diagnostic> diagnostics)
     {
-        if (diagnostics.Length == 0)
+        if (diagnostics.IsDefaultOrEmpty)
         {
             return null;
         }
@@ -139,6 +139,7 @@ public class CSharpProgramCompiler
                 sb.AppendLine(GetTextWithError(diagnostic));
             }
         }
+
         return sb.ToString();
     }
 

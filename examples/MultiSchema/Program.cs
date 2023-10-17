@@ -1,15 +1,14 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Calendar;
+using CoffeeShop;
+using HealthData;
+using Math;
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Classification;
-
-using Sentiment;
-using CoffeeShop;
-using Calendar;
-using Restaurant;
-using Math;
 using Plugins;
-using HealthData;
+using Restaurant;
+using Sentiment;
 
 namespace MultiSchema;
 

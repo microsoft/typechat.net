@@ -55,9 +55,14 @@ public class ProgramVisitor
 
     protected void Visit(Expression[] expressions)
     {
-        foreach (Expression expression in expressions ?? Array.Empty<Expression>())
+        if (expressions.IsNullOrEmpty())
         {
-            Visit(expression);
+            return;
+        }
+
+        for (int i = 0; i < expressions.Length; ++i)
+        {
+            Visit(expressions[i]);
         }
     }
 

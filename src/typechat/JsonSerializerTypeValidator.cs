@@ -27,7 +27,7 @@ public class JsonSerializerTypeValidator
         return options;
     }
 
-    private static JsonSerializerOptions _defaultOptions = DefaultOptions();
+    private static JsonSerializerOptions s_defaultOptions = DefaultOptions();
     private JsonSerializerOptions _options;
 
     /// <summary>
@@ -36,7 +36,7 @@ public class JsonSerializerTypeValidator
     /// <param name="options">options to use during serialization</param>
     public JsonSerializerTypeValidator(JsonSerializerOptions? options = null)
     {
-        _options = options ?? _defaultOptions;
+        _options = options ?? s_defaultOptions;
     }
 
     public JsonSerializerOptions Options => _options;

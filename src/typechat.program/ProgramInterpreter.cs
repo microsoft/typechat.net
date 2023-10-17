@@ -10,7 +10,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramInterpreter
 {
-    private static readonly dynamic[] EmptyArray = new dynamic[0];
+    private static readonly dynamic[] s_emptyArray = new dynamic[0];
 
     private List<dynamic> _results = new();
     private Func<string, dynamic[], dynamic>? _callHandler;
@@ -157,7 +157,7 @@ public class ProgramInterpreter
     {
         if (expressions.Length == 0)
         {
-            return EmptyArray;
+            return s_emptyArray;
         }
 
         dynamic[] args = new dynamic[expressions.Length];
@@ -173,7 +173,7 @@ public class ProgramInterpreter
     {
         if (expressions.Length == 0)
         {
-            return EmptyArray;
+            return s_emptyArray;
         }
 
         dynamic[] args = new dynamic[expressions.Length];

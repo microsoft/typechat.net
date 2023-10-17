@@ -115,7 +115,9 @@ public class Agent<T> : IAgent
         // Add any preamble       
         builder.AddRange(_instructions);
 
+        //
         // If a context provider is available, inject additional context
+        //
         if (_contextProvider is not null)
         {
             var context = _contextProvider.GetContextAsync(requestText, cancellationToken);
