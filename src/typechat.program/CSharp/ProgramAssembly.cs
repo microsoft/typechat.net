@@ -30,7 +30,7 @@ public class ProgramAssembly
     public dynamic Run(object api)
     {
         object instance = _assembly.CreateInstance(_className);
-        if (instance == null)
+        if (instance is null)
         {
             throw new InvalidOperationException();
         }

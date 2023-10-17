@@ -13,7 +13,7 @@ public partial class Cart
 {
     public virtual void GetUnknown(StringBuilder sb)
     {
-        if (Items != null)
+        if (Items is not null)
         {
             foreach (CartItem item in Items)
             {
@@ -71,7 +71,7 @@ internal static class CartEx
 {
     public static void GetUnknown(this DrinkOption[] options, StringBuilder sb)
     {
-        if (options != null)
+        if (options is not null)
         {
             foreach (var option in options)
             {

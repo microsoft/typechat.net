@@ -31,7 +31,7 @@ internal class JsonVocabConvertor : JsonConverter<string?>
     public override string? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         string? value = reader.GetString();
-        if (_vocab != null)
+        if (_vocab is not null)
         {
             _vocab.ThrowIfNotInVocab(_propertyName, value);
             return value;
@@ -40,7 +40,7 @@ internal class JsonVocabConvertor : JsonConverter<string?>
         {
             // Dynamically bind to a vocabulary if possible
             var converter = options.GetConverter(typeof(VocabString)) as VocabStringJsonConvertor;
-            if (converter == null)
+            if (converter is null)
             {
                 throw new SchemaException(SchemaException.ErrorCode.VocabNotFound);
             }

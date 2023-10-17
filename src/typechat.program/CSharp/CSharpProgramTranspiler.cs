@@ -338,7 +338,7 @@ public class CSharpProgramTranspiler
         writer.BeginMethodCall(jsonObj, "Add");
         {
             writer.Literal(key).ArgSep();
-            if (valueType != null)
+            if (valueType is not null)
             {
                 if (valueType.IsString() ||
                     valueType.IsPrimitive)

@@ -77,10 +77,10 @@ public class AgentWithHistory<T> : Agent<T>
     protected async override Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response)
     {
         await _history.AppendAsync(request).ConfigureAwait(false);
-        Message? historyMessage = (CreateMessageForHistory != null) ?
+        Message? historyMessage = (CreateMessageForHistory is not null) ?
                                   CreateMessageForHistory(response.GetBody<T>()) :
                                   response;
-        if (historyMessage != null)
+        if (historyMessage is not null)
         {
             await _history.AppendAsync(historyMessage).ConfigureAwait(false);
         }

@@ -32,7 +32,7 @@ public class MultiSchemaApp : ConsoleApp
     {
         var match = await _childApps.ClassifyRequestAsync(input, cancelToken);
         var processor = match.Value;
-        if (processor != null)
+        if (processor is not null)
         {
             Console.WriteLine($"App Selected: {match.Key}");
             await processor.ProcessInputAsync(input, cancelToken);
@@ -65,7 +65,7 @@ public class MultiSchemaApp : ConsoleApp
         int i = 0;
         foreach (var app in _childApps.Routes)
         {
-            if (app.Value != null)
+            if (app.Value is not null)
             {
                 Console.WriteLine($"{++i}: {app.Key}");
             }

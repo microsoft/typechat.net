@@ -37,7 +37,7 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         using StringWriter writer = new StringWriter();
         TypescriptExporter exporter = new TypescriptExporter(writer);
-        if (knownVocabs != null)
+        if (knownVocabs is not null)
         {
             exporter.Vocabs = knownVocabs;
         }
@@ -143,7 +143,7 @@ public class TypescriptExporter : TypeExporter<Type>
         }
         set
         {
-            if (value != null)
+            if (value is not null)
             {
                 _vocabExporter = new TypescriptVocabExporter(_writer, value);
             }
@@ -207,7 +207,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
         Type? baseClass = type.BaseClass();
         string baseClassName = null;
-        if (baseClass != null)
+        if (baseClass is not null)
         {
             ExportClass(baseClass);
             baseClassName = InterfaceName(baseClass);
@@ -219,7 +219,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             _writer.PushIndent();
 
-            if (_polymorphism.IncludeDiscriminator && baseClass != null)
+            if (_polymorphism.IncludeDiscriminator && baseClass is not null)
             {
                 ExportDiscriminator(type);
             }
@@ -485,7 +485,7 @@ public class TypescriptExporter : TypeExporter<Type>
         if (type.IsValueType)
         {
             Type? nullableType = type.GetNullableValueType();
-            isNullable = nullableType != null;
+            isNullable = nullableType is not null;
             actualType = isNullable ? nullableType : type;
         }
         else
@@ -521,7 +521,7 @@ public class TypescriptExporter : TypeExporter<Type>
         if (type.IsValueType)
         {
             Type? nullableType = type.GetNullableValueType();
-            isNullable = nullableType != null;
+            isNullable = nullableType is not null;
             actualType = isNullable ? nullableType : type;
         }
         else
@@ -544,7 +544,7 @@ public class TypescriptExporter : TypeExporter<Type>
     bool ExportJsonVocab(MemberInfo member, Type type, bool isNullable)
     {
         JsonVocabAttribute? vocabAttr = member.JsonVocabAttribute();
-        if (vocabAttr == null)
+        if (vocabAttr is null)
         {
             // No vocab
             return false;
@@ -569,7 +569,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
         if (vocabAttr.Inline)
         {
-            if (vocab == null)
+            if (vocab is null)
             {
                 // No vocab
                 throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, $"Vocabulary {vocabAttr.Name} not found");
@@ -578,7 +578,7 @@ public class TypescriptExporter : TypeExporter<Type>
         }
         else
         {
-            if (vocabType == null)
+            if (vocabType is null)
             {
                 // No vocab
                 SchemaException.ThrowVocabNotFound(vocabAttr.Name);
@@ -591,7 +591,7 @@ public class TypescriptExporter : TypeExporter<Type>
             vocabAttr.PropertyName = member.PropertyName();
         }
 
-        if (vocabType != null && vocabAttr.Enforce)
+        if (vocabType is not null && vocabAttr.Enforce)
         {
             _usedVocabs ??= new VocabCollection();
             _usedVocabs.Add(vocabType);
@@ -633,7 +633,7 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         if (!type.IsAbstract)
         {
-            string discriminator = (_polymorphism.DiscriminatorGenerator != null) ?
+            string discriminator = (_polymorphism.DiscriminatorGenerator is not null) ?
                                     _polymorphism.DiscriminatorGenerator(type) :
                                     $"'{type.Name}'";
 
@@ -664,11 +664,11 @@ public class TypescriptExporter : TypeExporter<Type>
         }
 
         string? typeName = null;
-        if (TypeNameMapper != null)
+        if (TypeNameMapper is not null)
         {
             typeName = TypeNameMapper(type);
         }
-        if (typeName == null)
+        if (typeName is null)
         {
             typeName = Typescript.Types.ToPrimitive(type);
         }
@@ -683,12 +683,12 @@ public class TypescriptExporter : TypeExporter<Type>
     string InterfaceName(Type type, bool useMapper = true)
     {
         string? typeName = null;
-        if (useMapper && TypeNameMapper != null)
+        if (useMapper && TypeNameMapper is not null)
         {
             typeName = TypeNameMapper(type);
         }
 
-        if (typeName == null)
+        if (typeName is null)
         {
             typeName = type.GenerateInterfaceName();
         }

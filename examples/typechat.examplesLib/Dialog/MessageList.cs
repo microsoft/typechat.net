@@ -35,7 +35,7 @@ public class MessageList : List<Message>, IMessageStream
     /// <exception cref="ArgumentNullException">if message is null</exception>
     public new void Add(Message message)
     {
-        if (message == null)
+        if (message is null)
         {
             throw new ArgumentNullException(nameof(message));
         }

@@ -23,7 +23,7 @@ public class SchemaHierarchyApp : ConsoleApp
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
         object result = await _translator.TranslateToObjectAsync(input, cancelToken);
-        if (result != null)
+        if (result is not null)
         {
             Console.WriteLine($"{result.GetType()}");
             Console.WriteLine(Json.Stringify(result));

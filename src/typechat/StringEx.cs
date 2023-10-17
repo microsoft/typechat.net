@@ -11,7 +11,7 @@ internal static class StringEx
         long iPrev = lineNumber - 1;
         long iNext = lineNumber + 1;
         using StringReader reader = new StringReader(text);
-        while ((line = reader.ReadLine()) != null)
+        while ((line = reader.ReadLine()) is not null)
         {
             if (i == iPrev ||
                 i == lineNumber ||

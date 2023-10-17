@@ -201,7 +201,7 @@ internal class CSharpWriter : CodeWriter
 
     public CSharpWriter Args(params string[] values)
     {
-        if (values != null)
+        if (values is not null)
         {
             for (int i = 0; i < values.Length; ++i)
             {

@@ -6,12 +6,12 @@ internal static class VocabExtensions
 {
     public static void ThrowIfNotInVocab(this IVocab vocab, string? propertyName, string? value)
     {
-        if (vocab == null)
+        if (vocab is null)
         {
             throw new SchemaException(SchemaException.ErrorCode.VocabNotFound);
         }
         string? error;
-        if (propertyName == null)
+        if (propertyName is null)
         {
             error = vocab.ValidateConstraints(value);
         }
@@ -19,7 +19,7 @@ internal static class VocabExtensions
         {
             error = vocab.ValidateConstraints(propertyName, value);
         }
-        if (error != null)
+        if (error is not null)
         {
             throw new SchemaException(SchemaException.ErrorCode.ValueNotInVocab, error);
         }
@@ -48,12 +48,12 @@ internal static class VocabExtensions
     public static void ThrowIfNotInVocab(this IVocabCollection vocabs, string vocabName, string? propertyName, string? value)
     {
         NamedVocab? vocabType = vocabs.Get(vocabName);
-        if (vocabType == null)
+        if (vocabType is null)
         {
             SchemaException.ThrowVocabNotFound(vocabName, value);
         }
         string? error;
-        if (propertyName == null)
+        if (propertyName is null)
         {
             error = vocabType.Vocab.ValidateConstraints(value);
         }
@@ -61,7 +61,7 @@ internal static class VocabExtensions
         {
             error = vocabType.Vocab.ValidateConstraints(propertyName, value);
         }
-        if (error != null)
+        if (error is not null)
         {
             throw new SchemaException(SchemaException.ErrorCode.ValueNotInVocab, error);
         }
