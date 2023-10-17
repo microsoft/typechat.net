@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat;
 using Microsoft.SemanticKernel;
+using Microsoft.TypeChat;
 
 namespace Plugins;
 

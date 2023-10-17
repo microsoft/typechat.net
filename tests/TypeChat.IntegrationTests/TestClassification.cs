@@ -30,7 +30,7 @@ public class TestClassification : TypeChatTest, IClassFixture<Config>
     public async Task TestRouting()
     {
         Skip.If(!CanRunEndToEndTest(_config));
-        
+
         TextRequestRouter<string> router = CreateRouter();
         string query = "I want to buy a Sherlock Holmes novel";
         string route = await router.RouteRequestAsync(query);

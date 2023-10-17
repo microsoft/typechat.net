@@ -2,9 +2,9 @@
 
 global using System;
 global using System.Collections.Generic;
-global using System.Linq;
 global using System.IO;
+global using System.Linq;
 global using System.Text.Json.Nodes;
-global using Xunit;
-global using Microsoft.TypeChat.Schema;
 global using Microsoft.TypeChat.Embeddings;
+global using Microsoft.TypeChat.Schema;
+global using Xunit;
