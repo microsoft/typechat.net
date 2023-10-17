@@ -70,12 +70,12 @@ public class JsonSerializerTypeValidator
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("### JSON ERROR:");
         sb.AppendLineNotEmpty(error.Message);
-        if (error.Path != null)
+        if (error.Path is not null)
         {
             sb.Append("Property with error: ");
             sb.AppendLine(ParsePath(error.Path));
         }
-        if (error.LineNumber != null)
+        if (error.LineNumber is not null)
         {
             sb.AppendLine("### Errors here:");
             json.ExtractLine((long)error.LineNumber, sb);

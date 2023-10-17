@@ -47,7 +47,7 @@ public class CoffeeShop : ConsoleApp
 
     bool PrintAnyUnknown(Cart cart)
     {
-        if (cart.Items != null)
+        if (cart.Items is not null)
         {
             StringBuilder sb = new StringBuilder();
             cart.GetUnknown(sb);

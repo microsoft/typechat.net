@@ -27,7 +27,7 @@ internal static class JsonParser
 
     public static void Throw(JsonValueKind expected, string? expectedName)
     {
-        if (expectedName != null)
+        if (expectedName is not null)
         {
             throw new JsonException($"Expected {expected} {expectedName}");
         }

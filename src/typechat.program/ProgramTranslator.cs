@@ -90,7 +90,7 @@ export type ResultReference = {
     {
         // If LLM could not translate the user request to begin with, then we can't continue
         Program? program = validationResult.Value;
-        return (program != null) ? program.HasNotTranslated : true;
+        return (program is not null) ? program.HasNotTranslated : true;
     }
 }
 

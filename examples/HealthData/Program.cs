@@ -82,7 +82,7 @@ public class HealthDataAgent : ConsoleApp
 
     void PrintResponse(HealthDataResponse response)
     {
-        if (response.Data != null)
+        if (response.Data is not null)
         {
             Console.WriteLine(Json.Stringify(response.Data));
         }

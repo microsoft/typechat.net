@@ -13,7 +13,7 @@ public static class Extensions
     /// <returns>string or null</returns>
     public static string? GetOrNull(this string[] array, int index)
     {
-        if (array == null ||
+        if (array is null ||
             index >= array.Length)
         {
             return null;
@@ -29,7 +29,7 @@ public static class Extensions
 
     public static void PrintNotTranslated(this Program program)
     {
-        if (program != null && program.HasNotTranslated)
+        if (program is not null && program.HasNotTranslated)
         {
             Console.WriteLine("I could not translate the following:");
             ConsoleApp.WriteLines(program.NotTranslated);
@@ -44,7 +44,7 @@ public static class Extensions
     /// <param name="apiType"></param>
     public static void Print(this Program program, string apiType)
     {
-        if (program == null)
+        if (program is null)
         {
             return;
         }

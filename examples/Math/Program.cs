@@ -44,7 +44,7 @@ public class MathApp : ConsoleApp
     {
         Console.WriteLine("Running program");
         dynamic retval = program.Run(_api);
-        if (retval != null && retval is double)
+        if (retval is not null && retval is double)
         {
             Console.WriteLine($"Result: {retval}");
         }

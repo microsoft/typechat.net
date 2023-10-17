@@ -47,7 +47,7 @@ public class TextCompletionModel : ILanguageModel
 
     CompleteRequestSettings? ToRequestSettings(TranslationSettings? settings)
     {
-        if (settings == null)
+        if (settings is null)
         {
             return null;
         }

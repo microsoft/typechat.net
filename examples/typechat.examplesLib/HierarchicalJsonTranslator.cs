@@ -47,7 +47,7 @@ public class HierarchicalJsonTranslator : IJsonTranslator
     {
         // First, select the translator that is best suited to translate this request
         IJsonTranslator? translator = await _requestRouter.RouteRequestAsync(request, cancelToken).ConfigureAwait(false);
-        if (translator == null)
+        if (translator is null)
         {
             throw new TypeChatException(TypeChatException.ErrorCode.NoTranslator, request);
         }

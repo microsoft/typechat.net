@@ -45,7 +45,7 @@ public class PersonAPI : IPersonApi
         for (int i = 0; i < persons.Length; ++i)
         {
             Person next = persons[i];
-            if (prev != null &&
+            if (prev is not null &&
                 !prev.HasSameName(next))
             {
                 return false;

@@ -17,7 +17,7 @@ public class TypeChatTest
 
     public void WriteLine(string message)
     {
-        if (_output != null)
+        if (_output is not null)
         {
             _output.WriteLine(message);
         }

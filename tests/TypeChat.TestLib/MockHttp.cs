@@ -33,7 +33,7 @@ public class MockHttpHandler : HttpMessageHandler
         LastRequest = request;
         RequestCount++;
         HttpResponseMessage response = Response;
-        if (response == null)
+        if (response is null)
         {
             response = new HttpResponseMessage();
             if (!string.IsNullOrEmpty(JsonResponse))
