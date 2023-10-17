@@ -9,12 +9,12 @@ public static class EmbeddingsEx
     /// </summary>
     /// <param name="model">model to use</param>
     /// <param name="text">text for which to generate an embedding</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    public static async Task<Embedding> GenerateEmbeddingAsync(this ITextEmbeddingGeneration model, string text, CancellationToken cancellationToken = default)
+    public static async Task<Embedding> GenerateEmbeddingAsync(this ITextEmbeddingGeneration model, string text, CancellationToken cancelToken = default)
     {
         string[] texts = new string[] { text };
-        var results = await model.GenerateEmbeddingsAsync(texts, cancellationToken).ConfigureAwait(false);
+        var results = await model.GenerateEmbeddingsAsync(texts, cancelToken).ConfigureAwait(false);
         return new Embedding(results[0]);
     }
 

@@ -7,5 +7,5 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public interface IInputHandler
 {
-    Task ProcessInputAsync(string input, CancellationToken cancellationToken = default);
+    Task ProcessInputAsync(string input, CancellationToken cancelToken = default);
 }

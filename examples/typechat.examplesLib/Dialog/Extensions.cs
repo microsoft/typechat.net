@@ -46,10 +46,10 @@ internal static class SerializationEx
     /// <param name="builder"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<bool> AddHistoryAsync(this PromptBuilder builder, IAsyncEnumerable<IPromptSection> context, CancellationToken cancellationToken = default)
+    public static async Task<bool> AddHistoryAsync(this PromptBuilder builder, IAsyncEnumerable<IPromptSection> context, CancellationToken cancelToken = default)
     {
         int contextStartAt = builder.Prompt.Count;
-        bool retVal = await builder.AddRangeAsync(context, cancellationToken).ConfigureAwait(false);
+        bool retVal = await builder.AddRangeAsync(context, cancelToken).ConfigureAwait(false);
         int contextEndAt = builder.Prompt.Count;
         if (contextStartAt < contextEndAt)
         {

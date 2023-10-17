@@ -62,9 +62,9 @@ public class Agent<T> : IAgent
     /// Get response for the given request
     /// </summary>
     /// <param name="requestMessage">request message</param>
-    /// <param name="cancellationToken">optional cancellation token</param>
+    /// <param name="cancelToken">optional cancellation token</param>
     /// <returns>response message</returns>
-    public async Task<Message> GetResponseMessageAsync(Message requestMessage, CancellationToken cancellationToken = default)
+    public async Task<Message> GetResponseMessageAsync(Message requestMessage, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNull(requestMessage, nameof(requestMessage));
 
@@ -74,7 +74,7 @@ public class Agent<T> : IAgent
         //
         // Prepare the actual message to send to the model
         //
-        Message preparedRequestMessage = await PrepareRequestAsync(requestMessage, cancellationToken).ConfigureAwait(false);
+        Message preparedRequestMessage = await PrepareRequestAsync(requestMessage, cancelToken).ConfigureAwait(false);
         if (!object.ReferenceEquals(preparedRequestMessage, requestMessage))
         {
             preparedRequestText = preparedRequestMessage.GetText();
@@ -83,16 +83,16 @@ public class Agent<T> : IAgent
         //
         // Prepare the context to send. For context building, use the original request text
         //
-        Prompt context = await BuildContextAsync(requestText, preparedRequestText.Length, cancellationToken).ConfigureAwait(false);
+        Prompt context = await BuildContextAsync(requestText, preparedRequestText.Length, cancelToken).ConfigureAwait(false);
 
         //
         // Translate
         //
-        T response = await _translator.TranslateAsync(preparedRequestText, context, null, cancellationToken).ConfigureAwait(false);
+        T response = await _translator.TranslateAsync(preparedRequestText, context, null, cancelToken).ConfigureAwait(false);
 
         Message responseMessage = Message.FromAssistant(response);
 
-        await ReceivedResponseAsync(requestMessage, preparedRequestMessage, responseMessage, cancellationToken).ConfigureAwait(false);
+        await ReceivedResponseAsync(requestMessage, preparedRequestMessage, responseMessage, cancelToken).ConfigureAwait(false);
 
         return responseMessage;
     }
@@ -101,15 +101,15 @@ public class Agent<T> : IAgent
     /// Get a response to the given message
     /// </summary>
     /// <param name="request">request</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns>Response object</returns>
-    public async Task<T> GetResponseAsync(Message request, CancellationToken cancellationToken = default)
+    public async Task<T> GetResponseAsync(Message request, CancellationToken cancelToken = default)
     {
-        Message response = await GetResponseMessageAsync(request, cancellationToken).ConfigureAwait(false);
+        Message response = await GetResponseMessageAsync(request, cancelToken).ConfigureAwait(false);
         return response.GetBody<T>();
     }
 
-    private async Task<Prompt> BuildContextAsync(string requestText, int actualRequestLength, CancellationToken cancellationToken)
+    private async Task<Prompt> BuildContextAsync(string requestText, int actualRequestLength, CancellationToken cancelToken)
     {
         PromptBuilder builder = CreateBuilder(MaxRequestPromptLength - actualRequestLength);
         // Add any preamble       
@@ -120,9 +120,9 @@ public class Agent<T> : IAgent
         //
         if (_contextProvider is not null)
         {
-            var context = _contextProvider.GetContextAsync(requestText, cancellationToken);
+            var context = _contextProvider.GetContextAsync(requestText, cancelToken);
             builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
-            await AppendContextAsync(builder, context, cancellationToken).ConfigureAwait(false);
+            await AppendContextAsync(builder, context, cancelToken).ConfigureAwait(false);
         }
 
         return builder.Prompt;
@@ -134,9 +134,9 @@ public class Agent<T> : IAgent
     /// By default, the request message is sent to the model as is
     /// </summary>
     /// <param name="request">request message</param>
-    /// <param name="cancellationToken">cancel </param>
+    /// <param name="cancelToken">cancel </param>
     /// <returns>Actual text to send to the AI</returns>
-    protected virtual Task<Message> PrepareRequestAsync(Message request, CancellationToken cancellationToken)
+    protected virtual Task<Message> PrepareRequestAsync(Message request, CancellationToken cancelToken)
     {
         return Task.FromResult(request);
     }
@@ -148,9 +148,9 @@ public class Agent<T> : IAgent
     /// <param name="builder">builder to append to</param>
     /// <param name="context">context to append</param>
     /// <returns></returns>
-    protected virtual Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context, CancellationToken cancellationToken)
+    protected virtual Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context, CancellationToken cancelToken)
     {
-        return builder.AddRangeAsync(context, cancellationToken);
+        return builder.AddRangeAsync(context, cancelToken);
     }
 
     /// <summary>
@@ -160,7 +160,7 @@ public class Agent<T> : IAgent
     /// <param name="preparedRequest">the prepared request that was actually used in translation</param>
     /// <param name="response">response message</param>
     /// <returns></returns>
-    protected virtual Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response, CancellationToken cancellationToken)
+    protected virtual Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response, CancellationToken cancelToken)
     {
         return Task.CompletedTask;
     }

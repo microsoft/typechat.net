@@ -36,11 +36,11 @@ public class TextCompletionModel : ILanguageModel
     /// </summary>
     public bool IncludeSectionSource { get; set; } = true;
 
-    public Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancellationToken = default)
+    public Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
         string request = prompt.ToString(IncludeSectionSource);
-        return _service.CompleteAsync(request, requestSettings, cancellationToken);
+        return _service.CompleteAsync(request, requestSettings, cancelToken);
     }
 
     CompleteRequestSettings? ToRequestSettings(TranslationSettings? settings)

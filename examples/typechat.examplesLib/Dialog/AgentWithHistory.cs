@@ -60,9 +60,9 @@ public class AgentWithHistory<T> : Agent<T>
     /// </summary>
     public Func<T, Message?> CreateMessageForHistory { get; set; }
 
-    protected override Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context, CancellationToken cancellationToken)
+    protected override Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context, CancellationToken cancelToken)
     {
-        return builder.AddHistoryAsync(context, cancellationToken);
+        return builder.AddHistoryAsync(context, cancelToken);
     }
 
     /// <summary>
@@ -74,15 +74,15 @@ public class AgentWithHistory<T> : Agent<T>
     /// <param name="preparedRequest"></param>
     /// <param name="response"></param>
     /// <returns></returns>
-    protected async override Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response, CancellationToken cancellationToken)
+    protected async override Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response, CancellationToken cancelToken)
     {
-        await _history.AppendAsync(request, cancellationToken).ConfigureAwait(false);
+        await _history.AppendAsync(request, cancelToken).ConfigureAwait(false);
         Message? historyMessage = (CreateMessageForHistory is not null) ?
                                   CreateMessageForHistory(response.GetBody<T>()) :
                                   response;
         if (historyMessage is not null)
         {
-            await _history.AppendAsync(historyMessage, cancellationToken).ConfigureAwait(false);
+            await _history.AppendAsync(historyMessage, cancelToken).ConfigureAwait(false);
         }
     }
 }

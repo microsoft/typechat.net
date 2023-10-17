@@ -52,8 +52,8 @@ public class VectorizedMessageList : IMessageStream
 
     public IEnumerable<Message> All() => _messageList.All();
 
-    public IAsyncEnumerable<Message> AllAsync(CancellationToken cancellationToken = default)
-        => _messageList.AllAsync(cancellationToken);
+    public IAsyncEnumerable<Message> AllAsync(CancellationToken cancelToken = default)
+        => _messageList.AllAsync(cancelToken);
 
     public void Append(Message message)
     {
@@ -65,11 +65,11 @@ public class VectorizedMessageList : IMessageStream
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>
-    public async Task AppendAsync(Message message, CancellationToken cancellationToken = default)
+    public async Task AppendAsync(Message message, CancellationToken cancelToken = default)
     {
         int position = _messageList.Count;
-        await _messageList.AppendAsync(message, cancellationToken).ConfigureAwait(false);
-        await _index.AddAsync(position, message.GetText(), cancellationToken).ConfigureAwait(false);
+        await _messageList.AppendAsync(message, cancelToken).ConfigureAwait(false);
+        await _index.AddAsync(position, message.GetText(), cancelToken).ConfigureAwait(false);
     }
 
     public void Clear()
@@ -88,11 +88,11 @@ public class VectorizedMessageList : IMessageStream
     /// Return messages that are nearest neighbors of the given request text
     /// </summary>
     /// <param name="request">find messages nearest to this text</param>
-    /// <param name="cancellationToken">cancel token</param>
+    /// <param name="cancelToken">cancel token</param>
     /// <returns></returns>
-    public async IAsyncEnumerable<IPromptSection> GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<IPromptSection> GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancelToken = default)
     {
-        List<int> matches = await _index.NearestAsync(request, _maxContextMatches, cancellationToken).ConfigureAwait(false);
+        List<int> matches = await _index.NearestAsync(request, _maxContextMatches, cancelToken).ConfigureAwait(false);
         for (int i = 0; i < matches.Count; ++i)
         {
             yield return _messageList[matches[i]];
@@ -109,6 +109,6 @@ public class VectorizedMessageList : IMessageStream
     /// Return newest messages
     /// </summary>
     /// <returns>an async enumerable of messages</returns>
-    public IAsyncEnumerable<Message> NewestAsync(CancellationToken cancellationToken = default)
-        => _messageList.NewestAsync(cancellationToken);
+    public IAsyncEnumerable<Message> NewestAsync(CancellationToken cancelToken = default)
+        => _messageList.NewestAsync(cancelToken);
 }

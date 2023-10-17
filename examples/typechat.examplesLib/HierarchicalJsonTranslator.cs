@@ -36,20 +36,20 @@ public class HierarchicalJsonTranslator : IJsonTranslator
     /// </summary>
     /// <typeparam name="T">type of translator</typeparam>
     /// <param name="description">description of the translator </param>
-    /// <param name="cancellationToken">cancellation token</param>
+    /// <param name="cancelToken">cancellation token</param>
     /// <returns></returns>
-    public virtual Task AddSchemaAsync<T>(string description, CancellationToken cancellationToken = default)
-        => Router.AddAsync(new JsonTranslator<T>(_model), description, cancellationToken);
+    public virtual Task AddSchemaAsync<T>(string description, CancellationToken cancelToken = default)
+        => Router.AddAsync(new JsonTranslator<T>(_model), description, cancelToken);
 
-    public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancellationToken = default)
+    public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken = default)
     {
         // First, select the translator that is best suited to translate this request
-        IJsonTranslator? translator = await Router.RouteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+        IJsonTranslator? translator = await Router.RouteRequestAsync(request, cancelToken).ConfigureAwait(false);
         if (translator is null)
         {
             throw new TypeChatException(TypeChatException.ErrorCode.NoTranslator, request);
         }
 
-        return await translator.TranslateToObjectAsync(request, cancellationToken).ConfigureAwait(false);
+        return await translator.TranslateToObjectAsync(request, cancelToken).ConfigureAwait(false);
     }
 }

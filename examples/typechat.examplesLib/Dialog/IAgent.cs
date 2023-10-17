@@ -11,7 +11,7 @@ public interface IAgent
     /// Respond to the request
     /// </summary>
     /// <param name="request">request message</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns>response message</returns>
-    Task<Message> GetResponseMessageAsync(Message request, CancellationToken cancellationToken = default);
+    Task<Message> GetResponseMessageAsync(Message request, CancellationToken cancelToken = default);
 }

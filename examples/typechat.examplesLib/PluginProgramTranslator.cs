@@ -49,6 +49,6 @@ public class PluginProgramTranslator
 
     public SchemaText Schema => _pluginSchema;
 
-    public Task<Program> TranslateAsync(string input, CancellationToken cancellationToken = default)
-        => _translator.TranslateAsync(input, cancellationToken);
+    public Task<Program> TranslateAsync(string input, CancellationToken cancelToken = default)
+        => _translator.TranslateAsync(input, cancelToken);
 }

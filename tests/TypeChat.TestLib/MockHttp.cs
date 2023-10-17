@@ -28,7 +28,7 @@ public class MockHttpHandler : HttpMessageHandler
         LastRequest = null;
     }
 
-    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancelToken)
     {
         LastRequest = request;
         RequestCount++;

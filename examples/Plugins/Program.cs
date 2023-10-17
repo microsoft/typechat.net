@@ -25,19 +25,19 @@ public class PluginApp : ConsoleApp
     public IKernel Kernel => _kernel;
     public string Schema => _programTranslator.Schema;
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken = default)
     {
-        using Program program = await _programTranslator.TranslateAsync(input, cancellationToken);
+        using Program program = await _programTranslator.TranslateAsync(input, cancelToken);
         program.Print(_programTranslator.Api.TypeName);
         Console.WriteLine();
 
         if (program.IsComplete)
         {
-            await RunProgramAsync(program, cancellationToken);
+            await RunProgramAsync(program, cancelToken);
         }
     }
 
-    private async Task RunProgramAsync(Program program, CancellationToken cancellationToken)
+    private async Task RunProgramAsync(Program program, CancellationToken cancelToken)
     {
         if (!program.IsComplete)
         {

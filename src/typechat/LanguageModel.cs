@@ -42,9 +42,9 @@ public class LanguageModel : ILanguageModel, IDisposable
     /// </summary>
     /// <param name="prompt">prompt</param>
     /// <param name="settings">translation settings such as temperature</param>
-    /// <param name="cancellationToken">cancellation token</param>
+    /// <param name="cancelToken">cancellation token</param>
     /// <returns></returns>
-    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancellationToken = default)
+    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNullOrEmpty<IPromptSection>(prompt, nameof(prompt));
 

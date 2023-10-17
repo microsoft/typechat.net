@@ -50,7 +50,7 @@ public class MessageList : List<Message>, IMessageStream
     /// Append a message to the message stream
     /// </summary>
     /// <param name="message">message to append</param>
-    public Task AppendAsync(Message message, CancellationToken cancellationToken = default)
+    public Task AppendAsync(Message message, CancellationToken cancelToken = default)
     {
         Add(message);
         return Task.CompletedTask;
@@ -85,9 +85,9 @@ public class MessageList : List<Message>, IMessageStream
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="cancellationToken"></param>
+    /// <param name="cancelToken"></param>
     /// <returns>async enumeration</returns>
-    public async IAsyncEnumerable<Message> AllAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Message> AllAsync([EnumeratorCancellation] CancellationToken cancelToken = default)
     {
         for (int i = 0; i < Count; ++i)
         {
@@ -98,9 +98,9 @@ public class MessageList : List<Message>, IMessageStream
     /// <summary>
     /// Enumerate messages asynchronously - newest first
     /// </summary>
-    /// <param name="cancellationToken"></param>
+    /// <param name="cancelToken"></param>
     /// <returns>async enumeration</returns>
-    public async IAsyncEnumerable<Message> NewestAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<Message> NewestAsync([EnumeratorCancellation] CancellationToken cancelToken = default)
     {
         for (int i = Count - 1; i >= 0; --i)
         {
@@ -112,9 +112,9 @@ public class MessageList : List<Message>, IMessageStream
     /// Just returns messages in order of newest first. You can build other message lists that support semantic and
     /// </summary>
     /// <param name="request">find messages nearest to this</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    public async IAsyncEnumerable<IPromptSection>? GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<IPromptSection>? GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancelToken = default)
     {
         for (int i = Count - 1; i >= 0; --i)
         {

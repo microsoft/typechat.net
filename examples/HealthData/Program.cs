@@ -32,9 +32,9 @@ public class HealthDataAgent : ConsoleApp
 
     public TypeSchema Schema => _agent.Translator.Validator.Schema;
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken = default)
     {
-        HealthDataResponse response = await _agent.GetResponseAsync(input, cancellationToken);
+        HealthDataResponse response = await _agent.GetResponseAsync(input, cancelToken);
         PrintResponse(response);
     }
 

@@ -12,7 +12,7 @@ public interface IContextProvider
     /// Return relevant context for this this request
     /// </summary>
     /// <param name="request">user request</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    IAsyncEnumerable<IPromptSection> GetContextAsync(string request, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<IPromptSection> GetContextAsync(string request, CancellationToken cancelToken = default);
 }

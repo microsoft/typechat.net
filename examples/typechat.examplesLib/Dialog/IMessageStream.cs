@@ -17,7 +17,7 @@ public interface IMessageStream : IContextProvider
     /// Append a message to the stream
     /// </summary>
     /// <param name="message">message to append</param>
-    Task AppendAsync(Message message, CancellationToken cancellationToken = default);
+    Task AppendAsync(Message message, CancellationToken cancelToken = default);
 
     /// <summary>
     /// Return all messages in the stream
@@ -29,7 +29,7 @@ public interface IMessageStream : IContextProvider
     /// Return all messages in the stream
     /// </summary>
     /// <returns>An async enumeration of messages</returns>
-    IAsyncEnumerable<Message> AllAsync(CancellationToken cancellationToken = default);
+    IAsyncEnumerable<Message> AllAsync(CancellationToken cancelToken = default);
 
     /// <summary>
     /// Return the newest messages in the stream in order - most recent messages first
@@ -41,7 +41,7 @@ public interface IMessageStream : IContextProvider
     /// Return the newest messages in the stream in order - most recent messages first
     /// </summary>
     /// <returns>An async enumeration of messages</returns>
-    IAsyncEnumerable<Message> NewestAsync(CancellationToken cancellationToken = default);
+    IAsyncEnumerable<Message> NewestAsync(CancellationToken cancelToken = default);
 
     /// <summary>
     /// Clear the stream

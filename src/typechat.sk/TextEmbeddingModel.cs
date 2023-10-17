@@ -49,22 +49,22 @@ public class TextEmbeddingModel
     /// Generate an embedding
     /// </summary>
     /// <param name="text">text to create embeddings for</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    public Task<Embedding> GenerateEmbeddingAsync(string text, CancellationToken cancellationToken = default)
+    public Task<Embedding> GenerateEmbeddingAsync(string text, CancellationToken cancelToken = default)
     {
-        return _service.GenerateEmbeddingAsync(text, cancellationToken);
+        return _service.GenerateEmbeddingAsync(text, cancelToken);
     }
 
     /// <summary>
     /// Generate embeddings in a batch
     /// </summary>
     /// <param name="texts">list of texts to turn into embeddings</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    public async Task<Embedding[]> GenerateEmbeddingsAsync(IList<string> texts, CancellationToken cancellationToken = default)
+    public async Task<Embedding[]> GenerateEmbeddingsAsync(IList<string> texts, CancellationToken cancelToken = default)
     {
-        var results = await _service.GenerateEmbeddingsAsync(texts, cancellationToken);
+        var results = await _service.GenerateEmbeddingsAsync(texts, cancelToken);
         Embedding[] embeddings = new Embedding[results.Count];
         for (int i = 0; i < embeddings.Length; ++i)
         {

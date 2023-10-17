@@ -14,7 +14,7 @@ public interface IJsonTranslator
     /// Translate the request into an object
     /// </summary>
     /// <param name="request">natural language request</param>
-    /// <param name="cancellationToken">cancellationToken</param>
+    /// <param name="cancelToken">cancelToken</param>
     /// <returns></returns>
-    Task<object> TranslateToObjectAsync(string request, CancellationToken cancellationToken = default);
+    Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken = default);
 }

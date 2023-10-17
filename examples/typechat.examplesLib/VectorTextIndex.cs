@@ -49,23 +49,23 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     /// Does so by comparing the embedding of request to that of all registered T
     /// </summary>
     /// <param name="request">tequest</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public Task<T> RouteRequestAsync(string request, CancellationToken cancellationToken = default)
-        => NearestAsync(request, cancellationToken);
+    public Task<T> RouteRequestAsync(string request, CancellationToken cancelToken = default)
+        => NearestAsync(request, cancelToken);
 
     /// <summary>
     /// Add an item to the collection. Its associated textKey will be vectorized into an embedding
     /// </summary>
     /// <param name="item">item to add to the index</param>
     /// <param name="textRepresentation">The text representation of the item; its transformed into an embedding</param>
-    /// <param name="cancellationToken">cancel token</param>
-    public async Task AddAsync(T item, string textRepresentation, CancellationToken cancellationToken = default)
+    /// <param name="cancelToken">cancel token</param>
+    public async Task AddAsync(T item, string textRepresentation, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNullOrEmpty(textRepresentation, nameof(textRepresentation));
 
-        var embedding = await GetNormalizedEmbeddingAsync(textRepresentation, cancellationToken).ConfigureAwait(false);
+        var embedding = await GetNormalizedEmbeddingAsync(textRepresentation, cancelToken).ConfigureAwait(false);
 
         _list.Add(item, embedding);
     }
@@ -76,10 +76,10 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     /// </summary>
     /// <param name="items">items to add to the collection</param>
     /// <param name="textRepresentations">the text representations of these items</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <exception cref="ArgumentException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
-    public async Task AddAsync(T[] items, string[] textRepresentations, CancellationToken cancellationToken = default)
+    public async Task AddAsync(T[] items, string[] textRepresentations, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNull(items, nameof(items));
         ArgumentVerify.ThrowIfNull(textRepresentations, nameof(textRepresentations));
@@ -89,7 +89,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
             throw new ArgumentException("items and their representations must of the same length");
         }
 
-        Embedding[] embeddings = await GetNormalizedEmbeddingAsync(textRepresentations, cancellationToken).ConfigureAwait(false);
+        Embedding[] embeddings = await GetNormalizedEmbeddingAsync(textRepresentations, cancelToken).ConfigureAwait(false);
         if (embeddings.Length != items.Length)
         {
             throw new InvalidOperationException($"Embedding length {embeddings.Length} does not match items length {items.Length}");
@@ -105,11 +105,11 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     /// Find nearest match to the given text
     /// </summary>
     /// <param name="text"></param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns>nearest item</returns>
-    public async Task<T> NearestAsync(string text, CancellationToken cancellationToken = default)
+    public async Task<T> NearestAsync(string text, CancellationToken cancelToken = default)
     {
-        var embedding = await GetNormalizedEmbeddingAsync(text, cancellationToken).ConfigureAwait(false);
+        var embedding = await GetNormalizedEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
 
         return _list.Nearest(embedding, EmbeddingDistance.Dot);
     }
@@ -119,26 +119,26 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
     /// </summary>
     /// <param name="text">text to search for</param>
     /// <param name="maxMatches">max matches</param>
-    /// <param name="cancellationToken">optional cancel token</param>
+    /// <param name="cancelToken">optional cancel token</param>
     /// <returns>list of matches</returns>
-    public async Task<List<T>> NearestAsync(string text, int maxMatches, CancellationToken cancellationToken = default)
+    public async Task<List<T>> NearestAsync(string text, int maxMatches, CancellationToken cancelToken = default)
     {
-        var embedding = await GetNormalizedEmbeddingAsync(text, cancellationToken).ConfigureAwait(false);
+        var embedding = await GetNormalizedEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
 
         return _list.Nearest(embedding, maxMatches, EmbeddingDistance.Dot).ToList();
     }
 
-    private async Task<Embedding> GetNormalizedEmbeddingAsync(string text, CancellationToken cancellationToken)
+    private async Task<Embedding> GetNormalizedEmbeddingAsync(string text, CancellationToken cancelToken)
     {
-        var embedding = await _model.GenerateEmbeddingAsync(text, cancellationToken).ConfigureAwait(false);
+        var embedding = await _model.GenerateEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
         embedding.NormalizeInPlace();
 
         return embedding;
     }
 
-    private async Task<Embedding[]> GetNormalizedEmbeddingAsync(string[] texts, CancellationToken cancellationToken)
+    private async Task<Embedding[]> GetNormalizedEmbeddingAsync(string[] texts, CancellationToken cancelToken)
     {
-        var embeddings = await _model.GenerateEmbeddingsAsync(texts, cancellationToken).ConfigureAwait(false);
+        var embeddings = await _model.GenerateEmbeddingsAsync(texts, cancelToken).ConfigureAwait(false);
 
         for (int i = 0; i < embeddings.Length; ++i)
         {

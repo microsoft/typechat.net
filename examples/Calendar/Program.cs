@@ -21,10 +21,10 @@ public class CalendarApp : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken = default)
     {
         string request = $"{input}\n{PromptLibrary.Now()}";
-        CalendarActions actions = await _translator.TranslateAsync(request, cancellationToken);
+        CalendarActions actions = await _translator.TranslateAsync(request, cancelToken);
         Console.WriteLine(Json.Stringify(actions));
         PrintUnknown(actions);
     }

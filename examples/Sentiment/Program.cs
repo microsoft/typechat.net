@@ -16,9 +16,9 @@ public class SentimentApp : ConsoleApp
         _translator = new JsonTranslator<SentimentResponse>(new LanguageModel(config));
     }
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancellationToken = default)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken = default)
     {
-        SentimentResponse response = await _translator.TranslateAsync(input, cancellationToken);
+        SentimentResponse response = await _translator.TranslateAsync(input, cancelToken);
         Console.WriteLine($"The sentiment is {response.Sentiment}");
     }
 
