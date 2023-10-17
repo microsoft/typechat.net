@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramTranslatorPrompts : JsonTranslatorPrompts
 {
-    private string _apiDef;
+    string _apiDef;
 
     /// <summary>
     /// Create a program translator

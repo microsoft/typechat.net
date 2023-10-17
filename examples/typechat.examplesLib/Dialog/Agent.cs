@@ -8,9 +8,10 @@ namespace Microsoft.TypeChat.Dialog;
 /// </summary>
 public class Agent<T> : IAgent
 {
-    private JsonTranslator<T> _translator;
-    private IContextProvider? _contextProvider;
-    private Prompt _instructions;
+    JsonTranslator<T> _translator;
+    IContextProvider? _contextProvider;
+    Prompt _instructions;
+    int _maxPromptLength;
 
     /// <summary>
     /// Create a new Agent that uses the given language model
@@ -37,7 +38,7 @@ public class Agent<T> : IAgent
         _instructions = new Prompt();
         // By default, only use 1/2 the estimated # of characters the model supports.. for prompts
         // the Agent sends
-        MaxRequestPromptLength = translator.Model.ModelInfo.MaxCharCount / 2;
+        _maxPromptLength = translator.Model.ModelInfo.MaxCharCount / 2;
         _contextProvider = contextProvider;
     }
 
@@ -56,7 +57,12 @@ public class Agent<T> : IAgent
     /// - the user's request
     /// - any automatically collected context, from history 
     /// </summary>
-    public int MaxRequestPromptLength { get; set; }
+    public int MaxRequestPromptLength
+    {
+        get => _maxPromptLength;
+        set => _maxPromptLength = value;
+    }
+
 
     /// <summary>
     /// Get response for the given request
@@ -111,7 +117,7 @@ public class Agent<T> : IAgent
 
     private async Task<Prompt> BuildContextAsync(string requestText, int actualRequestLength, CancellationToken cancelToken)
     {
-        PromptBuilder builder = CreateBuilder(MaxRequestPromptLength - actualRequestLength);
+        PromptBuilder builder = CreateBuilder(_maxPromptLength - actualRequestLength);
         // Add any preamble       
         builder.AddRange(_instructions);
 

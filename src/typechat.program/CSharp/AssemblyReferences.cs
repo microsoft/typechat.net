@@ -7,6 +7,8 @@ namespace Microsoft.TypeChat.CSharp;
 /// </summary>
 public class AssemblyReferences : HashSet<string>
 {
+    public AssemblyReferences() { }
+
     /// <summary>
     /// Automatically adds references to standard .NET assemblies
     /// </summary>
@@ -39,7 +41,7 @@ public class AssemblyReferences : HashSet<string>
             throw new ArgumentException($"{assemblyPath} not found");
         }
 
-        _ = Add(assemblyPath);
+        Add(assemblyPath);
     }
 
     /// <summary>
@@ -48,9 +50,15 @@ public class AssemblyReferences : HashSet<string>
     /// <param name="types"></param>
     public void Add(params Type[] types)
     {
+        if (types is null)
+        {
+            return;
+        }
+
         foreach (Type t in types)
         {
-            _ = Add(t.Assembly.Location);
+            // HashSet will ignore duplicates
+            Add(t.Assembly.Location);
         }
     }
 }

@@ -10,7 +10,7 @@ public struct Embedding
 {
     public static readonly Embedding Empty = new Embedding();
 
-    private float[] _vector;
+    float[] _vector;
 
     /// <summary>
     /// Create an empty embedding

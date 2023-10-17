@@ -8,6 +8,7 @@ namespace Microsoft.TypeChat;
 public class ChatLanguageModel : ILanguageModel
 {
     IChatCompletion _service;
+    ModelInfo _model;
 
     /// <summary>
     /// Create a new language model from the OpenAI config
@@ -23,7 +24,7 @@ public class ChatLanguageModel : ILanguageModel
         model ??= config.Model;
         IKernel kernel = config.CreateKernel();
         _service = kernel.GetService<IChatCompletion>(model.Name);
-        ModelInfo = model;
+        _model = model;
     }
 
     /// <summary>
@@ -35,13 +36,13 @@ public class ChatLanguageModel : ILanguageModel
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
-        ModelInfo = model;
+        _model = model;
     }
 
     /// <summary>
     /// Information about the model
     /// </summary>
-    public ModelInfo ModelInfo { get; }
+    public ModelInfo ModelInfo => _model;
 
     /// <summary>
     /// Return a completion for the prompt

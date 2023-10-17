@@ -9,7 +9,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class Api
 {
-    private static readonly object?[] s_emptyArgs = Array.Empty<object?>();
+    static readonly object?[] s_emptyArgs = Array.Empty<object?>();
+
+    ApiTypeInfo _typeInfo;
+    object _apiImpl;
 
     /// <summary>
     /// Create an Api using ALL Public instance methods of the supplied apiImpl
@@ -29,19 +32,19 @@ public class Api
     {
         ArgumentVerify.ThrowIfNull(typeInfo, nameof(typeInfo));
         ArgumentVerify.ThrowIfNull(apiImpl, nameof(apiImpl));
-        TypeInfo = typeInfo;
-        Implementation = apiImpl;
+        _typeInfo = typeInfo;
+        _apiImpl = apiImpl;
     }
 
     /// <summary>
     /// Type information for this Api
     /// </summary>
-    public ApiTypeInfo TypeInfo { get; }
+    public ApiTypeInfo TypeInfo => _typeInfo;
 
     /// <summary>
     /// The object that implements the Api
     /// </summary>
-    public object Implementation { get; }
+    public object Implementation => _apiImpl;
 
     /// <summary>
     /// Diagnostics
@@ -59,7 +62,7 @@ public class Api
     {
         var method = BindMethod(name, args);
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
-        dynamic retVal = method.Method.Invoke(Implementation, callArgs);
+        dynamic retVal = method.Method.Invoke(_apiImpl, callArgs);
         NotifyCall(name, args, retVal);
         return retVal;
     }
@@ -80,7 +83,7 @@ public class Api
         }
 
         dynamic[] callArgs = CreateCallArgs(name, args, method.Params);
-        dynamic task = (Task)method.Method.Invoke(Implementation, callArgs);
+        dynamic task = (Task)method.Method.Invoke(_apiImpl, callArgs);
         var result = await task;
         NotifyCall(name, args, result);
         return result;

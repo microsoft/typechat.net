@@ -45,5 +45,15 @@ internal static class StringEx
     }
 
     internal static StringBuilder AppendMultiple(this StringBuilder sb, string separator, IEnumerable<string> substrings)
-        => sb.Append(string.Join(separator, substrings));
+    {
+        int i = 0;
+        foreach (var substring in substrings)
+        {
+            if (i > 0) { sb.Append(separator); }
+            sb.Append(substring);
+            ++i;
+        }
+
+        return sb;
+    }
 }

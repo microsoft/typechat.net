@@ -10,17 +10,18 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramInterpreter
 {
-    private static readonly dynamic[] s_emptyArray = new dynamic[0];
+    static readonly dynamic[] s_emptyArray = new dynamic[0];
 
-    private List<dynamic> _results = new();
-    private Func<string, dynamic[], dynamic>? _callHandler;
-    private Func<string, dynamic[], Task<dynamic>>? _callHandlerAsync;
+    List<dynamic> _results;
+    Func<string, dynamic[], dynamic>? _callHandler;
+    Func<string, dynamic[], Task<dynamic>>? _callHandlerAsync;
 
     /// <summary>
     /// Create an interpreter
     /// </summary>
     public ProgramInterpreter()
     {
+        _results = new List<dynamic>();
     }
 
     /// <summary>

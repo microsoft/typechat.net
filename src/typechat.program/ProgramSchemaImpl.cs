@@ -8,6 +8,8 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public partial class Program : IDisposable
 {
+    JsonDocument? _programSource;
+
     /// <summary>
     /// Create a new Json program from the Json document
     /// </summary>
@@ -17,13 +19,13 @@ public partial class Program : IDisposable
     {
         ArgumentVerify.ThrowIfNull(steps, nameof(steps));
 
-        Source = source;
+        _programSource = source;
         Steps = steps;
     }
 
     internal Program(JsonDocument? source = null)
     {
-        Source = source;
+        _programSource = source;
     }
 
     ~Program()
@@ -32,7 +34,7 @@ public partial class Program : IDisposable
     }
 
     [JsonIgnore]
-    public JsonDocument? Source { get; private set; }
+    public JsonDocument? Source => _programSource;
 
     /// <summary>
     /// Did the LLM actually return steps?
@@ -101,10 +103,10 @@ public partial class Program : IDisposable
     {
         if (fromDispose)
         {
-            Source?.Dispose();
+            _programSource?.Dispose();
         }
 
-        Source = null;
+        _programSource = null;
         Delegate = null;
     }
 }

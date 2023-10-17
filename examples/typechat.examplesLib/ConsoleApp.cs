@@ -124,7 +124,7 @@ public abstract class ConsoleApp : IInputHandler
         return true;
     }
 
-    bool IsStop(string? line)
+    private bool IsStop(string? line)
     {
         return line is null || _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
     }

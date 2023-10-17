@@ -9,8 +9,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PromptBuilder
 {
-    private int _maxLength;
-    private Func<string, int, string>? _substring;
+    Prompt _prompt;
+    int _currentLength;
+    int _maxLength;
+    Func<string, int, string>? _substring;
 
     /// <summary>
     /// Create a builder to create prompts whose length does not exceed maxLength characters
@@ -31,6 +33,7 @@ public class PromptBuilder
     /// <param name="substringExtractor">optional extractor</param>
     public PromptBuilder(int maxLength, Func<string, int, string>? substringExtractor = null)
     {
+        _prompt = new Prompt();
         _maxLength = maxLength;
         _substring = substringExtractor;
     }
@@ -38,12 +41,12 @@ public class PromptBuilder
     /// <summary>
     /// The prompt being built
     /// </summary>
-    public Prompt Prompt { get; } = new();
+    public Prompt Prompt => _prompt;
 
     /// <summary>
     /// Current length of the prompt in characters
     /// </summary>
-    public int Length { get; private set; } = 0;
+    public int Length => _currentLength;
 
     /// <summary>
     /// Maximum allowed prompt length
@@ -53,9 +56,9 @@ public class PromptBuilder
         get => _maxLength;
         set
         {
-            if (value < Length)
+            if (value < _currentLength)
             {
-                throw new ArgumentException($"Current Length: {Length} exceeds {value}");
+                throw new ArgumentException($"Current Length: {_currentLength} exceeds new MaxLength: {value}");
             }
 
             _maxLength = value;
@@ -90,18 +93,18 @@ public class PromptBuilder
             return true;
         }
 
-        int lengthAvailable = _maxLength - Length;
+        int lengthAvailable = _maxLength - _currentLength;
         if (text.Length <= lengthAvailable)
         {
-            Prompt.Append(section);
-            Length += text.Length;
+            _prompt.Append(section);
+            _currentLength += text.Length;
             return true;
         }
 
         if (_substring is not null)
         {
             text = _substring(text, lengthAvailable);
-            Prompt.Append(section.Source, text);
+            _prompt.Append(section.Source, text);
             return true;
         }
 
@@ -153,8 +156,8 @@ public class PromptBuilder
     /// </summary>
     public void Clear()
     {
-        Prompt.Clear();
-        Length = 0;
+        _prompt.Clear();
+        _currentLength = 0;
     }
 
     /// <summary>

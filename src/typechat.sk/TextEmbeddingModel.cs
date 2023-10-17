@@ -6,7 +6,8 @@ namespace Microsoft.TypeChat;
 
 public class TextEmbeddingModel
 {
-    private ITextEmbeddingGeneration _service;
+    ITextEmbeddingGeneration _service;
+    ModelInfo _model;
 
     /// <summary>
     /// Create a new text embedding model from the OpenAI config
@@ -25,7 +26,7 @@ public class TextEmbeddingModel
             .Build();
         modelInfo ??= config.Model;
         _service = kernel.GetService<ITextEmbeddingGeneration>(modelInfo.Name);
-        ModelInfo = modelInfo;
+        _model = modelInfo;
     }
 
     /// <summary>
@@ -37,13 +38,13 @@ public class TextEmbeddingModel
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
-        ModelInfo = modelInfo;
+        _model = modelInfo;
     }
 
     /// <summary>
     /// Information about the model
     /// </summary>
-    public ModelInfo ModelInfo { get; }
+    public ModelInfo ModelInfo => _model;
 
     /// <summary>
     /// Generate an embedding

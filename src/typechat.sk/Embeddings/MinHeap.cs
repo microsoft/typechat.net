@@ -6,11 +6,13 @@ internal struct MinHeap<T>
 {
     static readonly T[] s_emptyBuffer = Array.Empty<T>();
 
-    private ScoredValue<T>[] _items;
+    ScoredValue<T>[] _items;
+    int _count;
 
     public MinHeap(int capacity)
     {
         _items = new ScoredValue<T>[capacity + 1];
+        _count = 0;
 
         //
         // The 0'th item is a sentinel entry that simplifies the code
@@ -18,7 +20,7 @@ internal struct MinHeap<T>
         _items[0] = new ScoredValue<T>(default, double.MinValue);
     }
 
-    public int Count { get; private set; } = 0;
+    public int Count => _count;
 
     public int Capacity => _items.Length - 1; // 0'th item is always a sentinel to simplify code
 
@@ -30,11 +32,11 @@ internal struct MinHeap<T>
 
     public ScoredValue<T> Top => _items[1];
 
-    public bool IsEmpty => (Count == 0);
+    public bool IsEmpty => (_count == 0);
 
     public void Clear()
     {
-        Count = 0;
+        _count = 0;
     }
 
     public void Add(ScoredValue<T> item)
@@ -48,9 +50,9 @@ internal struct MinHeap<T>
             throw new ArgumentOutOfRangeException($"Heap stores max {Capacity} entries");
         }
 
-        Count++;
-        _items[Count] = item;
-        this.UpHeap(Count);
+        _count++;
+        _items[_count] = item;
+        this.UpHeap(_count);
     }
 
     public ScoredValue<T> RemoveTop()
@@ -61,14 +63,14 @@ internal struct MinHeap<T>
         }
 
         ScoredValue<T> item = _items[1];
-        _items[1] = _items[Count--];
+        _items[1] = _items[_count--];
         DownHeap(1);
         return item;
     }
 
     public IEnumerable<ScoredValue<T>> RemoveAll()
     {
-        while (this.Count > 0)
+        while (this._count > 0)
         {
             yield return this.RemoveTop();
         }
@@ -95,7 +97,7 @@ internal struct MinHeap<T>
     private void DownHeap(int startAt)
     {
         int i = startAt;
-        int count = Count;
+        int count = _count;
         int maxParent = count >> 1;
         ScoredValue<T>[] items = _items;
         ScoredValue<T> item = items[i];
@@ -134,10 +136,10 @@ internal struct MinHeap<T>
     /// </summary>
     public void SortDescending()
     {
-        int count = Count;
+        int count = _count;
         int i = count; // remember that the 0'th item in the queue is always a sentinel. So i is 1 based
 
-        while (Count > 0)
+        while (_count > 0)
         {
             //
             // this dequeues the item with the current LOWEST relevancy
@@ -147,6 +149,6 @@ internal struct MinHeap<T>
             _items[i--] = item;
         }
 
-        Count = count;
+        _count = count;
     }
 }

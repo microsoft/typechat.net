@@ -10,7 +10,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginProgramValidator : ProgramVisitor, IProgramValidator
 {
-    private PluginApiTypeInfo _typeInfo;
+    PluginApiTypeInfo _typeInfo;
 
     public PluginProgramValidator(PluginApiTypeInfo typeInfo)
     {
@@ -149,6 +149,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
     {
         throw new ProgramException(
             ProgramException.ErrorCode.TypeMismatch,
-            $"TypeMismatch: @func {call.Name} @arg {paramName}: Expected {expectedType.Name}, Got {actualType.Name}");
+            $"TypeMismatch: @func {call.Name} @arg {paramName}: Expected {expectedType.Name}, Got {actualType.Name}"
+            );
     }
 }

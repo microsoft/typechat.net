@@ -11,7 +11,8 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class HierarchicalJsonTranslator : IJsonTranslator
 {
-    private ILanguageModel _model;
+    ILanguageModel _model;
+    VectorTextIndex<IJsonTranslator> _requestRouter;
 
     /// <summary>
     /// Create a new JsonTranslator that routes requests to child translators
@@ -23,13 +24,13 @@ public class HierarchicalJsonTranslator : IJsonTranslator
         ArgumentVerify.ThrowIfNull(model, nameof(model));
         ArgumentVerify.ThrowIfNull(embeddingModel, nameof(embeddingModel));
         _model = model;
-        Router = new VectorTextIndex<IJsonTranslator>(embeddingModel);
+        _requestRouter = new VectorTextIndex<IJsonTranslator>(embeddingModel);
     }
 
     /// <summary>
     /// The router being used by this translator
     /// </summary>
-    public VectorTextIndex<IJsonTranslator> Router { get; }
+    public VectorTextIndex<IJsonTranslator> Router => _requestRouter;
 
     /// <summary>
     /// Add a JsonTranslator with this description
@@ -44,7 +45,7 @@ public class HierarchicalJsonTranslator : IJsonTranslator
     public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken = default)
     {
         // First, select the translator that is best suited to translate this request
-        IJsonTranslator? translator = await Router.RouteRequestAsync(request, cancelToken).ConfigureAwait(false);
+        IJsonTranslator? translator = await _requestRouter.RouteRequestAsync(request, cancelToken).ConfigureAwait(false);
         if (translator is null)
         {
             throw new TypeChatException(TypeChatException.ErrorCode.NoTranslator, request);

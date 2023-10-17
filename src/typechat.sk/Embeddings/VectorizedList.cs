@@ -11,15 +11,16 @@ namespace Microsoft.TypeChat.Embeddings;
 /// <typeparam name="T"></typeparam>
 public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
 {
-    private const int DefaultCapacity = 8;
+    const int DefaultCapacity = 8;
 
-    private List<T> _buffer = new(DefaultCapacity);
-    private List<Embedding> _embeddings = new(DefaultCapacity);
+    List<T> _buffer;
+    List<Embedding> _embeddings;
 
     /// <summary>
     /// Create a new list
     /// </summary>
     public VectorizedList()
+        : this(DefaultCapacity)
     { }
 
     /// <summary>

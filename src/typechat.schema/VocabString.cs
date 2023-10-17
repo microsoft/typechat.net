@@ -22,12 +22,17 @@ internal struct VocabString : IStringType
     public string? VocabName { get; set; }
 
     public void ValidateConstraints(IVocab vocab, string? propertyName = null)
-        => vocab.ThrowIfNotInVocab(propertyName, Value);
+    {
+        vocab.ThrowIfNotInVocab(propertyName, Value);
+    }
 
     public void ValidateConstraints(IVocabCollection vocabs, string? propertyName = null)
-        => vocabs.ThrowIfNotInVocab(VocabName, propertyName, Value);
+    {
+        vocabs.ThrowIfNotInVocab(VocabName, propertyName, Value);
+    }
 
     public static implicit operator string(VocabString value)
-        => value.Value;
+    {
+        return value.Value;
+    }
 }
-

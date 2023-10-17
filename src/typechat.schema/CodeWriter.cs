@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Runtime.CompilerServices;
-
 namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
@@ -10,8 +8,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class CodeWriter
 {
-    private TextWriter _writer;
-    private List<char> _indent;
+    TextWriter _writer;
+    List<char> _indent;
 
     /// <summary>
     /// Create a new CodeWriter

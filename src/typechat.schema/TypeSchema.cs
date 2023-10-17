@@ -7,6 +7,9 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class TypeSchema
 {
+    Type _type;
+    SchemaText _schema;
+
     /// <summary>
     /// Create a new TypeSchema
     /// </summary>
@@ -16,8 +19,8 @@ public class TypeSchema
     public TypeSchema(Type type, SchemaText schema)
     {
         ArgumentVerify.ThrowIfNull(type, nameof(type));
-        Schema = schema;
-        Type = type;
+        _schema = schema;
+        _type = type;
     }
 
     /// <summary>
@@ -31,23 +34,23 @@ public class TypeSchema
     }
 
     [JsonIgnore]
-    public Type Type { get; }
+    public Type Type => _type;
 
     /// <summary>
     /// Name of the type
     /// </summary>
     [JsonIgnore]
-    public string TypeName => Type.Name;
+    public string TypeName => _type.Name;
 
     /// <summary>
     /// Full name for the type
     /// </summary>
     [JsonPropertyName("name")]
-    public string TypeFullName => Type.FullName;
+    public string TypeFullName => _type.FullName;
 
     /// <summary>
     /// Schema for the Type
     /// </summary>
     [JsonPropertyName("schema")]
-    public SchemaText Schema { get; }
+    public SchemaText Schema => _schema;
 }

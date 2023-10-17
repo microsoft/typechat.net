@@ -64,11 +64,15 @@ public class TypescriptExporter : TypeExporter<Type>
 
     const BindingFlags MemberFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-    private TypescriptVocabExporter? _vocabExporter;
+    TypescriptWriter _writer;
+    HashSet<Type> _nonExportTypes;
+    TypescriptVocabExporter? _vocabExporter;
 #if NET6_0_OR_GREATER
-    private NullabilityInfoContext _nullableInfo = new();
+    NullabilityInfoContext _nullableInfo = new();
 #endif
-    private JsonPolymorphismSettings _polymorphism = new();
+    VocabCollection _usedVocabs;
+    JsonPolymorphismSettings _polymorphism;
+
 
     public TypescriptExporter(TextWriter writer)
         : this(new TypescriptWriter(writer))
@@ -79,13 +83,25 @@ public class TypescriptExporter : TypeExporter<Type>
         : base()
     {
         ArgumentVerify.ThrowIfNull(writer, nameof(writer));
-        Writer = writer;
+        _writer = writer;
+        _nonExportTypes = new HashSet<Type>()
+        {
+            typeof(object),
+            typeof(string),
+            typeof(Array),
+            typeof(Nullable<>),
+            typeof(Task)
+        };
+        _polymorphism = new JsonPolymorphismSettings();
+#if NET6_0_OR_GREATER
+        _nullableInfo = new NullabilityInfoContext();
+#endif
     }
 
     /// <summary>
     /// Typescript writer the exporter is using
     /// </summary>
-    public TypescriptWriter Writer { get; }
+    public TypescriptWriter Writer => _writer;
 
     //
     // Use this to *customize* how a .NET Type Name is mapped to a Typescript type name
@@ -120,26 +136,16 @@ public class TypescriptExporter : TypeExporter<Type>
     /// <summary>
     /// Ignore these types during export
     /// </summary>
-    public HashSet<Type> TypesToIgnore { get; } = new HashSet<Type>()
-        {
-            typeof(object),
-            typeof(string),
-            typeof(Array),
-            typeof(Nullable<>),
-            typeof(Task)
-        };
+    public HashSet<Type> TypesToIgnore => _nonExportTypes;
 
     public IVocabCollection Vocabs
     {
-        get
-        {
-            return _vocabExporter?.Vocabs;
-        }
+        get => _vocabExporter?.Vocabs;
         set
         {
             if (value is not null)
             {
-                _vocabExporter = new TypescriptVocabExporter(Writer, value);
+                _vocabExporter = new TypescriptVocabExporter(_writer, value);
             }
             else
             {
@@ -148,12 +154,12 @@ public class TypescriptExporter : TypeExporter<Type>
         }
     }
 
-    public VocabCollection? UsedVocabs { get; private set; }
+    public VocabCollection? UsedVocabs => _usedVocabs;
 
     public override void Clear()
     {
         base.Clear();
-        Writer.Clear();
+        _writer.Clear();
         _vocabExporter?.Clear();
 
 #if NET6_0_OR_GREATER
@@ -206,12 +212,13 @@ public class TypescriptExporter : TypeExporter<Type>
             ExportClass(baseClass);
             baseClassName = InterfaceName(baseClass);
         }
+
         string typeName = InterfaceName(type);
 
         ExportComments(type);
-        Writer.BeginInterface(typeName, baseClassName);
+        _writer.BeginInterface(typeName, baseClassName);
         {
-            Writer.PushIndent();
+            _writer.PushIndent();
 
             if (_polymorphism.IncludeDiscriminator && baseClass is not null)
             {
@@ -219,9 +226,9 @@ public class TypescriptExporter : TypeExporter<Type>
             }
             ExportMembers(type);
 
-            Writer.PopIndent();
+            _writer.PopIndent();
         }
-        Writer.EndInterface();
+        _writer.EndInterface();
 
         AddExported(type);
 
@@ -279,14 +286,13 @@ public class TypescriptExporter : TypeExporter<Type>
 
         string typeName = type.Name;
         ExportComments(type);
-        Writer.BeginInterface(typeName);
+        _writer.BeginInterface(typeName);
         {
-            Writer.PushIndent();
+            _writer.PushIndent();
             ExportMethods(type);
-            Writer.PopIndent();
+            _writer.PopIndent();
         }
-
-        Writer.EndInterface();
+        _writer.EndInterface();
 
         AddExported(type);
         ExportPending();
@@ -298,14 +304,13 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         string typeName = type.Name;
         ExportComments(type);
-        Writer.Enum(typeName).Space().StartBlock();
+        _writer.Enum(typeName).Space().StartBlock();
         {
-            Writer.PushIndent();
+            _writer.PushIndent();
             ExportEnumValues(type);
-            Writer.PopIndent();
+            _writer.PopIndent();
         }
-
-        Writer.EndBlock();
+        _writer.EndBlock();
         return this;
     }
 
@@ -313,11 +318,11 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         string typeName = type.Name;
         ExportComments(type);
-        Writer.Type(typeName).Space().Assign().EOL();
+        _writer.Type(typeName).Space().Assign().EOL();
         {
             ExportEnumLiterals(type);
         }
-        Writer.EOL();
+        _writer.EOL();
         return this;
     }
 
@@ -325,7 +330,7 @@ public class TypescriptExporter : TypeExporter<Type>
     {
         if (!IncludeComments)
         {
-            Writer.Literals(Enum.GetNames(type)).Semicolon();
+            _writer.Literals(Enum.GetNames(type)).Semicolon();
             return this;
         }
 
@@ -333,21 +338,20 @@ public class TypescriptExporter : TypeExporter<Type>
         var fields = type.GetFields();
         for (int i = 0; i < names.Length; ++i)
         {
-            Writer.SOL();
+            _writer.SOL();
             {
                 ExportComments(fields[i + 1]);
-                Writer.Literal(names[i]);
+                _writer.Literal(names[i]);
                 if (i < names.Length - 1)
                 {
-                    Writer.Space().Or();
+                    _writer.Space().Or();
                 }
                 else
                 {
-                    Writer.Semicolon();
+                    _writer.Semicolon();
                 }
             }
-
-            Writer.EOL();
+            _writer.EOL();
         }
         return this;
     }
@@ -359,15 +363,15 @@ public class TypescriptExporter : TypeExporter<Type>
         for (int i = 0; i < names.Length; ++i)
         {
             ExportComments(fields[i + 1]);
-            Writer.SOL();
+            _writer.SOL();
             {
-                Writer.Name(names[i]);
+                _writer.Name(names[i]);
                 if (i < names.Length - 1)
                 {
-                    Writer.Comma();
+                    _writer.Comma();
                 }
             }
-            Writer.EOL();
+            _writer.EOL();
         }
 
         return this;
@@ -375,8 +379,8 @@ public class TypescriptExporter : TypeExporter<Type>
 
     TypescriptExporter ExportMembers(Type type)
     {
-        return ExportProperties(type).
-               ExportFields(type);
+        return ExportProperties(type)
+            .ExportFields(type);
     }
 
     TypescriptExporter ExportProperties(Type type)
@@ -436,6 +440,7 @@ public class TypescriptExporter : TypeExporter<Type>
             ExportComments(field);
             ExportVariable(field, field.FieldType);
         }
+
         return this;
     }
 
@@ -453,7 +458,7 @@ public class TypescriptExporter : TypeExporter<Type>
     TypescriptExporter ExportMethod(MethodInfo methodInfo)
     {
         ExportComments(methodInfo);
-        Writer.BeginMethodDeclare(methodInfo.Name);
+        _writer.BeginMethodDeclare(methodInfo.Name);
         {
             ParameterInfo[] parameters = methodInfo.GetParameters();
             for (int i = 0; i < parameters.Length; ++i)
@@ -463,7 +468,7 @@ public class TypescriptExporter : TypeExporter<Type>
             }
         }
 
-        Writer.EndMethodDeclare(DataType(methodInfo.ReturnType), methodInfo.ReturnType.IsNullableValueType());
+        _writer.EndMethodDeclare(DataType(methodInfo.ReturnType), methodInfo.ReturnType.IsNullableValueType());
         return this;
     }
 
@@ -473,11 +478,12 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             foreach (var comment in member.Comments())
             {
-                Writer.SOL().Comment(comment);
+                _writer.SOL().Comment(comment);
             }
+
             if (member.IsRequired())
             {
-                Writer.SOL().Comment("Required");
+                _writer.SOL().Comment("Required");
             }
         }
 
@@ -506,9 +512,9 @@ public class TypescriptExporter : TypeExporter<Type>
             return this;
         }
 
-        Writer.SOL();
+        _writer.SOL();
         {
-            Writer.Variable(
+            _writer.Variable(
                 member.PropertyName(),
                 DataType(actualType),
                 type.IsArray,
@@ -516,7 +522,7 @@ public class TypescriptExporter : TypeExporter<Type>
             );
         }
 
-        Writer.EOL();
+        _writer.EOL();
         return this;
     }
 
@@ -537,7 +543,7 @@ public class TypescriptExporter : TypeExporter<Type>
             isNullable = IsNullableRef(parameter);
         }
 
-        Writer.Parameter(
+        _writer.Parameter(
             parameter.Name,
             DataType(type),
             i,
@@ -603,8 +609,8 @@ public class TypescriptExporter : TypeExporter<Type>
 
         if (vocabType is not null && vocabAttr.Enforce)
         {
-            UsedVocabs ??= new VocabCollection();
-            UsedVocabs.Add(vocabType);
+            _usedVocabs ??= new VocabCollection();
+            _usedVocabs.Add(vocabType);
         }
 
         return true;
@@ -612,23 +618,23 @@ public class TypescriptExporter : TypeExporter<Type>
 
     void ExportVocabInline(MemberInfo member, bool isNullable, IVocab vocab)
     {
-        Writer.SOL();
+        _writer.SOL();
         {
-            Writer.Variable(
+            _writer.Variable(
                 member.PropertyName(),
                 isNullable,
                 vocab.Strings()
             );
         }
 
-        Writer.EOL();
+        _writer.EOL();
     }
 
     void ExportVocabType(MemberInfo member, Type type, NamedVocab vocabType, bool isNullable)
     {
-        Writer.SOL();
+        _writer.SOL();
         {
-            Writer.Variable(
+            _writer.Variable(
                 member.PropertyName(),
                 vocabType.Name,
                 type.IsArray,
@@ -636,7 +642,7 @@ public class TypescriptExporter : TypeExporter<Type>
             );
         }
 
-        Writer.EOL();
+        _writer.EOL();
 
         _vocabExporter.AddPending(vocabType);
     }
@@ -649,15 +655,15 @@ public class TypescriptExporter : TypeExporter<Type>
                                     _polymorphism.DiscriminatorGenerator(type) :
                                     $"'{type.Name}'";
 
-            Writer.SOL();
-            Writer.Variable("$type", discriminator);
+            _writer.SOL();
+            _writer.Variable("$type", discriminator);
             if (_polymorphism.IncludeComment)
             {
-                Writer.Comment("Always emit first");
+                _writer.Comment("Always emit first");
             }
             else
             {
-                Writer.EOL();
+                _writer.EOL();
             }
         }
 
@@ -780,6 +786,6 @@ public class TypescriptExporter : TypeExporter<Type>
         }
 
         typeToExport = type;
-        return !type.IsPrimitive && !TypesToIgnore.Contains(type);
+        return !type.IsPrimitive && !_nonExportTypes.Contains(type);
     }
 }

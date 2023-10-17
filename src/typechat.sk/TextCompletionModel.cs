@@ -7,7 +7,8 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class TextCompletionModel : ILanguageModel
 {
-    private ITextCompletion _service;
+    ITextCompletion _service;
+    ModelInfo _model;
 
     public TextCompletionModel(OpenAIConfig config, ModelInfo? model = null)
     {
@@ -17,17 +18,17 @@ public class TextCompletionModel : ILanguageModel
         model ??= config.Model;
         IKernel kernel = config.CreateKernel();
         _service = kernel.GetService<ITextCompletion>(model.Name);
-        ModelInfo = model;
+        _model = model;
     }
 
     public TextCompletionModel(ITextCompletion service, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
-        ModelInfo = model;
+        _model = model;
     }
 
-    public ModelInfo ModelInfo { get; }
+    public ModelInfo ModelInfo => _model;
 
     /// <summary>
     /// If true, will include the source of the prompt section

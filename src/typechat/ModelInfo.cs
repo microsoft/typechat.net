@@ -7,10 +7,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ModelInfo
 {
-    private string _name;
-    private int _maxTokens;
-    private int _maxCharCount;
-    private double _tokenToCharMultiple;
+    string _name;
+    int _maxTokens;
+    int _maxCharCount;
+    double _tokenToCharMultiple;
 
     /// <summary>
     /// Create model information

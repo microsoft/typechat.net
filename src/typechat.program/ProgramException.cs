@@ -22,13 +22,15 @@ public class ProgramException : Exception
         UnknownExpression
     }
 
+    ErrorCode _errorCode;
+
     public ProgramException(ErrorCode code, string? message = null, Exception? inner = null)
         : base(message, inner)
     {
-        Code = code;
+        _errorCode = code;
     }
 
-    public ErrorCode Code { get; }
+    public ErrorCode Code => _errorCode;
 
     public static void ThrowFunctionNotFound(string name)
     {
@@ -56,7 +58,8 @@ public class ProgramException : Exception
     {
         throw new ProgramException(
             ProgramException.ErrorCode.TypeMismatch,
-            $"TypeMismatch: @func {name} @arg {param.Name}: Expected {param.ParameterType.Name}, Got {actual.Name}");
+            $"TypeMismatch: @func {name} @arg {param.Name}: Expected {param.ParameterType.Name}, Got {actual.Name}"
+            );
     }
 
     internal static void ThrowInvalidResultRef(int refId)

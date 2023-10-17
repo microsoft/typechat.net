@@ -39,10 +39,10 @@ public class CSharpProgramCompiler
         return Path.GetDirectoryName(sysLocation);
     }
 
-    private static CSharpCompilationOptions s_defaultOptions = DefaultOptions();
+    static CSharpCompilationOptions s_defaultOptions = DefaultOptions();
 
-    private string _assemblyName;
-    private CSharpCompilation _compilation;
+    string _assemblyName;
+    CSharpCompilation _compilation;
 
     /// <summary>
     /// Create a new compiler

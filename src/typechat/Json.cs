@@ -17,10 +17,10 @@ public class Json
         return JsonSerializerTypeValidator.DefaultOptions();
     }
 
-    private static readonly Json s_default = new Json();
-    private static readonly Json s_indented = new Json(true);
+    static readonly Json s_default = new Json();
+    static readonly Json s_indented = new Json(true);
 
-    private JsonSerializerOptions _options;
+    JsonSerializerOptions _options;
 
     public Json(bool indented = false)
     {

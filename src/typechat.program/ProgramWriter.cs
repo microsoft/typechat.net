@@ -8,31 +8,33 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramWriter
 {
+    CodeWriter _writer;
+
+    string _programName = "Program";
+    string _apiVarName = "api";
+    string _resultVarPrefix = "step";
+
     public ProgramWriter(TextWriter writer)
     {
-        Writer = new CodeWriter(writer);
+        _writer = new CodeWriter(writer);
     }
-
-    private string _programName = "Program";
-    private string _apiVarName = "api";
-    private string _resultVarPrefix = "step";
 
     public CodeWriter Writer { get; }
 
     public void Clear()
-        => Writer.Clear();
+        => _writer.Clear();
 
     /// <summary>
     /// Write the given function call...
     /// </summary>
     public ProgramWriter Write(string functionName, dynamic[] args, bool isCallInline = false)
     {
-        Writer.SOL();
+        _writer.SOL();
         BeginCall(functionName);
         for (int i = 0; i < args.Length; ++i)
         {
-            if (i > 0) { Writer.Append($", "); }
-            Writer.Append(Convert.ToString(args[i]));
+            if (i > 0) { _writer.Append($", "); }
+            _writer.Append(Convert.ToString(args[i]));
         }
 
         EndCall(isCallInline);
@@ -53,9 +55,9 @@ public class ProgramWriter
 
         SOL().Write($"dynamic {_programName}({apiName} {_apiVarName}) {{").EOL();
 
-        Writer.PushIndent();
+        _writer.PushIndent();
         Write(program.Steps).Write("}").EOL();
-        Writer.PopIndent();
+        _writer.PopIndent();
 
         return this;
     }
@@ -67,11 +69,11 @@ public class ProgramWriter
         {
             for (int i = 0; i < calls.Length; ++i)
             {
-                Writer.SOL().Append($"var {ResultVar(i)} = ");
+                _writer.SOL().Append($"var {ResultVar(i)} = ");
                 Write(calls[i]);
             }
 
-            Writer.SOL().Append($"return {ResultVar(calls.Length - 1)};").EOL();
+            _writer.SOL().Append($"return {ResultVar(calls.Length - 1)};").EOL();
         }
 
         return this;
@@ -160,25 +162,25 @@ public class ProgramWriter
 
     private ProgramWriter SOL()
     {
-        Writer.SOL();
+        _writer.SOL();
         return this;
     }
 
     private ProgramWriter EOL()
     {
-        Writer.EOL();
+        _writer.EOL();
         return this;
     }
 
     private ProgramWriter Write(char ch)
     {
-        Writer.Append(ch);
+        _writer.Append(ch);
         return this;
     }
 
     private ProgramWriter Write(string value)
     {
-        Writer.Append(value);
+        _writer.Append(value);
         return this;
     }
 }

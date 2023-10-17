@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Orchestration;
 
 namespace Microsoft.TypeChat;
@@ -12,7 +11,9 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginApi
 {
-    private IKernel _kernel;
+    IKernel _kernel;
+    string _typeName;
+    PluginApiTypeInfo _typeInfo;
 
     /// <summary>
     /// Create an Api using all registered kernel plugins
@@ -36,19 +37,19 @@ public class PluginApi
         ArgumentVerify.ThrowIfNull(typeInfo, nameof(typeInfo));
 
         _kernel = kernel;
-        TypeName = typeName;
-        TypeInfo = typeInfo;
+        _typeName = typeName;
+        _typeInfo = typeInfo;
     }
 
     /// <summary>
     /// Api name
     /// </summary>
-    public string TypeName { get; }
+    public string TypeName => _typeName;
 
     /// <summary>
     /// Plugins that make up this Api
     /// </summary>
-    public PluginApiTypeInfo TypeInfo { get; }
+    public PluginApiTypeInfo TypeInfo => _typeInfo;
 
     /// <summary>
     /// Bind the given function name and args to the plugin that implements the call
@@ -60,7 +61,7 @@ public class PluginApi
     public (PluginFunctionName, FunctionView) BindFunction(string name, dynamic[] args)
     {
         var pluginName = PluginFunctionName.Parse(name);
-        if (!TypeInfo.TryGetValue(pluginName, out FunctionView function))
+        if (!_typeInfo.TryGetValue(pluginName, out FunctionView function))
         {
             throw new ArgumentException($"Function {name} does not exist");
         }

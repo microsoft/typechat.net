@@ -29,7 +29,6 @@ public class Config
         }
 
         var config = configBuilder.Build();
-
         var configSection = config.GetSection(sectionName);
         if (configSection is null)
         {

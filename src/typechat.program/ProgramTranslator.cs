@@ -43,6 +43,7 @@ export type ResultReference = {
     ""@ref"": number;
 };
 ";
+
     internal static readonly TypescriptSchema ProgramSchema;
 
     static ProgramTranslator()
@@ -57,7 +58,11 @@ export type ResultReference = {
     /// </summary>
     /// <returns></returns>
     internal static TypescriptSchema GetProgramSchema()
-        => new TypescriptSchema(typeof(Program), SchemaText);
+    {
+        return new TypescriptSchema(typeof(Program), SchemaText);
+    }
+
+    SchemaText _apiDef;
 
     /// <summary>
     /// Create a program translator that uses the given language model to create programs
@@ -68,17 +73,19 @@ export type ResultReference = {
     /// <param name="validator">Validator that verifies the returned program</param>
     /// <param name="apiDef">API definition</param>
     public ProgramTranslator(ILanguageModel model, IJsonTypeValidator<Program> validator, SchemaText apiDef)
-        : base(model,
+        : base(
+            model,
             validator,
-            new ProgramTranslatorPrompts(apiDef))
+            new ProgramTranslatorPrompts(apiDef)
+            )
     {
-        ApiDef = apiDef;
+        _apiDef = apiDef;
     }
 
     /// <summary>
     /// Api definition
     /// </summary>
-    public SchemaText ApiDef { get; }
+    public SchemaText ApiDef => _apiDef;
 
     // return true if validation loop should continue
     protected override bool OnValidationComplete(Result<Program> validationResult)
@@ -106,9 +113,11 @@ public class ProgramTranslator<TApi> : ProgramTranslator
     /// <param name="model"></param>
     /// <param name="api"></param>
     public ProgramTranslator(ILanguageModel model, Api<TApi> api)
-        : base(model,
+        : base(
+            model,
             new ProgramValidator<TApi>(api),
-            api.GenerateSchema().Schema)
+            api.GenerateSchema().Schema
+            )
     {
     }
 }

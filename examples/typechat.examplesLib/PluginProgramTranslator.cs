@@ -7,10 +7,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginProgramTranslator
 {
-    private IKernel _kernel;
-    private ProgramTranslator _translator;
-    private PluginApi _pluginApi;
-    private SchemaText _pluginSchema;
+    IKernel _kernel;
+    ProgramTranslator _translator;
+    PluginApi _pluginApi;
+    SchemaText _pluginSchema;
 
     /// <summary>
     /// Create a new translator that will produce programs that can call all skills and
@@ -29,7 +29,8 @@ public class PluginProgramTranslator
         _translator = new ProgramTranslator(
             _kernel.ChatLanguageModel(model),
             new ProgramValidator(new PluginProgramValidator(_pluginApi.TypeInfo)),
-            _pluginSchema);
+            _pluginSchema
+        );
     }
 
     /// <summary>

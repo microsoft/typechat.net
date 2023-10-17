@@ -15,7 +15,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class JsonVocabAttribute : JsonConverterAttribute
 {
-    private string _entries;
+    string _entries;
+    IVocab _vocab;
 
     /// <summary>
     /// Default const
@@ -46,11 +47,11 @@ public class JsonVocabAttribute : JsonConverterAttribute
         get => _entries;
         set
         {
-            Vocab = null;
+            _vocab = null;
             _entries = value;
             if (!string.IsNullOrEmpty(value))
             {
-                Vocab = Schema.Vocab.Parse(_entries);
+                _vocab = Schema.Vocab.Parse(_entries);
             }
         }
     }
@@ -69,13 +70,13 @@ public class JsonVocabAttribute : JsonConverterAttribute
     /// </summary>
     public bool Enforce { get; set; } = true;
 
-    internal IVocab? Vocab { get; private set; }
+    internal IVocab? Vocab => _vocab;
 
     internal bool HasEntries => !string.IsNullOrEmpty(_entries);
 
     internal bool HasName => !string.IsNullOrEmpty(Name);
 
-    internal bool HasVocab => Vocab is not null;
+    internal bool HasVocab => _vocab is not null;
 
     internal bool HasPropertyName => !string.IsNullOrEmpty(PropertyName);
 
@@ -93,7 +94,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
 
         if (HasVocab)
         {
-            return new JsonVocabConvertor(Vocab, PropertyName);
+            return new JsonVocabConvertor(_vocab, PropertyName);
         }
 
         if (HasName)
@@ -111,7 +112,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
             return null;
         }
 
-        return new Vocab(Vocab);
+        return new Vocab(_vocab);
     }
 
     public NamedVocab? ToVocabType()
@@ -121,7 +122,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
             return null;
         }
 
-        return new NamedVocab(Name, Vocab);
+        return new NamedVocab(Name, _vocab);
     }
 }
 

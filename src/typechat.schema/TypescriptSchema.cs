@@ -4,16 +4,20 @@ namespace Microsoft.TypeChat.Schema;
 
 public class TypescriptSchema : TypeSchema
 {
+    IVocabCollection? _vocabs;
+
     public TypescriptSchema(Type type, string schemaText, IVocabCollection? vocabs = null)
         : base(type, new SchemaText(schemaText, SchemaText.Languages.Typescript))
     {
-        Vocabs = vocabs;
+        _vocabs = vocabs;
     }
 
-    public IVocabCollection? Vocabs { get; }
+    public IVocabCollection? Vocabs => _vocabs;
 
-    public bool HasVocabs => Vocabs is not null;
+    public bool HasVocabs => _vocabs is not null;
 
     public static TypescriptSchema Load(Type type, string filePath)
-        => new TypescriptSchema(type, File.ReadAllText(filePath));
+    {
+        return new TypescriptSchema(type, File.ReadAllText(filePath));
+    }
 }

@@ -11,9 +11,9 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramCompiler
 {
-    private ApiTypeInfo _apiTypeInfo;
-    private ConstantExpression _apiImpl;
-    private Dictionary<string, ParameterExpression> _variables;
+    ApiTypeInfo _apiTypeInfo;
+    ConstantExpression _apiImpl;
+    Dictionary<string, ParameterExpression> _variables;
 
     /// <summary>
     /// Create a compiler that will allow programs to call an API defined by all public methods of the given type
@@ -52,7 +52,8 @@ public class ProgramCompiler
         _apiImpl = LinqExpression.Constant(apiImpl);
         BlockExpression lambdaBlock = LinqExpression.Block(
             _variables.Values,
-            CompileSteps(program.Steps));
+            CompileSteps(program.Steps)
+        );
         return LinqExpression.Lambda(lambdaBlock);
     }
 

@@ -22,23 +22,26 @@ public class TypeChatException : Exception
         /// Unknown error
         /// </summary>
         Unknown,
+
         /// <summary>
         /// No Json object returned by the model
         /// </summary>
         NoJsonObject,
+
         /// <summary>
         /// Json validation failed
         /// </summary>
         JsonValidation,
+
         /// <summary>
         /// There is no suitable translator this request
         /// </summary>
         NoTranslator
     }
 
-    private string _request;
-    private ErrorCode _errorCode;
-    private JsonResponse? _response;
+    string _request;
+    ErrorCode _errorCode;
+    JsonResponse? _response;
 
     public TypeChatException(ErrorCode code, string request, JsonResponse? response = null, string? message = null)
         : base(message)

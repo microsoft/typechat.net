@@ -14,8 +14,8 @@ namespace Microsoft.TypeChat;
 /// <typeparam name="T"></typeparam>
 public class VectorTextIndex<T> : ITextRequestRouter<T>
 {
-    private TextEmbeddingModel _model;
-    private VectorizedList<T> _list;
+    TextEmbeddingModel _model;
+    VectorizedList<T> _list;
 
     /// <summary>
     /// Create a new VectorTextIndex
