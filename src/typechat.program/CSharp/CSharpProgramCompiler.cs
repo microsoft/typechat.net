@@ -121,10 +121,11 @@ public class CSharpProgramCompiler
 
     string CollectDiagnostics(ImmutableArray<Diagnostic> diagnostics)
     {
-        if (diagnostics.Length == 0)
+        if (diagnostics.IsDefaultOrEmpty)
         {
             return null;
         }
+
         StringBuilder sb = new StringBuilder();
         foreach (var diagnostic in diagnostics)
         {
@@ -135,6 +136,7 @@ public class CSharpProgramCompiler
                 sb.AppendLine(GetTextWithError(diagnostic));
             }
         }
+
         return sb.ToString();
     }
 
