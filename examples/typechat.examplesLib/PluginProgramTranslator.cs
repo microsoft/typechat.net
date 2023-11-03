@@ -20,6 +20,9 @@ public class PluginProgramTranslator
     /// <param name="model"></param>
     public PluginProgramTranslator(IKernel kernel, ModelInfo model)
     {
+        ArgumentVerify.ThrowIfNull(kernel, nameof(kernel));
+        ArgumentVerify.ThrowIfNull(model, nameof(model));
+
         _kernel = kernel;
         _pluginApi = new PluginApi(_kernel);
         _pluginSchema = _pluginApi.TypeInfo.ExportSchema(_pluginApi.TypeName);
@@ -47,8 +50,6 @@ public class PluginProgramTranslator
 
     public SchemaText Schema => _pluginSchema;
 
-    public Task<Program> TranslateAsync(string input, CancellationToken cancelToken)
-    {
-        return _translator.TranslateAsync(input, cancelToken);
-    }
+    public Task<Program> TranslateAsync(string input, CancellationToken cancelToken = default)
+        => _translator.TranslateAsync(input, cancelToken);
 }

@@ -37,6 +37,7 @@ public static class EmbeddingsEx
                 best = new ScoredValue<int>(i, score);
             }
         }
+
         return best;
     }
 
@@ -55,6 +56,7 @@ public static class EmbeddingsEx
             double score = list[i].Similarity(embedding, distanceType);
             matches.Add(i, score);
         }
+
         return matches;
     }
 

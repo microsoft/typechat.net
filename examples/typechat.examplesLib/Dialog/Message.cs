@@ -30,6 +30,7 @@ public class Message : IPromptSection
         {
             from = PromptSection.Sources.User;
         }
+
         _body = body;
         _source = from;
     }
@@ -63,11 +64,7 @@ public class Message : IPromptSection
     /// <returns>body as text</returns>
     public virtual string GetText()
     {
-        if (_body is null)
-        {
-            return string.Empty;
-        }
-        return _body.Stringify();
+        return _body?.Stringify() ?? string.Empty;
     }
 
     public T GetBody<T>() => (T)_body;
@@ -77,18 +74,21 @@ public class Message : IPromptSection
     /// </summary>
     /// <param name="text">message body</param>
     public static implicit operator Message(string text) => new Message(text);
+
     /// <summary>
     /// Create a new message from a user
     /// </summary>
     /// <param name="body">message body</param>
     /// <returns>message</returns>
     public static Message FromUser(object body) => new Message(body);
+
     /// <summary>
     /// Create a new message from an assistant
     /// </summary>
     /// <param name="body">message body</param>
     /// <returns>message</returns>
     public static Message FromAssistant(object body) => new Message(PromptSection.Sources.Assistant, body);
+
     /// <summary>
     /// Create a new message from the system
     /// </summary>

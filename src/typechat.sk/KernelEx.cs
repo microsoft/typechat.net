@@ -15,12 +15,10 @@ public static class KernelEx
     public static IKernel CreateKernel(this OpenAIConfig config)
     {
         // Create kernel
-        KernelBuilder kb = new KernelBuilder();
-        kb.WithChatModel(config.Model, config)
-          .WithRetry(config);
-
-        IKernel kernel = kb.Build();
-        return kernel;
+        return Kernel.Builder
+            .WithChatModel(config.Model, config)
+            .WithRetry(config)
+            .Build();
     }
 
     /// <summary>
@@ -38,6 +36,7 @@ public static class KernelEx
         {
             builder.WithChatModel(modelName, config);
         }
+
         return builder;
     }
 
@@ -59,6 +58,7 @@ public static class KernelEx
             client = new HttpClient();
             client.Timeout = TimeSpan.FromMilliseconds(config.TimeoutMs);
         }
+
         if (config.Azure)
         {
             builder = builder.WithAzureChatCompletionService(modelName, config.Endpoint, config.ApiKey, true, modelName, false, client);
@@ -67,6 +67,7 @@ public static class KernelEx
         {
             builder = builder.WithOpenAIChatCompletionService(modelName, config.ApiKey, config.Organization, modelName, true, false, client);
         }
+
         return builder;
     }
 
@@ -105,6 +106,7 @@ public static class KernelEx
         {
             builder = builder.WithOpenAITextEmbeddingGenerationService(modelName, config.ApiKey, config.Organization, modelName);
         }
+
         return builder;
     }
 

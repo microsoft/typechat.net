@@ -36,8 +36,7 @@ public class JsonSerializerTypeValidator
     /// <param name="options">options to use during serialization</param>
     public JsonSerializerTypeValidator(JsonSerializerOptions? options = null)
     {
-        options ??= s_defaultOptions;
-        _options = options;
+        _options = options ?? s_defaultOptions;
     }
 
     public JsonSerializerOptions Options => _options;
@@ -65,25 +64,27 @@ public class JsonSerializerTypeValidator
         }
     }
 
-    string ToErrorString(string json, JsonException error)
+    private string ToErrorString(string json, JsonException error)
     {
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine("### JSON ERROR:");
-        sb.AppendLineNotEmpty(error.Message);
+        StringBuilder sb = new StringBuilder()
+            .AppendLine("### JSON ERROR:")
+            .AppendLineNotEmpty(error.Message);
         if (error.Path is not null)
         {
             sb.Append("Property with error: ");
             sb.AppendLine(ParsePath(error.Path));
         }
+
         if (error.LineNumber is not null)
         {
             sb.AppendLine("### Errors here:");
             json.ExtractLine((long)error.LineNumber, sb);
         }
+
         return sb.ToString();
     }
 
-    string ParsePath(string path)
+    private string ParsePath(string path)
     {
         const string pathPrefix = "$.";
         int iPrefix = path.IndexOf(pathPrefix);
@@ -91,6 +92,7 @@ public class JsonSerializerTypeValidator
         {
             return path.Substring(iPrefix + pathPrefix.Length);
         }
+
         return path;
     }
 }

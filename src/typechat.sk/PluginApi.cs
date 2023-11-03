@@ -65,6 +65,7 @@ public class PluginApi
         {
             throw new ArgumentException($"Function {name} does not exist");
         }
+
         return (pluginName, function);
     }
 
@@ -85,7 +86,9 @@ public class PluginApi
         {
             context.Variables[parameters[i].Name] = args[i].ToString();
         }
-        await function.InvokeAsync(context);
+
+        await function.InvokeAsync(context).ConfigureAwait(false);
+
         return context.Variables.Input;
     }
 }

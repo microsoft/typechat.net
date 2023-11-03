@@ -18,6 +18,20 @@ public class VocabCollection : IVocabCollection
     }
 
     /// <summary>
+    /// Create a new vocabulary collection with a set of vocab records
+    /// </summary>
+    internal VocabCollection(IDictionary<string, string[]> vocabRecords)
+    {
+        ArgumentVerify.ThrowIfNull(vocabRecords, nameof(vocabRecords));
+        foreach (var record in vocabRecords)
+        {
+            var vocab = new Vocab(record.Value);
+            vocab.TrimExcess();
+            Add(record.Key, vocab);
+        }
+    }
+
+    /// <summary>
     /// Count of vocabs in this collection
     /// </summary>
     public int Count => _vocabs.Count;
@@ -38,9 +52,7 @@ public class VocabCollection : IVocabCollection
     /// <param name="name"></param>
     /// <param name="vocab"></param>
     public void Add(string name, IVocab vocab)
-    {
-        Add(new NamedVocab(name, vocab));
-    }
+        => Add(new NamedVocab(name, vocab));
 
     /// <summary>
     /// Add a named vocab. The vocab text is dynamically parsed using Vocab.Parse
@@ -48,9 +60,7 @@ public class VocabCollection : IVocabCollection
     /// <param name="name"></param>
     /// <param name="vocabText">Text containing vocab entries that are parsed</param>
     public void Add(string name, string vocabText)
-    {
-        Add(name, Vocab.Parse(vocabText));
-    }
+        => Add(name, Vocab.Parse(vocabText));
 
     public void Clear() => _vocabs.Clear();
 
@@ -73,21 +83,17 @@ public class VocabCollection : IVocabCollection
         return _vocabs.TryGetValue(name, out NamedVocab vocab) ? vocab : null;
     }
 
-    public IEnumerator<NamedVocab> GetEnumerator()
-    {
-        return _vocabs.Values.GetEnumerator();
-    }
-
     public bool Remove(NamedVocab item)
     {
         ArgumentVerify.ThrowIfNull(item, nameof(item));
         return _vocabs.Remove(item.Name);
     }
 
+    public IEnumerator<NamedVocab> GetEnumerator()
+        => _vocabs.Values.GetEnumerator();
+
     IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+        => GetEnumerator();
 }
 
 public static class VocabCollectionEx
@@ -98,4 +104,3 @@ public static class VocabCollectionEx
         return vocabType is not null && vocabType.Vocab.Contains(entry);
     }
 }
-

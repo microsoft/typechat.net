@@ -21,7 +21,6 @@ public class Api
     public Api(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
     {
-
     }
 
     /// <summary>
@@ -90,16 +89,18 @@ public class Api
         return result;
     }
 
-    dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
+    private dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
         if (jsonArgs.Length != paramsInfo.Length)
         {
             ProgramException.ThrowArgCountMismatch(name, jsonArgs.Length, paramsInfo.Length);
         }
+
         if (paramsInfo.Length == 0)
         {
             return s_emptyArgs;
         }
+
         // If any of input parameters are JsonObjects, deserialize them
         ConvertObjects(jsonArgs, paramsInfo);
         return jsonArgs;
@@ -108,44 +109,50 @@ public class Api
     /// <summary>
     /// Dynamically type cast/convert args to the expected type
     /// </summary>
-    dynamic[] ConvertObjects(dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
+    private dynamic[] ConvertObjects(dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
         for (int i = 0; i < jsonArgs.Length; ++i)
         {
             jsonArgs[i] = ConvertObject(jsonArgs[i], paramsInfo[i].ParameterType);
         }
+
         return jsonArgs;
     }
 
-    dynamic[] ConvertObjects(dynamic[] jsonArgs, Type expectedType)
+    private dynamic[] ConvertObjects(dynamic[] jsonArgs, Type expectedType)
     {
         for (int i = 0; i < jsonArgs.Length; ++i)
         {
             jsonArgs[i] = ConvertObject(jsonArgs[i], expectedType);
         }
+
         return jsonArgs;
     }
 
-    dynamic ConvertObject(dynamic arg, Type expectedType)
+    private dynamic ConvertObject(dynamic arg, Type expectedType)
     {
         Type argType = arg.GetType();
         if (argType == expectedType)
         {
             return arg;
         }
+
         if (arg is JsonObject jsonObj)
         {
             if (expectedType != typeof(JsonObject))
             {
                 return JsonSerializer.Deserialize(jsonObj, expectedType);
             }
+
             return arg;
         }
+
         if (expectedType.IsArray != argType.IsArray)
         {
             // Won't try to convert arrays to scalars and vice versa. Let Reflection throw an error
             return arg;
         }
+
         if (!expectedType.IsArray)
         {
             // Convert plain old scalar if we need to
@@ -158,6 +165,7 @@ public class Api
             // No conversion needed
             return arg;
         }
+
         return ConvertArray(arg as Array, expectedType);
     }
 
@@ -169,6 +177,7 @@ public class Api
             dynamic value = ConvertObject(array.GetValue(i), expectedType);
             convertedArray.SetValue(value, i);
         }
+
         return convertedArray;
     }
 
@@ -185,10 +194,7 @@ public class Api
     }
 
     protected virtual ApiMethod BindMethod(string name, dynamic[] args)
-    {
-        return _typeInfo[name];
-    }
-
+        => TypeInfo[name];
 }
 
 public class Api<T> : Api
@@ -201,12 +207,8 @@ public class Api<T> : Api
     public Type Type => typeof(T);
 
     public TypeSchema GenerateSchema()
-    {
-        return TypescriptExporter.GenerateAPI(Type);
-    }
+        => TypescriptExporter.GenerateAPI(Type);
 
     public static implicit operator Api<T>(T apiImpl)
-    {
-        return new Api<T>(apiImpl);
-    }
+        => new Api<T>(apiImpl);
 }

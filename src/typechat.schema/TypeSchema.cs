@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 namespace Microsoft.TypeChat.Schema;
+
 /// <summary>
 /// The Schema for a Type
 /// </summary>
@@ -28,9 +29,8 @@ public class TypeSchema
     /// <param name="name">Type name</param>
     /// <param name="schema">Schema text for type</param>
     public TypeSchema(string name, SchemaText schema)
+        : this(System.Type.GetType(name), schema)
     {
-        _type = Type.GetType(name);
-        _schema = schema;
     }
 
     [JsonIgnore]

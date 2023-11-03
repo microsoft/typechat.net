@@ -13,6 +13,7 @@ internal static class JsonParser
         {
             JsonParser.Throw(JsonTokenType.PropertyName, propertyName);
         }
+
         value.EnsureIsType(JsonValueKind.String, propertyName);
         return value;
     }

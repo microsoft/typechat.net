@@ -10,10 +10,12 @@ internal static class SerializationEx
         {
             return str;
         }
+
         if (obj is ITextSerializable textSerializable)
         {
             return textSerializable.Stringify();
         }
+
         return Json.Stringify(obj, false);
     }
 
@@ -33,6 +35,7 @@ internal static class SerializationEx
         {
             builder.Prompt.Reverse(contextStartAt, contextEndAt - contextStartAt);
         }
+
         return retVal;
     }
 
@@ -43,15 +46,16 @@ internal static class SerializationEx
     /// <param name="builder"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public static async Task<bool> AddHistoryAsync(this PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
+    public static async Task<bool> AddHistoryAsync(this PromptBuilder builder, IAsyncEnumerable<IPromptSection> context, CancellationToken cancelToken = default)
     {
         int contextStartAt = builder.Prompt.Count;
-        bool retVal = await builder.AddRangeAsync(context).ConfigureAwait(false);
+        bool retVal = await builder.AddRangeAsync(context, cancelToken).ConfigureAwait(false);
         int contextEndAt = builder.Prompt.Count;
         if (contextStartAt < contextEndAt)
         {
             builder.Prompt.Reverse(contextStartAt, contextEndAt - contextStartAt);
         }
+
         return retVal;
     }
 }

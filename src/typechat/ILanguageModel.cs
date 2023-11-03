@@ -20,5 +20,5 @@ public interface ILanguageModel
     /// <param name="settings">translation settings such as temperature</param>
     /// <param name="cancelToken">cancellation token</param>
     /// <returns></returns>
-    Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings, CancellationToken cancelToken);
+    Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default);
 }

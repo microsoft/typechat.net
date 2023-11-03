@@ -11,7 +11,7 @@ namespace SchemaHierarchy;
 
 public class SchemaHierarchyApp : ConsoleApp
 {
-    HierarchicalJsonTranslator _translator;
+    private HierarchicalJsonTranslator _translator;
 
     public SchemaHierarchyApp()
     {
@@ -20,7 +20,7 @@ public class SchemaHierarchyApp : ConsoleApp
         _translator = new HierarchicalJsonTranslator(model, embeddingModel);
     }
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken = default)
     {
         object result = await _translator.TranslateToObjectAsync(input, cancelToken);
         if (result is not null)
@@ -30,16 +30,16 @@ public class SchemaHierarchyApp : ConsoleApp
         }
     }
 
-    protected override async Task InitApp()
+    protected override async Task InitAppAsync(CancellationToken cancelToken)
     {
         Console.WriteLine("Initializing app");
         // While this is hardcoded here, you can also do this dynamically
         // targets dynamically
-        await _translator.AddSchemaAsync<Cart>("Order Coffee Drinks (Italian names included) and Baked Goods");
-        await _translator.AddSchemaAsync<CalendarActions>("Actions related to calendars, appointments, meetings, schedules");
-        await _translator.AddSchemaAsync<Order>("Order pizza, beer and salads");
-        await _translator.AddSchemaAsync<SentimentResponse>("Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings");
-        await _translator.AddSchemaAsync<HealthDataResponse>("Health information: enter your medications, conditions");
+        await _translator.AddSchemaAsync<Cart>("Order Coffee Drinks (Italian names included) and Baked Goods", cancelToken);
+        await _translator.AddSchemaAsync<CalendarActions>("Actions related to calendars, appointments, meetings, schedules", cancelToken);
+        await _translator.AddSchemaAsync<Order>("Order pizza, beer and salads", cancelToken);
+        await _translator.AddSchemaAsync<SentimentResponse>("Statements with sentiments, emotions, feelings, impressions about places, things, the surroundings", cancelToken);
+        await _translator.AddSchemaAsync<HealthDataResponse>("Health information: enter your medications, conditions", cancelToken);
     }
 
     public static async Task<int> Main(string[] args)

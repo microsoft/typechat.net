@@ -34,12 +34,12 @@ public class NamedVocab : IComparable<NamedVocab>
     /// <summary>
     /// The name of this vocab
     /// </summary>
-    public string Name => _name;
+    public string Name { get; }
 
     /// <summary>
     /// The vocabulary associated with this vocab
     /// </summary>
-    public IVocab Vocab => _vocab;
+    public IVocab Vocab { get; }
 
     /// <summary>
     /// Compares the vocab name

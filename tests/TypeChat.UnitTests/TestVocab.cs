@@ -47,6 +47,7 @@ public class TestVocab : TypeChatTest
         {
             {vocabName, new Vocab("One", "Two", "Three") }
         };
+
         NamedVocab? type = store.Get(vocabName);
         Assert.NotNull(type);
 

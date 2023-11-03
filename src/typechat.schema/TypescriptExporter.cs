@@ -41,6 +41,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             exporter.Vocabs = knownVocabs;
         }
+
         exporter.Export(type);
         string schema = writer.ToString();
         return new TypescriptSchema(type, schema, exporter.UsedVocabs);
@@ -57,6 +58,7 @@ public class TypescriptExporter : TypeExporter<Type>
         TypescriptExporter exporter = new TypescriptExporter(writer);
         exporter.ExportAPI(type);
         string schema = writer.ToString();
+
         return new TypescriptSchema(type, schema, exporter.UsedVocabs);
     }
 
@@ -66,10 +68,11 @@ public class TypescriptExporter : TypeExporter<Type>
     HashSet<Type> _nonExportTypes;
     TypescriptVocabExporter? _vocabExporter;
 #if NET6_0_OR_GREATER
-    NullabilityInfoContext _nullableInfo;
+    NullabilityInfoContext _nullableInfo = new();
 #endif
     VocabCollection _usedVocabs;
     JsonPolymorphismSettings _polymorphism;
+
 
     public TypescriptExporter(TextWriter writer)
         : this(new TypescriptWriter(writer))
@@ -137,10 +140,7 @@ public class TypescriptExporter : TypeExporter<Type>
 
     public IVocabCollection Vocabs
     {
-        get
-        {
-            return _vocabExporter?.Vocabs;
-        }
+        get => _vocabExporter?.Vocabs;
         set
         {
             if (value is not null)
@@ -212,6 +212,7 @@ public class TypescriptExporter : TypeExporter<Type>
             ExportClass(baseClass);
             baseClassName = InterfaceName(baseClass);
         }
+
         string typeName = InterfaceName(type);
 
         ExportComments(type);
@@ -261,6 +262,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             ExportEnumAsEnum(type);
         }
+
         AddExported(type);
 
         return this;
@@ -331,6 +333,7 @@ public class TypescriptExporter : TypeExporter<Type>
             _writer.Literals(Enum.GetNames(type)).Semicolon();
             return this;
         }
+
         string[] names = Enum.GetNames(type);
         var fields = type.GetFields();
         for (int i = 0; i < names.Length; ++i)
@@ -370,13 +373,14 @@ public class TypescriptExporter : TypeExporter<Type>
             }
             _writer.EOL();
         }
+
         return this;
     }
 
     TypescriptExporter ExportMembers(Type type)
     {
-        return ExportProperties(type).
-               ExportFields(type);
+        return ExportProperties(type)
+            .ExportFields(type);
     }
 
     TypescriptExporter ExportProperties(Type type)
@@ -395,6 +399,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             ExportProperty(property);
         }
+
         return this;
     }
 
@@ -412,6 +417,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             ExportField(field);
         }
+
         return this;
     }
 
@@ -423,6 +429,7 @@ public class TypescriptExporter : TypeExporter<Type>
             ExportComments(property);
             ExportVariable(property, property.PropertyType);
         }
+
         return this;
     }
 
@@ -433,6 +440,7 @@ public class TypescriptExporter : TypeExporter<Type>
             ExportComments(field);
             ExportVariable(field, field.FieldType);
         }
+
         return this;
     }
 
@@ -443,6 +451,7 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             ExportMethod(method);
         }
+
         return this;
     }
 
@@ -458,6 +467,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 ExportParameter(parameter, i, parameters.Length);
             }
         }
+
         _writer.EndMethodDeclare(DataType(methodInfo.ReturnType), methodInfo.ReturnType.IsNullableValueType());
         return this;
     }
@@ -470,11 +480,13 @@ public class TypescriptExporter : TypeExporter<Type>
             {
                 _writer.SOL().Comment(comment);
             }
+
             if (member.IsRequired())
             {
                 _writer.SOL().Comment("Required");
             }
         }
+
         return this;
     }
 
@@ -509,6 +521,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 isNullable
             );
         }
+
         _writer.EOL();
         return this;
     }
@@ -529,14 +542,14 @@ public class TypescriptExporter : TypeExporter<Type>
             actualType = type;
             isNullable = IsNullableRef(parameter);
         }
+
         _writer.Parameter(
             parameter.Name,
             DataType(type),
             i,
             count,
             type.IsArray,
-            isNullable
-            );
+            isNullable);
         AddPending(type);
         return this;
     }
@@ -549,6 +562,7 @@ public class TypescriptExporter : TypeExporter<Type>
             // No vocab
             return false;
         }
+
         IVocab? vocab = null;
         NamedVocab? vocabType = null;
         if (vocabAttr.HasVocab)
@@ -574,6 +588,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 // No vocab
                 throw new SchemaException(SchemaException.ErrorCode.VocabNotFound, $"Vocabulary {vocabAttr.Name} not found");
             }
+
             ExportVocabInline(member, isNullable, vocab);
         }
         else
@@ -583,6 +598,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 // No vocab
                 SchemaException.ThrowVocabNotFound(vocabAttr.Name);
             }
+
             ExportVocabType(member, type, vocabType, isNullable);
         }
 
@@ -610,6 +626,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 vocab.Strings()
             );
         }
+
         _writer.EOL();
     }
 
@@ -624,6 +641,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 isNullable
             );
         }
+
         _writer.EOL();
 
         _vocabExporter.AddPending(vocabType);
@@ -648,6 +666,7 @@ public class TypescriptExporter : TypeExporter<Type>
                 _writer.EOL();
             }
         }
+
         return this;
     }
 
@@ -668,15 +687,18 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             typeName = TypeNameMapper(type);
         }
+
         if (typeName is null)
         {
             typeName = Typescript.Types.ToPrimitive(type);
         }
+
         if (string.IsNullOrEmpty(typeName))
         {
             typeName = InterfaceName(type, false);
             AddPending(type);
         }
+
         return typeName;
     }
 
@@ -702,10 +724,12 @@ public class TypescriptExporter : TypeExporter<Type>
         {
             return IsNullableRef(p);
         }
-        else if (member is FieldInfo f)
+
+        if (member is FieldInfo f)
         {
             return IsNullableRef(f);
         }
+
         return false;
     }
 

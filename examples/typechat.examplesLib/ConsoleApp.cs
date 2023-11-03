@@ -4,14 +4,13 @@ namespace Microsoft.TypeChat;
 
 public abstract class ConsoleApp : IInputHandler
 {
-    List<string> _stopStrings;
+    private List<string> _stopStrings;
 
     public ConsoleApp()
     {
         Console.OutputEncoding = Encoding.UTF8;
         _stopStrings = new List<string>(2) { "quit", "exit" };
     }
-
 
     public string? ConsolePrompt { get; set; } = ">";
 
@@ -21,17 +20,17 @@ public abstract class ConsoleApp : IInputHandler
 
     public string CommandPrefix { get; set; } = "@";
 
-    public async Task RunAsync(string consolePrompt, string? inputFilePath = null)
+    public async Task RunAsync(string consolePrompt, string? inputFilePath = null, CancellationToken cancelToken = default)
     {
         ConsolePrompt = consolePrompt;
-        await InitApp();
+        await InitAppAsync(cancelToken).ConfigureAwait(false);
         if (string.IsNullOrEmpty(inputFilePath))
         {
-            await RunAsync();
+            await RunAsync(cancelToken).ConfigureAwait(false);
         }
         else
         {
-            await RunBatchAsync(inputFilePath);
+            await RunBatchAsync(inputFilePath, cancelToken).ConfigureAwait(false);
         }
     }
 
@@ -73,34 +72,35 @@ public abstract class ConsoleApp : IInputHandler
     /// <summary>
     /// Return false if should exit
     /// </summary>
-    async Task<bool> EvalInputAsync(string input, CancellationToken cancelToken)
+    private async Task<bool> EvalInputAsync(string input, CancellationToken cancelToken)
     {
         try
         {
-            if (input.StartsWith(CommandPrefix))
-            {
-                return await EvalCommandAsync(input, cancelToken).ConfigureAwait(false);
-            }
-            return await EvalLineAsync(input, cancelToken).ConfigureAwait(false);
+            return input.StartsWith(CommandPrefix)
+                ? await EvalCommandAsync(input, cancelToken).ConfigureAwait(false)
+                : await EvalLineAsync(input, cancelToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
             OnException(input, ex);
         }
+
         return true;
     }
 
-    async Task<bool> EvalLineAsync(string input, CancellationToken cancelToken)
+    private async Task<bool> EvalLineAsync(string input, CancellationToken cancelToken)
     {
         if (IsStop(input))
         {
             return false;
         }
+
         await ProcessInputAsync(input, cancelToken).ConfigureAwait(false);
+
         return true;
     }
 
-    async Task<bool> EvalCommandAsync(string input, CancellationToken cancelToken)
+    private async Task<bool> EvalCommandAsync(string input, CancellationToken cancelToken)
     {
         // Process a command
         List<string> parts = CommandLineStringSplitter.Instance.Split(input).ToList();
@@ -116,19 +116,17 @@ public abstract class ConsoleApp : IInputHandler
             {
                 return false;
             }
+
             parts.RemoveAt(0);
             await ProcessCommandAsync(cmd, parts).ConfigureAwait(false);
         }
+
         return true;
     }
 
-    bool IsStop(string? line)
+    private bool IsStop(string? line)
     {
-        if (line is null)
-        {
-            return true;
-        }
-        return _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
+        return line is null || _stopStrings.Contains(line, StringComparer.OrdinalIgnoreCase);
     }
 
     public async Task<string?> ReadLineAsync(CancellationToken cancelToken = default)
@@ -141,7 +139,7 @@ public abstract class ConsoleApp : IInputHandler
         return (line is not null) ? line.Trim() : line;
     }
 
-    public async Task WriteLineAsync(string? value)
+    public async Task WriteLineAsync(string? value, CancellationToken cancelToken = default)
     {
         if (string.IsNullOrEmpty(value))
         {
@@ -153,7 +151,8 @@ public abstract class ConsoleApp : IInputHandler
         }
     }
 
-    public abstract Task ProcessInputAsync(string input, CancellationToken cancelToken);
+    public abstract Task ProcessInputAsync(string input, CancellationToken cancelToken = default);
+
     public virtual Task ProcessCommandAsync(string cmd, IList<string> args)
     {
         switch (cmd)
@@ -166,10 +165,11 @@ public abstract class ConsoleApp : IInputHandler
                 Console.Clear();
                 break;
         }
+
         return Task.CompletedTask;
     }
 
-    protected virtual Task InitApp() => Task.CompletedTask;
+    protected virtual Task InitAppAsync(CancellationToken cancelToken) => Task.CompletedTask;
 
     protected void SubscribeAllEvents<T>(JsonTranslator<T> translator)
     {

@@ -58,8 +58,9 @@ public class PromptBuilder
         {
             if (value < _currentLength)
             {
-                throw new ArgumentException($"CurrentLength: {_currentLength} exceeds {value}");
+                throw new ArgumentException($"Current Length: {_currentLength} exceeds new MaxLength: {value}");
             }
+
             _maxLength = value;
         }
     }
@@ -99,12 +100,14 @@ public class PromptBuilder
             _currentLength += text.Length;
             return true;
         }
+
         if (_substring is not null)
         {
             text = _substring(text, lengthAvailable);
             _prompt.Append(section.Source, text);
             return true;
         }
+
         return false;
     }
 
@@ -124,6 +127,7 @@ public class PromptBuilder
                 return false;
             }
         }
+
         return true;
     }
 
@@ -132,17 +136,18 @@ public class PromptBuilder
     /// </summary>
     /// <param name="sections"></param>
     /// <returns></returns>
-    public async Task<bool> AddRangeAsync(IAsyncEnumerable<IPromptSection> sections)
+    public async Task<bool> AddRangeAsync(IAsyncEnumerable<IPromptSection> sections, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNull(sections, nameof(sections));
 
-        await foreach (var section in sections.ConfigureAwait(false))
+        await foreach (var section in sections.WithCancellation(cancelToken).ConfigureAwait(false))
         {
             if (!Add(section))
             {
                 return false;
             }
         }
+
         return true;
     }
 

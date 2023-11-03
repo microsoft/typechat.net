@@ -42,7 +42,7 @@ public class TypescriptVocabExporter : TypeExporter<NamedVocab>
         AddExported(type);
     }
 
-    void ExportValues(IVocab vocab)
+    private void ExportValues(IVocab vocab)
     {
         var values = from entry in vocab
                      select entry.Text;

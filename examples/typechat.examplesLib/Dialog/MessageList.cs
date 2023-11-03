@@ -35,10 +35,8 @@ public class MessageList : List<Message>, IMessageStream
     /// <exception cref="ArgumentNullException">if message is null</exception>
     public new void Add(Message message)
     {
-        if (message is null)
-        {
-            throw new ArgumentNullException(nameof(message));
-        }
+        ArgumentVerify.ThrowIfNull(message, nameof(message));
+
         base.Add(message);
     }
 
@@ -52,7 +50,7 @@ public class MessageList : List<Message>, IMessageStream
     /// Append a message to the message stream
     /// </summary>
     /// <param name="message">message to append</param>
-    public Task AppendAsync(Message message)
+    public Task AppendAsync(Message message, CancellationToken cancelToken = default)
     {
         Add(message);
         return Task.CompletedTask;
@@ -116,7 +114,7 @@ public class MessageList : List<Message>, IMessageStream
     /// <param name="request">find messages nearest to this</param>
     /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    public async IAsyncEnumerable<IPromptSection>? GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancelToken)
+    public async IAsyncEnumerable<IPromptSection>? GetContextAsync(string request, [EnumeratorCancellation] CancellationToken cancelToken = default)
     {
         for (int i = Count - 1; i >= 0; --i)
         {

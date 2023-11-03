@@ -21,9 +21,7 @@ public class ProgramTranslatorPrompts : JsonTranslatorPrompts
     }
 
     public override Prompt CreateRequestPrompt(TypeSchema schema, Prompt request, IList<IPromptSection> context)
-    {
-        return RequestProgramPrompt(request, schema.Schema.Text, _apiDef, context);
-    }
+        => RequestProgramPrompt(request, schema.Schema.Text, _apiDef, context);
 
     public static Prompt RequestProgramPrompt(string request, string programSchema, string apiDef, IList<IPromptSection> context)
     {

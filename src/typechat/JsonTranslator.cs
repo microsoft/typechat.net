@@ -52,15 +52,13 @@ public class JsonTranslator<T> : IJsonTranslator
         IJsonTypeValidator<T> validator,
         IJsonTranslatorPrompts? prompts = null)
     {
-
         ArgumentVerify.ThrowIfNull(model, nameof(model));
         ArgumentVerify.ThrowIfNull(validator, nameof(validator));
 
         _model = model;
 
         _validator = validator;
-        prompts ??= JsonTranslatorPrompts.Default;
-        _prompts = prompts;
+        _prompts = prompts ?? JsonTranslatorPrompts.Default;
         _translationSettings = new TranslationSettings(); // Default settings
         _maxRepairAttempts = DefaultMaxRepairAttempts;
     }
@@ -71,15 +69,18 @@ public class JsonTranslator<T> : IJsonTranslator
     /// <param name="model">The language model to use for translation</param>
     /// <param name="prompts">Custom prompts to use during translation</param>
     /// <param name="knownVocabs">Any known vocabularies. JsonVocab attributes can bind to these during JSON deserialiation</param>
-    public JsonTranslator(ILanguageModel model, IJsonTranslatorPrompts? prompts = null, IVocabCollection? knownVocabs = null)
+    public JsonTranslator(
+        ILanguageModel model,
+        IJsonTranslatorPrompts? prompts = null,
+        IVocabCollection? knownVocabs = null)
+        : this(model, new TypeValidator<T>(knownVocabs), prompts)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
 
         _model = model;
         _validator = new TypeValidator<T>(knownVocabs);
-        prompts ??= JsonTranslatorPrompts.Default;
-        _prompts = prompts;
-        _translationSettings = new TranslationSettings(); // Default settings
+        _prompts = prompts ?? JsonTranslatorPrompts.Default;
+        _translationSettings = new TranslationSettings(); // Default settings	
         _maxRepairAttempts = DefaultMaxRepairAttempts;
     }
 
@@ -91,15 +92,7 @@ public class JsonTranslator<T> : IJsonTranslator
     /// <summary>
     /// The associated Json validator
     /// </summary>
-    public IJsonTypeValidator<T> Validator
-    {
-        get => _validator;
-        set
-        {
-            ArgumentVerify.ThrowIfNull(value, nameof(Validator));
-            _validator = value;
-        }
-    }
+    public IJsonTypeValidator<T> Validator => _validator;
 
     /// <summary>
     /// Optional constraints validation, once a valid object of type T is available
@@ -116,11 +109,7 @@ public class JsonTranslator<T> : IJsonTranslator
     public IJsonTranslatorPrompts Prompts
     {
         get => _prompts;
-        set
-        {
-            value ??= JsonTranslatorPrompts.Default;
-            _prompts = value;
-        }
+        set => _prompts = value ?? JsonTranslatorPrompts.Default;
     }
 
     /// <summary>
@@ -135,14 +124,7 @@ public class JsonTranslator<T> : IJsonTranslator
     public int MaxRepairAttempts
     {
         get => _maxRepairAttempts;
-        set
-        {
-            if (value < 0)
-            {
-                value = 0;
-            }
-            _maxRepairAttempts = value;
-        }
+        set => _maxRepairAttempts = Math.Max(value, 0);
     }
 
     // 
@@ -170,7 +152,7 @@ public class JsonTranslator<T> : IJsonTranslator
     /// <param name="request">text request</param>
     /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken)
+    public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken = default)
     {
         return await TranslateAsync(request, cancelToken);
     }
@@ -183,9 +165,7 @@ public class JsonTranslator<T> : IJsonTranslator
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
     public Task<T> TranslateAsync(string request, CancellationToken cancelToken = default)
-    {
-        return TranslateAsync(request, null, null, cancelToken);
-    }
+        => TranslateAsync(request, null, null, cancelToken);
 
     /// <summary>
     /// Translate a natural language request into an object of type 'T'
@@ -200,8 +180,7 @@ public class JsonTranslator<T> : IJsonTranslator
         Prompt request,
         IList<IPromptSection>? preamble,
         TranslationSettings? requestSettings = null,
-        CancellationToken cancelToken = default
-    )
+        CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNull(request, nameof(request));
 
@@ -238,6 +217,7 @@ public class JsonTranslator<T> : IJsonTranslator
             {
                 TypeChatException.ThrowJsonValidation(request, jsonResponse, validationResult.Message);
             }
+
             NotifyEvent(AttemptingRepair, validationResult.Message);
 
             PromptSection repairPrompt = CreateRepairPrompt(responseText, validationResult);
@@ -246,6 +226,7 @@ public class JsonTranslator<T> : IJsonTranslator
                 // Remove the previous attempts
                 prompt.Trim(2);
             }
+
             prompt.AppendResponse(responseText);
             prompt.Append(repairPrompt);
         }
@@ -265,12 +246,10 @@ public class JsonTranslator<T> : IJsonTranslator
     }
 
     protected virtual PromptSection CreateRepairPrompt(string responseText, Result<T> validationResult)
-    {
-        return _prompts.CreateRepairPrompt(_validator.Schema, responseText, validationResult.Message);
-    }
+        => Prompts.CreateRepairPrompt(Validator.Schema, responseText, validationResult.Message);
 
     // Return false if translation loop should stop
-    protected virtual bool OnValidationComplete(Result<T> validationResult) { return true; }
+    protected virtual bool OnValidationComplete(Result<T> validationResult) => true;
 
     Result<T> ValidateJson(string json)
     {

@@ -14,5 +14,5 @@ public interface IContextProvider
     /// <param name="request">user request</param>
     /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    IAsyncEnumerable<IPromptSection> GetContextAsync(string request, CancellationToken cancelToken);
+    IAsyncEnumerable<IPromptSection> GetContextAsync(string request, CancellationToken cancelToken = default);
 }

@@ -8,7 +8,7 @@ namespace HealthData;
 
 public class HealthDataAgent : ConsoleApp
 {
-    AgentWithHistory<HealthDataResponse> _agent;
+    private AgentWithHistory<HealthDataResponse> _agent;
 
     public HealthDataAgent()
     {
@@ -32,7 +32,7 @@ public class HealthDataAgent : ConsoleApp
 
     public TypeSchema Schema => _agent.Translator.Validator.Schema;
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken = default)
     {
         HealthDataResponse response = await _agent.GetResponseAsync(input, cancelToken);
         PrintResponse(response);
@@ -77,6 +77,7 @@ public class HealthDataAgent : ConsoleApp
                 PrintHelp();
                 break;
         }
+
         return Task.CompletedTask;
     }
 
@@ -86,10 +87,12 @@ public class HealthDataAgent : ConsoleApp
         {
             Console.WriteLine(Json.Stringify(response.Data));
         }
+
         if (response.HasMessage)
         {
             Console.WriteLine($"📝: {response.Message}");
         }
+
         if (response.HasNotTranslated)
         {
             Console.WriteLine($"🤔: I did not understand\n {response.NotTranslated}");

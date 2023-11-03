@@ -37,6 +37,7 @@ public class CSharpProgramTranspiler
         {
             throw new NotSupportedException("Async methods currently not supported");
         }
+
         _apiType = type;
         _apiTypeInfo = typeInfo;
         _className = DefaultClassName;
@@ -90,8 +91,10 @@ public class CSharpProgramTranspiler
                     writer.Append(block).EOL();
                 }
             }
+
             writer.EndClass();
         }
+
         return EndBlock(buffer, writer, false);
     }
 
@@ -109,13 +112,16 @@ public class CSharpProgramTranspiler
             {
                 writer.Variable(ApiVarName, _apiType);
             }
+
             writer.EndDeclareMethod();
             writer.BeginMethodBody();
             {
                 Compile(writer, program.Steps);
             }
+
             writer.EndMethodBody();
         }
+
         return EndBlock(buffer, writer, false);
     }
 
@@ -128,6 +134,7 @@ public class CSharpProgramTranspiler
             writer.Local(ResultVar(i), CSharpLang.Types.Var, isArray: false, assign: true);
             Compile(writer, calls[i], false);
         }
+
         if (!steps.Calls.IsNullOrEmpty())
         {
             writer.Return(ResultVar(steps.Calls.Length - 1));
@@ -140,6 +147,7 @@ public class CSharpProgramTranspiler
         {
             Compile(writer, function, inline);
         }
+
         return EndBlock(sw, writer, false);
     }
 
@@ -150,6 +158,7 @@ public class CSharpProgramTranspiler
         {
             CompileArgs(writer, function, apiInfo.Params);
         }
+
         writer.EndMethodCall(inline);
     }
 
@@ -160,6 +169,7 @@ public class CSharpProgramTranspiler
         {
             return;
         }
+
         if (paramsInfo.Length != expressions.Length)
         {
             ProgramException.ThrowArgCountMismatch(function, paramsInfo.Length, expressions.Length);
@@ -227,12 +237,16 @@ public class CSharpProgramTranspiler
         {
             default:
                 throw new ProgramException(ProgramException.ErrorCode.JsonValueTypeNotSupported, $"{expr.Value.ValueKind}");
+
             case JsonValueKind.True:
                 return CSharpLang.Types.True;
+
             case JsonValueKind.False:
                 return CSharpLang.Types.False;
+
             case JsonValueKind.String:
                 return CSharpLang.String(expr.Value.GetString());
+
             case JsonValueKind.Number:
                 return CSharpLang.Double(expr.Value.GetDouble());
         }
@@ -249,6 +263,7 @@ public class CSharpProgramTranspiler
         {
             Compile(writer, arrayExpr.Value, type);
         }
+
         return EndBlock(sw, writer, false);
     }
 
@@ -258,6 +273,7 @@ public class CSharpProgramTranspiler
         {
             Compile(writer, expressions, type);
         }
+
         return EndBlock(sw, writer, false);
     }
 
@@ -271,6 +287,7 @@ public class CSharpProgramTranspiler
                 writer.Append(Compile(expressions[i]));
             }
         }
+
         writer.EndArray();
     }
 
@@ -321,11 +338,15 @@ public class CSharpProgramTranspiler
                             break;
                     }
                 }
+
                 writer.Return(jsonObj);
             }
+
             writer.EndMethodBody();
         }
+
         EndBlock(buffer, writer);
+
         //
         // Emit a call to the method
         //
@@ -358,6 +379,7 @@ public class CSharpProgramTranspiler
                 writer.Append(value);
             }
         }
+
         writer.EndMethodCall();
     }
 
@@ -381,6 +403,7 @@ public class CSharpProgramTranspiler
         {
             writer.PushIndent();
         }
+
         return (sw, writer);
     }
     string EndBlock(StringWriter sw, CSharpWriter writer, bool emit = true)
@@ -390,6 +413,7 @@ public class CSharpProgramTranspiler
         {
             _blocks.Add(codeBlock);
         }
+
         return codeBlock;
     }
 

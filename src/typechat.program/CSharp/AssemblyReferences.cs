@@ -40,6 +40,7 @@ public class AssemblyReferences : HashSet<string>
         {
             throw new ArgumentException($"{assemblyPath} not found");
         }
+
         Add(assemblyPath);
     }
 
@@ -49,17 +50,15 @@ public class AssemblyReferences : HashSet<string>
     /// <param name="types"></param>
     public void Add(params Type[] types)
     {
-        if (types.IsNullOrEmpty())
+        if (types is null)
         {
             return;
         }
-        for (int i = 0; i < types.Length; ++i)
+
+        foreach (Type t in types)
         {
-            string path = types[i].Assembly.Location;
-            if (!Contains(path))
-            {
-                Add(path);
-            }
+            // HashSet will ignore duplicates
+            Add(t.Assembly.Location);
         }
     }
 }

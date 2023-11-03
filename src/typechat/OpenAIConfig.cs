@@ -96,7 +96,7 @@ public class OpenAIConfig
     /// Validate the configuration
     /// </summary>
     /// <param name="configFileName">(optional) Config file the settings came from</param>
-    public void Validate(string configFileName = default)
+    public void Validate(string? configFileName = default)
     {
         configFileName ??= string.Empty;
 
@@ -132,14 +132,11 @@ public class OpenAIConfig
         {
             config.Endpoint = Environment.GetEnvironmentVariable(VariableNames.AZURE_OPENAI_ENDPOINT);
         }
-        if (isEmbedding)
-        {
-            config.Model = Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDINGMODEL);
-        }
-        else
-        {
-            config.Model = Environment.GetEnvironmentVariable(VariableNames.OPENAI_MODEL);
-        }
+
+        config.Model = isEmbedding
+            ? Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDINGMODEL)
+            : Environment.GetEnvironmentVariable(VariableNames.OPENAI_MODEL);
+
         config.Validate();
         return config;
     }
@@ -156,6 +153,7 @@ public class OpenAIConfig
         {
             throw new ArgumentException($"{jsonFilePath} is empty");
         }
+
         return Json.Parse<OpenAIConfig>(json);
     }
 }

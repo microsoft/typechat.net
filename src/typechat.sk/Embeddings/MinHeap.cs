@@ -13,6 +13,7 @@ internal struct MinHeap<T>
     {
         _items = new ScoredValue<T>[capacity + 1];
         _count = 0;
+
         //
         // The 0'th item is a sentinel entry that simplifies the code
         //
@@ -31,11 +32,11 @@ internal struct MinHeap<T>
 
     public ScoredValue<T> Top => _items[1];
 
-    public bool IsEmpty => (this._count == 0);
+    public bool IsEmpty => (_count == 0);
 
     public void Clear()
     {
-        this._count = 0;
+        _count = 0;
     }
 
     public void Add(ScoredValue<T> item)
@@ -44,18 +45,19 @@ internal struct MinHeap<T>
         // the 0'th item is always a sentinel and not included in this._count.
         // The length of the buffer is always this._count + 1
         //
-        if (_count == Capacity)
+        if (Count == Capacity)
         {
             throw new ArgumentOutOfRangeException($"Heap stores max {Capacity} entries");
         }
+
         _count++;
         _items[_count] = item;
-        this.UpHeap(this._count);
+        this.UpHeap(_count);
     }
 
     public ScoredValue<T> RemoveTop()
     {
-        if (_count == 0)
+        if (Count == 0)
         {
             throw new InvalidOperationException("MinHeap is empty.");
         }
@@ -95,7 +97,7 @@ internal struct MinHeap<T>
     private void DownHeap(int startAt)
     {
         int i = startAt;
-        int count = this._count;
+        int count = _count;
         int maxParent = count >> 1;
         ScoredValue<T>[] items = _items;
         ScoredValue<T> item = items[i];
@@ -134,10 +136,10 @@ internal struct MinHeap<T>
     /// </summary>
     public void SortDescending()
     {
-        int count = this._count;
+        int count = _count;
         int i = count; // remember that the 0'th item in the queue is always a sentinel. So i is 1 based
 
-        while (this._count > 0)
+        while (_count > 0)
         {
             //
             // this dequeues the item with the current LOWEST relevancy

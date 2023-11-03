@@ -8,7 +8,5 @@ namespace Microsoft.TypeChat;
 public class ValidateObjectAttribute : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
-    {
-        return ConstraintsValidator.Default.ValidateConstraints(value);
-    }
+        => ConstraintsValidator.Default.ValidateConstraints(value);
 }

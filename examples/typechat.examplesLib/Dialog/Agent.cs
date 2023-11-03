@@ -63,6 +63,7 @@ public class Agent<T> : IAgent
         set => _maxPromptLength = value;
     }
 
+
     /// <summary>
     /// Get response for the given request
     /// </summary>
@@ -75,6 +76,7 @@ public class Agent<T> : IAgent
 
         string requestText = requestMessage.GetText();
         string preparedRequestText = requestText;
+
         //
         // Prepare the actual message to send to the model
         //
@@ -83,10 +85,12 @@ public class Agent<T> : IAgent
         {
             preparedRequestText = preparedRequestMessage.GetText();
         }
+
         //
         // Prepare the context to send. For context building, use the original request text
         //
         Prompt context = await BuildContextAsync(requestText, preparedRequestText.Length, cancelToken).ConfigureAwait(false);
+
         //
         // Translate
         //
@@ -94,7 +98,7 @@ public class Agent<T> : IAgent
 
         Message responseMessage = Message.FromAssistant(response);
 
-        await ReceivedResponseAsync(requestMessage, preparedRequestMessage, responseMessage).ConfigureAwait(false);
+        await ReceivedResponseAsync(requestMessage, preparedRequestMessage, responseMessage, cancelToken).ConfigureAwait(false);
 
         return responseMessage;
     }
@@ -111,11 +115,12 @@ public class Agent<T> : IAgent
         return response.GetBody<T>();
     }
 
-    async Task<Prompt> BuildContextAsync(string requestText, int actualRequestLength, CancellationToken cancelToken)
+    private async Task<Prompt> BuildContextAsync(string requestText, int actualRequestLength, CancellationToken cancelToken)
     {
         PromptBuilder builder = CreateBuilder(_maxPromptLength - actualRequestLength);
         // Add any preamble       
         builder.AddRange(_instructions);
+
         //
         // If a context provider is available, inject additional context
         //
@@ -123,8 +128,9 @@ public class Agent<T> : IAgent
         {
             var context = _contextProvider.GetContextAsync(requestText, cancelToken);
             builder.Add(PromptSection.Instruction("IMPORTANT CONTEXT for the user request:"));
-            await AppendContextAsync(builder, context).ConfigureAwait(false);
+            await AppendContextAsync(builder, context, cancelToken).ConfigureAwait(false);
         }
+
         return builder.Prompt;
     }
 
@@ -148,9 +154,9 @@ public class Agent<T> : IAgent
     /// <param name="builder">builder to append to</param>
     /// <param name="context">context to append</param>
     /// <returns></returns>
-    protected virtual Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
+    protected virtual Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context, CancellationToken cancelToken)
     {
-        return builder.AddRangeAsync(context);
+        return builder.AddRangeAsync(context, cancelToken);
     }
 
     /// <summary>
@@ -160,12 +166,12 @@ public class Agent<T> : IAgent
     /// <param name="preparedRequest">the prepared request that was actually used in translation</param>
     /// <param name="response">response message</param>
     /// <returns></returns>
-    protected virtual Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response)
+    protected virtual Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response, CancellationToken cancelToken)
     {
         return Task.CompletedTask;
     }
 
-    PromptBuilder CreateBuilder(int maxLength)
+    private PromptBuilder CreateBuilder(int maxLength)
     {
         // Future: Pool these
         return new PromptBuilder(maxLength);

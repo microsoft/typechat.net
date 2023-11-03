@@ -74,6 +74,7 @@ public struct SchemaText
         {
             throw new NotSupportedException($"{lang} is not supported");
         }
+
         return new SchemaText(schemaText, lang);
     }
 }

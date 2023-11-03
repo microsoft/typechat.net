@@ -36,6 +36,7 @@ public class ProgramException : Exception
     {
         throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"@func {name} not found in API");
     }
+
     public static void ThrowArgCountMismatch(FunctionCall call, int expectedCount, int actualCount)
     {
         string json = call.Source.ToString();
@@ -65,10 +66,12 @@ public class ProgramException : Exception
     {
         throw new ProgramException(ProgramException.ErrorCode.InvalidResultRef, $"{refId} is not a valid ResultReference");
     }
+
     internal static void ThrowInvalidResultRef(int resultRef, int maxResults)
     {
         throw new ProgramException(ProgramException.ErrorCode.InvalidResultRef, $"Referencing @ref: {resultRef} that is not available yet. Only {maxResults} results available");
     }
+
     internal static void ThrowVariableNotFound(string name)
     {
         throw new ProgramException(ProgramException.ErrorCode.FunctionNotFound, $"Variable {name} not found");

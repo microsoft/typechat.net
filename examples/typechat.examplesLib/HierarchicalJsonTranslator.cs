@@ -37,13 +37,12 @@ public class HierarchicalJsonTranslator : IJsonTranslator
     /// </summary>
     /// <typeparam name="T">type of translator</typeparam>
     /// <param name="description">description of the translator </param>
+    /// <param name="cancelToken">cancellation token</param>
     /// <returns></returns>
-    public virtual Task AddSchemaAsync<T>(string description)
-    {
-        return _requestRouter.AddAsync(new JsonTranslator<T>(_model), description);
-    }
+    public virtual Task AddSchemaAsync<T>(string description, CancellationToken cancelToken = default)
+        => Router.AddAsync(new JsonTranslator<T>(_model), description, cancelToken);
 
-    public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken)
+    public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken = default)
     {
         // First, select the translator that is best suited to translate this request
         IJsonTranslator? translator = await _requestRouter.RouteRequestAsync(request, cancelToken).ConfigureAwait(false);
@@ -51,6 +50,7 @@ public class HierarchicalJsonTranslator : IJsonTranslator
         {
             throw new TypeChatException(TypeChatException.ErrorCode.NoTranslator, request);
         }
+
         return await translator.TranslateToObjectAsync(request, cancelToken).ConfigureAwait(false);
     }
 }

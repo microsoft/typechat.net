@@ -10,21 +10,19 @@ public class ProgramWriter
 {
     CodeWriter _writer;
 
+    string _programName = "Program";
+    string _apiVarName = "api";
+    string _resultVarPrefix = "step";
+
     public ProgramWriter(TextWriter writer)
     {
         _writer = new CodeWriter(writer);
     }
 
-    string ProgramName { get; set; } = "Program";
-    string ApiVarName { get; set; } = "api";
-    string ResultVarPrefix { get; set; } = "step";
-
-    public CodeWriter Writer => _writer;
+    public CodeWriter Writer { get; }
 
     public void Clear()
-    {
-        _writer.Clear();
-    }
+        => _writer.Clear();
 
     /// <summary>
     /// Write the given function call...
@@ -38,11 +36,13 @@ public class ProgramWriter
             if (i > 0) { _writer.Append($", "); }
             _writer.Append(Convert.ToString(args[i]));
         }
+
         EndCall(isCallInline);
         return this;
     }
 
-    public ProgramWriter Write(Program program, Type apiType) => Write(program, apiType.Name);
+    public ProgramWriter Write(Program program, Type apiType)
+        => Write(program, apiType.Name);
 
     public ProgramWriter Write(Program program, string apiName)
     {
@@ -53,7 +53,7 @@ public class ProgramWriter
             return this;
         }
 
-        SOL().Write($"dynamic {ProgramName}({apiName} {ApiVarName}) {{").EOL();
+        SOL().Write($"dynamic {_programName}({apiName} {_apiVarName}) {{").EOL();
 
         _writer.PushIndent();
         Write(program.Steps).Write("}").EOL();
@@ -72,16 +72,18 @@ public class ProgramWriter
                 _writer.SOL().Append($"var {ResultVar(i)} = ");
                 Write(calls[i]);
             }
+
             _writer.SOL().Append($"return {ResultVar(calls.Length - 1)};").EOL();
         }
+
         return this;
     }
 
     ProgramWriter Write(FunctionCall call, bool inline = false)
     {
-        return BeginCall(call.Name, ApiVarName).
-               Write(call.Args).
-               EndCall(inline);
+        return BeginCall(call.Name, _apiVarName)
+            .Write(call.Args)
+            .EndCall(inline);
     }
 
     ProgramWriter Write(Expression[] args)
@@ -94,6 +96,7 @@ public class ProgramWriter
                 Write(args[i]);
             }
         }
+
         return this;
     }
 
@@ -127,20 +130,23 @@ public class ProgramWriter
                     if (i > 0) { Write(", "); }
                     ++i;
                 }
+
                 Write("}");
                 Write("*/");
                 break;
         }
+
         return this;
     }
 
-    ProgramWriter BeginCall(string name, string api = null)
+    private ProgramWriter BeginCall(string name, string api = null)
     {
         return Write(api is not null ? $"{api}.{name}(" : $"{name}(");
     }
-    string ResultVar(int resultNumber) => (ResultVarPrefix + (resultNumber + 1));
 
-    ProgramWriter EndCall(bool inline = false)
+    private string ResultVar(int resultNumber) => (_resultVarPrefix + (resultNumber + 1));
+
+    private ProgramWriter EndCall(bool inline = false)
     {
         if (inline)
         {
@@ -150,11 +156,31 @@ public class ProgramWriter
         {
             Write(");").EOL();
         }
+
         return this;
     }
 
-    ProgramWriter SOL() { _writer.SOL(); return this; }
-    ProgramWriter EOL() { _writer.EOL(); return this; }
-    ProgramWriter Write(char ch) { _writer.Append(ch); return this; }
-    ProgramWriter Write(string value) { _writer.Append(value); return this; }
+    private ProgramWriter SOL()
+    {
+        _writer.SOL();
+        return this;
+    }
+
+    private ProgramWriter EOL()
+    {
+        _writer.EOL();
+        return this;
+    }
+
+    private ProgramWriter Write(char ch)
+    {
+        _writer.Append(ch);
+        return this;
+    }
+
+    private ProgramWriter Write(string value)
+    {
+        _writer.Append(value);
+        return this;
+    }
 }

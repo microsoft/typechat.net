@@ -44,8 +44,10 @@ internal class JsonVocabConvertor : JsonConverter<string?>
             {
                 throw new SchemaException(SchemaException.ErrorCode.VocabNotFound);
             }
+
             converter.Vocabs.ThrowIfNotInVocab(_vocabName, _propertyName, value);
         }
+
         return value;
     }
 

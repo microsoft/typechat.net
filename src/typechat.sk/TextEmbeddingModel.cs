@@ -6,8 +6,8 @@ namespace Microsoft.TypeChat;
 
 public class TextEmbeddingModel
 {
-    ITextEmbeddingGeneration _model;
-    ModelInfo _modelInfo;
+    ITextEmbeddingGeneration _service;
+    ModelInfo _model;
 
     /// <summary>
     /// Create a new text embedding model from the OpenAI config
@@ -20,14 +20,13 @@ public class TextEmbeddingModel
         ArgumentVerify.ThrowIfNull(config, nameof(config));
         config.Validate();
 
-        KernelBuilder kb = new KernelBuilder();
-        kb.WithEmbeddingModel(config.Model, config)
-          .WithRetry(config);
-
-        IKernel kernel = kb.Build();
+        IKernel kernel = Kernel.Builder
+            .WithEmbeddingModel(config.Model, config)
+            .WithRetry(config)
+            .Build();
         modelInfo ??= config.Model;
-        _model = kernel.GetService<ITextEmbeddingGeneration>(modelInfo.Name);
-        _modelInfo = modelInfo;
+        _service = kernel.GetService<ITextEmbeddingGeneration>(modelInfo.Name);
+        _model = modelInfo;
     }
 
     /// <summary>
@@ -38,14 +37,14 @@ public class TextEmbeddingModel
     public TextEmbeddingModel(ITextEmbeddingGeneration service, ModelInfo? modelInfo)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
-        _model = service;
-        _modelInfo = modelInfo;
+        _service = service;
+        _model = modelInfo;
     }
 
     /// <summary>
     /// Information about the model
     /// </summary>
-    public ModelInfo ModelInfo => _modelInfo;
+    public ModelInfo ModelInfo => _model;
 
     /// <summary>
     /// Generate an embedding
@@ -55,7 +54,7 @@ public class TextEmbeddingModel
     /// <returns></returns>
     public Task<Embedding> GenerateEmbeddingAsync(string text, CancellationToken cancelToken = default)
     {
-        return _model.GenerateEmbeddingAsync(text, cancelToken);
+        return _service.GenerateEmbeddingAsync(text, cancelToken);
     }
 
     /// <summary>
@@ -66,12 +65,13 @@ public class TextEmbeddingModel
     /// <returns></returns>
     public async Task<Embedding[]> GenerateEmbeddingsAsync(IList<string> texts, CancellationToken cancelToken = default)
     {
-        var results = await _model.GenerateEmbeddingsAsync(texts, cancelToken);
+        var results = await _service.GenerateEmbeddingsAsync(texts, cancelToken);
         Embedding[] embeddings = new Embedding[results.Count];
         for (int i = 0; i < embeddings.Length; ++i)
         {
             embeddings[i] = new Embedding(results[i]);
         }
+
         return embeddings;
     }
 }
