@@ -19,7 +19,7 @@ public class TestVocab : TypeChatTest
         NamedVocab? type = attribute.ToVocabType();
         Assert.NotNull(type);
         Assert.Equal(type.Name, attribute.Name);
-        Assert.Equal(vocab, type.Vocab);
+        VocabEquals(vocab, type.Vocab);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public class TestVocab : TypeChatTest
         Assert.NotNull(exporter.UsedVocabs);
         Assert.True(exporter.UsedVocabs.Count == 1);
         IVocab localVocab = exporter.UsedVocabs.Get(HardcodedVocabObj.VocabName).Vocab;
-        Assert.Equal(vocab, localVocab);
+        VocabEquals(vocab, localVocab);
     }
 
     [Fact]
@@ -139,6 +139,18 @@ public class TestVocab : TypeChatTest
         foreach (var entry in vocab)
         {
             Assert.True(text.Contains($"'{entry}'"));
+        }
+    }
+
+    // Workaround for Xunit issues
+    void VocabEquals(IVocab left, IVocab right)
+    {
+        var l = left.ToArray();
+        var r = right.ToArray();
+        Assert.Equal(l.Length, r.Length);
+        for (int i = 0; i < l.Length; ++i)
+        {
+            Assert.True(l[i].Equals(r[i]));
         }
     }
 
