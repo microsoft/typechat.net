@@ -11,18 +11,22 @@ internal static class ModelEx
         {
             return AuthorRole.User;
         }
+
         if (AuthorRole.User.IsRole(source))
         {
             return AuthorRole.User;
         }
+
         if (AuthorRole.Assistant.IsRole(source))
         {
             return AuthorRole.Assistant;
         }
+
         if (AuthorRole.System.IsRole(source))
         {
             return AuthorRole.System;
         }
+
         return AuthorRole.User;
     }
 
@@ -37,12 +41,8 @@ internal static class ModelEx
     }
 
     public static void Append(this ChatHistory history, IPromptSection message)
-    {
-        history.AddMessage(message.GetRole(), message.GetText());
-    }
+        => history.AddMessage(message.GetRole(), message.GetText());
 
     internal static bool IsRole(this AuthorRole role, string label)
-    {
-        return role.Label.Equals(label, StringComparison.OrdinalIgnoreCase);
-    }
+        => role.Label.Equals(label, StringComparison.OrdinalIgnoreCase);
 }

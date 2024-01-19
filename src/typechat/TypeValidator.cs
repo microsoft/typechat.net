@@ -52,7 +52,5 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
     /// <param name="json"></param>
     /// <returns></returns>
     public Result<T> Validate(string json)
-    {
-        return _jsonValidator.Validate(json);
-    }
+        => _jsonValidator.Validate(json);
 }

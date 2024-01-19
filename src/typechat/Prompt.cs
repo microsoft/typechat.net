@@ -39,10 +39,12 @@ public class Prompt : List<IPromptSection>
         {
             AddRange(preamble);
         }
+
         if (text is not null)
         {
             Add(text);
         }
+
         if (postamble is not null)
         {
             AddRange(postamble);
@@ -137,8 +139,10 @@ public class Prompt : List<IPromptSection>
             {
                 sb.Append(section.Source).Append(":\n");
             }
+
             sb.Append(section.GetText()).Append(sectionSep);
         }
+
         return sb;
     }
 
@@ -166,6 +170,7 @@ public class Prompt : List<IPromptSection>
         {
             total += section.GetText().Length;
         }
+
         return total;
     }
 

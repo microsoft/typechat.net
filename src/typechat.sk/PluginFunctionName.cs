@@ -33,12 +33,12 @@ public class PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<Pl
     /// <summary>
     /// Plugin
     /// </summary>
-    public string? PluginName { get; private set; }
+    public string? PluginName { get; }
 
     /// <summary>
     /// A function contained in a plugin
     /// </summary>
-    public string? FunctionName { get; private set; }
+    public string? FunctionName { get; }
 
     public bool IsGlobal => (string.IsNullOrEmpty(PluginName));
 
@@ -56,10 +56,12 @@ public class PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<Pl
         {
             return FunctionName;
         }
+
         if (string.IsNullOrEmpty(separator))
         {
             return $"{PluginName}{FunctionName}";
         }
+
         return $"{PluginName}{separator}{FunctionName}";
     }
 
@@ -84,6 +86,7 @@ public class PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<Pl
         return new PluginFunctionName(pluginName, functionName);
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
         return obj is PluginFunctionName name && this.Equals(name);
@@ -95,6 +98,7 @@ public class PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<Pl
                this.FunctionName == other.FunctionName;
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
         return HashCode.Combine(this.PluginName, this.FunctionName);
@@ -107,6 +111,7 @@ public class PluginFunctionName : IEquatable<PluginFunctionName>, IComparable<Pl
         {
             cmp = string.CompareOrdinal(this.FunctionName, other.FunctionName);
         }
+
         return cmp;
     }
 

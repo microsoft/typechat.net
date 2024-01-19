@@ -38,6 +38,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
     /// The Name of the vocabulary
     /// </summary>
     public string? Name { get; set; }
+
     /// <summary>
     /// Entries in this vocabulary, if any were provided inline
     /// </summary>
@@ -95,10 +96,12 @@ public class JsonVocabAttribute : JsonConverterAttribute
         {
             return new JsonVocabConvertor(_vocab, PropertyName);
         }
+
         if (HasName)
         {
             return new JsonVocabConvertor(Name, PropertyName);
         }
+
         return base.CreateConverter(typeToConvert);
     }
 
@@ -108,6 +111,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
         {
             return null;
         }
+
         return new Vocab(_vocab);
     }
 
@@ -117,6 +121,7 @@ public class JsonVocabAttribute : JsonConverterAttribute
         {
             return null;
         }
+
         return new NamedVocab(Name, _vocab);
     }
 }

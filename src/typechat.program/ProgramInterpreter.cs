@@ -46,6 +46,7 @@ public class ProgramInterpreter
             dynamic result = Eval(call);
             _results.Add(result);
         }
+
         return GetResult();
     }
 
@@ -71,6 +72,7 @@ public class ProgramInterpreter
             dynamic result = await EvalAsync(call).ConfigureAwait(false);
             _results.Add(result);
         }
+
         return GetResult();
     }
 
@@ -97,7 +99,7 @@ public class ProgramInterpreter
     async Task<dynamic> EvalAsync(FunctionCall call)
     {
         dynamic[] args = await EvalAsync(call.Args).ConfigureAwait(false);
-        return await _callHandlerAsync(call.Name, args);
+        return await _callHandlerAsync(call.Name, args).ConfigureAwait(false);
     }
 
     dynamic Eval(Expression expr)
@@ -164,6 +166,7 @@ public class ProgramInterpreter
         {
             args[i] = Eval(expressions[i]);
         }
+
         return args;
     }
 
@@ -177,8 +180,9 @@ public class ProgramInterpreter
         dynamic[] args = new dynamic[expressions.Length];
         for (int i = 0; i < expressions.Length; ++i)
         {
-            args[i] = await EvalAsync(expressions[i]);
+            args[i] = await EvalAsync(expressions[i]).ConfigureAwait(false);
         }
+
         return args;
     }
 
@@ -218,6 +222,7 @@ public class ProgramInterpreter
             JsonNode node = ToJsonNode(result);
             jsonObject.Add(property.Key, node);
         }
+
         return jsonObject;
     }
 
@@ -230,6 +235,7 @@ public class ProgramInterpreter
             JsonNode node = ToJsonNode(result);
             jsonObj.Add(property.Key, node);
         }
+
         return jsonObj;
     }
 
@@ -239,6 +245,7 @@ public class ProgramInterpreter
         {
             ProgramException.ThrowInvalidResultRef(expr.Ref, _results.Count);
         }
+
         return _results[expr.Ref];
     }
 

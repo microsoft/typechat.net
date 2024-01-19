@@ -100,6 +100,7 @@ public static class TypeEx
                 return true;
             }
         }
+
         return false;
     }
 
@@ -145,6 +146,7 @@ public static class TypeEx
         {
             return null;
         }
+
         var args = type.GetGenericArguments();
         return (args.IsNullOrEmpty()) ? null : args[0];
     }
@@ -155,6 +157,7 @@ public static class TypeEx
         {
             return Empty<Type>();
         }
+
         Assembly assembly = type.Assembly;
         return assembly.GetTypes().Where(t => t.IsSubclassOf(type));
     }
@@ -200,10 +203,12 @@ public static class TypeEx
         {
             return typeName;
         }
-        StringBuilder sb = new StringBuilder();
-        sb.Append(typeName).Append('<');
-        typeParams.CombineArgNames(sb, ",").Append('>');
-        return sb.ToString();
+
+        return new StringBuilder(typeName)
+            .Append('<')
+            .JoinArgNames(",", typeParams)
+            .Append('>')
+            .ToString();
     }
 
     internal static string GenerateInterfaceName(this Type type)
@@ -219,17 +224,17 @@ public static class TypeEx
         {
             return typeName;
         }
-        StringBuilder sb = new StringBuilder();
-        sb.Append(typeName).Append('_');
-        typeArgs.CombineArgNames(sb, "_");
-        return sb.ToString();
+
+        return new StringBuilder(typeName)
+            .Append('_')
+            .JoinArgNames("_", typeArgs)
+            .ToString();
     }
 
-    internal static StringBuilder CombineArgNames(this Type[] args, StringBuilder sb, string sep)
+    internal static StringBuilder JoinArgNames(this StringBuilder sb, string separator, Type[] args)
     {
         var paramNames = from arg in args select arg.Name;
-        sb.AppendMultiple(sep, paramNames);
-        return sb;
+        return sb.AppendMultiple(separator, paramNames);
     }
 
     internal static string NonGenericName(this Type type)
@@ -240,6 +245,7 @@ public static class TypeEx
         {
             return name.Substring(0, i);
         }
+
         return name;
     }
 

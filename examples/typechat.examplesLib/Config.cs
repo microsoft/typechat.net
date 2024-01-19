@@ -17,16 +17,17 @@ public class Config
         public const string Ad002 = "ada-002";
     }
 
-    public static T LoadConfig<T>(string configFile, string configOverloadFile, string sectionName = default)
+    public static T LoadConfig<T>(string configFile, string configOverloadFile, string? sectionName = default)
         where T : new()
     {
         var configBuilder = new ConfigurationBuilder()
-                    .AddJsonFile(configFile, false, true);
+            .AddJsonFile(configFile, false, true);
 
         if (File.Exists(configOverloadFile))
         {
             configBuilder.AddJsonFile(configOverloadFile, false, true);
         }
+
         var config = configBuilder.Build();
         var configSection = config.GetSection(sectionName);
         if (configSection is null)
@@ -47,8 +48,8 @@ public class Config
         return config;
     }
 
-    OpenAIConfig? _openAI;
-    OpenAIConfig? _openAIEmbeddings;
+    private OpenAIConfig? _openAI;
+    private OpenAIConfig? _openAIEmbeddings;
 
     public Config()
     {

@@ -43,6 +43,7 @@ public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
                 return ValidateProgram(result.Value);
             }
         }
+
         return result;
     }
 
@@ -52,6 +53,7 @@ public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
         {
             return _programValidator.ValidateProgram(program);
         }
+
         return program;
     }
 }

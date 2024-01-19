@@ -50,6 +50,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             throw;
         }
         catch { }
+
         ProgramException.ThrowFunctionNotFound(functionCall.Name);
     }
 
@@ -91,7 +92,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             ProgramException.ThrowArgCountMismatch(call, requiredArgCount, actualCount);
         }
 
-        int totalArgCount = (typeInfo.Parameters is not null) ? typeInfo.Parameters.Count : 0;
+        int totalArgCount = typeInfo.Parameters?.Count ?? 0;
         if (actualCount > totalArgCount)
         {
             ProgramException.ThrowArgCountMismatch(call, totalArgCount, actualCount);
@@ -142,9 +143,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
     }
 
     bool IsOptional(ParameterView parameter)
-    {
-        return (!string.IsNullOrEmpty(parameter.DefaultValue));
-    }
+        => !string.IsNullOrEmpty(parameter.DefaultValue);
 
     void ThrowTypeMismatch(FunctionCall call, string paramName, ParameterViewType expectedType, ParameterViewType actualType)
     {
@@ -152,6 +151,5 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             ProgramException.ErrorCode.TypeMismatch,
             $"TypeMismatch: @func {call.Name} @arg {paramName}: Expected {expectedType.Name}, Got {actualType.Name}"
             );
-
     }
 }

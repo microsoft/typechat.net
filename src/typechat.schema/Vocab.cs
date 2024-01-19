@@ -62,6 +62,7 @@ public class Vocab : List<VocabEntry>, IVocab
                 return true;
             }
         }
+
         return false;
     }
 
@@ -76,6 +77,7 @@ public class Vocab : List<VocabEntry>, IVocab
         AppendTo(sb);
         return sb.ToString();
     }
+
     /// <summary>
     /// Append this vocabulary to the given StringBuilder. 
     /// </summary>
@@ -83,7 +85,7 @@ public class Vocab : List<VocabEntry>, IVocab
     /// <param name="quoteChar">How to quote individual entries</param>
     /// <param name="separator">Separator between strings</param>
     /// <returns></returns>
-    public StringBuilder AppendTo(
+    private StringBuilder AppendTo(
         StringBuilder sb,
         char quoteChar = '\'',
         char separator = DefaultEntrySeparator)
@@ -95,16 +97,20 @@ public class Vocab : List<VocabEntry>, IVocab
             {
                 sb.Append(' ').Append(separator).Append(' ');
             }
+
             if (quoteChar != char.MinValue)
             {
                 sb.Append(quoteChar);
             }
+
             sb.Append(entry.Text);
+
             if (quoteChar != char.MinValue)
             {
                 sb.Append(quoteChar);
             }
         }
+
         return sb;
     }
 
@@ -126,6 +132,7 @@ public class Vocab : List<VocabEntry>, IVocab
         {
             return null;
         }
+
         Vocab vocab = new Vocab(entries);
         vocab.TrimExcess();
         return vocab;

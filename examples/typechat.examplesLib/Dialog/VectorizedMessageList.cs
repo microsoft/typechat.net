@@ -50,15 +50,10 @@ public class VectorizedMessageList : IMessageStream
         }
     }
 
-    public IEnumerable<Message> All()
-    {
-        return _messageList.All();
-    }
+    public IEnumerable<Message> All() => _messageList.All();
 
-    public IAsyncEnumerable<Message> AllAsync(CancellationToken cancelToken)
-    {
-        return _messageList.AllAsync(cancelToken);
-    }
+    public IAsyncEnumerable<Message> AllAsync(CancellationToken cancelToken = default)
+        => _messageList.AllAsync(cancelToken);
 
     public void Append(Message message)
     {
@@ -70,11 +65,11 @@ public class VectorizedMessageList : IMessageStream
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>
-    public async Task AppendAsync(Message message)
+    public async Task AppendAsync(Message message, CancellationToken cancelToken = default)
     {
         int position = _messageList.Count;
-        await _messageList.AppendAsync(message).ConfigureAwait(false);
-        await _index.AddAsync(position, message.GetText()).ConfigureAwait(false);
+        await _messageList.AppendAsync(message, cancelToken).ConfigureAwait(false);
+        await _index.AddAsync(position, message.GetText(), cancelToken).ConfigureAwait(false);
     }
 
     public void Clear()
@@ -108,16 +103,12 @@ public class VectorizedMessageList : IMessageStream
     /// Return newest messages
     /// </summary>
     /// <returns>an enumerable of messages</returns>
-    public IEnumerable<Message> Newest()
-    {
-        return _messageList.Newest();
-    }
+    public IEnumerable<Message> Newest() => _messageList.Newest();
+
     /// <summary>
     /// Return newest messages
     /// </summary>
     /// <returns>an async enumerable of messages</returns>
-    public IAsyncEnumerable<Message> NewestAsync(CancellationToken cancelToken)
-    {
-        return _messageList.NewestAsync(cancelToken);
-    }
+    public IAsyncEnumerable<Message> NewestAsync(CancellationToken cancelToken = default)
+        => _messageList.NewestAsync(cancelToken);
 }

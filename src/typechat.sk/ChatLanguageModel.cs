@@ -51,12 +51,11 @@ public class ChatLanguageModel : ILanguageModel
     /// <param name="settings"></param>
     /// <param name="cancelToken"></param>
     /// <returns></returns>
-    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    public Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ChatHistory history = ToHistory(prompt);
         ChatRequestSettings? requestSettings = ToRequestSettings(settings);
-        string textResponse = await _service.GenerateMessageAsync(history, requestSettings, cancelToken).ConfigureAwait(false);
-        return textResponse;
+        return _service.GenerateMessageAsync(history, requestSettings, cancelToken);
     }
 
     ChatHistory ToHistory(Prompt prompt)
@@ -72,15 +71,18 @@ public class ChatLanguageModel : ILanguageModel
         {
             return null;
         }
+
         var requestSettings = new ChatRequestSettings();
         if (settings.Temperature >= 0)
         {
             requestSettings.Temperature = settings.Temperature;
         }
+
         if (settings.MaxTokens > 0)
         {
             requestSettings.MaxTokens = settings.MaxTokens;
         }
+
         return requestSettings;
     }
 }

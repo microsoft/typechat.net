@@ -43,6 +43,7 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
         {
             Add(plugins.SemanticFunctions.Values);
         }
+
         if (plugins.NativeFunctions is not null)
         {
             Add(plugins.NativeFunctions.Values);

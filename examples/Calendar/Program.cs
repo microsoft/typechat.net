@@ -21,7 +21,7 @@ public class CalendarApp : ConsoleApp
 
     public TypeSchema Schema => _translator.Validator.Schema;
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken = default)
     {
         string request = $"{input}\n{PromptLibrary.Now()}";
         CalendarActions actions = await _translator.TranslateAsync(request, cancelToken);

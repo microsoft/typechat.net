@@ -12,6 +12,7 @@ public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
     [JsonConstructor]
     public VocabEntry(string text)
     {
+        ArgumentVerify.ThrowIfNullOrEmpty(text, nameof(text));
         _text = text;
     }
 
@@ -21,24 +22,20 @@ public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
     public string Text => _text;
 
     public int CompareTo(VocabEntry other)
-    {
-        return _text.CompareTo(other._text);
-    }
+        => Text.CompareTo(other.Text);
 
     public int CompareTo(VocabEntry other, StringComparison comparison)
-    {
-        return string.Compare(_text, other._text, comparison);
-    }
+        => string.Compare(_text, other.Text, comparison);
 
     public override bool Equals(object? obj) => _text.Equals(obj);
 
-    public bool Equals(VocabEntry other) => _text.Equals(other._text);
+    public bool Equals(VocabEntry other) => _text.Equals(other.Text);
 
     public override int GetHashCode() => _text.GetHashCode();
 
-    public override string? ToString() => _text;
+    public override string ToString() => _text;
 
-    public static implicit operator string(VocabEntry entry) => entry._text;
+    public static implicit operator string(VocabEntry entry) => entry.Text;
 
     public static implicit operator VocabEntry(string text) => new VocabEntry(text);
 }

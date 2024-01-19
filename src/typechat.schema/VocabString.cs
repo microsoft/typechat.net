@@ -5,12 +5,11 @@ namespace Microsoft.TypeChat.Schema;
 internal struct VocabString : IStringType
 {
     public VocabString()
+        : this(null, null)
     {
-        Value = null;
-        VocabName = null;
     }
 
-    public VocabString(string vocabName, string value)
+    public VocabString(string? vocabName, string? value)
     {
         VocabName = vocabName;
         Value = value;
@@ -20,7 +19,7 @@ internal struct VocabString : IStringType
     public string? Value { get; set; }
 
     [JsonPropertyName("vocab")]
-    public string VocabName { get; set; }
+    public string? VocabName { get; set; }
 
     public void ValidateConstraints(IVocab vocab, string? propertyName = null)
     {
@@ -37,4 +36,3 @@ internal struct VocabString : IStringType
         return value.Value;
     }
 }
-

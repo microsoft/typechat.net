@@ -43,12 +43,14 @@ export type ResultReference = {
     ""@ref"": number;
 };
 ";
+
     internal static readonly TypescriptSchema ProgramSchema;
 
     static ProgramTranslator()
     {
         ProgramSchema = GetProgramSchema();
     }
+
     /// <summary>
     /// Return the schema used for program synthesis
     /// The schema is currently written by hand in Typescript and is identical to the one
@@ -90,7 +92,7 @@ export type ResultReference = {
     {
         // If LLM could not translate the user request to begin with, then we can't continue
         Program? program = validationResult.Value;
-        return (program is not null) ? program.HasNotTranslated : true;
+        return program?.HasNotTranslated ?? true;
     }
 }
 
@@ -115,7 +117,7 @@ public class ProgramTranslator<TApi> : ProgramTranslator
             model,
             new ProgramValidator<TApi>(api),
             api.GenerateSchema().Schema
-        )
+            )
     {
     }
 }

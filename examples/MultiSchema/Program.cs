@@ -28,7 +28,7 @@ public class MultiSchemaApp : ConsoleApp
         InitApps();
     }
 
-    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
+    public override async Task ProcessInputAsync(string input, CancellationToken cancelToken = default)
     {
         var match = await _childApps.ClassifyRequestAsync(input, cancelToken);
         var processor = match.Value;

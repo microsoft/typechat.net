@@ -76,6 +76,7 @@ public partial class Program : IDisposable
         {
             throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson);
         }
+
         if (Delegate is not null)
         {
             return Delegate.DynamicInvoke();
@@ -104,6 +105,7 @@ public partial class Program : IDisposable
         {
             _programSource?.Dispose();
         }
+
         _programSource = null;
         Delegate = null;
     }
@@ -158,10 +160,7 @@ public partial class FunctionCall : Expression
     [JsonIgnore]
     public override JsonValueKind ValueType => JsonValueKind.Undefined;
 
-    public override string ToString()
-    {
-        return Name;
-    }
+    public override string ToString() => Name;
 }
 
 public partial class ResultReference : Expression
@@ -187,9 +186,7 @@ public partial class ValueExpr : Expression
     }
 
     public override string ToString()
-    {
-        return Value.ToString();
-    }
+        => Value.ToString();
 
     internal override Type Type
     {
@@ -207,6 +204,7 @@ public partial class ValueExpr : Expression
                 case JsonValueKind.False:
                     return typeof(bool);
             }
+
             return base.Type;
         }
     }

@@ -41,7 +41,9 @@ public class JsonResponse
     public bool HasCompleteJson { get; private set; }
 
     public bool HasJson => !string.IsNullOrEmpty(Json);
+
     public bool HasPrologue => !string.IsNullOrEmpty(Prologue);
+
     public bool HasEpilogue => !string.IsNullOrEmpty(Epilogue);
 
     // Message combines Prologue and Epilogue
@@ -53,6 +55,7 @@ public class JsonResponse
         }
         return null;
     }
+
     /// <summary>
     /// Parse the given json response into its parts
     /// </summary>
@@ -65,6 +68,7 @@ public class JsonResponse
         {
             return response;
         }
+
         int lastIndex = responseText.Length - 1;
         int iJsonStartAt = responseText.IndexOf('{');
         int iJsonEndAt = responseText.LastIndexOf('}');
@@ -82,6 +86,7 @@ public class JsonResponse
             // Prologue precedes Json
             response.Prologue = responseText.Substring(0, iJsonStartAt);
         }
+
         if (iJsonEndAt < 0)
         {
             // Incomplete json. Treat remaining text as epilogue
@@ -97,6 +102,7 @@ public class JsonResponse
             // Epilogue follows json
             response.Epilogue = responseText.Substring(iJsonEndAt, (lastIndex - iJsonEndAt) + 1);
         }
+
         return response;
     }
 }

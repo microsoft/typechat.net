@@ -23,17 +23,17 @@ public class ApiMethod
     /// <summary>
     /// Api method
     /// </summary>
-    public MethodInfo Method { get; private set; }
+    public MethodInfo Method { get; }
 
     /// <summary>
     /// Method parameters
     /// </summary>
-    public ParameterInfo[] Params { get; private set; }
+    public ParameterInfo[] Params { get; }
 
     /// <summary>
     /// Method return type
     /// </summary>
-    public ParameterInfo ReturnType { get; private set; }
+    public ParameterInfo ReturnType { get; }
 }
 
 /// <summary>
@@ -80,6 +80,7 @@ public class ApiTypeInfo
             {
                 ProgramException.ThrowFunctionNotFound(methodName);
             }
+
             return method;
         }
     }
@@ -116,27 +117,11 @@ public class ApiTypeInfo
     {
         ArgumentVerify.ThrowIfNullOrEmpty(methodName, nameof(methodName));
 
-        foreach (var typeInfo in _typeInfo)
-        {
-            if (typeInfo.Method.Name == methodName)
-            {
-                return typeInfo;
-            }
-        }
-        return null;
+        return _typeInfo.FirstOrDefault(t => t.Method.Name == methodName);
     }
 
     public bool HasAsyncMethods()
-    {
-        foreach (var typeInfo in _typeInfo)
-        {
-            if (typeInfo.ReturnType.IsAsync())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+        => _typeInfo.Any(t => t.ReturnType.IsAsync());
 
     static MethodInfo[] GetPublicMethods(Type type, BindingFlags? flags = null)
     {

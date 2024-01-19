@@ -92,7 +92,7 @@ public class MathAPIAsync : IMathAPIAsync
         return SlowResult(sum);
     }
 
-    async Task<double> SlowResult(double result)
+    private async Task<double> SlowResult(double result)
     {
         await Task.Delay(500).ConfigureAwait(false);
         return result;

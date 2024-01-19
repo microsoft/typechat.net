@@ -54,7 +54,5 @@ public class ModelInfo
     public int MaxCharCount => _maxCharCount;
 
     public static implicit operator ModelInfo(string name)
-    {
-        return new ModelInfo(name);
-    }
+        => new ModelInfo(name);
 }
