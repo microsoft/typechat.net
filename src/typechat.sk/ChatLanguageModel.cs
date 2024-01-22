@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.SemanticKernel.Connectors.OpenAI;
+
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -7,7 +9,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ChatLanguageModel : ILanguageModel
 {
-    IChatCompletion _service;
+    IChatCompletionService _service;
     ModelInfo _model;
 
     /// <summary>
@@ -54,7 +56,7 @@ public class ChatLanguageModel : ILanguageModel
     public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ChatHistory history = ToHistory(prompt);
-        ChatRequestSettings? requestSettings = ToRequestSettings(settings);
+        OpenAIPromptExecutionSettings? requestSettings = ToRequestSettings(settings);
         string textResponse = await _service.GenerateMessageAsync(history, requestSettings, cancelToken).ConfigureAwait(false);
         return textResponse;
     }
@@ -66,13 +68,13 @@ public class ChatLanguageModel : ILanguageModel
         return history;
     }
 
-    ChatRequestSettings? ToRequestSettings(TranslationSettings? settings)
+    OpenAIPromptExecutionSettings? ToRequestSettings(TranslationSettings? settings)
     {
         if (settings is null)
         {
             return null;
         }
-        var requestSettings = new ChatRequestSettings();
+        var requestSettings = new OpenAIPromptExecutionSettings();
         if (settings.Temperature >= 0)
         {
             requestSettings.Temperature = settings.Temperature;

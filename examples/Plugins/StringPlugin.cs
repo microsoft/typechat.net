@@ -1,19 +1,19 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using System.ComponentModel;
-using Microsoft.SemanticKernel.SkillDefinition;
+using Microsoft.SemanticKernel;
 
 namespace Plugins;
 
 public class StringPlugin
 {
-    [SKFunction, SKName("concat")]
+    [KernelFunction("concat")]
     [Description("Concat two strings")]
     public string Concat(string x, string y)
     {
         return x + y;
     }
 
-    [SKFunction, SKName("concatWithSep")]
+    [KernelFunction("concatWithSep")]
     [Description("Concat two strings using the separator")]
     public string ConcatWithSep(string separator, string x, string y)
     {
@@ -24,7 +24,7 @@ public class StringPlugin
         return x + y;
     }
 
-    [SKFunction, SKName("find")]
+    [KernelFunction("find")]
     [Description("Returns the lines that contain the given search pattern")]
     public string Find(string lines, string searchPattern)
     {
