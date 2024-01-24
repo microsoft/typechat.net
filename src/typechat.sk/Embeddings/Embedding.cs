@@ -55,6 +55,11 @@ public struct Embedding
         }
     }
 
+    public ReadOnlySpan<float> VectorSpan
+    {
+        get => _vector.AsSpan();
+    }
+
     /// <summary>
     /// Makes this embedding into a unit vector - in place
     /// If all embeddings have length 1, you can use DotProducts into of full Cosine Similarity. 
@@ -70,7 +75,7 @@ public struct Embedding
     /// <returns>cosine similarity</returns>
     public double CosineSimilarity(Embedding other)
     {
-        return _vector.CosineSimilarity(other._vector);
+        return TensorPrimitives.CosineSimilarity(VectorSpan, other.VectorSpan);
     }
 
     /// <summary>
@@ -80,7 +85,7 @@ public struct Embedding
     /// <returns>dot product</returns>
     public double DotProduct(Embedding other)
     {
-        return _vector.DotProduct(other._vector);
+        return TensorPrimitives.Dot(VectorSpan, other.VectorSpan);
     }
 
     /// <summary>
@@ -89,13 +94,13 @@ public struct Embedding
     /// <param name="other">embedding to compare to</param>
     /// <param name="type">distance measure type</param>
     /// <returns>score</returns>
-    public Score Similarity(Embedding other, EmbeddingDistance type)
+    public double Similarity(Embedding other, EmbeddingDistance type)
     {
         if (type == EmbeddingDistance.Dot)
         {
-            return _vector.DotProduct(other._vector);
+            return TensorPrimitives.Dot(VectorSpan, other.VectorSpan);
         }
-        return _vector.CosineSimilarity(other._vector);
+        return TensorPrimitives.CosineSimilarity(VectorSpan, other.VectorSpan);
     }
 
     public bool Equal(Embedding other)
