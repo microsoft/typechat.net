@@ -8,7 +8,7 @@ namespace Plugins;
 public class PluginApp : ConsoleApp
 {
     OpenAIConfig _config;
-    IKernel _kernel;
+    Kernel _kernel;
     PluginProgramTranslator _programTranslator;
     ProgramInterpreter _interpreter;
 
@@ -22,7 +22,7 @@ public class PluginApp : ConsoleApp
         //base.SubscribeAllEvents(_translator.Translator);
     }
 
-    public IKernel Kernel => _kernel;
+    public Kernel Kernel => _kernel;
     public string Schema => _programTranslator.Schema;
 
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
@@ -55,10 +55,10 @@ public class PluginApp : ConsoleApp
     {
         _config = Config.LoadOpenAI();
         _kernel = _config.CreateKernel();
-        _kernel.ImportSkill(new ShellPlugin());
-        _kernel.ImportSkill(new FoldersPlugin());
-        _kernel.ImportSkill(new StringPlugin());
-        _kernel.ImportSkill(new TimePlugin());
+        _kernel.Plugins.AddFromObject(new ShellPlugin());
+        _kernel.Plugins.AddFromObject(new FoldersPlugin());
+        _kernel.Plugins.AddFromObject(new StringPlugin());
+        _kernel.Plugins.AddFromObject(new TimePlugin());
     }
 
     public static async Task<int> Main(string[] args)

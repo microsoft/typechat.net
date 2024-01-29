@@ -7,72 +7,38 @@ namespace Microsoft.TypeChat;
 /// This is type information returned by the semantic kernel, but cached for fast lookup
 /// The type information defines the shape of the API: its methods, the signatures for the methods
 /// </summary>
-public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
+public class PluginApiTypeInfo : SortedList<PluginFunctionName, KernelFunctionMetadata>
 {
     /// <summary>
-    /// Use ALL Skills and Plugins registered in this kernel to initialize the Api
+    /// Use ALL Plugins registered in this kernel to initialize the Api
     /// </summary>
     /// <param name="kernel">kernel</param>
-    public PluginApiTypeInfo(IKernel kernel)
-        : this(kernel.Skills.GetFunctionsView())
+    public PluginApiTypeInfo(Kernel kernel)
+        : this(kernel.Plugins.GetFunctionsMetadata())
     {
     }
 
     /// <summary>
-    /// Create type information for the given plugins. These will form the plugin Api
+    /// Use ALL Plugins registered in this kernel to initialize the Api
     /// </summary>
-    /// <param name="plugins">plugins in this API</param>
-    public PluginApiTypeInfo(FunctionsView plugins = null)
-        : base()
+    /// <param name="plugins">plugins to use</param>
+    public PluginApiTypeInfo(IEnumerable<KernelFunctionMetadata> plugins)
+    {
+        Add(plugins);
+    }
+
+    /// <summary>
+    /// Add a collection of Plugins to this Api
+    /// </summary>
+    /// <param name="plugins">plugins to register</param>
+    public void Add(IEnumerable<KernelFunctionMetadata> plugins)
     {
         if (plugins is not null)
         {
-            Add(plugins);
-        }
-    }
-
-    /// <summary>
-    /// Add a plugin to the Api
-    /// </summary>
-    /// <param name="plugins">plugin to register</param>
-    public void Add(FunctionsView plugins)
-    {
-        ArgumentVerify.ThrowIfNull(plugins, nameof(plugins));
-
-        if (plugins.SemanticFunctions is not null)
-        {
-            Add(plugins.SemanticFunctions.Values);
-        }
-        if (plugins.NativeFunctions is not null)
-        {
-            Add(plugins.NativeFunctions.Values);
-        }
-    }
-
-    /// <summary>
-    /// Add a collection of Skills to this Api
-    /// </summary>
-    /// <param name="plugins">plugins to register</param>
-    public void Add(IEnumerable<IEnumerable<FunctionView>> plugins)
-    {
-        ArgumentVerify.ThrowIfNull(plugins, nameof(plugins));
-        foreach (var plugin in plugins)
-        {
-            Add(plugin);
-        }
-    }
-
-    /// <summary>
-    /// Add a collection of semantic kernel functions to this Api
-    /// </summary>
-    /// <param name="plugin">plugin</param>
-    public void Add(IEnumerable<FunctionView> plugin)
-    {
-        ArgumentVerify.ThrowIfNull(plugin, nameof(plugin));
-
-        foreach (var function in plugin)
-        {
-            Add(function);
+            foreach (var plugin in plugins)
+            {
+                Add(plugin);
+            }
         }
     }
 
@@ -80,7 +46,7 @@ public class PluginApiTypeInfo : SortedList<PluginFunctionName, FunctionView>
     /// Add a function to the Api
     /// </summary>
     /// <param name="function">function to add</param>
-    public void Add(FunctionView function)
+    public void Add(KernelFunctionMetadata function)
     {
         Add(function.ToPluginName(), function);
     }

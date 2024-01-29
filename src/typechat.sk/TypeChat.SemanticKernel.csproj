@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="8.1.0" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.2.0" />
     <PackageReference Include="System.Numerics.Tensors" Version="8.0.0" />
   </ItemGroup>
@@ -28,6 +29,12 @@
   <PropertyGroup>
     <PackageId>$(AssemblyName)</PackageId>
     <Description>TypeChat.SemanticKernel supplies bindings for Language models, Plugins and Embeddings to TypeChat.NET</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;SKEXP0001;SKEXP0011</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;SKEXP0001;SKEXP0011</NoWarn>
   </PropertyGroup>
 
 </Project>

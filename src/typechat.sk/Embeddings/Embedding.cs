@@ -55,6 +55,7 @@ public struct Embedding
         }
     }
 
+    [JsonIgnore]
     public ReadOnlySpan<float> VectorSpan
     {
         get => _vector.AsSpan();
@@ -66,8 +67,13 @@ public struct Embedding
     /// </summary>
     public void NormalizeInPlace()
     {
-        _vector.NormalizeInPlace();
+        var length = EuclideanLength(_vector);
+        for (int i = 0; i < _vector.Length; ++i)
+        {
+            _vector[i] = (float)((double) _vector[i] / length);
+        }
     }
+
     /// <summary>
     /// Compute the cosine similarity between this and other
     /// </summary>
@@ -101,6 +107,11 @@ public struct Embedding
             return TensorPrimitives.Dot(VectorSpan, other.VectorSpan);
         }
         return TensorPrimitives.CosineSimilarity(VectorSpan, other.VectorSpan);
+    }
+
+    static double EuclideanLength(float[] vector)
+    {
+        return Math.Sqrt(TensorPrimitives.Dot(vector, vector));
     }
 
     public bool Equal(Embedding other)

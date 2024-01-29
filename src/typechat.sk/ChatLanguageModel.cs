@@ -1,11 +1,9 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.Connectors.OpenAI;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// A LanguageModel that uses IChatCompletion AI models
+/// A LanguageModel that uses IChatCompletionService AI models
 /// </summary>
 public class ChatLanguageModel : ILanguageModel
 {
@@ -24,17 +22,17 @@ public class ChatLanguageModel : ILanguageModel
         config.Validate();
 
         model ??= config.Model;
-        IKernel kernel = config.CreateKernel();
-        _service = kernel.GetService<IChatCompletion>(model.Name);
+        Kernel kernel = config.CreateKernel();
+        _service = kernel.GetRequiredService<IChatCompletionService>(model.Name);
         _model = model;
     }
 
     /// <summary>
-    /// Create a new language model using the supplied IChatCompletion service
+    /// Create a new language model using the supplied IChatCompletionService service
     /// </summary>
     /// <param name="service"></param>
     /// <param name="model"></param>
-    public ChatLanguageModel(IChatCompletion service, ModelInfo model)
+    public ChatLanguageModel(IChatCompletionService service, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;

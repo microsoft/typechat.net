@@ -191,10 +191,10 @@ var model = new LanguageModel(config);
 ```
 
 ## Using Semantic Kernel
-You can also access a LanguageModel using the SemanticKernel IKernel object you created using a KernelBuilder.
+You can also access a LanguageModel using the SemanticKernel Kernel object you created using a KernelBuilder.
 ```
 const string modelName = "gpt-35-turbo";
-new ChatLanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
+new ChatLanguageModel(_kernel.GetService<IChatCompletionService>(modelName), modelName);
 ```
 
 ## Using your own client

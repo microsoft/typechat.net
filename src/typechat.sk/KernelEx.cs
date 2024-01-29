@@ -1,7 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel;
-using Microsoft.SemanticKernel.Reliability.Basic;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http.Resilience;
+using Microsoft.SemanticKernel.TextGeneration;
 
 namespace Microsoft.TypeChat;
 
@@ -13,14 +14,14 @@ public static class KernelEx
     /// </summary>
     /// <param name="config">OpenAI configuration</param>
     /// <returns>A kernel object</returns>
-    public static IKernel CreateKernel(this OpenAIConfig config)
+    public static Kernel CreateKernel(this OpenAIConfig config)
     {
         // Create kernel
-        KernelBuilder kb = new KernelBuilder();
+        IKernelBuilder kb = Kernel.CreateBuilder();
         kb.WithChatModel(config.Model, config)
           .WithRetry(config);
 
-        IKernel kernel = kb.Build();
+        Kernel kernel = kb.Build();
         return kernel;
     }
 
@@ -80,13 +81,17 @@ public static class KernelEx
     public static IKernelBuilder WithRetry(this IKernelBuilder builder, OpenAIConfig config)
     {
         TimeSpan retryPause = TimeSpan.FromMilliseconds(config.MaxPauseMs);
-        BasicRetryConfig retryConfig = new BasicRetryConfig
+
+        builder.Services.ConfigureHttpClientDefaults(c =>
         {
-            MaxRetryDelay = retryPause,
-            MaxRetryCount = config.MaxRetries,
-            UseExponentialBackoff = false
-        };
-        return builder.WithRetryBasic(retryConfig);
+            // Use a standard resiliency policy, augmented to retry 5 times
+            c.AddStandardResilienceHandler().Configure(o =>
+            {
+                o.Retry.MaxRetryAttempts = config.MaxRetries;
+                o.Retry.Delay = retryPause;
+            });
+        });
+        return builder;
     }
 
     /// <summary>
@@ -115,11 +120,11 @@ public static class KernelEx
     /// <param name="kernel">semantic kernel object</param>
     /// <param name="model">information about the model to use</param>
     /// <returns>LanguageModel object</returns>
-    public static ChatLanguageModel ChatLanguageModel(this IKernel kernel, ModelInfo model)
+    public static ChatLanguageModel ChatLanguageModel(this Kernel kernel, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
 
-        return new ChatLanguageModel(kernel.GetService<IChatCompletion>(model.Name), model);
+        return new ChatLanguageModel(kernel.GetRequiredService<IChatCompletionService>(model.Name), model);
     }
 
     /// <summary>
@@ -128,11 +133,11 @@ public static class KernelEx
     /// <param name="kernel">semantic kernel object</param>
     /// <param name="model">information about the model to use</param>
     /// <returns>TextCompletionModel</returns>
-    public static TextCompletionModel TextCompletionModel(this IKernel kernel, ModelInfo model)
+    public static TextCompletionModel TextCompletionModel(this Kernel kernel, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
 
-        return new TextCompletionModel(kernel.GetService<ITextCompletion>(model.Name), model);
+        return new TextCompletionModel(kernel.GetRequiredService<ITextGenerationService>(model.Name), model);
     }
 
     public static async Task<string> GenerateMessageAsync(this IChatCompletionService service, ChatHistory history, OpenAIPromptExecutionSettings settings, CancellationToken cancelToken)
@@ -140,5 +145,4 @@ public static class KernelEx
         var content = await service.GetChatMessageContentAsync(history, settings).ConfigureAwait(false);
         return content.Content;
     }
-
 }
