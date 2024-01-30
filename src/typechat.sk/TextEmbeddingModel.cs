@@ -22,8 +22,7 @@ public class TextEmbeddingModel
         config.Validate();
 
         IKernelBuilder kb = Kernel.CreateBuilder();
-        kb.WithEmbeddingModel(config.Model, config)
-          .WithRetry(config);
+        kb.WithEmbeddingModel(config.Model, config);
 
         _kernel = kb.Build();
         modelInfo ??= config.Model;

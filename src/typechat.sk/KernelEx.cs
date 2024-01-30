@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Http.Resilience;
 using Microsoft.SemanticKernel.TextGeneration;
 
 namespace Microsoft.TypeChat;
@@ -18,8 +16,7 @@ public static class KernelEx
     {
         // Create kernel
         IKernelBuilder kb = Kernel.CreateBuilder();
-        kb.WithChatModel(config.Model, config)
-          .WithRetry(config);
+        kb.WithChatModel(config.Model, config);
 
         Kernel kernel = kb.Build();
         return kernel;
@@ -69,28 +66,6 @@ public static class KernelEx
         {
             builder = builder.AddOpenAIChatCompletion(modelName, config.ApiKey, config.Organization, modelName, client);
         }
-        return builder;
-    }
-
-    /// <summary>
-    /// Configure the kernel with retry settings defined in the OpenAI config
-    /// </summary>
-    /// <param name="builder">builder</param>
-    /// <param name="config">OpenAI configuration</param>
-    /// <returns>builder</returns>
-    public static IKernelBuilder WithRetry(this IKernelBuilder builder, OpenAIConfig config)
-    {
-        TimeSpan retryPause = TimeSpan.FromMilliseconds(config.MaxPauseMs);
-
-        builder.Services.ConfigureHttpClientDefaults(c =>
-        {
-            // Use a standard resiliency policy, augmented to retry 5 times
-            c.AddStandardResilienceHandler().Configure(o =>
-            {
-                o.Retry.MaxRetryAttempts = config.MaxRetries;
-                o.Retry.Delay = retryPause;
-            });
-        });
         return builder;
     }
 

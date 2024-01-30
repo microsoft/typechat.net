@@ -31,12 +31,14 @@ internal static class MetadataEx
 
     internal static PluginFunctionName ToPluginName(this KernelFunctionMetadata function)
     {
-        // Temporary hack to make pretty printing possible
+        /*
         if (function.IsGlobal())
         {
             return new PluginFunctionName(function.Name);
         }
         return new PluginFunctionName(function.PluginName, function.Name);
+        */
+        return new PluginFunctionName(function.Name);
     }
 
     internal static bool IsNullable(this KernelParameterMetadata param)

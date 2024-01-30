@@ -70,7 +70,7 @@ public struct Embedding
         var length = EuclideanLength(_vector);
         for (int i = 0; i < _vector.Length; ++i)
         {
-            _vector[i] = (float)((double) _vector[i] / length);
+            _vector[i] = (float)((double)_vector[i] / length);
         }
     }
 
