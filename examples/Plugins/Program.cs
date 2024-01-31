@@ -19,7 +19,7 @@ public class PluginApp : ConsoleApp
         _programTranslator.Translator.MaxRepairAttempts = 2;
         _interpreter = new ProgramInterpreter();
         // Uncomment to see ALL raw messages to and from the AI
-        //base.SubscribeAllEvents(_translator.Translator);
+        // base.SubscribeAllEvents(_programTranslator.Translator);
     }
 
     public Kernel Kernel => _kernel;

@@ -108,7 +108,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
             if (expectedType is not null)
             {
                 Type exprType = ParameterTypeFromExpr(args[i]);
-                if (expectedType != exprType)
+                if (expectedType != exprType && exprType != typeof(object))
                 {
                     ThrowTypeMismatch(call, parameters[i].Name, expectedType, exprType);
                 }

@@ -81,7 +81,7 @@ public class PluginApi
         KernelArguments kernelArgs = new KernelArguments();
         for (int i = 0; i < args.Length; ++i)
         {
-            kernelArgs[parameters[i].Name] = args[i].ToString();
+            kernelArgs[parameters[i].Name] = args[i];
         }
         var result = await function.InvokeAsync(_kernel, kernelArgs);
         return result.GetValue<dynamic>();
