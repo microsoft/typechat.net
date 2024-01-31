@@ -49,7 +49,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
 
         var translator = new JsonTranslator<Drawing>(new ChatLanguageModel(_config.OpenAI));
         string request = "Add a circle of radius 4.5 at 30, 30 and\n" +
-                         "Add a retangle at 5, 5 with height 10 and width 15";
+                         "Add a rectangle at 5, 5 with height 10 and width 15";
 
         var canvas = await translator.TranslateAsync(request);
         Assert.True(canvas.Shapes.Length == 2);

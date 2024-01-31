@@ -69,7 +69,9 @@ program.Run(api);
 TypeChat.SemanticKernel include classes for:
 * **Json Programs for Plugins**: turn registered plugins into **APIs** that Json programs can target. See the [Plugins Example](examples/Plugins/Program.cs).
 * Language model and embeddings access using Semantic Kernel. 
- 
+
+TypeChat.SemanticKernel currently uses a pre-release version of Semantic Kernel. An upgrade to Semantic Kernel V1.0 is in progress in the [sk_upgrade branch](https://github.com/microsoft/typechat.net/tree/umeshma/sk_upgrade). 
+
 # Getting Started 
 
 ## Prerequisite: OpenAI
