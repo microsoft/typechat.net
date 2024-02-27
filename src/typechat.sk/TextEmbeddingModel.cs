@@ -6,7 +6,8 @@ namespace Microsoft.TypeChat;
 
 public class TextEmbeddingModel
 {
-    ITextEmbeddingGeneration _model;
+    Kernel _kernel;
+    ITextEmbeddingGenerationService _model;
     ModelInfo _modelInfo;
 
     /// <summary>
@@ -20,13 +21,12 @@ public class TextEmbeddingModel
         ArgumentVerify.ThrowIfNull(config, nameof(config));
         config.Validate();
 
-        KernelBuilder kb = new KernelBuilder();
-        kb.WithEmbeddingModel(config.Model, config)
-          .WithRetry(config);
+        IKernelBuilder kb = Kernel.CreateBuilder();
+        kb.WithEmbeddingModel(config.Model, config);
 
-        IKernel kernel = kb.Build();
+        _kernel = kb.Build();
         modelInfo ??= config.Model;
-        _model = kernel.GetService<ITextEmbeddingGeneration>(modelInfo.Name);
+        _model = _kernel.GetRequiredService<ITextEmbeddingGenerationService>(modelInfo.Name);
         _modelInfo = modelInfo;
     }
 
@@ -35,7 +35,7 @@ public class TextEmbeddingModel
     /// </summary>
     /// <param name="service"></param>
     /// <param name="modelInfo">information about the model to create</param>
-    public TextEmbeddingModel(ITextEmbeddingGeneration service, ModelInfo? modelInfo)
+    public TextEmbeddingModel(ITextEmbeddingGenerationService service, ModelInfo? modelInfo)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _model = service;
@@ -55,7 +55,7 @@ public class TextEmbeddingModel
     /// <returns></returns>
     public Task<Embedding> GenerateEmbeddingAsync(string text, CancellationToken cancelToken = default)
     {
-        return _model.GenerateEmbeddingAsync(text, cancelToken);
+        return _model.GenerateEmbeddingAsync(text, _kernel, cancelToken);
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public class TextEmbeddingModel
     /// <returns></returns>
     public async Task<Embedding[]> GenerateEmbeddingsAsync(IList<string> texts, CancellationToken cancelToken = default)
     {
-        var results = await _model.GenerateEmbeddingsAsync(texts, cancelToken);
+        var results = await _model.GenerateEmbeddingsAsync(texts, _kernel, cancelToken);
         Embedding[] embeddings = new Embedding[results.Count];
         for (int i = 0; i < embeddings.Length; ++i)
         {

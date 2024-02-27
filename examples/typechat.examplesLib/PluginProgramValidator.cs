@@ -1,6 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.SkillDefinition;
+using Microsoft.SemanticKernel;
 
 namespace Microsoft.TypeChat;
 
@@ -36,7 +36,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         {
             // Verify function exists
             var name = PluginFunctionName.Parse(functionCall.Name);
-            FunctionView typeInfo = _typeInfo[name];
+            KernelFunctionMetadata typeInfo = _typeInfo[name];
 
             // Verify that parameter counts etc match
             ValidateArgs(functionCall, typeInfo, functionCall.Args);
@@ -53,7 +53,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         ProgramException.ThrowFunctionNotFound(functionCall.Name);
     }
 
-    void ValidateArgs(FunctionCall call, FunctionView typeInfo, Expression[] args)
+    void ValidateArgs(FunctionCall call, KernelFunctionMetadata typeInfo, Expression[] args)
     {
         // Verify arg counts
         CheckArgCount(call, typeInfo, args);
@@ -62,7 +62,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         TypeCheckArgs(call, typeInfo.Parameters, args);
     }
 
-    int GetRequiredArgCount(IList<ParameterView> parameters)
+    int GetRequiredArgCount(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         int requiredCount = 0;
 
@@ -80,7 +80,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         return requiredCount;
     }
 
-    void CheckArgCount(FunctionCall call, FunctionView typeInfo, Expression[] args)
+    void CheckArgCount(FunctionCall call, KernelFunctionMetadata typeInfo, Expression[] args)
     {
         // Just checks if the right number of parameters were supplied
         int requiredArgCount = (typeInfo.Parameters is not null) ? GetRequiredArgCount(typeInfo.Parameters) : 0;
@@ -98,17 +98,17 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         }
     }
 
-    void TypeCheckArgs(FunctionCall call, IList<ParameterView> parameters, Expression[] args)
+    void TypeCheckArgs(FunctionCall call, IReadOnlyList<KernelParameterMetadata> parameters, Expression[] args)
     {
         Debug.Assert(args.Length <= parameters.Count);
 
         for (int i = 0; i < args.Length; ++i)
         {
-            ParameterViewType expectedType = parameters[i].Type;
+            Type expectedType = parameters[i].ParameterType;
             if (expectedType is not null)
             {
-                ParameterViewType exprType = ParameterTypeFromExpr(args[i]);
-                if (expectedType != exprType)
+                Type exprType = ParameterTypeFromExpr(args[i]);
+                if (expectedType != exprType && exprType != typeof(object))
                 {
                     ThrowTypeMismatch(call, parameters[i].Name, expectedType, exprType);
                 }
@@ -116,37 +116,37 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         }
     }
 
-    ParameterViewType ParameterTypeFromExpr(Expression expr)
+    Type ParameterTypeFromExpr(Expression expr)
     {
         switch (expr.ValueType)
         {
             default:
-                return ParameterViewType.String;
+                return typeof(string);
 
             case JsonValueKind.True:
             case JsonValueKind.False:
-                return ParameterViewType.Boolean;
+                return typeof(bool);
 
             case JsonValueKind.String:
-                return ParameterViewType.String;
+                return typeof(string);
 
             case JsonValueKind.Number:
-                return ParameterViewType.Number;
+                return typeof(double);
 
             case JsonValueKind.Array:
-                return ParameterViewType.Array;
+                return typeof(Array);
 
             case JsonValueKind.Object:
-                return ParameterViewType.Object;
+                return typeof(object);
         }
     }
 
-    bool IsOptional(ParameterView parameter)
+    bool IsOptional(KernelParameterMetadata parameter)
     {
-        return (!string.IsNullOrEmpty(parameter.DefaultValue));
+        return parameter.DefaultValue is null;
     }
 
-    void ThrowTypeMismatch(FunctionCall call, string paramName, ParameterViewType expectedType, ParameterViewType actualType)
+    void ThrowTypeMismatch(FunctionCall call, string paramName, Type expectedType, Type actualType)
     {
         throw new ProgramException(
             ProgramException.ErrorCode.TypeMismatch,

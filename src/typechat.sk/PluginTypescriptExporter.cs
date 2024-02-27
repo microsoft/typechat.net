@@ -47,7 +47,7 @@ public class PluginTypescriptExporter
         _tsWriter.Flush();
     }
 
-    void Export(PluginFunctionName pluginName, FunctionView function)
+    void Export(PluginFunctionName pluginName, KernelFunctionMetadata function)
     {
         ArgumentVerify.ThrowIfNull(function, nameof(function));
 
@@ -59,7 +59,7 @@ public class PluginTypescriptExporter
         _tsWriter.EndMethodDeclare(Typescript.Types.String);
     }
 
-    void Export(IList<ParameterView> parameters)
+    void Export(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         if (parameters is null)
         {
@@ -75,7 +75,7 @@ public class PluginTypescriptExporter
         }
     }
 
-    void ExportDetailed(IList<ParameterView> parameters)
+    void ExportDetailed(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         _tsWriter.PushIndent();
         _tsWriter.EOL();
@@ -98,7 +98,7 @@ public class PluginTypescriptExporter
         _tsWriter.SOL();
     }
 
-    void ExportPlain(IList<ParameterView> parameters)
+    void ExportPlain(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         for (int i = 0; i < parameters.Count; ++i)
         {
@@ -106,14 +106,14 @@ public class PluginTypescriptExporter
         }
     }
 
-    void Export(ParameterView param, int argNumber, int argCount)
+    void Export(KernelParameterMetadata param, int argNumber, int argCount)
     {
-        bool isArray = (param.Type == ParameterViewType.Array);
+        bool isArray = param.ParameterType.IsArray;
         bool isNullable = param.IsNullable();
-        _tsWriter.Parameter(param.Name, DataType(param.Type), argNumber, argCount, isArray, isNullable);
+        _tsWriter.Parameter(param.Name, DataType(param.ParameterType), argNumber, argCount, isArray, isNullable);
     }
 
-    bool HasDescriptions(IList<ParameterView> parameters)
+    bool HasDescriptions(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         for (int i = 0; i < parameters.Count; ++i)
         {
@@ -125,29 +125,14 @@ public class PluginTypescriptExporter
         return false;
     }
 
-    string DataType(ParameterViewType? pType)
+    string DataType(Type type)
     {
-        string type = Typescript.Types.String;
-        if (pType is not null)
+        string? dataType = Typescript.Types.ToPrimitive(type);
+        if (dataType is null)
         {
-            if (pType == ParameterViewType.String)
-            {
-                type = Typescript.Types.String;
-            }
-            else if (pType == ParameterViewType.Number)
-            {
-                type = Typescript.Types.Number;
-            }
-            else if (pType == ParameterViewType.Boolean)
-            {
-                type = Typescript.Types.Boolean;
-            }
-            else if (pType == ParameterViewType.Object)
-            {
-                type = Typescript.Types.Any;
-            }
+            dataType = Typescript.Types.Any;
         }
-        return type;
+        return dataType;
     }
 
     PluginTypescriptExporter SOL() { _tsWriter.SOL(); return this; }
