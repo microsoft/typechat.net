@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 
 namespace Restaurant;
 
@@ -28,7 +29,7 @@ public class RestaurantApp : ConsoleApp
 
     void PrintOrder(Order order)
     {
-        if (order.Items != null)
+        if (order.Items is not null)
         {
             (string printedOrder, string log) = order.ProcessOrder();
             Console.WriteLine();

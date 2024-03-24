@@ -1,5 +1,4 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
-using System.Runtime.CompilerServices;
 
 namespace Microsoft.TypeChat;
 
@@ -17,7 +16,7 @@ internal static class ArgumentVerify
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ThrowIfNull(object argument, string paramName)
     {
-        if (argument == null)
+        if (argument is null)
         {
             throw new ArgumentNullException(paramName);
         }
@@ -30,6 +29,16 @@ internal static class ArgumentVerify
         if (string.IsNullOrEmpty(argument))
         {
             throw new ArgumentException("The value cannot be an empty string.", paramName);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void ThrowIfNullOrEmpty<T>(IList<T> array, string paramName)
+    {
+        ThrowIfNull(array, paramName);
+        if (array.Count == 0)
+        {
+            throw new ArgumentException("The list cannot be empty.", paramName);
         }
     }
 }

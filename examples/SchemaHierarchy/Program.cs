@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.TypeChat;
-using Sentiment;
-using CoffeeShop;
 using Calendar;
-using Restaurant;
+using CoffeeShop;
 using HealthData;
+using Microsoft.TypeChat;
+using Restaurant;
+using Sentiment;
 
 namespace SchemaHierarchy;
 
@@ -23,10 +23,10 @@ public class SchemaHierarchyApp : ConsoleApp
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
         object result = await _translator.TranslateToObjectAsync(input, cancelToken);
-        if (result != null)
+        if (result is not null)
         {
             Console.WriteLine($"{result.GetType()}");
-            Console.WriteLine(Json.Stringify(result));
+            Console.WriteLine(Microsoft.TypeChat.Json.Stringify(result));
         }
     }
 

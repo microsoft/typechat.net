@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using System.Text;
 using System.Text.Json.Serialization;
-using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
 namespace Restaurant;
@@ -19,7 +18,7 @@ public partial class Order
         StringBuilder order = new StringBuilder();
         StringBuilder log = new StringBuilder();
 
-        if (Items != null)
+        if (Items is not null)
         {
             for (int i = 0; i < Items.Length; ++i)
             {
@@ -41,7 +40,7 @@ public abstract partial class OrderItem
 
     protected string[] ConcatItems(string[]? items, IVocab vocab)
     {
-        IEnumerable<string> newItems = (items != null) ?
+        IEnumerable<string> newItems = (items is not null) ?
                                         items.Concat(vocab.Strings()) :
                                         vocab.Strings();
         return newItems.Distinct().ToArray();
@@ -57,7 +56,7 @@ public abstract partial class OrderItem
 
     protected void PrintAddedItems(string[] addedItems, IVocab vocab, StringBuilder order, StringBuilder log)
     {
-        if (addedItems != null && addedItems.Length > 0)
+        if (addedItems is not null && addedItems.Length > 0)
         {
             int toppingCount = 0;
             foreach (var addition in addedItems)
@@ -78,7 +77,7 @@ public abstract partial class OrderItem
 
     protected void PrintRemovedItems(string[] removedItems, bool hasAdded, StringBuilder order, StringBuilder log)
     {
-        if (removedItems != null && removedItems.Length > 0)
+        if (removedItems is not null && removedItems.Length > 0)
         {
             for (int i = 0; i < removedItems.Length; ++i)
             {
@@ -100,7 +99,7 @@ public partial class UnknownItem : OrderItem
 public partial class Pizza : LineItem
 {
     [JsonIgnore]
-    public bool HasToppings => (AddedToppings != null && AddedToppings.Length > 0);
+    public bool HasToppings => (AddedToppings is not null && AddedToppings.Length > 0);
 
     public override void Process()
     {
@@ -110,11 +109,11 @@ public partial class Pizza : LineItem
         }
         Size ??= "large";
         var vocabType = RestaurantVocabs.NamedPizzas.Get(Name);
-        if (vocabType != null)
+        if (vocabType is not null)
         {
             AddedToppings = ConcatItems(AddedToppings, vocabType.Vocab);
         }
-        if (RemovedToppings != null)
+        if (RemovedToppings is not null)
         {
             RemoveItems(AddedToppings, RemovedToppings);
         }
@@ -132,7 +131,7 @@ public partial class Pizza : LineItem
 public partial class Salad : LineItem
 {
     [JsonIgnore]
-    public bool HasAdditions => (AddedIngredients != null && AddedIngredients.Length > 0);
+    public bool HasAdditions => (AddedIngredients is not null && AddedIngredients.Length > 0);
 
     public override void Print(StringBuilder order, StringBuilder log)
     {

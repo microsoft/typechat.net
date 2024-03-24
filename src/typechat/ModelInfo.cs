@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Reflection;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -36,16 +34,19 @@ public class ModelInfo
     /// </summary>
     [JsonPropertyName("name")]
     public string Name => _name;
+
     /// <summary>
     /// Maximum tokens allowed by this model
     /// </summary>
     [JsonPropertyName("maxTokens")]
     public int MaxTokens => _maxTokens;
+
     /// <summary>
     /// Allows a simple way to estimate # of tokens from # of characters
     /// </summary>
     [JsonPropertyName("tokenMultiple")]
     public double TokenToCharMultiple => _tokenToCharMultiple;
+
     /// <summary>
     /// An estimate of the max # of characters - input + output - that the model will accept
     /// </summary>

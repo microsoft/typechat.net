@@ -10,7 +10,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramInterpreter
 {
-    static readonly dynamic[] EmptyArray = new dynamic[0];
+    static readonly dynamic[] s_emptyArray = new dynamic[0];
 
     List<dynamic> _results;
     Func<string, dynamic[], dynamic>? _callHandler;
@@ -156,7 +156,7 @@ public class ProgramInterpreter
     {
         if (expressions.Length == 0)
         {
-            return EmptyArray;
+            return s_emptyArray;
         }
 
         dynamic[] args = new dynamic[expressions.Length];
@@ -171,7 +171,7 @@ public class ProgramInterpreter
     {
         if (expressions.Length == 0)
         {
-            return EmptyArray;
+            return s_emptyArray;
         }
 
         dynamic[] args = new dynamic[expressions.Length];
@@ -215,7 +215,7 @@ public class ProgramInterpreter
         foreach (var property in expr.Value)
         {
             dynamic result = Eval(property.Value);
-            JsonNode node = result;
+            JsonNode node = ToJsonNode(result);
             jsonObject.Add(property.Key, node);
         }
         return jsonObject;
@@ -227,7 +227,7 @@ public class ProgramInterpreter
         foreach (var property in expr.Value)
         {
             dynamic result = await EvalAsync(property.Value).ConfigureAwait(false);
-            JsonNode node = result;
+            JsonNode node = ToJsonNode(result);
             jsonObj.Add(property.Key, node);
         }
         return jsonObj;
@@ -241,4 +241,16 @@ public class ProgramInterpreter
         }
         return _results[expr.Ref];
     }
+
+    /// <summary>
+    /// obj can be one of:
+    /// - dynamic[]  (returned by ArrayExpr)
+    /// - dynamic (returned by valueExpr and ResultReference)
+    /// - JsonObject (returned by ObjectExpr)
+    ///
+    /// dynamic[] must be converted to a JsonArray
+    /// </summary>
+    /// <param name="obj">obj to convert</param>
+    /// <returns></returns>
+    public static JsonNode ToJsonNode(dynamic obj) => JsonNodeEx.ToJsonNode(obj);
 }

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.AI.TextCompletion;
-using Microsoft.SemanticKernel.Reliability;
-using Microsoft.SemanticKernel.Reliability.Basic;
+using Microsoft.SemanticKernel.TextGeneration;
 
 namespace Microsoft.TypeChat;
 
@@ -14,14 +12,13 @@ public static class KernelEx
     /// </summary>
     /// <param name="config">OpenAI configuration</param>
     /// <returns>A kernel object</returns>
-    public static IKernel CreateKernel(this OpenAIConfig config)
+    public static Kernel CreateKernel(this OpenAIConfig config)
     {
         // Create kernel
-        KernelBuilder kb = new KernelBuilder();
-        kb.WithChatModel(config.Model, config)
-          .WithRetry(config);
+        IKernelBuilder kb = Kernel.CreateBuilder();
+        kb.WithChatModel(config.Model, config);
 
-        IKernel kernel = kb.Build();
+        Kernel kernel = kb.Build();
         return kernel;
     }
 
@@ -32,7 +29,7 @@ public static class KernelEx
     /// <param name="config">OpenAI configuration</param>
     /// <param name="modelNames">names of chat models</param>
     /// <returns>kernel builder</returns>
-    public static KernelBuilder WithChatModels(this KernelBuilder builder, OpenAIConfig config, params string[] modelNames)
+    public static IKernelBuilder WithChatModels(this IKernelBuilder builder, OpenAIConfig config, params string[] modelNames)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
 
@@ -51,7 +48,7 @@ public static class KernelEx
     /// <param name="modelName">name of the model to use</param>
     /// <param name="config">OpenAI configuration for the model</param>
     /// <returns>builder</returns>
-    public static KernelBuilder WithChatModel(this KernelBuilder builder, string modelName, OpenAIConfig config)
+    public static IKernelBuilder WithChatModel(this IKernelBuilder builder, string modelName, OpenAIConfig config)
     {
         ArgumentVerify.ThrowIfNull(config, nameof(config));
 
@@ -63,31 +60,13 @@ public static class KernelEx
         }
         if (config.Azure)
         {
-            builder = builder.WithAzureChatCompletionService(modelName, config.Endpoint, config.ApiKey, true, modelName, false, client);
+            builder = builder.AddAzureOpenAIChatCompletion(modelName, config.Endpoint, config.ApiKey, modelName, modelName, client);
         }
         else
         {
-            builder = builder.WithOpenAIChatCompletionService(modelName, config.ApiKey, config.Organization, modelName, true, false, client);
+            builder = builder.AddOpenAIChatCompletion(modelName, config.ApiKey, config.Organization, modelName, client);
         }
         return builder;
-    }
-
-    /// <summary>
-    /// Configure the kernel with retry settings defined in the OpenAI config
-    /// </summary>
-    /// <param name="builder">builder</param>
-    /// <param name="config">OpenAI configuration</param>
-    /// <returns>builder</returns>
-    public static KernelBuilder WithRetry(this KernelBuilder builder, OpenAIConfig config)
-    {
-        TimeSpan retryPause = TimeSpan.FromMilliseconds(config.MaxPauseMs);
-        BasicRetryConfig retryConfig = new BasicRetryConfig
-        {
-            MaxRetryDelay = retryPause,
-            MaxRetryCount = config.MaxRetries,
-            UseExponentialBackoff = false
-        };
-        return builder.WithRetryBasic(retryConfig);
     }
 
     /// <summary>
@@ -97,15 +76,15 @@ public static class KernelEx
     /// <param name="modelName">model to use</param>
     /// <param name="config">OpenAI configuration</param>
     /// <returns>builder</returns>
-    public static KernelBuilder WithEmbeddingModel(this KernelBuilder builder, string modelName, OpenAIConfig config)
+    public static IKernelBuilder WithEmbeddingModel(this IKernelBuilder builder, string modelName, OpenAIConfig config)
     {
         if (config.Azure)
         {
-            builder = builder.WithAzureTextEmbeddingGenerationService(modelName, config.Endpoint, config.ApiKey, modelName);
+            builder = builder.AddAzureOpenAITextEmbeddingGeneration(modelName, config.Endpoint, config.ApiKey, modelName);
         }
         else
         {
-            builder = builder.WithOpenAITextEmbeddingGenerationService(modelName, config.ApiKey, config.Organization, modelName);
+            builder = builder.AddOpenAITextEmbeddingGeneration(modelName, config.ApiKey, config.Organization, modelName);
         }
         return builder;
     }
@@ -116,11 +95,11 @@ public static class KernelEx
     /// <param name="kernel">semantic kernel object</param>
     /// <param name="model">information about the model to use</param>
     /// <returns>LanguageModel object</returns>
-    public static LanguageModel LanguageModel(this IKernel kernel, ModelInfo model)
+    public static ChatLanguageModel ChatLanguageModel(this Kernel kernel, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
 
-        return new LanguageModel(kernel.GetService<IChatCompletion>(model.Name), model);
+        return new ChatLanguageModel(kernel.GetRequiredService<IChatCompletionService>(model.Name), model);
     }
 
     /// <summary>
@@ -129,10 +108,16 @@ public static class KernelEx
     /// <param name="kernel">semantic kernel object</param>
     /// <param name="model">information about the model to use</param>
     /// <returns>TextCompletionModel</returns>
-    public static TextCompletionModel TextCompletionModel(this IKernel kernel, ModelInfo model)
+    public static TextCompletionModel TextCompletionModel(this Kernel kernel, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(model, nameof(model));
 
-        return new TextCompletionModel(kernel.GetService<ITextCompletion>(model.Name), model);
+        return new TextCompletionModel(kernel.GetRequiredService<ITextGenerationService>(model.Name), model);
+    }
+
+    public static async Task<string> GenerateMessageAsync(this IChatCompletionService service, ChatHistory history, OpenAIPromptExecutionSettings settings, CancellationToken cancelToken)
+    {
+        var content = await service.GetChatMessageContentAsync(history, settings).ConfigureAwait(false);
+        return content.Content;
     }
 }

@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Diagnostics;
-
 namespace Microsoft.TypeChat.Embeddings;
 
 /// <summary>
@@ -57,14 +55,25 @@ public struct Embedding
         }
     }
 
+    [JsonIgnore]
+    public ReadOnlySpan<float> VectorSpan
+    {
+        get => _vector.AsSpan();
+    }
+
     /// <summary>
     /// Makes this embedding into a unit vector - in place
     /// If all embeddings have length 1, you can use DotProducts into of full Cosine Similarity. 
     /// </summary>
     public void NormalizeInPlace()
     {
-        _vector.NormalizeInPlace();
+        var length = EuclideanLength(_vector);
+        for (int i = 0; i < _vector.Length; ++i)
+        {
+            _vector[i] = (float)((double)_vector[i] / length);
+        }
     }
+
     /// <summary>
     /// Compute the cosine similarity between this and other
     /// </summary>
@@ -72,7 +81,7 @@ public struct Embedding
     /// <returns>cosine similarity</returns>
     public double CosineSimilarity(Embedding other)
     {
-        return _vector.CosineSimilarity(other._vector);
+        return TensorPrimitives.CosineSimilarity(VectorSpan, other.VectorSpan);
     }
 
     /// <summary>
@@ -82,7 +91,7 @@ public struct Embedding
     /// <returns>dot product</returns>
     public double DotProduct(Embedding other)
     {
-        return _vector.DotProduct(other._vector);
+        return TensorPrimitives.Dot(VectorSpan, other.VectorSpan);
     }
 
     /// <summary>
@@ -91,13 +100,18 @@ public struct Embedding
     /// <param name="other">embedding to compare to</param>
     /// <param name="type">distance measure type</param>
     /// <returns>score</returns>
-    public Score Similarity(Embedding other, EmbeddingDistance type)
+    public double Similarity(Embedding other, EmbeddingDistance type)
     {
         if (type == EmbeddingDistance.Dot)
         {
-            return _vector.DotProduct(other._vector);
+            return TensorPrimitives.Dot(VectorSpan, other.VectorSpan);
         }
-        return _vector.CosineSimilarity(other._vector);
+        return TensorPrimitives.CosineSimilarity(VectorSpan, other.VectorSpan);
+    }
+
+    static double EuclideanLength(float[] vector)
+    {
+        return Math.Sqrt(TensorPrimitives.Dot(vector, vector));
     }
 
     public bool Equal(Embedding other)
@@ -123,9 +137,11 @@ public struct Embedding
     /// Is the embedding empty
     /// </summary>
     [JsonIgnore]
-    public bool IsEmpty => _vector == null || _vector.Length == 0;
+    public bool IsEmpty => _vector is null || _vector.Length == 0;
 
     public static implicit operator float[](Embedding vector) => vector._vector;
+
     public static implicit operator Embedding(float[] vector) => new Embedding(vector);
+
     public static implicit operator Embedding(ReadOnlyMemory<float> src) => new Embedding(src);
 }

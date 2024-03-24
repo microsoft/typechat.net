@@ -1,9 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.TypeChat;
-using Microsoft.TypeChat.Schema;
 
 namespace Sentiment;
 
@@ -22,7 +18,7 @@ public class SentimentApp : ConsoleApp
 
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
-        SentimentResponse response = await _translator.TranslateAsync(input);
+        SentimentResponse response = await _translator.TranslateAsync(input, cancelToken);
         Console.WriteLine($"The sentiment is {response.Sentiment}");
     }
 

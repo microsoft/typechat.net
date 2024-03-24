@@ -27,7 +27,7 @@ public class JsonSerializerTypeValidator
         return options;
     }
 
-    static JsonSerializerOptions _defaultOptions = DefaultOptions();
+    static JsonSerializerOptions s_defaultOptions = DefaultOptions();
     JsonSerializerOptions _options;
 
     /// <summary>
@@ -36,7 +36,7 @@ public class JsonSerializerTypeValidator
     /// <param name="options">options to use during serialization</param>
     public JsonSerializerTypeValidator(JsonSerializerOptions? options = null)
     {
-        options ??= _defaultOptions;
+        options ??= s_defaultOptions;
         _options = options;
     }
 
@@ -70,12 +70,12 @@ public class JsonSerializerTypeValidator
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("### JSON ERROR:");
         sb.AppendLineNotEmpty(error.Message);
-        if (error.Path != null)
+        if (error.Path is not null)
         {
             sb.Append("Property with error: ");
             sb.AppendLine(ParsePath(error.Path));
         }
-        if (error.LineNumber != null)
+        if (error.LineNumber is not null)
         {
             sb.AppendLine("### Errors here:");
             json.ExtractLine((long)error.LineNumber, sb);
@@ -131,6 +131,7 @@ public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
     /// Schema for T
     /// </summary>
     public TypeSchema Schema => _schema;
+
     /// <summary>
     /// Serialization options
     /// </summary>

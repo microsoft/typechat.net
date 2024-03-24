@@ -2,6 +2,7 @@
 
 using System.Text;
 using Microsoft.TypeChat;
+using Microsoft.TypeChat.Schema;
 
 namespace CoffeeShop;
 
@@ -23,10 +24,10 @@ public class CoffeeShopApp : ConsoleApp
 
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
-        Cart cart = await _translator.TranslateAsync(input);
+        Cart cart = await _translator.TranslateAsync(input, cancelToken);
 
         Console.WriteLine("##YOUR ORDER");
-        string json = Json.Stringify(cart);
+        string json = Microsoft.TypeChat.Json.Stringify(cart);
         Console.WriteLine(json);
 
         if (!PrintAnyUnknown(cart))
@@ -37,7 +38,7 @@ public class CoffeeShopApp : ConsoleApp
 
     bool PrintAnyUnknown(Cart cart)
     {
-        if (cart.Items != null)
+        if (cart.Items is not null)
         {
             StringBuilder sb = new StringBuilder();
             cart.GetUnknown(sb);
@@ -58,7 +59,7 @@ public class CoffeeShopApp : ConsoleApp
         {
             CoffeeShopApp app = new CoffeeShopApp();
             // Un-comment to print auto-generated schema at start:
-            // Console.WriteLine(app.Schema.Schema.Text);
+            //Console.WriteLine(app.Schema.Schema.Text);
 
             await app.RunAsync("☕> ", args.GetOrNull(0));
         }

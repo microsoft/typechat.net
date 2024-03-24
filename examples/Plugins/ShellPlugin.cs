@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
-using System.IO;
 using System.ComponentModel;
-using Microsoft.SemanticKernel.SkillDefinition;
-using Microsoft.SemanticKernel.AI.TextCompletion;
-using Microsoft.TypeChat;
+using Microsoft.SemanticKernel;
 
 namespace Plugins;
 
@@ -12,21 +9,21 @@ namespace Plugins;
 /// </summary>
 public class ShellPlugin
 {
-    [SKFunction, SKName("getEnv")]
+    [KernelFunction("getEnv")]
     [Description("Get environment variable")]
     public string GetEnv(string name)
     {
         return Environment.GetEnvironmentVariable(name);
     }
 
-    [SKFunction, SKName("getcd")]
+    [KernelFunction("getcd")]
     [Description("Get the name of the current directory")]
     public string GetCD()
     {
         return Directory.GetCurrentDirectory();
     }
 
-    [SKFunction, SKName("setcd")]
+    [KernelFunction("setcd")]
     [Description("Set the name of the current directory")]
     public void SetCD(
         [Description("Set current directory to this path")]
@@ -40,7 +37,7 @@ public class ShellPlugin
         }
     }
 
-    [SKFunction, SKName("md")]
+    [KernelFunction("md")]
     [Description("Make a directory if it does not exist")]
     public void MD(string path)
     {
@@ -50,7 +47,7 @@ public class ShellPlugin
         }
     }
 
-    [SKFunction, SKName("dir")]
+    [KernelFunction("dir")]
     [Description("List files and sub-directories, each item on its own line")]
     public string Dir(
         [Description("directory path")]
@@ -69,21 +66,21 @@ public class ShellPlugin
         return string.Empty;
     }
 
-    [SKFunction, SKName("output")]
+    [KernelFunction("output")]
     [Description("Write message to output")]
     public void Output(string message)
     {
         Console.WriteLine(message);
     }
 
-    [SKFunction, SKName("outputLine")]
+    [KernelFunction("outputLine")]
     [Description("Write message to output followed by new line")]
     public void OutputLine(string message)
     {
         Console.WriteLine(message);
     }
 
-    [SKFunction, SKName("input")]
+    [KernelFunction("input")]
     [Description("Get user input")]
     public string Input(string? userPrompt)
     {
@@ -95,14 +92,14 @@ public class ShellPlugin
         return Console.ReadLine();
     }
 
-    [SKFunction, SKName("readFile")]
+    [KernelFunction("readFile")]
     [Description("Read text from a file")]
     public string ReadFile(string filePath)
     {
         return File.ReadAllText(filePath);
     }
 
-    [SKFunction, SKName("writeFile")]
+    [KernelFunction("writeFile")]
     [Description("Write text to a file")]
     public void WriteFile(string filePath, string text)
     {

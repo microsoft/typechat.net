@@ -21,7 +21,7 @@ public class CoffeeShop : ConsoleApp
         // Each with a different vocab specific to the request
         // E.g. you could service a different vocab to a Vegan user. Or show more options to a Premimum user
         _translator = new JsonTranslator<Cart>(
-                   new LanguageModel(Config.LoadOpenAI()),
+                   new ChatLanguageModel(Config.LoadOpenAI()),
                    new TypeValidator<Cart>(_vocabs)
                );
         _translator.MaxRepairAttempts = 3;
@@ -36,7 +36,7 @@ public class CoffeeShop : ConsoleApp
         Cart cart = await _translator.TranslateAsync(input, cancelToken);
 
         Console.WriteLine("##YOUR ORDER");
-        string json = Json.Stringify(cart);
+        string json = Microsoft.TypeChat.Json.Stringify(cart);
         Console.WriteLine(json);
 
         if (!PrintAnyUnknown(cart))
@@ -47,7 +47,7 @@ public class CoffeeShop : ConsoleApp
 
     bool PrintAnyUnknown(Cart cart)
     {
-        if (cart.Items != null)
+        if (cart.Items is not null)
         {
             StringBuilder sb = new StringBuilder();
             cart.GetUnknown(sb);

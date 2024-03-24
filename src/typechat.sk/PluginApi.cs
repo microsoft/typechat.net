@@ -1,8 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.Orchestration;
-using Microsoft.CSharp;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -12,7 +9,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginApi
 {
-    IKernel _kernel;
+    Kernel _kernel;
     string _typeName;
     PluginApiTypeInfo _typeInfo;
 
@@ -20,7 +17,7 @@ public class PluginApi
     /// Create an Api using all registered kernel plugins
     /// </summary>
     /// <param name="kernel"></param>
-    public PluginApi(IKernel kernel)
+    public PluginApi(Kernel kernel)
         : this(kernel, "IPluginApi", new PluginApiTypeInfo(kernel))
     {
     }
@@ -31,7 +28,7 @@ public class PluginApi
     /// <param name="kernel"></param>
     /// <param name="typeName"></param>
     /// <param name="typeInfo"></param>
-    public PluginApi(IKernel kernel, string typeName, PluginApiTypeInfo typeInfo)
+    public PluginApi(Kernel kernel, string typeName, PluginApiTypeInfo typeInfo)
     {
         ArgumentVerify.ThrowIfNull(kernel, nameof(kernel));
         ArgumentVerify.ThrowIfNullOrEmpty(typeName, nameof(typeName));
@@ -46,6 +43,7 @@ public class PluginApi
     /// Api name
     /// </summary>
     public string TypeName => _typeName;
+
     /// <summary>
     /// Plugins that make up this Api
     /// </summary>
@@ -58,18 +56,12 @@ public class PluginApi
     /// <param name="args">function args</param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public (PluginFunctionName, FunctionView) BindFunction(string name, dynamic[] args)
+    public (PluginFunctionName, KernelFunctionMetadata) BindFunction(string name, dynamic[] args)
     {
         var pluginName = PluginFunctionName.Parse(name);
-        if (!_typeInfo.TryGetValue(pluginName, out FunctionView function))
+        if (!_typeInfo.TryGetValue(pluginName, out KernelFunctionMetadata function))
         {
             throw new ArgumentException($"Function {name} does not exist");
-        }
-        int argCount = (args != null) ? args.Length : 0;
-        int paramCount = (function.Parameters != null) ? function.Parameters.Count : 0;
-        if (argCount != paramCount)
-        {
-            throw new ArgumentException($"Function {name}: Arg Count mismatch. Expected {paramCount}, Got {argCount}");
         }
         return (pluginName, function);
     }
@@ -83,15 +75,15 @@ public class PluginApi
     public async Task<dynamic> InvokeAsync(string name, dynamic[] args)
     {
         var (functionName, typeInfo) = BindFunction(name, args);
-        ISKFunction function = _kernel.GetFunction(functionName);
+        KernelFunction function = _kernel.GetFunction(functionName);
 
-        IList<ParameterView> parameters = typeInfo.Parameters;
-        SKContext context = _kernel.CreateNewContext();
+        var parameters = typeInfo.Parameters;
+        KernelArguments kernelArgs = new KernelArguments();
         for (int i = 0; i < args.Length; ++i)
         {
-            context.Variables[parameters[i].Name] = args[i].ToString();
+            kernelArgs[parameters[i].Name] = args[i];
         }
-        await function.InvokeAsync(context);
-        return context.Variables.Input;
+        var result = await function.InvokeAsync(_kernel, kernelArgs);
+        return result.GetValue<dynamic>();
     }
 }

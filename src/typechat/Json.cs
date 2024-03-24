@@ -17,8 +17,8 @@ public class Json
         return JsonSerializerTypeValidator.DefaultOptions();
     }
 
-    static readonly Json Default = new Json();
-    static readonly Json Indented = new Json(true);
+    static readonly Json s_default = new Json();
+    static readonly Json s_indented = new Json(true);
 
     JsonSerializerOptions _options;
 
@@ -37,9 +37,10 @@ public class Json
     public static string Stringify(object value, bool indented = true)
     {
         return indented ?
-               Indented.Serialize(value) :
-               Default.Serialize(value);
+               s_indented.Serialize(value) :
+               s_default.Serialize(value);
     }
+
     /// <summary>
     /// Stringify value of type T
     /// </summary>
@@ -50,8 +51,8 @@ public class Json
     public static string Stringify<T>(T value, bool indented = true)
     {
         return indented ?
-               Indented.Serialize(value) :
-               Default.Serialize<T>(value);
+               s_indented.Serialize(value) :
+               s_default.Serialize<T>(value);
     }
 
     /// <summary>
@@ -62,8 +63,9 @@ public class Json
     /// <returns></returns>
     public static object? Parse(string json, Type type)
     {
-        return Default.Deserialize(json, type);
+        return s_default.Deserialize(json, type);
     }
+
     /// <summary>
     /// Parse Json into an object of the given type
     /// </summary>
@@ -75,6 +77,17 @@ public class Json
         return (T)Parse(json, typeof(T));
     }
 
+    /// <summary>
+    /// Parse Json from a stream into an object of the given type
+    /// </summary>
+    /// <typeparam name="T">destination type</typeparam>
+    /// <param name="jsonStream">stream to read from</param>
+    /// <returns></returns>
+    public static T Parse<T>(Stream jsonStream)
+    {
+        return (T)s_default.Deserialize(jsonStream, typeof(T));
+    }
+
     string Serialize<T>(T value)
     {
         return JsonSerializer.Serialize<T>(value, _options);
@@ -83,5 +96,16 @@ public class Json
     object? Deserialize(string json, Type type)
     {
         return JsonSerializer.Deserialize(json, type, _options);
+    }
+
+    object? Deserialize(Stream jsonStream, Type type)
+    {
+        return JsonSerializer.Deserialize(jsonStream, type, _options);
+    }
+
+    internal static StringContent ToJsonMessage<T>(T value)
+    {
+        string jsonContent = Json.Stringify(value, false);
+        return new StringContent(jsonContent, UnicodeEncoding.UTF8, "application/json");
     }
 }

@@ -13,6 +13,7 @@ public interface IPromptSection
     /// Typical sources - user, system and assistant - are defined in PromptSection.Sources
     /// </summary>
     public string? Source { get; }
+
     /// <summary>
     /// Get the text for this section
     /// </summary>

@@ -9,7 +9,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class Api
 {
-    static readonly object?[] EmptyArgs = Array.Empty<object?>();
+    static readonly object?[] s_emptyArgs = Array.Empty<object?>();
 
     ApiTypeInfo _typeInfo;
     object _apiImpl;
@@ -17,12 +17,13 @@ public class Api
     /// <summary>
     /// Create an Api using ALL Public instance methods of the supplied apiImpl
     /// </summary>
-    /// <param name="apiImpl">object that implements the API</param>
+    /// <param name="apiImpl">object that implements t`he API</param>
     public Api(object apiImpl)
         : this(new ApiTypeInfo(apiImpl.GetType()), apiImpl)
     {
 
     }
+
     /// <summary>
     /// Create an Api using the supplied methods + type info implemented in the given object instance
     /// </summary>
@@ -40,6 +41,7 @@ public class Api
     /// Type information for this Api
     /// </summary>
     public ApiTypeInfo TypeInfo => _typeInfo;
+
     /// <summary>
     /// The object that implements the Api
     /// </summary>
@@ -96,7 +98,7 @@ public class Api
         }
         if (paramsInfo.Length == 0)
         {
-            return EmptyArgs;
+            return s_emptyArgs;
         }
         // If any of input parameters are JsonObjects, deserialize them
         ConvertObjects(jsonArgs, paramsInfo);
@@ -172,7 +174,7 @@ public class Api
 
     void NotifyCall(string name, dynamic[] args, dynamic result)
     {
-        if (CallCompleted != null)
+        if (CallCompleted is not null)
         {
             try
             {

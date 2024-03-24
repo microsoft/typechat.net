@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Threading.Tasks;
-
 namespace Microsoft.TypeChat.Tests;
 
 [Comment("This is a schema for writing programs that evaluate Math expressions")]
@@ -78,6 +76,7 @@ public interface IPersonApi
     string toJson(Person person);
     string toJsonArray(Person[] persons);
     bool isPerson(Person person, Name name, int age);
+    string listBooks(AuthorPerson author);
 }
 
 public interface IAsyncService
@@ -86,4 +85,3 @@ public interface IAsyncService
     Task DoWork(string userText, Name name);
     Task<Name> GetNameOf(string userText, Person person);
 }
-

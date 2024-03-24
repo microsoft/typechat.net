@@ -17,7 +17,7 @@ public class TypeChatTest
 
     public void WriteLine(string message)
     {
-        if (_output != null)
+        if (_output is not null)
         {
             _output.WriteLine(message);
         }
@@ -113,6 +113,26 @@ public class TypeChatTest
             }
         }
         return null;
+    }
+
+    public OpenAIConfig MockOpenAIConfig(bool azure = true)
+    {
+        OpenAIConfig config = new OpenAIConfig
+        {
+            Azure = azure,
+            ApiKey = "NOT_A_KEY",
+            Model = "gpt-35-turbo"
+        };
+        if (azure)
+        {
+            config.Endpoint = "https://YOUR_RESOURCE_NAME.openai.azure.com";
+        }
+        else
+        {
+            config.Endpoint = "https://api.openai.com/v1/chat/completions";
+            config.Organization = "NOT_AN_ORG";
+        }
+        return config;
     }
 }
 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net60;net70</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>10</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>annotations</Nullable>
@@ -16,7 +16,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Microsoft.SemanticKernel" Version="0.22.230905.3-preview" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.2.0" />
+    <PackageReference Include="System.Numerics.Tensors" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +29,12 @@
   <PropertyGroup>
     <PackageId>$(AssemblyName)</PackageId>
     <Description>TypeChat.SemanticKernel supplies bindings for Language models, Plugins and Embeddings to TypeChat.NET</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;SKEXP0001;SKEXP0011</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;SKEXP0001;SKEXP0011</NoWarn>
   </PropertyGroup>
 
 </Project>

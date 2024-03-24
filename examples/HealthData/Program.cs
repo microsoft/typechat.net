@@ -1,8 +1,8 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Microsoft.TypeChat;
-using Microsoft.TypeChat.Schema;
 using Microsoft.TypeChat.Dialog;
+using Microsoft.TypeChat.Schema;
 
 namespace HealthData;
 
@@ -13,7 +13,7 @@ public class HealthDataAgent : ConsoleApp
     public HealthDataAgent()
     {
         // Create an agent with history
-        _agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
+        _agent = new AgentWithHistory<HealthDataResponse>(new ChatLanguageModel(Config.LoadOpenAI()));
         // Instruct the agent on how it should act
         GiveAgentInstructions();
         // We only capture the questions that the model asked us into history
@@ -82,9 +82,9 @@ public class HealthDataAgent : ConsoleApp
 
     void PrintResponse(HealthDataResponse response)
     {
-        if (response.Data != null)
+        if (response.Data is not null)
         {
-            Console.WriteLine(Json.Stringify(response.Data));
+            Console.WriteLine(Microsoft.TypeChat.Json.Stringify(response.Data));
         }
         if (response.HasMessage)
         {

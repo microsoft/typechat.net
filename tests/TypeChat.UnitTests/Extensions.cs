@@ -1,14 +1,14 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 namespace Microsoft.TypeChat.Tests;
-
+/*
 internal static class Extensions
 {
     public static IEnumerable<string> ReadLines(this string text)
     {
         using var reader = new StringReader(text);
         string line;
-        while ((line = reader.ReadLine()) != null)
+        while ((line = reader.ReadLine()) is not null)
         {
             yield return line;
         }
@@ -46,7 +46,7 @@ internal static class Extensions
     public static JsonTranslator<T> CreateTranslator<T>(this Config config)
     {
         return new JsonTranslator<T>(
-            new LanguageModel(config.OpenAI),
+            new ChatLanguageModel(config.OpenAI),
             new TypeValidator<T>(TestVocabs.All()));
     }
 
@@ -74,3 +74,4 @@ internal static class Extensions
         return (int)(value + 0.5);
     }
 }
+*/

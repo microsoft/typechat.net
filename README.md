@@ -1,6 +1,6 @@
 # TypeChat.NET
 
-TypeChat.NET is an **experimental project** from the [Microsoft Semantic Kernel](https://github.com/microsoft/semantic-kernel) team. TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
+TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
 TypeChat.NET provides **cross platform** libraries that help you build natural language interfaces with language models using strong types, type validation and simple type safe programs (plans). Strong typing may help make software that uses language models more deterministic and reliable.    
 ```
@@ -15,15 +15,13 @@ CalendarActions actions = await translator.TranslateAsync(requestText);
 TypeChat.NET is in **active development** with frequent updates. The framework will evolve as the team explores the space and incorporates feedback. Supported scenarios are shown in the included [Examples](./examples). Documentation will also continue to improve. When in doubt, please look at the code.  
 
 # Assemblies
-TypeChat.NET consists of the following assemblies:
+TypeChat.NET currently consists of the following assemblies:
 
 * **Microsoft.TypeChat**: Classes that translate user intent into strongly typed and validated objects. 
 
 * **Microsoft.TypeChat.Program**: Classes to synthesize, validate and run  ***JSON programs***. 
 
-* **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for language models, plugins and embeddings.
-
-* **Microsoft.TypeChat.Dialog**: Classes for working with interactive Agents that have history. 
+* **Microsoft.TypeChat.SemanticKernel**: Integration with Microsoft Semantic Kernel for models, plugins, embeddings and other features.
 
 ## Microsoft.TypeChat ##
 TypeChat uses language models to translate user intent into JSON that conforms to a schema. This JSON is then validated and deserialized into a typed object. Additional constraint checking is applied as needed. Validation errors are sent back to the language model, which uses them to **repair** the Json it originally returned. 
@@ -32,7 +30,7 @@ TypeChat provides:
 * Json translation, validation, repair and deserialization.
 * Extensibility: interfaces for customizing schemas, validators and prompts.
 * Schema export: classes to generate schema for the .NET Type you want to translate to. Exported schema includes dependencies and base classes. The exported schema is specified using **Typescript**, which can concisely express schema for JSON objects. 
-  * Support for common scenarios shown in TypeChat examples. When you encounter limitations, you can supply schema text, such as Typescript authored by hand. 
+  * Support for common scenarios shown in TypeChat examples. When you encounter limitations (such as how generics are currently exported), you can supply schema text, such as Typescript authored by hand.  
   * Helper attributes for Vocabularies and Comments. Vocabularies are string tables that constrain the values that can be assigned to string properties. Dynamic loading of vocabularies enables scenarios where they vary at runtime.
   * **Note**: Like TypeChat, TypeChat.NET has only been tested with schema specified in Typescript. 
 ```
@@ -47,7 +45,7 @@ public class Milks
 ## Microsoft.TypeChat.Program ##
 TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. 
 
-JSON programs can be thought of as a [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) or [Plan](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/planners/?tabs=Csharp), expressed in JSON, with an associated [**grammar**](src/typechat.program/ProgramSchema.ts) that is enforced. JSON programs can be type checked against the APIs they target. They can be then be run using an interpreter, or compiled into .NET code. Both mechanisms enforce type safety.
+JSON programs can be thought of as a [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) or [Plan](https://learn.microsoft.com/en-us/semantic-kernel/ai-orchestration/planners/?tabs=Csharp), expressed in JSON, with an associated [**grammar**](src/typechat.program/ProgramSchema.ts) that is enforced. JSON programs can be type checked against the APIs they target. They can then be run using an interpreter, or compiled into .NET code. 
 
 TypeChat.Program includes:
 * Program Translator: translates user intent into programs that follow the [Program Grammar](src/typechat.program/ProgramSchema.ts)
@@ -67,28 +65,12 @@ program.Run(api);
 ```
 
 ## Microsoft.TypeChat.SemanticKernel ##
-TypeChat.SemanticKernel provides default bindings for language models, plugins and embeddings to Typechat.NET and TypeChat.NET examples.
 
-TypeChat.SemanticKernel include classes for:
+TypeChat.SemanticKernel uses [Semantic Kernel 1.0](https://github.com/microsoft/semantic-kernel). It includes classes for:
 * **Json Programs for Plugins**: turn registered plugins into **APIs** that Json programs can target. See the [Plugins Example](examples/Plugins/Program.cs).
-* Language model and embeddings access: all TypeChat examples use the Semantic Kernel to call models and generate embeddings. 
- 
-## Microsoft.TypeChat.Dialog
-TypeChat.Dialog is an **early** version of a framework that demonstrates how TypeChat.NET may be used for strongly typed interactions with message passing Agents or Bots. These agents can include features such as built in interaction history. 
+* Language model and embeddings access using Semantic Kernel. 
 
-```
-// Create an agent with history
-agent = new AgentWithHistory<HealthDataResponse>(new LanguageModel(Config.LoadOpenAI()));
-agent.Instructions.Append("Help me enter my health data step by step");
-
-// Run a chat loop
-while (true)
-{
-   ...
-    var userInput = Console.ReadLine();
-    HealthDataResponse response = await agent.GetResponseAsync(userInput);
-}
-```
+Prior versions of TypeChat.NET used the pre-release programming model of Semantic Kernel. You can access this deprecated version using the [sk_prerelease](https://github.com/microsoft/typechat.net/tree/sk_0.22.230905.3-preview) branch. 
 
 # Getting Started 
 
@@ -99,7 +81,6 @@ while (true)
     * gpt-4
     * ada-002
 * Some examples and scenarios will work best with gpt-4
-* Since TypeChat.NET uses the Semantic Kernel, models from other providers ***may*** be used for experimentation.
 
 ## Building
 
@@ -117,43 +98,50 @@ while (true)
 * Microsoft.Typechat
 ```
 dotnet add package Microsoft.TypeChat
-dotnet add package Microsoft.TypeChat.SemanticKernel
 ```
-Please ensure that you have installed both packages above. 
 
 * Microsoft.TypeChat.Program
 ```
 dotnet add package Microsoft.TypeChat.Program
 ```
-* Microsoft.TypeChat.Dialog
+
+* Microsoft.Typechat.SemanticKernel
 ```
-dotnet add package Microsoft.TypeChat.Dialog
+dotnet add package Microsoft.TypeChat.SemanticKernel
 ```
 
 ## Examples
 
-To see TypeChat in action, explore the [TypeChat example projects](./examples). The list below describes which examples will best introduce which concept. Some examples or scenarios may work best with gpt-4.
-
-* Hello World: The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
-
-* JsonTranslator, Schemas and Vocabularies: 
-  
-  * CoffeeShop: Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialzation.
-  * Calendar: Transform language into calendar actions
-  * Restaurant: Order processing at a pizza restaurant
-
-* Hierarchical schemas and routing:
-  * MultiSchema: dynamically route user intent to other 'sub-apps'
-  * SchemaHierarchy: A Json Translator than uses multiple child JsonTranslators
-
-* Json Programs and TypeChat.Program:
-  * Math: Turn user requests into calculator programs
-  * Plugins: Generate programs that use Semantic Kernel Plugins
-
-* Typed Interactive Agents (bots):
-  * Healthdata
+To see TypeChat.NET in action, explore the [Example projects](./examples) and [TypeChat.Examples Library](./examples/typechat.examplesLib). 
   
 Each example includes an **input.txt** with sample input. Pass the input file as an argument to run the example in **batch mode**. 
+
+The sections below describe which examples will best introduce which concept. Some examples or scenarios may work ***best with gpt-4***.
+
+### Hello World
+The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello World and a minimal introduction to JsonTranslator. 
+
+### JsonTranslator
+  
+The following examples demonstrate how to use JsonTranslator, Schemas and Vocabularies: 
+
+* [CoffeeShop](./examples/CoffeeShop): Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialzation.
+* [Calendar](./examples/Calendar): Transform language into calendar actions
+* [Restaurant](./examples/Restaurant): Order processing at a pizza restaurant
+
+### Hierarchical schemas
+* [MultiSchema](./examples/MultiSchema): dynamically route user intent to other 'sub-apps'
+* [SchemaHierarchy](./examples/SchemaHierarchy): A Json Translator than uses multiple child JsonTranslators. For each user request, it picks the semantically ***nearest*** child translator and routes the input to it. 
+* [TextClassifier](./examples/typechat.examplesLib/Classification/TextClassifier.cs) and [VectorTextIndex](./examples/typechat.examplesLib/VectorTextIndex.cs) show how to build a simple classifiers to route input.
+
+### Json Programs
+
+* [Math](./examples/Math): How to turn user requests into simple calculator programs
+* [Plugins](./examples/Plugins): How to translate user intent into programs programs that call Semantic Kernel Plugins
+
+### Interactive agents
+  * [HealthData](./examples/HealthData): how to use an interactive bot to collect a user's health information. 
+  * [Agent Classes](./examples/typechat.examplesLib/Dialog) for working with interactive agents that have history. These classes emonstrate how TypeChat.NET may be used for strongly typed interactions with message passing agents or bots. These agents can include features such as built in interaction history. 
 
 ## Api Key and Configuration
 To use TypeChat.net or run the examples, you need an **API key** for an OpenAI service. Azure OpenAI and the OpenAI service are both supported.
@@ -188,9 +176,9 @@ A typical appSettings.Development.json will look like this:
 ```
 
 ### OpenAIConfig
-TypeChat examples accesses language models using the [LanguageModel](./src/typechat.sk/LanguageModel.cs) class. The OpenAIConfig class supplies configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
+TypeChat examples accesses language models using the [LanguageModel](./src/typechat/LanguageModel.cs) class. The OpenAIConfig class supplies configuration for LanguageModel. You initialize OpenAIConfig from your application's configuration, from a Json file or from environment variables. 
 
-See [OpenAIConfig.cs](./src/typechat.sk/OpenAIConfig.cs) for a list of :
+See [OpenAIConfig.cs](./src/typechat/OpenAIConfig.cs) for a list of :
   * Configurable properties
   * Supported environment variables.
 ```
@@ -204,19 +192,19 @@ config = OpenAIConfig.FromEnvironment();
 var model = new LanguageModel(config);
 ```
 
-### Using Semantic Kernel directly
-You can also initialize LanguageModel using an IKernel object you created using a KernelBuilder.
+## Using Semantic Kernel
+You can also access a LanguageModel using the SemanticKernel Kernel object you created using a KernelBuilder.
 ```
 const string modelName = "gpt-35-turbo";
-new LanguageModel(_kernel.GetService<IChatCompletion>(modelName), modelName);
+new ChatLanguageModel(_kernel.GetService<IChatCompletionService>(modelName), modelName);
 ```
 
-### Using your own client
-TypeChat accesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat.sk/LanguageModel.cs) implements ILanguageModel. 
+## Using your own client
+TypeChat accesses language models using the [ILanguageModel](src/typechat/ILanguageModel.cs) interface. [LanguageModel](src/typechat/LanguageModel.cs) implements ILanguageModel. 
 
-You can use your own model client by implementing ILanguageModel.
+You can use your own model client by implementing ILanguageModel. If you don't use one of the Open AI models listed above, you will likely also need to supply [JsonTranslatorPrompts](./src/typechat/IJsonTranslatorPrompts.cs) that work best with your model.
 
-## Code of Conduct
+# Code of Conduct
 
 This project has adopted the
 [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
@@ -225,13 +213,13 @@ For more information see the
 or contact [opencode@microsoft.com](mailto:opencode@microsoft.com)
 with any additional questions or comments.
 
-## License
+# License
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
 Licensed under the [MIT](LICENSE) license.
 
-## Trademarks
+# Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
 trademarks or logos is subject to and must follow 

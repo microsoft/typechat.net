@@ -12,6 +12,7 @@ public interface ILanguageModel
     /// Information about the language model
     /// </summary>
     ModelInfo ModelInfo { get; }
+
     /// <summary>
     /// Get a completion for the given prompt
     /// </summary>

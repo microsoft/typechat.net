@@ -24,10 +24,12 @@ public class ApiMethod
     /// Api method
     /// </summary>
     public MethodInfo Method { get; private set; }
+
     /// <summary>
     /// Method parameters
     /// </summary>
     public ParameterInfo[] Params { get; private set; }
+
     /// <summary>
     /// Method return type
     /// </summary>
@@ -57,7 +59,7 @@ public class ApiTypeInfo
     public ApiTypeInfo(MethodInfo[]? apiMethods = null)
     {
         _typeInfo = new List<ApiMethod>();
-        if (apiMethods != null)
+        if (apiMethods is not null)
         {
             Add(apiMethods);
         }
@@ -74,7 +76,7 @@ public class ApiTypeInfo
         get
         {
             ApiMethod method = Get(methodName);
-            if (method == null)
+            if (method is null)
             {
                 ProgramException.ThrowFunctionNotFound(methodName);
             }

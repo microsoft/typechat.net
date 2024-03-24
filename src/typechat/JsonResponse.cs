@@ -18,19 +18,23 @@ public class JsonResponse
     /// Raw response text
     /// </summary>
     public string ResponseText { get; private set; }
+
     /// <summary>
     /// Any text contained within outer-most braces only: {} and can be passed to a Json
     /// parser or serializer for further validation
     /// </summary>
     public string? Json { get; private set; }
+
     /// <summary>
     /// Anything the model returned before the Json
     /// </summary>
     public string? Prologue { get; private set; }
+
     /// <summary>
     /// Anything the model returned after the Json
     /// </summary>
     public string? Epilogue { get; private set; }
+
     /// <summary>
     /// Was the json at least enclosed in outer braces? {} 
     /// </summary>

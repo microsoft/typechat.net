@@ -2,13 +2,13 @@
 
 namespace Microsoft.TypeChat.Tests;
 
-internal static class Extensions
+public static class Extensions
 {
     public static IEnumerable<string> ReadLines(this string text)
     {
         using var reader = new StringReader(text);
         string line;
-        while ((line = reader.ReadLine()) != null)
+        while ((line = reader.ReadLine()) is not null)
         {
             yield return line;
         }
@@ -46,7 +46,7 @@ internal static class Extensions
     public static JsonTranslator<T> CreateTranslator<T>(this Config config)
     {
         return new JsonTranslator<T>(
-            new LanguageModel(config.OpenAI),
+            new ChatLanguageModel(config.OpenAI),
             new TypeValidator<T>(TestVocabs.All()));
     }
 
@@ -72,5 +72,11 @@ internal static class Extensions
     public static int RoundToInt(this double value)
     {
         return (int)(value + 0.5);
+    }
+
+    public static HttpResponseMessage SetJson(this HttpResponseMessage message, string json)
+    {
+        message.Content = new StringContent(json, null, "application/json");
+        return message;
     }
 }

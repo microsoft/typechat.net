@@ -86,7 +86,7 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TestRouting()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest_Embeddings(_config));
 
         VectorTextIndex<string> index = CreateIndex<string>();
         foreach (var shop in Classes.Shops())

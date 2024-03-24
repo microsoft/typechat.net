@@ -16,16 +16,16 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
     public void TestKernelBuild()
     {
         Skip.If(!CanRunEndToEndTest(_config));
-        
-        KernelBuilder kb = new KernelBuilder();
+
+        IKernelBuilder kb = Kernel.CreateBuilder();
         kb.WithChatModels(_config.OpenAI, Config.ModelNames.Gpt35Turbo, Config.ModelNames.Gpt4);
-        IKernel kernel = kb.Build();
+        Kernel kernel = kb.Build();
 
         var model = kernel.TextCompletionModel(Config.ModelNames.Gpt35Turbo);
         Assert.NotNull(model);
         Assert.Equal(model.ModelInfo.Name, Config.ModelNames.Gpt35Turbo);
 
-        var languageModel = kernel.LanguageModel(Config.ModelNames.Gpt4);
+        var languageModel = kernel.ChatLanguageModel(Config.ModelNames.Gpt4);
         Assert.NotNull(languageModel);
         Assert.Equal(languageModel.ModelInfo.Name, Config.ModelNames.Gpt4);
     }
@@ -46,7 +46,7 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
     {
         Skip.If(!CanRunEndToEndTest(_config));
 
-        LanguageModel cm = new LanguageModel(_config.OpenAI);
+        ChatLanguageModel cm = new ChatLanguageModel(_config.OpenAI);
         Prompt prompt = "Is Venus a planet?";
         Assert.Equal(prompt.Last().Source, PromptSection.Sources.User);
 
