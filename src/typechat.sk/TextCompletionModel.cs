@@ -1,13 +1,16 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.SemanticKernel.TextGeneration;
+
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// A language model that can work models that support the ITextCompletion interface
+/// A language model that can work models that support the ITextGenerationService interface
 /// </summary>
 public class TextCompletionModel : ILanguageModel
 {
-    ITextCompletion _service;
+    Kernel _kernel;
+    ITextGenerationService _service;
     ModelInfo _model;
 
     public TextCompletionModel(OpenAIConfig config, ModelInfo? model = null)
@@ -17,12 +20,12 @@ public class TextCompletionModel : ILanguageModel
         config.Validate();
 
         model ??= config.Model;
-        IKernel kernel = config.CreateKernel();
-        _service = kernel.GetService<ITextCompletion>(model.Name);
+        _kernel = config.CreateKernel();
+        _service = _kernel.GetRequiredService<ITextGenerationService>(model.Name);
         _model = model;
     }
 
-    public TextCompletionModel(ITextCompletion service, ModelInfo model)
+    public TextCompletionModel(ITextGenerationService service, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
@@ -39,19 +42,20 @@ public class TextCompletionModel : ILanguageModel
 
     public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
-        CompleteRequestSettings? requestSettings = ToRequestSettings(settings);
+        OpenAIPromptExecutionSettings? requestSettings = ToRequestSettings(settings);
         string request = prompt.ToString(IncludeSectionSource);
-        string response = await _service.CompleteAsync(request, requestSettings, cancelToken).ConfigureAwait(false);
-        return response;
+        var response = await _service.GetTextContentsAsync(request, requestSettings,_kernel, cancelToken).ConfigureAwait(false);
+        return response.Count > 0 ? response[0].Text : string.Empty;
     }
 
-    CompleteRequestSettings? ToRequestSettings(TranslationSettings? settings)
+    OpenAIPromptExecutionSettings? ToRequestSettings(TranslationSettings? settings)
     {
         if (settings is null)
         {
             return null;
         }
-        var requestSettings = new CompleteRequestSettings();
+
+        var requestSettings = new OpenAIPromptExecutionSettings();
         if (settings.Temperature >= 0)
         {
             requestSettings.Temperature = settings.Temperature;

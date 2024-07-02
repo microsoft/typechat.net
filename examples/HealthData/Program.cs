@@ -84,7 +84,7 @@ public class HealthDataAgent : ConsoleApp
     {
         if (response.Data is not null)
         {
-            Console.WriteLine(Json.Stringify(response.Data));
+            Console.WriteLine(Microsoft.TypeChat.Json.Stringify(response.Data));
         }
         if (response.HasMessage)
         {

@@ -3,11 +3,11 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// A LanguageModel that uses IChatCompletion AI models
+/// A LanguageModel that uses IChatCompletionService AI models
 /// </summary>
 public class ChatLanguageModel : ILanguageModel
 {
-    IChatCompletion _service;
+    IChatCompletionService _service;
     ModelInfo _model;
 
     /// <summary>
@@ -22,17 +22,17 @@ public class ChatLanguageModel : ILanguageModel
         config.Validate();
 
         model ??= config.Model;
-        IKernel kernel = config.CreateKernel();
-        _service = kernel.GetService<IChatCompletion>(model.Name);
+        Kernel kernel = config.CreateKernel();
+        _service = kernel.GetRequiredService<IChatCompletionService>(model.Name);
         _model = model;
     }
 
     /// <summary>
-    /// Create a new language model using the supplied IChatCompletion service
+    /// Create a new language model using the supplied IChatCompletionService service
     /// </summary>
     /// <param name="service"></param>
     /// <param name="model"></param>
-    public ChatLanguageModel(IChatCompletion service, ModelInfo model)
+    public ChatLanguageModel(IChatCompletionService service, ModelInfo model)
     {
         ArgumentVerify.ThrowIfNull(service, nameof(service));
         _service = service;
@@ -54,7 +54,7 @@ public class ChatLanguageModel : ILanguageModel
     public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ChatHistory history = ToHistory(prompt);
-        ChatRequestSettings? requestSettings = ToRequestSettings(settings);
+        OpenAIPromptExecutionSettings? requestSettings = ToRequestSettings(settings);
         string textResponse = await _service.GenerateMessageAsync(history, requestSettings, cancelToken).ConfigureAwait(false);
         return textResponse;
     }
@@ -66,13 +66,13 @@ public class ChatLanguageModel : ILanguageModel
         return history;
     }
 
-    ChatRequestSettings? ToRequestSettings(TranslationSettings? settings)
+    OpenAIPromptExecutionSettings? ToRequestSettings(TranslationSettings? settings)
     {
         if (settings is null)
         {
             return null;
         }
-        var requestSettings = new ChatRequestSettings();
+        var requestSettings = new OpenAIPromptExecutionSettings();
         if (settings.Temperature >= 0)
         {
             requestSettings.Temperature = settings.Temperature;
