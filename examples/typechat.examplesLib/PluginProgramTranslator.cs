@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginProgramTranslator
 {
-    IKernel _kernel;
+    Kernel _kernel;
     ProgramTranslator _translator;
     PluginApi _pluginApi;
     SchemaText _pluginSchema;
@@ -18,7 +18,7 @@ public class PluginProgramTranslator
     /// </summary>
     /// <param name="kernel"></param>
     /// <param name="model"></param>
-    public PluginProgramTranslator(IKernel kernel, ModelInfo model)
+    public PluginProgramTranslator(Kernel kernel, ModelInfo model)
     {
         _kernel = kernel;
         _pluginApi = new PluginApi(_kernel);
@@ -38,7 +38,7 @@ public class PluginProgramTranslator
     /// <summary>
     /// Kernel this translator is working with
     /// </summary>
-    public IKernel Kernel => _kernel;
+    public Kernel Kernel => _kernel;
 
     /// <summary>
     /// The "API" formed by the various plugins registered with the kernel 

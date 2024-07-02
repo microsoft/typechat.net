@@ -36,7 +36,7 @@ public class CoffeeShop : ConsoleApp
         Cart cart = await _translator.TranslateAsync(input, cancelToken);
 
         Console.WriteLine("##YOUR ORDER");
-        string json = Json.Stringify(cart);
+        string json = Microsoft.TypeChat.Json.Stringify(cart);
         Console.WriteLine(json);
 
         if (!PrintAnyUnknown(cart))

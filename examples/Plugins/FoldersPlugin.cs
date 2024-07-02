@@ -1,30 +1,30 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel.SkillDefinition;
+using Microsoft.SemanticKernel;
 
 namespace Plugins;
 
 public class FoldersPlugin
 {
-    [SKFunction, SKName("myPicturesFolder")]
+    [KernelFunction("myPicturesFolder")]
     public string Pictures()
     {
         return Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
     }
 
-    [SKFunction, SKName("myDocumentsFolder")]
+    [KernelFunction("myDocumentsFolder")]
     public string Documents()
     {
         return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
     }
 
-    [SKFunction, SKName("myVideosFolder")]
+    [KernelFunction("myVideosFolder")]
     public string Videos()
     {
         return Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
     }
 
-    [SKFunction, SKName("myMusicFolder")]
+    [KernelFunction("myMusicFolder")]
     public string Music()
     {
         return Environment.GetFolderPath(Environment.SpecialFolder.MyMusic);

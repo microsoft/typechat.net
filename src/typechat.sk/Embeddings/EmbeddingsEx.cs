@@ -9,12 +9,13 @@ public static class EmbeddingsEx
     /// </summary>
     /// <param name="model">model to use</param>
     /// <param name="text">text for which to generate an embedding</param>
+    /// <param name="kernel">kernel to use</param>
     /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
-    public static async Task<Embedding> GenerateEmbeddingAsync(this ITextEmbeddingGeneration model, string text, CancellationToken cancelToken = default)
+    public static async Task<Embedding> GenerateEmbeddingAsync(this ITextEmbeddingGenerationService model, string text, Kernel kernel, CancellationToken cancelToken = default)
     {
         string[] texts = new string[] { text };
-        var results = await model.GenerateEmbeddingsAsync(texts, cancelToken).ConfigureAwait(false);
+        var results = await model.GenerateEmbeddingsAsync(texts, kernel, cancelToken).ConfigureAwait(false);
         return new Embedding(results[0]);
     }
 
@@ -31,7 +32,7 @@ public static class EmbeddingsEx
         ScoredValue<int> best = new ScoredValue<int>(-1, double.MinValue);
         for (int i = 0; i < list.Count; ++i)
         {
-            Score score = list[i].Similarity(embedding, distanceType);
+            double score = list[i].Similarity(embedding, distanceType);
             if (score > best.Score)
             {
                 best = new ScoredValue<int>(i, score);

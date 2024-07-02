@@ -25,7 +25,7 @@ public class CalendarApp : ConsoleApp
     {
         string request = $"{input}\n{PromptLibrary.Now()}";
         CalendarActions actions = await _translator.TranslateAsync(request, cancelToken);
-        Console.WriteLine(Json.Stringify(actions));
+        Console.WriteLine(Microsoft.TypeChat.Json.Stringify(actions));
         PrintUnknown(actions);
     }
 

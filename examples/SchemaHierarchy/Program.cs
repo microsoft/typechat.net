@@ -26,7 +26,7 @@ public class SchemaHierarchyApp : ConsoleApp
         if (result is not null)
         {
             Console.WriteLine($"{result.GetType()}");
-            Console.WriteLine(Json.Stringify(result));
+            Console.WriteLine(Microsoft.TypeChat.Json.Stringify(result));
         }
     }
 
