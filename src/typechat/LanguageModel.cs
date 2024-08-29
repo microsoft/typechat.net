@@ -49,7 +49,8 @@ public class LanguageModel : ILanguageModel, IDisposable
         ArgumentVerify.ThrowIfNullOrEmpty<IPromptSection>(prompt, nameof(prompt));
 
         var request = CreateRequest(prompt, settings);
-        var response = await _client.GetJsonResponseAsync<Request, Response>(_endPoint, request, _config.MaxRetries, _config.MaxPauseMs);
+        string apiToken = _config.HasTokenProvider ? await _config.ApiTokenProvider.GetAccessTokenAsync(cancelToken) : null;
+        var response = await _client.GetJsonResponseAsync<Request, Response>(_endPoint, request, _config.MaxRetries, _config.MaxPauseMs, apiToken).ConfigureAwait(false);
         return response.GetText();
     }
 
@@ -76,7 +77,10 @@ public class LanguageModel : ILanguageModel, IDisposable
                 string path = $"openai/deployments/{_model.Name}/chat/completions?api-version={_config.ApiVersion}";
                 _endPoint = new Uri(new Uri(_config.Endpoint), path).AbsoluteUri;
             }
-            _client.DefaultRequestHeaders.Add("api-key", _config.ApiKey);
+            if (!_config.HasTokenProvider)
+            {
+                _client.DefaultRequestHeaders.Add("api-key", _config.ApiKey);
+            }
         }
         else
         {

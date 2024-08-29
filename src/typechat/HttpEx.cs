@@ -1,19 +1,28 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 namespace Microsoft.TypeChat;
+using System.Net.Http;
 
 /// <summary>
 /// Extension methods for working with Http 
 /// </summary>
 internal static class HttpEx
 {
-    internal static async Task<Response> GetJsonResponseAsync<Request, Response>(this HttpClient client, string endpoint, Request request, int maxRetries, int retryPauseMs)
+    internal static async Task<Response> GetJsonResponseAsync<Request, Response>(this HttpClient client, string endpoint, Request request, int maxRetries, int retryPauseMs, string? apiToken = null)
     {
         var requestMessage = Json.ToJsonMessage(request);
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, endpoint)
+        {
+            Content = requestMessage
+        };
+        if (!string.IsNullOrEmpty(apiToken))
+        {
+            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiToken);
+        }
         int retryCount = 0;
         while (true)
         {
-            HttpResponseMessage response = await client.PostAsync(endpoint, requestMessage).ConfigureAwait(false);
+            HttpResponseMessage response = await client.SendAsync(httpRequest).ConfigureAwait(false);
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 using Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);

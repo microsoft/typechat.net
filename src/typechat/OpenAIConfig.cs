@@ -93,6 +93,16 @@ public class OpenAIConfig
     public int MaxPauseMs { get; set; } = 1000; // 1000 milliseconds
 
     /// <summary>
+    /// When provided, gets Api token from this provider
+    /// </summary>
+    public IApiTokenProvider ApiTokenProvider { get; set; }
+
+    public bool HasTokenProvider
+    {
+        get { return this.ApiTokenProvider is not null; }
+    }
+
+    /// <summary>
     /// Validate the configuration
     /// </summary>
     /// <param name="configFileName">(optional) Config file the settings came from</param>
