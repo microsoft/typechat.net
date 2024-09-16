@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Azure.Core;
 using Microsoft.SemanticKernel.TextGeneration;
 
 namespace Microsoft.TypeChat;
@@ -60,7 +61,14 @@ public static class KernelEx
         }
         if (config.Azure)
         {
-            builder = builder.AddAzureOpenAIChatCompletion(modelName, config.Endpoint, config.ApiKey, modelName, modelName, client);
+            if (config.HasTokenProvider)
+            {
+                builder = builder.AddAzureOpenAIChatCompletion(modelName, config.Endpoint, (TokenCredential)config.ApiTokenProvider.GetCredential(), modelName, modelName, client);
+            }
+            else
+            {
+                builder = builder.AddAzureOpenAIChatCompletion(modelName, config.Endpoint, config.ApiKey, modelName, modelName, client);
+            }
         }
         else
         {
@@ -80,7 +88,14 @@ public static class KernelEx
     {
         if (config.Azure)
         {
-            builder = builder.AddAzureOpenAITextEmbeddingGeneration(modelName, config.Endpoint, config.ApiKey, modelName);
+            if (config.HasTokenProvider)
+            {
+                builder = builder.AddAzureOpenAITextEmbeddingGeneration(modelName, config.Endpoint, (TokenCredential)config.ApiTokenProvider.GetCredential(), modelName);
+            }
+            else
+            {
+                builder = builder.AddAzureOpenAITextEmbeddingGeneration(modelName, config.Endpoint, config.ApiKey, modelName);
+            }
         }
         else
         {

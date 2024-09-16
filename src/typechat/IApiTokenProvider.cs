@@ -5,4 +5,5 @@ namespace Microsoft.TypeChat;
 public interface IApiTokenProvider
 {
     Task<string> GetAccessTokenAsync(CancellationToken cancelToken);
+    object GetCredential();
 }

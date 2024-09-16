@@ -55,6 +55,11 @@ public class AzureTokenProvider : IApiTokenProvider, IDisposable
         return _accessToken.Token;
     }
 
+    public object GetCredential()
+    {
+        return _credential;
+    }
+
     public async Task<string> RefreshTokenAsync(CancellationToken cancelToken)
     {
         await _lock.WaitAsync(cancelToken).ConfigureAwait(false);
