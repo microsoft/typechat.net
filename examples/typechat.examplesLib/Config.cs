@@ -9,6 +9,7 @@ public class Config
 {
     public const string DefaultConfigFile = "appSettings.json";
     public const string DefaultConfigFile_Dev = "appSettings.Development.json";
+    public const string IdentityApiKey = "identity";
 
     public static class ModelNames
     {
@@ -43,7 +44,10 @@ public class Config
     {
         sectionName ??= "OpenAI";
         OpenAIConfig config = LoadConfig<OpenAIConfig>(DefaultConfigFile, DefaultConfigFile_Dev, sectionName);
-
+        if (config.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
+        {
+            config.ApiTokenProvider = AzureTokenProvider.Default;
+        }
         return config;
     }
 
