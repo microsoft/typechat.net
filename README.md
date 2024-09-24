@@ -166,7 +166,7 @@ A typical appSettings.Development.json will look like this:
     "Model": "gpt-35-turbo"  // Name of Azure deployment
   }
 }
-// For Azure OpenAI service with default credentials
+// For Azure OpenAI service with Azure Identity: DefaultCredentials
 {
   "OpenAI": {
     "Azure": true,
