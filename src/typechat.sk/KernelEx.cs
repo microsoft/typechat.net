@@ -86,6 +86,7 @@ public static class KernelEx
     /// <returns>builder</returns>
     public static IKernelBuilder WithEmbeddingModel(this IKernelBuilder builder, string modelName, OpenAIConfig config)
     {
+#pragma warning disable SKEXP0010        
         if (config.Azure)
         {
             if (config.HasTokenProvider)
@@ -102,6 +103,7 @@ public static class KernelEx
             builder = builder.AddOpenAITextEmbeddingGeneration(modelName, config.ApiKey, config.Organization, modelName);
         }
         return builder;
+#pragma warning restore SKEXP0010
     }
 
     /// <summary>
