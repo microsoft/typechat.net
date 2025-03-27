@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TestClassification : TypeChatTest, IClassFixture<Config>
 {
-    Config _config;
+    private readonly Config _config;
 
     public TestClassification(Config config, ITestOutputHelper output)
         : base(output)
@@ -39,16 +39,16 @@ public class TestClassification : TypeChatTest, IClassFixture<Config>
         Assert.Equal(route, classify.Value);
     }
 
-    TextRequestRouter<string> CreateRouter()
+    private TextRequestRouter<string> CreateRouter()
     {
         TextRequestRouter<string> router = new TextRequestRouter<string>(new ChatLanguageModel(_config.OpenAI));
         AddRoutes(router, out _);
         return router;
     }
 
-    string ShopId(int i) => $"Shop{i}";
+    private string ShopId(int i) => $"Shop{i}";
 
-    void AddRoutes(TextRequestRouter<string> router, out int numRoutes)
+    private void AddRoutes(TextRequestRouter<string> router, out int numRoutes)
     {
         int i = 0;
         foreach (var shop in Classes.Shops())

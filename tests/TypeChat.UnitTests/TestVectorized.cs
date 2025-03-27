@@ -93,7 +93,7 @@ public class TestVectorized
         Assert.False(list.Remove(i_test_str));
     }
 
-    void ValidateEqual(Embedding x, Embedding y)
+    private void ValidateEqual(Embedding x, Embedding y)
     {
         Assert.Equal(x.Vector.Length, y.Vector.Length);
         bool cmp = false;
@@ -104,7 +104,7 @@ public class TestVectorized
         Assert.True(cmp);
     }
 
-    int Degrees(double cosine)
+    private int Degrees(double cosine)
     {
         double angle = Math.Acos(cosine); // In radians
         return ((180 / Math.PI) * angle).RoundToInt();

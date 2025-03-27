@@ -10,11 +10,11 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramInterpreter
 {
-    static readonly dynamic[] s_emptyArray = new dynamic[0];
+    private static readonly dynamic[] s_emptyArray = new dynamic[0];
 
-    List<dynamic> _results;
-    Func<string, dynamic[], dynamic>? _callHandler;
-    Func<string, dynamic[], Task<dynamic>>? _callHandlerAsync;
+    private readonly List<dynamic> _results;
+    private Func<string, dynamic[], dynamic>? _callHandler;
+    private Func<string, dynamic[], Task<dynamic>>? _callHandlerAsync;
 
     /// <summary>
     /// Create an interpreter
@@ -74,33 +74,33 @@ public class ProgramInterpreter
         return GetResult();
     }
 
-    void Clear()
+    private void Clear()
     {
         _results.Clear();
         _callHandler = null;
         _callHandlerAsync = null;
     }
 
-    dynamic? GetResult()
+    private dynamic? GetResult()
     {
         dynamic? result = (_results.Count > 0) ? _results[_results.Count - 1] : null;
         return result;
     }
 
-    dynamic Eval(FunctionCall call)
+    private dynamic Eval(FunctionCall call)
     {
         dynamic[] args = Eval(call.Args);
         dynamic result = _callHandler(call.Name, args);
         return result;
     }
 
-    async Task<dynamic> EvalAsync(FunctionCall call)
+    private async Task<dynamic> EvalAsync(FunctionCall call)
     {
         dynamic[] args = await EvalAsync(call.Args).ConfigureAwait(false);
         return await _callHandlerAsync(call.Name, args);
     }
 
-    dynamic Eval(Expression expr)
+    private dynamic Eval(Expression expr)
     {
         switch (expr)
         {
@@ -126,7 +126,7 @@ public class ProgramInterpreter
         return null;
     }
 
-    async Task<dynamic> EvalAsync(Expression expr)
+    private async Task<dynamic> EvalAsync(Expression expr)
     {
         switch (expr)
         {
@@ -152,7 +152,7 @@ public class ProgramInterpreter
         return null;
     }
 
-    dynamic[] Eval(Expression[] expressions)
+    private dynamic[] Eval(Expression[] expressions)
     {
         if (expressions.Length == 0)
         {
@@ -167,7 +167,7 @@ public class ProgramInterpreter
         return args;
     }
 
-    async Task<dynamic[]> EvalAsync(Expression[] expressions)
+    private async Task<dynamic[]> EvalAsync(Expression[] expressions)
     {
         if (expressions.Length == 0)
         {
@@ -182,7 +182,7 @@ public class ProgramInterpreter
         return args;
     }
 
-    dynamic Eval(ValueExpr expr)
+    private dynamic Eval(ValueExpr expr)
     {
         switch (expr.Value.ValueKind)
         {
@@ -199,17 +199,17 @@ public class ProgramInterpreter
         }
     }
 
-    dynamic[] Eval(ArrayExpr expr)
+    private dynamic[] Eval(ArrayExpr expr)
     {
         return Eval(expr.Value);
     }
 
-    Task<dynamic[]> EvalAsync(ArrayExpr expr)
+    private Task<dynamic[]> EvalAsync(ArrayExpr expr)
     {
         return EvalAsync(expr.Value);
     }
 
-    JsonObject Eval(ObjectExpr expr)
+    private JsonObject Eval(ObjectExpr expr)
     {
         JsonObject jsonObject = new JsonObject();
         foreach (var property in expr.Value)
@@ -221,7 +221,7 @@ public class ProgramInterpreter
         return jsonObject;
     }
 
-    async Task<JsonObject> EvalAsync(ObjectExpr expr)
+    private async Task<JsonObject> EvalAsync(ObjectExpr expr)
     {
         JsonObject jsonObj = new JsonObject();
         foreach (var property in expr.Value)
@@ -233,7 +233,7 @@ public class ProgramInterpreter
         return jsonObj;
     }
 
-    dynamic Eval(ResultReference expr)
+    private dynamic Eval(ResultReference expr)
     {
         if (expr.Ref >= _results.Count)
         {

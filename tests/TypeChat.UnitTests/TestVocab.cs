@@ -143,7 +143,7 @@ public class TestVocab : TypeChatTest
     }
 
     // Workaround for Xunit issues
-    void VocabEquals(IVocab left, IVocab right)
+    private void VocabEquals(IVocab left, IVocab right)
     {
         var l = left.ToArray();
         var r = right.ToArray();

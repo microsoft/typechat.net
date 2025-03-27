@@ -8,8 +8,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class NamedVocab : IComparable<NamedVocab>
 {
-    string _name;
-    IVocab _vocab;
+    private readonly string _name;
+    private readonly IVocab _vocab;
 
     public NamedVocab(IVocab vocab)
         : this(string.Empty, vocab)

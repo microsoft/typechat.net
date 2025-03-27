@@ -1,17 +1,22 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Calendar;
+
 using CoffeeShop;
+
 using HealthData;
+
 using Microsoft.TypeChat;
+
 using Restaurant;
+
 using Sentiment;
 
 namespace SchemaHierarchy;
 
 public class SchemaHierarchyApp : ConsoleApp
 {
-    HierarchicalJsonTranslator _translator;
+    private readonly HierarchicalJsonTranslator _translator;
 
     public SchemaHierarchyApp()
     {

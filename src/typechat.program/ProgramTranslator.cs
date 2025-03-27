@@ -60,7 +60,7 @@ export type ResultReference = {
         return new TypescriptSchema(typeof(Program), SchemaText);
     }
 
-    SchemaText _apiDef;
+    private readonly SchemaText _apiDef;
 
     /// <summary>
     /// Create a program translator that uses the given language model to create programs

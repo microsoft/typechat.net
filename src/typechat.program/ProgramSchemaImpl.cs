@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public partial class Program : IDisposable
 {
-    JsonDocument? _programSource;
+    private JsonDocument? _programSource;
 
     /// <summary>
     /// Create a new Json program from the Json document
@@ -134,7 +134,7 @@ public abstract partial class Expression
 
 public partial class Steps : Expression
 {
-    static readonly FunctionCall[] s_emptySteps = new FunctionCall[0];
+    private static readonly FunctionCall[] s_emptySteps = new FunctionCall[0];
 
     public Steps(JsonElement source, FunctionCall[]? calls)
         : base(source)

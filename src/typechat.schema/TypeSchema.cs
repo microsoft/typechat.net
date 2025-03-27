@@ -6,8 +6,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class TypeSchema
 {
-    Type _type;
-    SchemaText _schema;
+    private readonly Type _type;
+    private readonly SchemaText _schema;
 
     /// <summary>
     /// Create a new TypeSchema

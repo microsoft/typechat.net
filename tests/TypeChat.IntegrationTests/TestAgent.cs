@@ -4,8 +4,8 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TestAgent : TypeChatTest, IClassFixture<Config>
 {
-    Config _config;
-    NamedVocab _desserts;
+    private readonly Config _config;
+    private NamedVocab _desserts;
 
     public TestAgent(Config config)
     {
@@ -59,7 +59,7 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
         Validate(order.Desserts, new DessertOrder("Tiramisu", 2));
     }
 
-    void Validate(DessertOrder[] order, params DessertOrder[] expected)
+    private void Validate(DessertOrder[] order, params DessertOrder[] expected)
     {
         Assert.True(order.Length == expected.Length);
         for (int i = 0; i < order.Length; ++i)
@@ -68,7 +68,7 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
         }
     }
 
-    void Validate(DessertOrder order, DessertOrder expected)
+    private void Validate(DessertOrder order, DessertOrder expected)
     {
         Assert.Equal(order.Quantity, expected.Quantity);
         Assert.Equal(order.Name, expected.Name);

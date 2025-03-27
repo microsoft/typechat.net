@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
 {
-    Config _config;
+    private readonly Config _config;
 
     public TestVectorized_EndToEnd(Config config, ITestOutputHelper output)
         : base(output)
@@ -134,7 +134,7 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
         }
     }
 
-    VectorTextIndex<T> CreateIndex<T>()
+    private VectorTextIndex<T> CreateIndex<T>()
     {
         return new VectorTextIndex<T>(new TextEmbeddingModel(_config.OpenAIEmbeddings));
     }

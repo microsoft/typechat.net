@@ -21,7 +21,7 @@ public class TestLanguageModel : TypeChatTest
         await RunRetry(config);
     }
 
-    async Task RunRetry(OpenAIConfig config)
+    private async Task RunRetry(OpenAIConfig config)
     {
         var handler = MockHttpHandler.ErrorResponder(429);
         using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
@@ -88,7 +88,7 @@ public class TestLanguageModel : TypeChatTest
         Assert.Equal(config.Endpoint.ToLower(), requestUrl);
     }
 
-    (string, string) CannedResponse()
+    private (string, string) CannedResponse()
     {
         const string jsonResponse = @"{
           ""id"": ""chatcmpl-123"",

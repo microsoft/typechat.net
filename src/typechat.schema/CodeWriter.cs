@@ -8,8 +8,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class CodeWriter
 {
-    TextWriter _writer;
-    List<char> _indent;
+    private readonly TextWriter _writer;
+    private readonly List<char> _indent;
 
     /// <summary>
     /// Create a new CodeWriter
@@ -57,7 +57,7 @@ public class CodeWriter
     /// </summary>
     /// <param name="token">token to write</param>
     /// <returns>this code writer</returns>
-    CodeWriter Write(string token)
+    private CodeWriter Write(string token)
     {
         if (!string.IsNullOrEmpty(token))
         {
@@ -71,7 +71,7 @@ public class CodeWriter
     /// </summary>
     /// <param name="sb">string builder that contains the string to write</param>
     /// <returns>CodeWriter</returns>
-    CodeWriter Write(StringBuilder sb)
+    private CodeWriter Write(StringBuilder sb)
     {
         if (sb.Length > 0)
         {

@@ -76,7 +76,7 @@ public class ProgramParser
         throw new ProgramException(ProgramException.ErrorCode.InvalidProgramJson, root.ToString());
     }
 
-    Steps ParseSteps(JsonElement source)
+    private Steps ParseSteps(JsonElement source)
     {
         Debug.Assert(source.ValueKind == JsonValueKind.Array);
         FunctionCall[] steps = new FunctionCall[source.GetArrayLength()];
@@ -87,7 +87,7 @@ public class ProgramParser
         return new Steps(source, steps);
     }
 
-    string[] ParseNotTranslated(JsonElement source)
+    private string[] ParseNotTranslated(JsonElement source)
     {
         Debug.Assert(source.ValueKind == JsonValueKind.Array);
         try
@@ -103,12 +103,12 @@ public class ProgramParser
         return null;
     }
 
-    FunctionCall ParseCall(JsonElement elt)
+    private FunctionCall ParseCall(JsonElement elt)
     {
         return ParseCall(elt, elt.GetStringProperty(ExprNames.Func));
     }
 
-    FunctionCall ParseCall(JsonElement source, JsonElement funcName)
+    private FunctionCall ParseCall(JsonElement source, JsonElement funcName)
     {
         Debug.Assert(source.ValueKind == JsonValueKind.Object);
         Expression[] args = ParseArgs(source);
@@ -125,7 +125,7 @@ public class ProgramParser
         return ParseExprArray(args);
     }
 
-    Expression[] ParseExprArray(JsonElement elt)
+    private Expression[] ParseExprArray(JsonElement elt)
     {
         Debug.Assert(elt.ValueKind == JsonValueKind.Array);
         Expression[] expr = new Expression[elt.GetArrayLength()];
@@ -136,7 +136,7 @@ public class ProgramParser
         return expr;
     }
 
-    Expression ParseObject(JsonElement elt)
+    private Expression ParseObject(JsonElement elt)
     {
         Debug.Assert(elt.ValueKind == JsonValueKind.Object);
 
@@ -157,7 +157,7 @@ public class ProgramParser
         }
     }
 
-    ObjectExpr ParseObjectExpr(JsonElement elt)
+    private ObjectExpr ParseObjectExpr(JsonElement elt)
     {
         Debug.Assert(elt.ValueKind == JsonValueKind.Object);
         Dictionary<string, Expression> obj = new Dictionary<string, Expression>();
@@ -169,7 +169,7 @@ public class ProgramParser
         return new ObjectExpr(elt, obj);
     }
 
-    Expression ParseExpr(JsonElement elt)
+    private Expression ParseExpr(JsonElement elt)
     {
         switch (elt.ValueKind)
         {

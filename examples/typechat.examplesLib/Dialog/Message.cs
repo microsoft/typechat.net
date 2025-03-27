@@ -7,8 +7,8 @@ namespace Microsoft.TypeChat.Dialog;
 /// </summary>
 public class Message : IPromptSection
 {
-    string _source;
-    object _body;
+    private readonly string _source;
+    private readonly object _body;
 
     /// <summary>
     /// Create a new message with the given message body
