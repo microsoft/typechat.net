@@ -72,7 +72,8 @@ public class TypeChatTest
     {
         return (config.HasOpenAI &&
                 !string.IsNullOrEmpty(config.OpenAI.ApiKey) &&
-                config.OpenAI.ApiKey != "?");
+                config.OpenAI.ApiKey != "?" &&
+                !string.IsNullOrWhiteSpace(config.OpenAI.Model));
     }
 
     public bool CanRunEndToEndTest(Config config, string testName)
@@ -88,8 +89,9 @@ public class TypeChatTest
     public bool CanRunEndToEndTest_Embeddings(Config config)
     {
         return (config.HasOpenAIEmbeddings &&
-                !string.IsNullOrEmpty(config.OpenAIEmbeddings.ApiKey) &&
-                config.OpenAIEmbeddings.ApiKey != "?");
+                !string.IsNullOrEmpty(config.OpenAIEmbeddings?.ApiKey) &&
+                config.OpenAIEmbeddings.ApiKey != "?" &&
+                !string.IsNullOrWhiteSpace(config.OpenAIEmbeddings.Model));
     }
 
     public bool CanRunEndToEndTest_Embeddings(Config config, string testName)
