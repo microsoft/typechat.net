@@ -8,16 +8,16 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramWriter
 {
-    CodeWriter _writer;
+    private readonly CodeWriter _writer;
 
     public ProgramWriter(TextWriter writer)
     {
         _writer = new CodeWriter(writer);
     }
 
-    string ProgramName { get; set; } = "Program";
-    string ApiVarName { get; set; } = "api";
-    string ResultVarPrefix { get; set; } = "step";
+    private string ProgramName { get; set; } = "Program";
+    private string ApiVarName { get; set; } = "api";
+    private string ResultVarPrefix { get; set; } = "step";
 
     public CodeWriter Writer => _writer;
 
@@ -62,7 +62,7 @@ public class ProgramWriter
         return this;
     }
 
-    ProgramWriter Write(Steps steps)
+    private ProgramWriter Write(Steps steps)
     {
         FunctionCall[] calls = steps.Calls;
         if (calls is not null && calls.Length > 0)
@@ -77,14 +77,14 @@ public class ProgramWriter
         return this;
     }
 
-    ProgramWriter Write(FunctionCall call, bool inline = false)
+    private ProgramWriter Write(FunctionCall call, bool inline = false)
     {
         return BeginCall(call.Name, ApiVarName).
                Write(call.Args).
                EndCall(inline);
     }
 
-    ProgramWriter Write(Expression[] args)
+    private ProgramWriter Write(Expression[] args)
     {
         if (args is not null)
         {
@@ -97,7 +97,7 @@ public class ProgramWriter
         return this;
     }
 
-    ProgramWriter Write(Expression expr)
+    private ProgramWriter Write(Expression expr)
     {
         switch (expr)
         {
@@ -134,13 +134,14 @@ public class ProgramWriter
         return this;
     }
 
-    ProgramWriter BeginCall(string name, string api = null)
+    private ProgramWriter BeginCall(string name, string api = null)
     {
         return Write(api is not null ? $"{api}.{name}(" : $"{name}(");
     }
-    string ResultVar(int resultNumber) => (ResultVarPrefix + (resultNumber + 1));
 
-    ProgramWriter EndCall(bool inline = false)
+    private string ResultVar(int resultNumber) => (ResultVarPrefix + (resultNumber + 1));
+
+    private ProgramWriter EndCall(bool inline = false)
     {
         if (inline)
         {
@@ -153,8 +154,8 @@ public class ProgramWriter
         return this;
     }
 
-    ProgramWriter SOL() { _writer.SOL(); return this; }
-    ProgramWriter EOL() { _writer.EOL(); return this; }
-    ProgramWriter Write(char ch) { _writer.Append(ch); return this; }
-    ProgramWriter Write(string value) { _writer.Append(value); return this; }
+    private ProgramWriter SOL() { _writer.SOL(); return this; }
+    private ProgramWriter EOL() { _writer.EOL(); return this; }
+    private ProgramWriter Write(char ch) { _writer.Append(ch); return this; }
+    private ProgramWriter Write(string value) { _writer.Append(value); return this; }
 }

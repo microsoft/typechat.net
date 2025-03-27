@@ -15,7 +15,7 @@ public class AzureTokenProvider : IApiTokenProvider, IDisposable
 {
     public const int DefaultExpirationBufferMs = 5 * 60 * 1000;
 
-    static AzureTokenProvider s_default;
+    private static readonly AzureTokenProvider s_default;
 
     static AzureTokenProvider()
     {
@@ -26,11 +26,11 @@ public class AzureTokenProvider : IApiTokenProvider, IDisposable
         get { return s_default; }
     }
 
-    TokenCredential _credential;
-    string[] _scopes;
-    int _expirationBufferMs;
-    AccessToken _accessToken;
-    SemaphoreSlim _lock;
+    private readonly TokenCredential _credential;
+    private readonly string[] _scopes;
+    private readonly int _expirationBufferMs;
+    private AccessToken _accessToken;
+    private SemaphoreSlim _lock;
 
     public AzureTokenProvider(AzureTokenScopes scope, int expirationBufferMs = DefaultExpirationBufferMs)
         : this(GetScopes(scope), expirationBufferMs)
@@ -90,7 +90,7 @@ public class AzureTokenProvider : IApiTokenProvider, IDisposable
         _lock = null;
     }
 
-    static string[] GetScopes(AzureTokenScopes scope)
+    private static string[] GetScopes(AzureTokenScopes scope)
     {
         switch (scope)
         {

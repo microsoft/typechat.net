@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
 {
-    Api<TApi> _api;
+    private readonly Api<TApi> _api;
 
     public FunctionCallValidator(Api<TApi> api)
         : base()
@@ -58,7 +58,7 @@ public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
         ProgramException.ThrowFunctionNotFound(functionCall.Name);
     }
 
-    void ValidateArgs(FunctionCall call, ApiMethod methodInfo, Expression[] args)
+    private void ValidateArgs(FunctionCall call, ApiMethod methodInfo, Expression[] args)
     {
         int expectedCount = (methodInfo.Params is not null) ? methodInfo.Params.Length : 0;
         int actualCount = (args is not null) ? args.Length : 0;

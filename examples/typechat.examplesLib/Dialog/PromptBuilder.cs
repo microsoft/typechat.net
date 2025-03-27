@@ -9,10 +9,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PromptBuilder
 {
-    Prompt _prompt;
-    int _currentLength;
-    int _maxLength;
-    Func<string, int, string>? _substring;
+    private readonly Prompt _prompt;
+    private int _currentLength;
+    private int _maxLength;
+    private readonly Func<string, int, string>? _substring;
 
     /// <summary>
     /// Create a builder to create prompts whose length does not exceed maxLength characters
@@ -165,7 +165,7 @@ public class PromptBuilder
         Reverse(startAt, count);
     }
 
-    static string Substring(string text, int length)
+    private static string Substring(string text, int length)
     {
         return text.Substring(0, length);
     }

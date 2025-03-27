@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
 {
-    Config _config;
+    private readonly Config _config;
 
     public TestEndToEnd(Config config, ITestOutputHelper output)
         : base(output)
@@ -27,7 +27,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         await TranslateSentiment(new TextCompletionModel(_config.OpenAI));
     }
 
-    async Task TranslateSentiment(ILanguageModel model)
+    private async Task TranslateSentiment(ILanguageModel model)
     {
         var translator = new JsonTranslator<SentimentResponse>(
             model,
@@ -103,7 +103,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         await ProgramMath(new TextCompletionModel(_config.OpenAI));
     }
 
-    async Task ProgramMath(ILanguageModel model)
+    private async Task ProgramMath(ILanguageModel model)
     {
         string request = "3 * 5 + 2 * 7";
         double expectedResult = 29.0;

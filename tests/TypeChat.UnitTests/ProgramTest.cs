@@ -54,7 +54,7 @@ public class ProgramTest : TypeChatTest
         return GetPrograms(doc);
     }
 
-    static IEnumerable<object[]> GetPrograms(params JsonDocument[] docs)
+    private static IEnumerable<object[]> GetPrograms(params JsonDocument[] docs)
     {
         foreach (var doc in docs)
         {

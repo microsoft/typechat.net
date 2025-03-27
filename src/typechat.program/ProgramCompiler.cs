@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Linq.Expressions;
+
 using LinqExpression = System.Linq.Expressions.Expression;
 
 namespace Microsoft.TypeChat;
@@ -11,9 +12,9 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramCompiler
 {
-    ApiTypeInfo _apiTypeInfo;
-    ConstantExpression _apiImpl;
-    Dictionary<string, ParameterExpression> _variables;
+    private readonly ApiTypeInfo _apiTypeInfo;
+    private ConstantExpression _apiImpl;
+    private readonly Dictionary<string, ParameterExpression> _variables;
 
     /// <summary>
     /// Create a compiler that will allow programs to call an API defined by all public methods of the given type
@@ -80,13 +81,13 @@ public class ProgramCompiler
         return lambda.Compile();
     }
 
-    void Clear()
+    private void Clear()
     {
         _apiImpl = null;
         _variables.Clear();
     }
 
-    BlockExpression CompileSteps(Steps steps)
+    private BlockExpression CompileSteps(Steps steps)
     {
         var block = BeginBlock();
         {
@@ -100,7 +101,7 @@ public class ProgramCompiler
         return EndBlock(block);
     }
 
-    LinqExpression CompileStep(FunctionCall call, int stepNumber)
+    private LinqExpression CompileStep(FunctionCall call, int stepNumber)
     {
         ApiMethod method = _apiTypeInfo[call.Name];
         LinqExpression callExpr = Compile(call, method);
@@ -112,19 +113,19 @@ public class ProgramCompiler
         return callExpr;
     }
 
-    LinqExpression Compile(FunctionCall call)
+    private LinqExpression Compile(FunctionCall call)
     {
         return Compile(call, _apiTypeInfo[call.Name]);
     }
 
-    LinqExpression Compile(FunctionCall call, ApiMethod method)
+    private LinqExpression Compile(FunctionCall call, ApiMethod method)
     {
         LinqExpression[]? args = CompileArgs(call, method.Params);
         MethodCallExpression callExpr = LinqExpression.Call(_apiImpl, method.Method, args);
         return CompileReturnValue(callExpr);
     }
 
-    LinqExpression Compile(Expression expr)
+    private LinqExpression Compile(Expression expr)
     {
         switch (expr)
         {
@@ -150,7 +151,7 @@ public class ProgramCompiler
         return null;
     }
 
-    LinqExpression[]? CompileArgs(FunctionCall call, ParameterInfo[] paramsInfo)
+    private LinqExpression[]? CompileArgs(FunctionCall call, ParameterInfo[] paramsInfo)
     {
         Expression[] expressions = call.Args;
         if (paramsInfo.Length != expressions.Length)
@@ -205,7 +206,7 @@ public class ProgramCompiler
         return args;
     }
 
-    LinqExpression[]? Compile(Expression[] expressions, Type? itemType = null)
+    private LinqExpression[]? Compile(Expression[] expressions, Type? itemType = null)
     {
         if (expressions.Length == 0)
         {
@@ -223,7 +224,7 @@ public class ProgramCompiler
         return items;
     }
 
-    ConstantExpression Compile(ValueExpr expr)
+    private ConstantExpression Compile(ValueExpr expr)
     {
         switch (expr.Value.ValueKind)
         {
@@ -240,19 +241,19 @@ public class ProgramCompiler
         }
     }
 
-    NewArrayExpression Compile(ArrayExpr expr, Type? itemType = null)
+    private NewArrayExpression Compile(ArrayExpr expr, Type? itemType = null)
     {
         LinqExpression[] items = Compile(expr.Value, itemType);
         itemType ??= typeof(object);
         return LinqExpression.NewArrayInit(itemType, items);
     }
 
-    ParameterExpression Compile(ResultReference refExpr)
+    private ParameterExpression Compile(ResultReference refExpr)
     {
         return GetVariable(ResultVarName(refExpr.Ref));
     }
 
-    BlockExpression Compile(ObjectExpr expr)
+    private BlockExpression Compile(ObjectExpr expr)
     {
         var block = BeginBlock();
         {
@@ -304,7 +305,7 @@ public class ProgramCompiler
         return EndBlock(block);
     }
 
-    ParameterExpression AddVariable(Type type, string name)
+    private ParameterExpression AddVariable(Type type, string name)
     {
         Debug.Assert(!_variables.ContainsKey(name));
 
@@ -313,7 +314,7 @@ public class ProgramCompiler
         return variable;
     }
 
-    ParameterExpression? GetVariable(string name)
+    private ParameterExpression? GetVariable(string name)
     {
         if (_variables.TryGetValue(name, out ParameterExpression variable))
         {
@@ -323,7 +324,7 @@ public class ProgramCompiler
         return null;
     }
 
-    UnaryExpression CallJsonFunc(FunctionCall call)
+    private UnaryExpression CallJsonFunc(FunctionCall call)
     {
         ApiMethod method = _apiTypeInfo[call.Name];
         var callExpr = Compile(call, method);
@@ -331,7 +332,7 @@ public class ProgramCompiler
         return CastToJsonNode(callExpr, method.ReturnType.ParameterType);
     }
 
-    MethodCallExpression AddJsonProperty(ConstantExpression jsonObj, string name, LinqExpression value)
+    private MethodCallExpression AddJsonProperty(ConstantExpression jsonObj, string name, LinqExpression value)
     {
         return LinqExpression.Call(
             CompilerApi.AddNodeMethod.Method,
@@ -341,7 +342,7 @@ public class ProgramCompiler
         );
     }
 
-    UnaryExpression CastToJsonNode(LinqExpression srcExpr, Type srcType)
+    private UnaryExpression CastToJsonNode(LinqExpression srcExpr, Type srcType)
     {
         if (!(srcType.IsPrimitive || srcType.IsString()))
         {
@@ -353,7 +354,7 @@ public class ProgramCompiler
         return LinqExpression.Convert(srcExpr, typeof(JsonNode));
     }
 
-    LinqExpression CastFromJsonObject(LinqExpression srcExpr, Type type)
+    private LinqExpression CastFromJsonObject(LinqExpression srcExpr, Type type)
     {
         if (srcExpr.Type == type)
         {
@@ -370,7 +371,7 @@ public class ProgramCompiler
         return LinqExpression.Convert(srcExpr, type);
     }
 
-    LinqExpression CompileReturnValue(LinqExpression retVal)
+    private LinqExpression CompileReturnValue(LinqExpression retVal)
     {
         Type retType = retVal.Type;
         if (typeof(Task).IsAssignableFrom(retType))
@@ -388,23 +389,24 @@ public class ProgramCompiler
         return retVal;
     }
 
-    string ResultVarName(int resultRef)
+    private string ResultVarName(int resultRef)
     {
         return "resultRef_" + resultRef;
     }
 
-    List<LinqExpression> BeginBlock()
+    private List<LinqExpression> BeginBlock()
     {
         // Future: pool
         return new List<LinqExpression>();
     }
-    BlockExpression EndBlock(List<LinqExpression> list)
+
+    private BlockExpression EndBlock(List<LinqExpression> list)
     {
         // Pool block lists 
         return LinqExpression.Block(list);
     }
 
-    class CompilerApi
+    private class CompilerApi
     {
         static CompilerApi()
         {

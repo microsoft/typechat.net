@@ -16,8 +16,8 @@ public interface IProgramValidator
 /// </summary>
 public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
 {
-    TypeValidator<Program> _typeValidator;
-    IProgramValidator? _programValidator;
+    private readonly TypeValidator<Program> _typeValidator;
+    private readonly IProgramValidator? _programValidator;
 
     public ProgramValidator(IProgramValidator? programValidator = null)
     {
@@ -63,7 +63,7 @@ public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
 /// <typeparam name="TApi"></typeparam>
 public class ProgramValidator<TApi> : ProgramValidator
 {
-    Api<TApi> _api;
+    private readonly Api<TApi> _api;
 
     public ProgramValidator(Api<TApi> api)
         : base()

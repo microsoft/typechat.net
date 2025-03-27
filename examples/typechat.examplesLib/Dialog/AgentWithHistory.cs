@@ -12,7 +12,7 @@ namespace Microsoft.TypeChat.Dialog;
 /// </summary>
 public class AgentWithHistory<T> : Agent<T>
 {
-    IMessageStream _history;
+    private readonly IMessageStream _history;
 
     /// <summary>
     /// Create a new Agent that uses the given language model

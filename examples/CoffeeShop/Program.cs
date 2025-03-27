@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Text;
+
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
@@ -8,7 +9,7 @@ namespace CoffeeShop;
 
 public class CoffeeShopApp : ConsoleApp
 {
-    JsonTranslator<Cart> _translator;
+    private readonly JsonTranslator<Cart> _translator;
 
     public CoffeeShopApp()
     {
@@ -36,7 +37,7 @@ public class CoffeeShopApp : ConsoleApp
         }
     }
 
-    bool PrintAnyUnknown(Cart cart)
+    private bool PrintAnyUnknown(Cart cart)
     {
         if (cart.Items is not null)
         {

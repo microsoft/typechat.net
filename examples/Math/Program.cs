@@ -7,8 +7,8 @@ namespace Math;
 
 public class MathApp : ConsoleApp
 {
-    ProgramTranslator<IMathAPI> _translator;
-    Api<IMathAPI> _api;
+    private readonly ProgramTranslator<IMathAPI> _translator;
+    private readonly Api<IMathAPI> _api;
 
     public MathApp()
     {
@@ -40,7 +40,7 @@ public class MathApp : ConsoleApp
         }
     }
 
-    void RunProgram(Program program)
+    private void RunProgram(Program program)
     {
         Console.WriteLine("Running program");
         dynamic retval = program.Run(_api);
@@ -54,7 +54,7 @@ public class MathApp : ConsoleApp
         }
     }
 
-    void DisplayCall(string functionName, dynamic[] args, dynamic result)
+    private void DisplayCall(string functionName, dynamic[] args, dynamic result)
     {
         new ProgramWriter(Console.Out).Write(functionName, args);
         Console.WriteLine($"==> {result}");

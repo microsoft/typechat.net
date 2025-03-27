@@ -30,7 +30,7 @@ public class ConstraintsValidator
         return new ValidationResult(errorMessage);
     }
 
-    string ToErrorString(List<ValidationResult> validationResults)
+    private string ToErrorString(List<ValidationResult> validationResults)
     {
         // Future: pool these
         StringBuilder sb = new StringBuilder();
@@ -66,7 +66,7 @@ public class ConstraintsValidator<T> : ConstraintsValidator, IConstraintsValidat
         return Result<T>.Error(result.ErrorMessage);
     }
 
-    string ToErrorString(List<ValidationResult> validationResults)
+    private string ToErrorString(List<ValidationResult> validationResults)
     {
         StringBuilder sb = new StringBuilder();
         foreach (var result in validationResults)

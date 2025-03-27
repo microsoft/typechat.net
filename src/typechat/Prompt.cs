@@ -169,7 +169,7 @@ public class Prompt : List<IPromptSection>
         return total;
     }
 
-    int IndexOfLast()
+    private int IndexOfLast()
     {
         return Count > 0 ? Count - 1 : -1;
     }

@@ -305,5 +305,5 @@ internal class CSharpWriter : CodeWriter
         return this;
     }
 
-    CSharpWriter Public() { Append(CSharpLang.Modifiers.Public).Space(); return this; }
+    private CSharpWriter Public() { Append(CSharpLang.Modifiers.Public).Space(); return this; }
 }

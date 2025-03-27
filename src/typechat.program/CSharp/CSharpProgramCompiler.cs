@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Collections.Immutable;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
@@ -39,10 +40,10 @@ public class CSharpProgramCompiler
         return Path.GetDirectoryName(sysLocation);
     }
 
-    static CSharpCompilationOptions s_defaultOptions = DefaultOptions();
+    private static readonly CSharpCompilationOptions s_defaultOptions = DefaultOptions();
 
-    string _assemblyName;
-    CSharpCompilation _compilation;
+    private readonly string _assemblyName;
+    private CSharpCompilation _compilation;
 
     /// <summary>
     /// Create a new compiler
@@ -119,7 +120,7 @@ public class CSharpProgramCompiler
         return Result<byte[]>.Error(CollectDiagnostics(result.Diagnostics));
     }
 
-    string CollectDiagnostics(ImmutableArray<Diagnostic> diagnostics)
+    private string CollectDiagnostics(ImmutableArray<Diagnostic> diagnostics)
     {
         if (diagnostics.IsDefaultOrEmpty)
         {
@@ -140,7 +141,7 @@ public class CSharpProgramCompiler
         return sb.ToString();
     }
 
-    string GetTextWithError(Diagnostic diagnostic)
+    private string GetTextWithError(Diagnostic diagnostic)
     {
         var errorSpan = diagnostic.Location.SourceSpan;
         var sourceText = diagnostic.Location.SourceTree.GetText();

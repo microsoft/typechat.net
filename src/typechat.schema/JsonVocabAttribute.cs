@@ -15,8 +15,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class JsonVocabAttribute : JsonConverterAttribute
 {
-    string _entries;
-    IVocab _vocab;
+    private string _entries;
+    private IVocab _vocab;
 
     /// <summary>
     /// Default const

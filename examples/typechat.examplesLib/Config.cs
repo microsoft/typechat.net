@@ -51,8 +51,8 @@ public class Config
         return config;
     }
 
-    OpenAIConfig? _openAI;
-    OpenAIConfig? _openAIEmbeddings;
+    private readonly OpenAIConfig? _openAI;
+    private readonly OpenAIConfig? _openAIEmbeddings;
 
     public Config()
     {

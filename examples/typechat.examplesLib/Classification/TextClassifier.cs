@@ -10,7 +10,7 @@ namespace Microsoft.TypeChat.Classification;
 /// </summary>
 public class TextClassifier : JsonTranslator<TextClassification>
 {
-    TextClasses _classes;
+    private readonly TextClasses _classes;
 
     /// <summary>
     /// Create a classifier that will make classification decisions using the given language model

@@ -7,7 +7,7 @@ namespace Calendar;
 
 public class CalendarApp : ConsoleApp
 {
-    JsonTranslator<CalendarActions> _translator;
+    private readonly JsonTranslator<CalendarActions> _translator;
 
     public CalendarApp()
     {
@@ -29,7 +29,7 @@ public class CalendarApp : ConsoleApp
         PrintUnknown(actions);
     }
 
-    bool PrintUnknown(CalendarActions calendarActions)
+    private bool PrintUnknown(CalendarActions calendarActions)
     {
         int countUnknown = 0;
         foreach (var action in calendarActions.Actions)

@@ -10,7 +10,7 @@ public struct Embedding
 {
     public static readonly Embedding Empty = new Embedding();
 
-    float[] _vector;
+    private float[] _vector;
 
     /// <summary>
     /// Create an empty embedding
@@ -109,7 +109,7 @@ public struct Embedding
         return TensorPrimitives.CosineSimilarity(VectorSpan, other.VectorSpan);
     }
 
-    static double EuclideanLength(float[] vector)
+    private static double EuclideanLength(float[] vector)
     {
         return Math.Sqrt(TensorPrimitives.Dot(vector, vector));
     }
