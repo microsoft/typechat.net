@@ -82,8 +82,10 @@ public class Result<T>
     /// <returns></returns>
     public static Result<T> Error(T value, string message)
     {
-        var result = new Result<T>(false, message);
-        result.Value = value;
+        var result = new Result<T>(false, message)
+        {
+            Value = value
+        };
         return result;
     }
 }

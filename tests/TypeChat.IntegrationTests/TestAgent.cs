@@ -46,9 +46,14 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
     {
         Skip.If(!CanRunEndToEndTest(_config));
 
-        AgentWithHistory<Order> agent = new AgentWithHistory<Order>(_config.CreateTranslator<Order>());
-        agent.CreateMessageForHistory = (r) => null; // Don't remember responses. 
-        agent.Translator.MaxRepairAttempts = 3;
+        AgentWithHistory<Order> agent = new AgentWithHistory<Order>(_config.CreateTranslator<Order>())
+        {
+            CreateMessageForHistory = (r) => null, // Don't remember responses. 
+            Translator =
+                {
+                    MaxRepairAttempts = 3
+                }
+        };
 
         Order order = await agent.GetResponseAsync("I would like 1 strawberry shortcake");
         Validate(order.Desserts, "Strawberry Shortcake");

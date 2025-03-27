@@ -13,8 +13,10 @@ public class RestaurantApp : ConsoleApp
     {
         _translator = new JsonTranslator<Order>(
             new LanguageModel(Config.LoadOpenAI())
-        );
-        _translator.MaxRepairAttempts = 3;
+        )
+        {
+            MaxRepairAttempts = 3
+        };
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);
     }

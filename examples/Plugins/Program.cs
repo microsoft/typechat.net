@@ -15,8 +15,13 @@ public class PluginApp : ConsoleApp
     public PluginApp()
     {
         InitPlugins();
-        _programTranslator = new PluginProgramTranslator(_kernel, _config.Model);
-        _programTranslator.Translator.MaxRepairAttempts = 2;
+        _programTranslator = new PluginProgramTranslator(_kernel, _config.Model)
+        {
+            Translator =
+            {
+                MaxRepairAttempts = 2
+            }
+        };
         _interpreter = new ProgramInterpreter();
         // Uncomment to see ALL raw messages to and from the AI
         // base.SubscribeAllEvents(_programTranslator.Translator);

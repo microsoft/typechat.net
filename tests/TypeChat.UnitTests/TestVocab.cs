@@ -76,7 +76,7 @@ public class TestVocab : TypeChatTest
         var dessertVocab = TestVocabs.Desserts();
         var fruitsVocab = TestVocabs.Fruits();
 
-        VocabCollection vocabs = new VocabCollection { dessertVocab, fruitsVocab };
+        VocabCollection vocabs = [dessertVocab, fruitsVocab];
         var schema = TypescriptExporter.GenerateSchema(typeof(DessertOrder), vocabs);
         ValidateBasic(typeof(DessertOrder), schema);
         ValidateVocab(schema, dessertVocab);
@@ -103,8 +103,10 @@ public class TestVocab : TypeChatTest
     [Fact]
     public void JsonVocab()
     {
-        var obj = new ConverterTestObj();
-        obj.Milk = "Cream";
+        var obj = new ConverterTestObj
+        {
+            Milk = "Cream"
+        };
 
         string json = Json.Stringify(obj);
         Assert.Throws<SchemaException>(() => Json.Parse<ConverterTestObj>(json));

@@ -129,8 +129,10 @@ public class OpenAIConfig
     /// <returns></returns>
     public static OpenAIConfig FromEnvironment(bool isEmbedding = false)
     {
-        OpenAIConfig config = new OpenAIConfig();
-        config.ApiKey = Environment.GetEnvironmentVariable(VariableNames.AZURE_OPENAI_API_KEY);
+        OpenAIConfig config = new OpenAIConfig
+        {
+            ApiKey = Environment.GetEnvironmentVariable(VariableNames.AZURE_OPENAI_API_KEY)
+        };
         if (config.ApiKey is null)
         {
             config.Azure = false;

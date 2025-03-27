@@ -8,13 +8,15 @@ public class TestConstraints : TypeChatTest
     public void Test_Valid()
     {
         // Valid object
-        Person person = new Person();
-        person.Name = new Name
+        Person person = new Person
         {
-            FirstName = "Mario",
-            LastName = "Minderbinder"
+            Name = new Name
+            {
+                FirstName = "Mario",
+                LastName = "Minderbinder"
+            },
+            Age = 45
         };
-        person.Age = 45;
 
         ConstraintsValidator<Person> validator = new ConstraintsValidator<Person>();
         Result<Person> result = validator.Validate(person);
@@ -28,13 +30,15 @@ public class TestConstraints : TypeChatTest
         ConstraintsValidator<Person> validator = new ConstraintsValidator<Person>();
 
         // Names too long
-        Person person = new Person();
-        person.Name = new Name
+        Person person = new Person
         {
-            FirstName = new string('f', 64),
-            LastName = new string('l', 34)
+            Name = new Name
+            {
+                FirstName = new string('f', 64),
+                LastName = new string('l', 34)
+            },
+            Age = 45
         };
-        person.Age = 45;
 
         Result<Person> result = validator.Validate(person);
         Assert.False(result.Success);

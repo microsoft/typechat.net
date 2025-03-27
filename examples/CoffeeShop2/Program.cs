@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Text;
+
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Schema;
 
@@ -23,8 +24,10 @@ public class CoffeeShop : ConsoleApp
         _translator = new JsonTranslator<Cart>(
                    new ChatLanguageModel(Config.LoadOpenAI()),
                    new TypeValidator<Cart>(_vocabs)
-               );
-        _translator.MaxRepairAttempts = 3;
+               )
+        {
+            MaxRepairAttempts = 3
+        };
 
         //base.SubscribeAllEvents(_translator);
     }
