@@ -131,7 +131,7 @@ public class OpenAIConfig
     {
         OpenAIConfig config = new OpenAIConfig();
         config.ApiKey = Environment.GetEnvironmentVariable(VariableNames.AZURE_OPENAI_API_KEY);
-        if (config.ApiKey is null)
+        if (string.IsNullOrEmpty(config.ApiKey))
         {
             config.Azure = false;
             config.ApiKey = Environment.GetEnvironmentVariable(VariableNames.OPENAI_API_KEY);
