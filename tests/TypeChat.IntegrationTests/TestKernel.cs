@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TestKernel : TypeChatTest, IClassFixture<Config>
 {
-    private Config _config;
+    private readonly Config _config;
 
     public TestKernel(ITestOutputHelper output, Config config)
         : base(output)

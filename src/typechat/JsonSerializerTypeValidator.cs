@@ -27,8 +27,8 @@ public class JsonSerializerTypeValidator
         return options;
     }
 
-    private static JsonSerializerOptions s_defaultOptions = DefaultOptions();
-    private JsonSerializerOptions _options;
+    private static readonly JsonSerializerOptions s_defaultOptions = DefaultOptions();
+    private readonly JsonSerializerOptions _options;
 
     /// <summary>
     /// Create a new type validator
@@ -101,8 +101,8 @@ public class JsonSerializerTypeValidator
 /// </summary>
 public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
 {
-    private TypeSchema _schema;
-    private JsonSerializerTypeValidator _validator;
+    private readonly TypeSchema _schema;
+    private readonly JsonSerializerTypeValidator _validator;
 
     /// <summary>
     /// Create a new validator

@@ -7,8 +7,8 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ChatLanguageModel : ILanguageModel
 {
-    private IChatCompletionService _service;
-    private ModelInfo _model;
+    private readonly IChatCompletionService _service;
+    private readonly ModelInfo _model;
 
     /// <summary>
     /// Create a new language model from the OpenAI config

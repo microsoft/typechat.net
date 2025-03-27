@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramWriter
 {
-    private CodeWriter _writer;
+    private readonly CodeWriter _writer;
 
     public ProgramWriter(TextWriter writer)
     {

@@ -6,7 +6,7 @@ internal struct MinHeap<T>
 {
     private static readonly T[] s_emptyBuffer = Array.Empty<T>();
 
-    private ScoredValue<T>[] _items;
+    private readonly ScoredValue<T>[] _items;
     private int _count;
 
     public MinHeap(int capacity)

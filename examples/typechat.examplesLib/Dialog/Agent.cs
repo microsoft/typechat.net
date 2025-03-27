@@ -8,9 +8,9 @@ namespace Microsoft.TypeChat.Dialog;
 /// </summary>
 public class Agent<T> : IAgent
 {
-    private JsonTranslator<T> _translator;
-    private IContextProvider? _contextProvider;
-    private Prompt _instructions;
+    private readonly JsonTranslator<T> _translator;
+    private readonly IContextProvider? _contextProvider;
+    private readonly Prompt _instructions;
     private int _maxPromptLength;
 
     /// <summary>

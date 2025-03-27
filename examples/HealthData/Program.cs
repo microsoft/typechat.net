@@ -8,7 +8,7 @@ namespace HealthData;
 
 public class HealthDataAgent : ConsoleApp
 {
-    private AgentWithHistory<HealthDataResponse> _agent;
+    private readonly AgentWithHistory<HealthDataResponse> _agent;
 
     public HealthDataAgent()
     {

@@ -3,7 +3,7 @@
 namespace Microsoft.TypeChat.Schema;
 
 /// <summary>
-/// Terminals, Operators etc, used to export Typescript
+/// Terminals, Operators etc., used to export Typescript
 /// This only contains enough operators currently used for schema export
 /// </summary>
 public class Typescript : CodeLanguage

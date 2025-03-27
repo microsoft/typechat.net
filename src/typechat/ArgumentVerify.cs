@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat;
 
 /// <summary>
 /// Reserved for Typechat infrastructure
-/// Used by Typechat libraries to do argument validation in a .NET framework agnostic way
+/// Used by Typechat libraries to do argument validation in a .NET framework-agnostic way
 /// </summary>
 internal static class ArgumentVerify
 {

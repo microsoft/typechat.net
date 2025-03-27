@@ -6,7 +6,7 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TypeChatTest
 {
-    private ITestOutputHelper? _output;
+    private readonly ITestOutputHelper? _output;
 
     public TypeChatTest(ITestOutputHelper? output = null)
     {

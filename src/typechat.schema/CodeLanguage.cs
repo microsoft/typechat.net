@@ -11,8 +11,8 @@ public class CodeLanguage
     {
         public const string LBrace = "{";
         public const string RBrace = "}";
-        public const string LParan = "(";
-        public const string RParan = ")";
+        public const string LParen = "(";
+        public const string RParen = ")";
         public const string LSquare = "[";
         public const string RSquare = "]";
         public const string Colon = ":";

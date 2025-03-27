@@ -9,9 +9,9 @@ public class TextClasses
 {
     public const string VocabName = "Classes";
 
-    private List<TextClass> _classes;
-    private VocabCollection _vocabs;
-    private Vocab _vocab;
+    private readonly List<TextClass> _classes;
+    private readonly VocabCollection _vocabs;
+    private readonly Vocab _vocab;
 
     /// <summary>
     /// Create a new set of classes

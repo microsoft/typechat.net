@@ -16,7 +16,7 @@ namespace SchemaHierarchy;
 
 public class SchemaHierarchyApp : ConsoleApp
 {
-    private HierarchicalJsonTranslator _translator;
+    private readonly HierarchicalJsonTranslator _translator;
 
     public SchemaHierarchyApp()
     {

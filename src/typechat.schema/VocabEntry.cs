@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public struct VocabEntry : IComparable<VocabEntry>, IEquatable<VocabEntry>
 {
-    private string _text;
+    private readonly string _text;
 
     [JsonConstructor]
     public VocabEntry(string text)

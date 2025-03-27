@@ -9,8 +9,8 @@ namespace CoffeeShop;
 
 public class CoffeeShop : ConsoleApp
 {
-    private IVocabCollection _vocabs;
-    private JsonTranslator<Cart> _translator;
+    private readonly IVocabCollection _vocabs;
+    private readonly JsonTranslator<Cart> _translator;
 
     private CoffeeShop()
     {

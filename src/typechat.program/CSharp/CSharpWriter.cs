@@ -114,13 +114,13 @@ internal class CSharpWriter : CodeWriter
         {
             retType = CSharpLang.Types.Void;
         }
-        Public().Append(retType).Space().Append(name).LParan();
+        Public().Append(retType).Space().Append(name).LParen();
         return this;
     }
 
     public CSharpWriter EndDeclareMethod()
     {
-        RParan().EOL();
+        RParen().EOL();
         return this;
     }
 
@@ -195,7 +195,7 @@ internal class CSharpWriter : CodeWriter
 
     public CSharpWriter BeginMethodCall(string objName, string methodName)
     {
-        Append(objName).Period().Append(methodName).LParan();
+        Append(objName).Period().Append(methodName).LParen();
         return this;
     }
 
@@ -217,7 +217,7 @@ internal class CSharpWriter : CodeWriter
 
     public CSharpWriter EndMethodCall(bool inline = false)
     {
-        RParan();
+        RParen();
         if (!inline)
         {
             Semicolon().EOL();
@@ -237,18 +237,18 @@ internal class CSharpWriter : CodeWriter
 
     public CSharpWriter StaticCall(string methodName, params string[] args)
     {
-        Append(methodName).LParan();
+        Append(methodName).LParen();
         {
             Args(args);
         }
-        RParan();
+        RParen();
 
         return this;
     }
 
     public CSharpWriter Cast(string type)
     {
-        LParan().Append(type).RParan();
+        LParen().Append(type).RParen();
         return this;
     }
 

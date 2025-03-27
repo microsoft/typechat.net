@@ -7,8 +7,8 @@ namespace Math;
 
 public class MathApp : ConsoleApp
 {
-    private ProgramTranslator<IMathAPI> _translator;
-    private Api<IMathAPI> _api;
+    private readonly ProgramTranslator<IMathAPI> _translator;
+    private readonly Api<IMathAPI> _api;
 
     public MathApp()
     {

@@ -7,10 +7,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class LanguageModel : ILanguageModel, IDisposable
 {
-    private static TranslationSettings s_defaultSettings = new TranslationSettings();
+    private static readonly TranslationSettings s_defaultSettings = new TranslationSettings();
 
-    private OpenAIConfig _config;
-    private ModelInfo _model;
+    private readonly OpenAIConfig _config;
+    private readonly ModelInfo _model;
     private HttpClient _client;
     private string _endPoint;
 

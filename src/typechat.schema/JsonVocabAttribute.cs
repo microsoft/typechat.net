@@ -15,8 +15,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class JsonVocabAttribute : JsonConverterAttribute
 {
-    private string _entries;
-    private IVocab _vocab;
+    private string? _entries;
+    private IVocab? _vocab;
 
     /// <summary>
     /// Default const
@@ -93,11 +93,11 @@ public class JsonVocabAttribute : JsonConverterAttribute
 
         if (HasVocab)
         {
-            return new JsonVocabConvertor(_vocab, PropertyName);
+            return new JsonVocabConvertor(_vocab!, PropertyName);
         }
         if (HasName)
         {
-            return new JsonVocabConvertor(Name, PropertyName);
+            return new JsonVocabConvertor(Name!, PropertyName);
         }
         return base.CreateConverter(typeToConvert);
     }
@@ -108,16 +108,16 @@ public class JsonVocabAttribute : JsonConverterAttribute
         {
             return null;
         }
-        return new Vocab(_vocab);
+        return new Vocab(_vocab!);
     }
 
     public NamedVocab? ToVocabType()
     {
-        if (!HasVocab)
+        if (!HasVocab || !HasName)
         {
             return null;
         }
-        return new NamedVocab(Name, _vocab);
+        return new NamedVocab(Name!, _vocab!);
     }
 }
 

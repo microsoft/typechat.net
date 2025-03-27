@@ -16,13 +16,13 @@ namespace Microsoft.TypeChat.CSharp;
 public class CSharpProgramTranspiler
 {
     private const string DefaultClassName = "Program";
-    private static string[] s_standardNamespaces = new[] { "System", "System.Text", "System.Text.Json", "System.Text.Json.Nodes" };
+    private static readonly string[] s_standardNamespaces = new[] { "System", "System.Text", "System.Text.Json", "System.Text.Json.Nodes" };
 
-    private Type _apiType;
-    private ApiTypeInfo _apiTypeInfo;
-    private List<string> _namespaces;
+    private readonly Type _apiType;
+    private readonly ApiTypeInfo _apiTypeInfo;
+    private readonly List<string> _namespaces;
     private string _className;
-    private List<string> _blocks;
+    private readonly List<string> _blocks;
     private int _objectId = 0;
     private int _minIndent = 0;
 

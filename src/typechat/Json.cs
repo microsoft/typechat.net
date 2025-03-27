@@ -20,7 +20,7 @@ public class Json
     private static readonly Json s_default = new Json();
     private static readonly Json s_indented = new Json(true);
 
-    private JsonSerializerOptions _options;
+    private readonly JsonSerializerOptions _options;
 
     public Json(bool indented = false)
     {

@@ -20,8 +20,8 @@ public struct SchemaText
         public const string Typescript = "TypeScript";
     }
 
-    private string _lang;
-    private string _text;
+    private readonly string _lang;
+    private readonly string _text;
 
     /// <summary>
     /// Create a SchemaText object to hold schema specified in the given language

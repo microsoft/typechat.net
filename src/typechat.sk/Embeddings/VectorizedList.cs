@@ -11,8 +11,8 @@ namespace Microsoft.TypeChat.Embeddings;
 /// <typeparam name="T"></typeparam>
 public class VectorizedList<T> : ICollection<KeyValuePair<T, Embedding>>
 {
-    private List<T> _buffer;
-    private List<Embedding> _embeddings;
+    private readonly List<T> _buffer;
+    private readonly List<Embedding> _embeddings;
 
     /// <summary>
     /// Create a new list

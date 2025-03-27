@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
 {
-    private Api<TApi> _api;
+    private readonly Api<TApi> _api;
 
     public FunctionCallValidator(Api<TApi> api)
         : base()

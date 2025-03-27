@@ -30,7 +30,7 @@ public class PromptSection : IPromptSection
 
     public static readonly PromptSection Empty = FromUser(string.Empty);
 
-    private string _source;
+    private readonly string _source;
     private string _text;
 
     /// <summary>

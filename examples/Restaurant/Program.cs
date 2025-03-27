@@ -7,7 +7,7 @@ namespace Restaurant;
 
 public class RestaurantApp : ConsoleApp
 {
-    private JsonTranslator<Order> _translator;
+    private readonly JsonTranslator<Order> _translator;
 
     public RestaurantApp()
     {

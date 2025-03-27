@@ -12,9 +12,9 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ProgramCompiler
 {
-    private ApiTypeInfo _apiTypeInfo;
+    private readonly ApiTypeInfo _apiTypeInfo;
     private ConstantExpression _apiImpl;
-    private Dictionary<string, ParameterExpression> _variables;
+    private readonly Dictionary<string, ParameterExpression> _variables;
 
     /// <summary>
     /// Create a compiler that will allow programs to call an API defined by all public methods of the given type

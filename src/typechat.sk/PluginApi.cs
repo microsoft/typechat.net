@@ -9,9 +9,9 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginApi
 {
-    private Kernel _kernel;
-    private string _typeName;
-    private PluginApiTypeInfo _typeInfo;
+    private readonly Kernel _kernel;
+    private readonly string _typeName;
+    private readonly PluginApiTypeInfo _typeInfo;
 
     /// <summary>
     /// Create an Api using all registered kernel plugins

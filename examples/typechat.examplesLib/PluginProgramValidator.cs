@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginProgramValidator : ProgramVisitor, IProgramValidator
 {
-    private PluginApiTypeInfo _typeInfo;
+    private readonly PluginApiTypeInfo _typeInfo;
 
     public PluginProgramValidator(PluginApiTypeInfo typeInfo)
     {

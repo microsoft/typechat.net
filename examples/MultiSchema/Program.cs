@@ -25,8 +25,8 @@ namespace MultiSchema;
 /// </summary>
 public class MultiSchemaApp : ConsoleApp
 {
-    private ILanguageModel _model;
-    private TextRequestRouter<IInputHandler> _childApps;
+    private readonly ILanguageModel _model;
+    private readonly TextRequestRouter<IInputHandler> _childApps;
 
     public MultiSchemaApp()
     {

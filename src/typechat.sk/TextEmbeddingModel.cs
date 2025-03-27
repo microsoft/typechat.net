@@ -6,9 +6,9 @@ namespace Microsoft.TypeChat;
 
 public class TextEmbeddingModel
 {
-    private Kernel _kernel;
-    private ITextEmbeddingGenerationService _model;
-    private ModelInfo _modelInfo;
+    private readonly Kernel _kernel;
+    private readonly ITextEmbeddingGenerationService _model;
+    private readonly ModelInfo _modelInfo;
 
     /// <summary>
     /// Create a new text embedding model from the OpenAI config

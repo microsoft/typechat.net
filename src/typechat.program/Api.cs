@@ -11,8 +11,8 @@ public class Api
 {
     private static readonly object?[] s_emptyArgs = Array.Empty<object?>();
 
-    private ApiTypeInfo _typeInfo;
-    private object _apiImpl;
+    private readonly ApiTypeInfo _typeInfo;
+    private readonly object _apiImpl;
 
     /// <summary>
     /// Create an Api using ALL Public instance methods of the supplied apiImpl

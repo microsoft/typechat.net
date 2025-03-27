@@ -15,7 +15,7 @@ public class AzureTokenProvider : IApiTokenProvider, IDisposable
 {
     public const int DefaultExpirationBufferMs = 5 * 60 * 1000;
 
-    private static AzureTokenProvider s_default;
+    private static readonly AzureTokenProvider s_default;
 
     static AzureTokenProvider()
     {
@@ -26,9 +26,9 @@ public class AzureTokenProvider : IApiTokenProvider, IDisposable
         get { return s_default; }
     }
 
-    private TokenCredential _credential;
-    private string[] _scopes;
-    private int _expirationBufferMs;
+    private readonly TokenCredential _credential;
+    private readonly string[] _scopes;
+    private readonly int _expirationBufferMs;
     private AccessToken _accessToken;
     private SemaphoreSlim _lock;
 

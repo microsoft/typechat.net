@@ -9,8 +9,8 @@ public class PluginApp : ConsoleApp
 {
     private OpenAIConfig _config;
     private Kernel _kernel;
-    private PluginProgramTranslator _programTranslator;
-    private ProgramInterpreter _interpreter;
+    private readonly PluginProgramTranslator _programTranslator;
+    private readonly ProgramInterpreter _interpreter;
 
     public PluginApp()
     {

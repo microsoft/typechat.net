@@ -36,9 +36,9 @@ public class TypeChatException : Exception
         NoTranslator
     }
 
-    private string _request;
-    private ErrorCode _errorCode;
-    private JsonResponse? _response;
+    private readonly string _request;
+    private readonly ErrorCode _errorCode;
+    private readonly JsonResponse? _response;
 
     public TypeChatException(ErrorCode code, string request, JsonResponse? response = null, string? message = null)
         : base(message)

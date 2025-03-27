@@ -7,9 +7,9 @@ namespace Microsoft.TypeChat.CSharp;
 /// </summary>
 public class ProgramAssembly
 {
-    private Assembly _assembly;
-    private string _className;
-    private string _methodName;
+    private readonly Assembly _assembly;
+    private readonly string _className;
+    private readonly string _methodName;
 
     public ProgramAssembly(byte[] bytes, CSharpProgramTranspiler writer)
         : this(bytes, writer.ClassName, writer.MethodName)

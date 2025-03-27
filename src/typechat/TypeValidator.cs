@@ -10,8 +10,8 @@ namespace Microsoft.TypeChat;
 /// <typeparam name="T"></typeparam>
 public class TypeValidator<T> : IJsonTypeValidator<T>
 {
-    private TypescriptSchema _schema;
-    private JsonSerializerTypeValidator<T> _jsonValidator;
+    private readonly TypescriptSchema _schema;
+    private readonly JsonSerializerTypeValidator<T> _jsonValidator;
 
     /// <summary>
     /// Create a new TypeValidator.

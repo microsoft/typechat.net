@@ -7,7 +7,7 @@ namespace Calendar;
 
 public class CalendarApp : ConsoleApp
 {
-    private JsonTranslator<CalendarActions> _translator;
+    private readonly JsonTranslator<CalendarActions> _translator;
 
     public CalendarApp()
     {

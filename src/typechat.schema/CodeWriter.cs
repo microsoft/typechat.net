@@ -8,8 +8,8 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class CodeWriter
 {
-    private TextWriter _writer;
-    private List<char> _indent;
+    private readonly TextWriter _writer;
+    private readonly List<char> _indent;
 
     /// <summary>
     /// Create a new CodeWriter
@@ -141,8 +141,8 @@ public class CodeWriter
 
     public CodeWriter LBrace() => Write(CodeLanguage.Punctuation.LBrace);
     public CodeWriter RBrace() => Write(CodeLanguage.Punctuation.RBrace);
-    public CodeWriter LParan() => Write(CodeLanguage.Punctuation.LParan);
-    public CodeWriter RParan() => Write(CodeLanguage.Punctuation.RParan);
+    public CodeWriter LParen() => Write(CodeLanguage.Punctuation.LParen);
+    public CodeWriter RParen() => Write(CodeLanguage.Punctuation.RParen);
     public CodeWriter LSquare() => Write(CodeLanguage.Punctuation.LSquare);
     public CodeWriter RSquare() => Write(CodeLanguage.Punctuation.RSquare);
     public CodeWriter Semicolon() => Write(CodeLanguage.Punctuation.Semicolon);

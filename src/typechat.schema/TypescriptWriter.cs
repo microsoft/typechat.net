@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class TypescriptWriter
 {
-    private CodeWriter _writer;
+    private readonly CodeWriter _writer;
 
     /// <summary>
     /// Create a new TypescriptWrite that writes Typescript to the given text writer
@@ -66,8 +66,8 @@ public class TypescriptWriter
 
     public TypescriptWriter LBrace() { _writer.LBrace(); return this; }
     public TypescriptWriter RBrace() { _writer.RBrace(); return this; }
-    public TypescriptWriter LParan() { _writer.LParan(); return this; }
-    public TypescriptWriter RParan() { _writer.RParan(); return this; }
+    public TypescriptWriter LParen() { _writer.LParen(); return this; }
+    public TypescriptWriter RParen() { _writer.RParen(); return this; }
     public TypescriptWriter Semicolon() { _writer.Semicolon(); return this; }
     public TypescriptWriter Comma() { _writer.Comma(); return this; }
     public TypescriptWriter EOS() => Semicolon().EOL();
@@ -226,12 +226,12 @@ public class TypescriptWriter
 
     public TypescriptWriter BeginMethodDeclare(string name)
     {
-        return SOL().Name(name).LParan();
+        return SOL().Name(name).LParen();
     }
 
     public TypescriptWriter EndMethodDeclare(string? returnType = null, bool nullable = false)
     {
-        RParan();
+        RParen();
         if (!string.IsNullOrEmpty(returnType))
         {
             Colon().Space().Name(returnType);

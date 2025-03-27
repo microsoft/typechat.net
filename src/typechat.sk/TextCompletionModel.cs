@@ -9,9 +9,9 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class TextCompletionModel : ILanguageModel
 {
-    private Kernel _kernel;
-    private ITextGenerationService _service;
-    private ModelInfo _model;
+    private readonly Kernel _kernel;
+    private readonly ITextGenerationService _service;
+    private readonly ModelInfo _model;
 
     public TextCompletionModel(OpenAIConfig config, ModelInfo? model = null)
     {

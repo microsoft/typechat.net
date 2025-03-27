@@ -12,7 +12,7 @@ public class ProgramInterpreter
 {
     private static readonly dynamic[] s_emptyArray = new dynamic[0];
 
-    private List<dynamic> _results;
+    private readonly List<dynamic> _results;
     private Func<string, dynamic[], dynamic>? _callHandler;
     private Func<string, dynamic[], Task<dynamic>>? _callHandlerAsync;
 

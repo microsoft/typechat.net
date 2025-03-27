@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat;
 
 public abstract class ConsoleApp : IInputHandler
 {
-    private List<string> _stopStrings;
+    private readonly List<string> _stopStrings;
 
     public ConsoleApp()
     {

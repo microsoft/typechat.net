@@ -9,7 +9,7 @@ namespace CoffeeShop;
 
 public class CoffeeShopApp : ConsoleApp
 {
-    private JsonTranslator<Cart> _translator;
+    private readonly JsonTranslator<Cart> _translator;
 
     public CoffeeShopApp()
     {

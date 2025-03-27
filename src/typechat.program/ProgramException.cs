@@ -22,7 +22,7 @@ public class ProgramException : Exception
         UnknownExpression
     }
 
-    private ErrorCode _errorCode;
+    private readonly ErrorCode _errorCode;
 
     public ProgramException(ErrorCode code, string? message = null, Exception? inner = null)
         : base(message, inner)

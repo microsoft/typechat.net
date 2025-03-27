@@ -24,11 +24,11 @@ public class JsonTranslator<T> : IJsonTranslator
 {
     public const int DefaultMaxRepairAttempts = 1;
 
-    private ILanguageModel _model;
+    private readonly ILanguageModel _model;
     private IJsonTypeValidator<T> _validator;
     private IConstraintsValidator<T>? _constraintsValidator;
     private IJsonTranslatorPrompts _prompts;
-    private TranslationSettings _translationSettings;
+    private readonly TranslationSettings _translationSettings;
     private int _maxRepairAttempts;
 
     /// <summary>

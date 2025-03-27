@@ -9,7 +9,7 @@ internal class JsonProgramConvertor : JsonConverter<Program>
 {
     internal static readonly JsonSerializerOptions Options = JsonSerializerTypeValidator.DefaultOptions();
 
-    private static ProgramParser s_defaultParser = new ProgramParser();
+    private static readonly ProgramParser s_defaultParser = new ProgramParser();
 
     public override Program? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

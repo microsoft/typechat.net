@@ -9,10 +9,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PromptBuilder
 {
-    private Prompt _prompt;
+    private readonly Prompt _prompt;
     private int _currentLength;
     private int _maxLength;
-    private Func<string, int, string>? _substring;
+    private readonly Func<string, int, string>? _substring;
 
     /// <summary>
     /// Create a builder to create prompts whose length does not exceed maxLength characters

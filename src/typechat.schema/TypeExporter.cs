@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat.Schema;
 /// <typeparam name="T">The type of the type information being exported</typeparam>
 public abstract class TypeExporter<T>
 {
-    private HashSet<T> _exportedTypes;
+    private readonly HashSet<T> _exportedTypes;
     private Queue<T>? _pendingTypes;
 
     /// <summary>

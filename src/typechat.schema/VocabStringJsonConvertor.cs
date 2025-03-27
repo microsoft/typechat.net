@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Schema;
 
 internal class VocabStringJsonConvertor : JsonConverter<VocabString>
 {
-    private IVocabCollection _vocabs;
+    private readonly IVocabCollection _vocabs;
 
     public VocabStringJsonConvertor(IVocabCollection vocabs)
     {

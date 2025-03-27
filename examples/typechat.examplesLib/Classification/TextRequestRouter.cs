@@ -8,8 +8,8 @@ namespace Microsoft.TypeChat.Classification;
 /// <typeparam name="T"></typeparam>
 public class TextRequestRouter<T> : ITextRequestRouter<T>
 {
-    private TextClassifier _classifier;
-    private Dictionary<string, T> _routes;
+    private readonly TextClassifier _classifier;
+    private readonly Dictionary<string, T> _routes;
 
     /// <summary>
     /// Create a router that creates a classifier that uses the given language model

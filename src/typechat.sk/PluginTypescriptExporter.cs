@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginTypescriptExporter
 {
-    private TypescriptWriter _tsWriter;
+    private readonly TypescriptWriter _tsWriter;
 
     public PluginTypescriptExporter(TextWriter writer)
     {

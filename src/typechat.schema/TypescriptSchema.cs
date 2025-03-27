@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Schema;
 
 public class TypescriptSchema : TypeSchema
 {
-    private IVocabCollection? _vocabs;
+    private readonly IVocabCollection? _vocabs;
 
     public TypescriptSchema(Type type, string schemaText, IVocabCollection? vocabs = null)
         : base(type, new SchemaText(schemaText, SchemaText.Languages.Typescript))

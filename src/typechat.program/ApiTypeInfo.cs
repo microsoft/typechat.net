@@ -41,7 +41,7 @@ public class ApiMethod
 /// </summary>
 public class ApiTypeInfo
 {
-    private List<ApiMethod> _typeInfo;
+    private readonly List<ApiMethod> _typeInfo;
 
     /// <summary>
     /// Create an Api using all public methods of the given type
