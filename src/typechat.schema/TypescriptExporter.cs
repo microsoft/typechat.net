@@ -104,7 +104,7 @@ public class TypescriptExporter : TypeExporter<Type>
     // Use this to *customize* how a .NET Type Name is mapped to a Typescript type name
     // Return null if you can't map and defaults are used.
     //
-    public Func<Type, string?> TypeNameMapper { get; set; }
+    public Func<Type, string?>? TypeNameMapper { get; set; }
 
     /// <summary>
     /// Customize how Json Polymorphism is supported in schemas
@@ -135,7 +135,7 @@ public class TypescriptExporter : TypeExporter<Type>
     /// </summary>
     public HashSet<Type> TypesToIgnore => _nonExportTypes;
 
-    public IVocabCollection Vocabs
+    public IVocabCollection? Vocabs
     {
         get
         {
@@ -143,14 +143,7 @@ public class TypescriptExporter : TypeExporter<Type>
         }
         set
         {
-            if (value is not null)
-            {
-                _vocabExporter = new TypescriptVocabExporter(_writer, value);
-            }
-            else
-            {
-                _vocabExporter = null;
-            }
+            _vocabExporter = value is not null ? new TypescriptVocabExporter(_writer, value) : null;
         }
     }
 
@@ -739,7 +732,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return info.WriteState == NullabilityState.Nullable;
 #else
         // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
-        return pinfo.ParameterType.IsNullableValueType();
+        return pinfo.ParameterType.IsNullableValueType() || pinfo.IsOptional;
 #endif
     }
 
