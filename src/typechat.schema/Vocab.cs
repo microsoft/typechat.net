@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class Vocab : List<VocabEntry>, IVocab
 {
-    const char DefaultEntrySeparator = '|';
+    private const char DefaultEntrySeparator = '|';
 
     public Vocab() { }
 
@@ -120,9 +120,9 @@ public class Vocab : List<VocabEntry>, IVocab
 #if NET6_0_OR_GREATER
         string[] entries = text.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 #else
-        string[] entries = text.Split(separator).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
+        string[] entries = text.Split(separator, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
 #endif
-        if (entries is null || entries.Length == 0)
+        if (entries.Length == 0)
         {
             return null;
         }

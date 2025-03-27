@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Tests;
 
 public class MockLanguageModel : ILanguageModel
 {
-    ModelInfo _model;
+    private ModelInfo _model;
 
     public MockLanguageModel()
     {

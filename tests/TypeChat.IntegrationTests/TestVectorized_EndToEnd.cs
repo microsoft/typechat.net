@@ -2,26 +2,19 @@
 
 namespace Microsoft.TypeChat.Tests;
 
-public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
+public class TestVectorized_EndToEnd(Config config, ITestOutputHelper output)
+    : TypeChatTest(output), IClassFixture<Config>
 {
-    Config _config;
-
-    public TestVectorized_EndToEnd(Config config, ITestOutputHelper output)
-        : base(output)
-    {
-        _config = config;
-    }
-
     [SkippableFact]
     public async Task TestEmbeddings()
     {
-        Skip.If(!CanRunEndToEndTest_Embeddings(_config));
+        Skip.If(!CanRunEndToEndTest_Embeddings(config));
 
         //
         // Get the same embedding twice. Should have same result
         //
         string request = "The area of a circle is Pi R Squared";
-        TextEmbeddingModel model = new TextEmbeddingModel(_config.OpenAIEmbeddings);
+        TextEmbeddingModel model = new TextEmbeddingModel(config.OpenAIEmbeddings);
         Embedding embeddingX = await model.GenerateEmbeddingAsync(request);
         Assert.True(embeddingX.Size > 0);
         Embedding embeddingY = await model.GenerateEmbeddingAsync(request);
@@ -29,11 +22,11 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
         double score = embeddingX.CosineSimilarity(embeddingY);
         Assert.Equal(1, score.RoundToInt()); // Round up. Cosine should be 1 - identical embeddings
 
-        string[] requests = new string[]
-        {
+        string[] requests =
+        [
             "The circumference of a circle is 2 Pi R",
             "All we are, is dust in the wind, dude"
-        };
+        ];
         Embedding[] embeddings = await model.GenerateEmbeddingsAsync(requests);
         Assert.Equal(2, embeddings.Length);
         double score1 = embeddingX.CosineSimilarity(embeddings[0]);
@@ -45,7 +38,7 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TestVectorTextIndex()
     {
-        Skip.If(!CanRunEndToEndTest_Embeddings(_config));
+        Skip.If(!CanRunEndToEndTest_Embeddings(config));
 
         VectorTextIndex<int> index = CreateIndex<int>();
 
@@ -86,7 +79,7 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TestRouting()
     {
-        Skip.If(!CanRunEndToEndTest_Embeddings(_config));
+        Skip.If(!CanRunEndToEndTest_Embeddings(config));
 
         VectorTextIndex<string> index = CreateIndex<string>();
         foreach (var shop in Classes.Shops())
@@ -100,22 +93,22 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TestMessageIndex()
     {
-        Skip.If(!CanRunEndToEndTest_Embeddings(_config));
+        Skip.If(!CanRunEndToEndTest_Embeddings(config));
 
-        VectorizedMessageList messages = new VectorizedMessageList(new TextEmbeddingModel(_config.OpenAIEmbeddings));
+        VectorizedMessageList messages = new VectorizedMessageList(new TextEmbeddingModel(config.OpenAIEmbeddings));
         Assert.Equal(VectorizedMessageList.DefaultMaxMatches, messages.MaxContextMatches);
 
         messages.MaxContextMatches = 2;
-        string[] desserts = new string[]
-        {
+        string[] desserts =
+        [
             "Strawberry Shortcake, Tiramisu",
-            "Donuts and Eclairs",
-        };
-        string[] books = new string[]
-        {
+            "Donuts and Eclairs"
+        ];
+        string[] books =
+        [
             "Popular Science, Biographies, Textbooks",
-            "Mysteries, Thrillers, Science Fiction",
-        };
+            "Mysteries, Thrillers, Science Fiction"
+        ];
         for (int i = 0; i < books.Length; ++i)
         {
             messages.Append(books[i]);
@@ -134,8 +127,8 @@ public class TestVectorized_EndToEnd : TypeChatTest, IClassFixture<Config>
         }
     }
 
-    VectorTextIndex<T> CreateIndex<T>()
+    private VectorTextIndex<T> CreateIndex<T>()
     {
-        return new VectorTextIndex<T>(new TextEmbeddingModel(_config.OpenAIEmbeddings));
+        return new VectorTextIndex<T>(new TextEmbeddingModel(config.OpenAIEmbeddings));
     }
 }

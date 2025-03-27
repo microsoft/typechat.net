@@ -13,7 +13,7 @@ public class SchemaException : Exception
         ValueNotInVocab
     }
 
-    ErrorCode _errorCode;
+    private ErrorCode _errorCode;
 
     public SchemaException(string? message, Exception? inner = null)
         : base(message, inner)

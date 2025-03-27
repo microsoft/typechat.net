@@ -4,10 +4,10 @@ namespace Microsoft.TypeChat.Embeddings;
 
 internal struct MinHeap<T>
 {
-    static readonly T[] s_emptyBuffer = Array.Empty<T>();
+    private static readonly T[] s_emptyBuffer = Array.Empty<T>();
 
-    ScoredValue<T>[] _items;
-    int _count;
+    private ScoredValue<T>[] _items;
+    private int _count;
 
     public MinHeap(int capacity)
     {

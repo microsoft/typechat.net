@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginTypescriptExporter
 {
-    TypescriptWriter _tsWriter;
+    private TypescriptWriter _tsWriter;
 
     public PluginTypescriptExporter(TextWriter writer)
     {
@@ -47,7 +47,7 @@ public class PluginTypescriptExporter
         _tsWriter.Flush();
     }
 
-    void Export(PluginFunctionName pluginName, KernelFunctionMetadata function)
+    private void Export(PluginFunctionName pluginName, KernelFunctionMetadata function)
     {
         ArgumentVerify.ThrowIfNull(function, nameof(function));
 
@@ -59,7 +59,7 @@ public class PluginTypescriptExporter
         _tsWriter.EndMethodDeclare(Typescript.Types.String);
     }
 
-    void Export(IReadOnlyList<KernelParameterMetadata> parameters)
+    private void Export(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         if (parameters is null)
         {
@@ -75,7 +75,7 @@ public class PluginTypescriptExporter
         }
     }
 
-    void ExportDetailed(IReadOnlyList<KernelParameterMetadata> parameters)
+    private void ExportDetailed(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         _tsWriter.PushIndent();
         _tsWriter.EOL();
@@ -98,7 +98,7 @@ public class PluginTypescriptExporter
         _tsWriter.SOL();
     }
 
-    void ExportPlain(IReadOnlyList<KernelParameterMetadata> parameters)
+    private void ExportPlain(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         for (int i = 0; i < parameters.Count; ++i)
         {
@@ -106,14 +106,14 @@ public class PluginTypescriptExporter
         }
     }
 
-    void Export(KernelParameterMetadata param, int argNumber, int argCount)
+    private void Export(KernelParameterMetadata param, int argNumber, int argCount)
     {
         bool isArray = param.ParameterType.IsArray;
         bool isNullable = param.IsNullable();
         _tsWriter.Parameter(param.Name, DataType(param.ParameterType), argNumber, argCount, isArray, isNullable);
     }
 
-    bool HasDescriptions(IReadOnlyList<KernelParameterMetadata> parameters)
+    private bool HasDescriptions(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         for (int i = 0; i < parameters.Count; ++i)
         {
@@ -125,7 +125,7 @@ public class PluginTypescriptExporter
         return false;
     }
 
-    string DataType(Type type)
+    private string DataType(Type type)
     {
         string? dataType = Typescript.Types.ToPrimitive(type);
         if (dataType is null)
@@ -135,6 +135,6 @@ public class PluginTypescriptExporter
         return dataType;
     }
 
-    PluginTypescriptExporter SOL() { _tsWriter.SOL(); return this; }
-    PluginTypescriptExporter EOL() { _tsWriter.EOL(); return this; }
+    private PluginTypescriptExporter SOL() { _tsWriter.SOL(); return this; }
+    private PluginTypescriptExporter EOL() { _tsWriter.EOL(); return this; }
 }

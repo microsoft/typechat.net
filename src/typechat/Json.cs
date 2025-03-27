@@ -17,10 +17,10 @@ public class Json
         return JsonSerializerTypeValidator.DefaultOptions();
     }
 
-    static readonly Json s_default = new Json();
-    static readonly Json s_indented = new Json(true);
+    private static readonly Json s_default = new Json();
+    private static readonly Json s_indented = new Json(true);
 
-    JsonSerializerOptions _options;
+    private JsonSerializerOptions _options;
 
     public Json(bool indented = false)
     {
@@ -88,17 +88,17 @@ public class Json
         return (T)s_default.Deserialize(jsonStream, typeof(T));
     }
 
-    string Serialize<T>(T value)
+    private string Serialize<T>(T value)
     {
         return JsonSerializer.Serialize<T>(value, _options);
     }
 
-    object? Deserialize(string json, Type type)
+    private object? Deserialize(string json, Type type)
     {
         return JsonSerializer.Deserialize(json, type, _options);
     }
 
-    object? Deserialize(Stream jsonStream, Type type)
+    private object? Deserialize(Stream jsonStream, Type type)
     {
         return JsonSerializer.Deserialize(jsonStream, type, _options);
     }

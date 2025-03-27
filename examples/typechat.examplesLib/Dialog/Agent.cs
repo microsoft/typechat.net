@@ -8,10 +8,10 @@ namespace Microsoft.TypeChat.Dialog;
 /// </summary>
 public class Agent<T> : IAgent
 {
-    JsonTranslator<T> _translator;
-    IContextProvider? _contextProvider;
-    Prompt _instructions;
-    int _maxPromptLength;
+    private JsonTranslator<T> _translator;
+    private IContextProvider? _contextProvider;
+    private Prompt _instructions;
+    private int _maxPromptLength;
 
     /// <summary>
     /// Create a new Agent that uses the given language model
@@ -111,7 +111,7 @@ public class Agent<T> : IAgent
         return response.GetBody<T>();
     }
 
-    async Task<Prompt> BuildContextAsync(string requestText, int actualRequestLength, CancellationToken cancelToken)
+    private async Task<Prompt> BuildContextAsync(string requestText, int actualRequestLength, CancellationToken cancelToken)
     {
         PromptBuilder builder = CreateBuilder(_maxPromptLength - actualRequestLength);
         // Add any preamble       
@@ -165,7 +165,7 @@ public class Agent<T> : IAgent
         return Task.CompletedTask;
     }
 
-    PromptBuilder CreateBuilder(int maxLength)
+    private PromptBuilder CreateBuilder(int maxLength)
     {
         // Future: Pool these
         return new PromptBuilder(maxLength);

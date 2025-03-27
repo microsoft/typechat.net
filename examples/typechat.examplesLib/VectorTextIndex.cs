@@ -14,8 +14,8 @@ namespace Microsoft.TypeChat;
 /// <typeparam name="T"></typeparam>
 public class VectorTextIndex<T> : ITextRequestRouter<T>
 {
-    TextEmbeddingModel _model;
-    VectorizedList<T> _list;
+    private TextEmbeddingModel _model;
+    private VectorizedList<T> _list;
 
     /// <summary>
     /// Create a new VectorTextIndex
@@ -130,7 +130,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
         return _list.Nearest(embedding, maxMatches, EmbeddingDistance.Dot).ToList();
     }
 
-    async Task<Embedding> GetNormalizedEmbeddingAsync(string text, CancellationToken cancelToken)
+    private async Task<Embedding> GetNormalizedEmbeddingAsync(string text, CancellationToken cancelToken)
     {
         var embedding = await _model.GenerateEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
         embedding.NormalizeInPlace();
@@ -138,7 +138,7 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
         return embedding;
     }
 
-    async Task<Embedding[]> GetNormalizedEmbeddingAsync(string[] texts, CancellationToken cancelToken)
+    private async Task<Embedding[]> GetNormalizedEmbeddingAsync(string[] texts, CancellationToken cancelToken)
     {
         var embeddings = await _model.GenerateEmbeddingsAsync(texts, cancelToken).ConfigureAwait(false);
 

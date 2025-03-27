@@ -7,8 +7,8 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ChatLanguageModel : ILanguageModel
 {
-    IChatCompletionService _service;
-    ModelInfo _model;
+    private IChatCompletionService _service;
+    private ModelInfo _model;
 
     /// <summary>
     /// Create a new language model from the OpenAI config
@@ -59,14 +59,14 @@ public class ChatLanguageModel : ILanguageModel
         return textResponse;
     }
 
-    ChatHistory ToHistory(Prompt prompt)
+    private ChatHistory ToHistory(Prompt prompt)
     {
         ChatHistory history = new ChatHistory();
         history.Append(prompt);
         return history;
     }
 
-    OpenAIPromptExecutionSettings? ToRequestSettings(TranslationSettings? settings)
+    private OpenAIPromptExecutionSettings? ToRequestSettings(TranslationSettings? settings)
     {
         if (settings is null)
         {

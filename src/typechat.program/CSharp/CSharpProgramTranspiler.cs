@@ -15,16 +15,16 @@ namespace Microsoft.TypeChat.CSharp;
 /// </summary>
 public class CSharpProgramTranspiler
 {
-    const string DefaultClassName = "Program";
-    static string[] s_standardNamespaces = new[] { "System", "System.Text", "System.Text.Json", "System.Text.Json.Nodes" };
+    private const string DefaultClassName = "Program";
+    private static string[] s_standardNamespaces = new[] { "System", "System.Text", "System.Text.Json", "System.Text.Json.Nodes" };
 
-    Type _apiType;
-    ApiTypeInfo _apiTypeInfo;
-    List<string> _namespaces;
-    string _className;
-    List<string> _blocks;
-    int _objectId = 0;
-    int _minIndent = 0;
+    private Type _apiType;
+    private ApiTypeInfo _apiTypeInfo;
+    private List<string> _namespaces;
+    private string _className;
+    private List<string> _blocks;
+    private int _objectId = 0;
+    private int _minIndent = 0;
 
     public CSharpProgramTranspiler(Type type, ApiTypeInfo? typeInfo = null)
     {
@@ -95,13 +95,13 @@ public class CSharpProgramTranspiler
         return EndBlock(buffer, writer, false);
     }
 
-    void Clear()
+    private void Clear()
     {
         _objectId = 0;
         _blocks.Clear();
     }
 
-    string CompileProgramMethods(Program program)
+    private string CompileProgramMethods(Program program)
     {
         var (buffer, writer) = BeginBlock();
         {
@@ -119,7 +119,7 @@ public class CSharpProgramTranspiler
         return EndBlock(buffer, writer, false);
     }
 
-    void Compile(CSharpWriter writer, Steps steps)
+    private void Compile(CSharpWriter writer, Steps steps)
     {
         FunctionCall[] calls = steps.Calls;
         for (int i = 0; i < calls.Length; ++i)
@@ -134,7 +134,7 @@ public class CSharpProgramTranspiler
         }
     }
 
-    string Compile(FunctionCall function, bool inline = true)
+    private string Compile(FunctionCall function, bool inline = true)
     {
         var (sw, writer) = BeginBlock();
         {
@@ -143,7 +143,7 @@ public class CSharpProgramTranspiler
         return EndBlock(sw, writer, false);
     }
 
-    void Compile(CSharpWriter writer, FunctionCall function, bool inline)
+    private void Compile(CSharpWriter writer, FunctionCall function, bool inline)
     {
         var apiInfo = _apiTypeInfo[function.Name];
         writer.BeginMethodCall(ApiVarName, function.Name);
@@ -153,7 +153,7 @@ public class CSharpProgramTranspiler
         writer.EndMethodCall(inline);
     }
 
-    void CompileArgs(CSharpWriter writer, FunctionCall function, ParameterInfo[] paramsInfo)
+    private void CompileArgs(CSharpWriter writer, FunctionCall function, ParameterInfo[] paramsInfo)
     {
         Expression[] expressions = function.Args;
         if (expressions.IsNullOrEmpty())
@@ -197,7 +197,7 @@ public class CSharpProgramTranspiler
         }
     }
 
-    string Compile(Expression expr)
+    private string Compile(Expression expr)
     {
         switch (expr)
         {
@@ -221,7 +221,7 @@ public class CSharpProgramTranspiler
         }
     }
 
-    string Compile(ValueExpr expr)
+    private string Compile(ValueExpr expr)
     {
         switch (expr.Value.ValueKind)
         {
@@ -238,12 +238,12 @@ public class CSharpProgramTranspiler
         }
     }
 
-    string Compile(ResultReference resultRef)
+    private string Compile(ResultReference resultRef)
     {
         return ResultVar(resultRef.Ref);
     }
 
-    string Compile(ArrayExpr arrayExpr, string type)
+    private string Compile(ArrayExpr arrayExpr, string type)
     {
         var (sw, writer) = BeginBlock();
         {
@@ -252,7 +252,7 @@ public class CSharpProgramTranspiler
         return EndBlock(sw, writer, false);
     }
 
-    string Compile(Expression[] expressions, string type = null)
+    private string Compile(Expression[] expressions, string type = null)
     {
         var (sw, writer) = BeginBlock();
         {
@@ -261,7 +261,7 @@ public class CSharpProgramTranspiler
         return EndBlock(sw, writer, false);
     }
 
-    void Compile(CSharpWriter writer, Expression[] expressions, string type)
+    private void Compile(CSharpWriter writer, Expression[] expressions, string type)
     {
         writer.BeginArray(type);
         {
@@ -279,7 +279,7 @@ public class CSharpProgramTranspiler
     /// </summary>
     /// <param name="objectExpr"></param>
     /// <returns>A call to the factory method</returns>
-    string Compile(ObjectExpr objectExpr)
+    private string Compile(ObjectExpr objectExpr)
     {
         ++_objectId;
         string jsonObj = "jsonObj";
@@ -332,7 +332,7 @@ public class CSharpProgramTranspiler
         return methodName + "()";
     }
 
-    void AddJsonProperty(CSharpWriter writer, string jsonObj, string key, string value, Type? valueType = null)
+    private void AddJsonProperty(CSharpWriter writer, string jsonObj, string key, string value, Type? valueType = null)
     {
         writer.SOL();
         writer.BeginMethodCall(jsonObj, "Add");
@@ -361,7 +361,7 @@ public class CSharpProgramTranspiler
         writer.EndMethodCall();
     }
 
-    void CastFromJsonObject(CSharpWriter writer, string jsonObj, Type type)
+    private void CastFromJsonObject(CSharpWriter writer, string jsonObj, Type type)
     {
         if (!typeof(JsonObject).IsAssignableFrom(type))
         {
@@ -371,9 +371,9 @@ public class CSharpProgramTranspiler
         }
     }
 
-    string ResultVar(int resultNumber) => ResultVarPrefix + (resultNumber + 1);
+    private string ResultVar(int resultNumber) => ResultVarPrefix + (resultNumber + 1);
 
-    (StringWriter, CSharpWriter) BeginBlock()
+    private (StringWriter, CSharpWriter) BeginBlock()
     {
         var sw = new StringWriter();
         var writer = new CSharpWriter(sw);
@@ -383,7 +383,8 @@ public class CSharpProgramTranspiler
         }
         return (sw, writer);
     }
-    string EndBlock(StringWriter sw, CSharpWriter writer, bool emit = true)
+
+    private string EndBlock(StringWriter sw, CSharpWriter writer, bool emit = true)
     {
         string codeBlock = sw.ToString();
         if (emit)

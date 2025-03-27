@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat.Tests;
 
 public class TestKernel : TypeChatTest, IClassFixture<Config>
 {
-    Config _config;
+    private Config _config;
 
     public TestKernel(ITestOutputHelper output, Config config)
         : base(output)
@@ -62,7 +62,7 @@ public class TestKernel : TypeChatTest, IClassFixture<Config>
         Assert.Equal(prompt.Count, 4);
     }
 
-    void Validate(Message message, string? contents = null)
+    private void Validate(Message message, string? contents = null)
     {
         Assert.NotNull(message.Body);
         if (!string.IsNullOrEmpty(contents))

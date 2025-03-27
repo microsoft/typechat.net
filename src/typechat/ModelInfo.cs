@@ -7,10 +7,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class ModelInfo
 {
-    string _name;
-    int _maxTokens;
-    int _maxCharCount;
-    double _tokenToCharMultiple;
+    private readonly string _name;
+    private readonly int _maxTokens;
+    private readonly int _maxCharCount;
+    private readonly double _tokenToCharMultiple;
 
     /// <summary>
     /// Create model information
@@ -30,7 +30,7 @@ public class ModelInfo
     }
 
     /// <summary>
-    /// Modelname
+    /// Model name
     /// </summary>
     [JsonPropertyName("name")]
     public string Name => _name;

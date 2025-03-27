@@ -9,10 +9,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class Api
 {
-    static readonly object?[] s_emptyArgs = Array.Empty<object?>();
+    private static readonly object?[] s_emptyArgs = Array.Empty<object?>();
 
-    ApiTypeInfo _typeInfo;
-    object _apiImpl;
+    private ApiTypeInfo _typeInfo;
+    private object _apiImpl;
 
     /// <summary>
     /// Create an Api using ALL Public instance methods of the supplied apiImpl
@@ -90,7 +90,7 @@ public class Api
         return result;
     }
 
-    dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
+    private dynamic[] CreateCallArgs(string name, dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
         if (jsonArgs.Length != paramsInfo.Length)
         {
@@ -108,7 +108,7 @@ public class Api
     /// <summary>
     /// Dynamically type cast/convert args to the expected type
     /// </summary>
-    dynamic[] ConvertObjects(dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
+    private dynamic[] ConvertObjects(dynamic[] jsonArgs, ParameterInfo[] paramsInfo)
     {
         for (int i = 0; i < jsonArgs.Length; ++i)
         {
@@ -117,7 +117,7 @@ public class Api
         return jsonArgs;
     }
 
-    dynamic[] ConvertObjects(dynamic[] jsonArgs, Type expectedType)
+    private dynamic[] ConvertObjects(dynamic[] jsonArgs, Type expectedType)
     {
         for (int i = 0; i < jsonArgs.Length; ++i)
         {
@@ -126,7 +126,7 @@ public class Api
         return jsonArgs;
     }
 
-    dynamic ConvertObject(dynamic arg, Type expectedType)
+    private dynamic ConvertObject(dynamic arg, Type expectedType)
     {
         Type argType = arg.GetType();
         if (argType == expectedType)
@@ -161,7 +161,7 @@ public class Api
         return ConvertArray(arg as Array, expectedType);
     }
 
-    Array ConvertArray(Array array, Type expectedType)
+    private Array ConvertArray(Array array, Type expectedType)
     {
         Array convertedArray = Array.CreateInstance(expectedType, array.Length);
         for (int i = 0; i < array.Length; ++i)
@@ -172,7 +172,7 @@ public class Api
         return convertedArray;
     }
 
-    void NotifyCall(string name, dynamic[] args, dynamic result)
+    private void NotifyCall(string name, dynamic[] args, dynamic result)
     {
         if (CallCompleted is not null)
         {

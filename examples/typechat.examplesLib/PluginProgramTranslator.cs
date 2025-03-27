@@ -7,10 +7,10 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginProgramTranslator
 {
-    Kernel _kernel;
-    ProgramTranslator _translator;
-    PluginApi _pluginApi;
-    SchemaText _pluginSchema;
+    private Kernel _kernel;
+    private ProgramTranslator _translator;
+    private PluginApi _pluginApi;
+    private SchemaText _pluginSchema;
 
     /// <summary>
     /// Create a new translator that will produce programs that can call all skills and

@@ -9,9 +9,9 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class TextCompletionModel : ILanguageModel
 {
-    Kernel _kernel;
-    ITextGenerationService _service;
-    ModelInfo _model;
+    private Kernel _kernel;
+    private ITextGenerationService _service;
+    private ModelInfo _model;
 
     public TextCompletionModel(OpenAIConfig config, ModelInfo? model = null)
     {
@@ -44,11 +44,11 @@ public class TextCompletionModel : ILanguageModel
     {
         OpenAIPromptExecutionSettings? requestSettings = ToRequestSettings(settings);
         string request = prompt.ToString(IncludeSectionSource);
-        var response = await _service.GetTextContentsAsync(request, requestSettings,_kernel, cancelToken).ConfigureAwait(false);
+        var response = await _service.GetTextContentsAsync(request, requestSettings, _kernel, cancelToken).ConfigureAwait(false);
         return response.Count > 0 ? response[0].Text : string.Empty;
     }
 
-    OpenAIPromptExecutionSettings? ToRequestSettings(TranslationSettings? settings)
+    private OpenAIPromptExecutionSettings? ToRequestSettings(TranslationSettings? settings)
     {
         if (settings is null)
         {

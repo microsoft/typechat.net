@@ -41,7 +41,7 @@ public class ApiMethod
 /// </summary>
 public class ApiTypeInfo
 {
-    List<ApiMethod> _typeInfo;
+    private List<ApiMethod> _typeInfo;
 
     /// <summary>
     /// Create an Api using all public methods of the given type
@@ -138,7 +138,7 @@ public class ApiTypeInfo
         return false;
     }
 
-    static MethodInfo[] GetPublicMethods(Type type, BindingFlags? flags = null)
+    private static MethodInfo[] GetPublicMethods(Type type, BindingFlags? flags = null)
     {
         flags ??= BindingFlags.Public | BindingFlags.Instance;
         return type.GetMethods(flags.Value);

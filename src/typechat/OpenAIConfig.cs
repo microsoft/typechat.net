@@ -114,7 +114,7 @@ public class OpenAIConfig
         Verify(ApiKey, nameof(ApiKey), configFileName);
     }
 
-    void Verify(string value, string name, string fileName)
+    private void Verify(string value, string name, string fileName)
     {
         if (string.IsNullOrEmpty(value) || value == "?")
         {

@@ -7,12 +7,12 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class LanguageModel : ILanguageModel, IDisposable
 {
-    static TranslationSettings s_defaultSettings = new TranslationSettings();
+    private static TranslationSettings s_defaultSettings = new TranslationSettings();
 
-    OpenAIConfig _config;
-    ModelInfo _model;
-    HttpClient _client;
-    string _endPoint;
+    private OpenAIConfig _config;
+    private ModelInfo _model;
+    private HttpClient _client;
+    private string _endPoint;
 
     /// <summary>
     /// Create an OpenAILanguageModel object using the given OpenAIConfig
@@ -54,7 +54,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         return response.GetText();
     }
 
-    Request CreateRequest(Prompt prompt, TranslationSettings? settings = null)
+    private Request CreateRequest(Prompt prompt, TranslationSettings? settings = null)
     {
         var request = Request.Create(prompt, settings ?? s_defaultSettings);
         if (!_config.Azure)
@@ -64,7 +64,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         return request;
     }
 
-    void ConfigureClient()
+    private void ConfigureClient()
     {
         if (_config.Azure)
         {
@@ -97,7 +97,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
     }
 
-    struct Request
+    private struct Request
     {
         public string? model { get; set; }
         public Message[] messages { get; set; }
@@ -115,7 +115,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
     }
 
-    struct Response
+    private struct Response
     {
         public Choice[] choices { get; set; }
 
@@ -130,7 +130,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
     }
 
-    struct Message
+    private struct Message
     {
         public string role { get; set; }
         public string content { get; set; }
@@ -146,7 +146,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
     }
 
-    struct Choice
+    private struct Choice
     {
         public Message message { get; set; }
     }

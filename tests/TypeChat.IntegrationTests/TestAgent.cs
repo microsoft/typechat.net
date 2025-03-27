@@ -2,15 +2,9 @@
 
 namespace Microsoft.TypeChat.Tests;
 
-public class TestAgent : TypeChatTest, IClassFixture<Config>
+public class TestAgent(Config config) : TypeChatTest, IClassFixture<Config>
 {
-    Config _config;
-    NamedVocab _desserts;
-
-    public TestAgent(Config config)
-    {
-        _config = config;
-    }
+    private NamedVocab _desserts;
 
     public IVocab Desserts
     {
@@ -26,7 +20,7 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
     {
         const int messageCount = 3;
 
-        MessageList messageList = new MessageList();
+        MessageList messageList = [];
         for (int i = 0; i < messageCount; ++i)
         {
             messageList.Append(i.ToString());
@@ -44,9 +38,9 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TestEndToEnd()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
-        AgentWithHistory<Order> agent = new AgentWithHistory<Order>(_config.CreateTranslator<Order>())
+        AgentWithHistory<Order> agent = new AgentWithHistory<Order>(config.CreateTranslator<Order>())
         {
             CreateMessageForHistory = (r) => null, // Don't remember responses. 
             Translator =
@@ -64,7 +58,7 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
         Validate(order.Desserts, new DessertOrder("Tiramisu", 2));
     }
 
-    void Validate(DessertOrder[] order, params DessertOrder[] expected)
+    private void Validate(DessertOrder[] order, params DessertOrder[] expected)
     {
         Assert.True(order.Length == expected.Length);
         for (int i = 0; i < order.Length; ++i)
@@ -73,7 +67,7 @@ public class TestAgent : TypeChatTest, IClassFixture<Config>
         }
     }
 
-    void Validate(DessertOrder order, DessertOrder expected)
+    private void Validate(DessertOrder order, DessertOrder expected)
     {
         Assert.Equal(order.Quantity, expected.Quantity);
         Assert.Equal(order.Name, expected.Name);

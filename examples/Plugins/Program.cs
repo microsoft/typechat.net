@@ -7,10 +7,10 @@ namespace Plugins;
 
 public class PluginApp : ConsoleApp
 {
-    OpenAIConfig _config;
-    Kernel _kernel;
-    PluginProgramTranslator _programTranslator;
-    ProgramInterpreter _interpreter;
+    private OpenAIConfig _config;
+    private Kernel _kernel;
+    private PluginProgramTranslator _programTranslator;
+    private ProgramInterpreter _interpreter;
 
     public PluginApp()
     {
@@ -42,7 +42,7 @@ public class PluginApp : ConsoleApp
         }
     }
 
-    async Task RunProgram(Program program)
+    private async Task RunProgram(Program program)
     {
         if (!program.IsComplete)
         {
@@ -56,7 +56,7 @@ public class PluginApp : ConsoleApp
         }
     }
 
-    void InitPlugins()
+    private void InitPlugins()
     {
         _config = Config.LoadOpenAI();
         _kernel = _config.CreateKernel();

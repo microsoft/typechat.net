@@ -12,7 +12,7 @@ namespace Microsoft.TypeChat.Dialog;
 /// </summary>
 public class AgentWithHistory<T> : Agent<T>
 {
-    IMessageStream _history;
+    private readonly IMessageStream _history;
 
     /// <summary>
     /// Create a new Agent that uses the given language model
@@ -58,7 +58,7 @@ public class AgentWithHistory<T> : Agent<T>
     /// Customize how a response is transformed into a message written into history
     /// If you return null, the response will not be added to the history
     /// </summary>
-    public Func<T, Message?> CreateMessageForHistory { get; set; }
+    public Func<T, Message?>? CreateMessageForHistory { get; set; }
 
     protected override Task<bool> AppendContextAsync(PromptBuilder builder, IAsyncEnumerable<IPromptSection> context)
     {
@@ -74,7 +74,7 @@ public class AgentWithHistory<T> : Agent<T>
     /// <param name="preparedRequest"></param>
     /// <param name="response"></param>
     /// <returns></returns>
-    protected async override Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response)
+    protected override async Task ReceivedResponseAsync(Message request, Message preparedRequest, Message response)
     {
         await _history.AppendAsync(request).ConfigureAwait(false);
         Message? historyMessage = (CreateMessageForHistory is not null) ?

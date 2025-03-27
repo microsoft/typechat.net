@@ -2,20 +2,12 @@
 
 namespace Microsoft.TypeChat.Tests;
 
-public class TestClassification : TypeChatTest, IClassFixture<Config>
+public class TestClassification(Config config, ITestOutputHelper output) : TypeChatTest(output), IClassFixture<Config>
 {
-    Config _config;
-
-    public TestClassification(Config config, ITestOutputHelper output)
-        : base(output)
-    {
-        _config = config;
-    }
-
     [Fact]
     public void TestRouter()
     {
-        TextRequestRouter<string> router = new TextRequestRouter<string>(new MockLanguageModel());
+        TextRequestRouter<string> router = new(new MockLanguageModel());
         AddRoutes(router, out int countAdded);
 
         Assert.Equal(countAdded, router.Routes.Count);
@@ -29,7 +21,7 @@ public class TestClassification : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TestRouting()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
         TextRequestRouter<string> router = CreateRouter();
         string query = "I want to buy a Sherlock Holmes novel";
@@ -39,16 +31,16 @@ public class TestClassification : TypeChatTest, IClassFixture<Config>
         Assert.Equal(route, classify.Value);
     }
 
-    TextRequestRouter<string> CreateRouter()
+    private TextRequestRouter<string> CreateRouter()
     {
-        TextRequestRouter<string> router = new TextRequestRouter<string>(new ChatLanguageModel(_config.OpenAI));
+        TextRequestRouter<string> router = new TextRequestRouter<string>(new ChatLanguageModel(config.OpenAI));
         AddRoutes(router, out _);
         return router;
     }
 
-    string ShopId(int i) => $"Shop{i}";
+    private static string ShopId(int i) => $"Shop{i}";
 
-    void AddRoutes(TextRequestRouter<string> router, out int numRoutes)
+    private static void AddRoutes(TextRequestRouter<string> router, out int numRoutes)
     {
         int i = 0;
         foreach (var shop in Classes.Shops())

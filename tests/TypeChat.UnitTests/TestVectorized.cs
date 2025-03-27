@@ -7,7 +7,7 @@ public class TestVectorized
     [Fact]
     public void TestSerialize_Embedding()
     {
-        List<Embedding> list = new List<Embedding>();
+        List<Embedding> list = [];
         for (int i = 0; i < 4; ++i)
         {
             list.Add(Random.Shared.FloatArray(8));
@@ -29,7 +29,7 @@ public class TestVectorized
         string json = Json.Stringify(kv);
         kv = Json.Parse<KeyValuePair<string, Embedding>>(json);
 
-        VectorizedList<string> list = new VectorizedList<string>();
+        VectorizedList<string> list = [];
         list.Add("one", Random.Shared.FloatArray(8));
         list.Add("two", Random.Shared.FloatArray(8));
 
@@ -93,7 +93,7 @@ public class TestVectorized
         Assert.False(list.Remove(i_test_str));
     }
 
-    void ValidateEqual(Embedding x, Embedding y)
+    private void ValidateEqual(Embedding x, Embedding y)
     {
         Assert.Equal(x.Vector.Length, y.Vector.Length);
         bool cmp = false;
@@ -104,7 +104,7 @@ public class TestVectorized
         Assert.True(cmp);
     }
 
-    int Degrees(double cosine)
+    private int Degrees(double cosine)
     {
         double angle = Math.Acos(cosine); // In radians
         return ((180 / Math.PI) * angle).RoundToInt();

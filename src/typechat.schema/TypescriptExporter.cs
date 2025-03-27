@@ -60,16 +60,16 @@ public class TypescriptExporter : TypeExporter<Type>
         return new TypescriptSchema(type, schema, exporter.UsedVocabs);
     }
 
-    const BindingFlags MemberFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+    private const BindingFlags MemberFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-    TypescriptWriter _writer;
-    HashSet<Type> _nonExportTypes;
-    TypescriptVocabExporter? _vocabExporter;
+    private readonly TypescriptWriter _writer;
+    private readonly HashSet<Type> _nonExportTypes;
+    private TypescriptVocabExporter? _vocabExporter;
 #if NET6_0_OR_GREATER
     NullabilityInfoContext _nullableInfo;
 #endif
-    VocabCollection _usedVocabs;
-    JsonPolymorphismSettings _polymorphism;
+    private VocabCollection _usedVocabs;
+    private readonly JsonPolymorphismSettings _polymorphism;
 
     public TypescriptExporter(TextWriter writer)
         : this(new TypescriptWriter(writer))
@@ -298,7 +298,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportEnumAsEnum(Type type)
+    private TypescriptExporter ExportEnumAsEnum(Type type)
     {
         string typeName = type.Name;
         ExportComments(type);
@@ -312,7 +312,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportEnumAsLiterals(Type type)
+    private TypescriptExporter ExportEnumAsLiterals(Type type)
     {
         string typeName = type.Name;
         ExportComments(type);
@@ -324,7 +324,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportEnumLiterals(Type type)
+    private TypescriptExporter ExportEnumLiterals(Type type)
     {
         if (!IncludeComments)
         {
@@ -353,7 +353,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportEnumValues(Type type)
+    private TypescriptExporter ExportEnumValues(Type type)
     {
         string[] names = Enum.GetNames(type);
         var fields = type.GetFields();
@@ -373,13 +373,13 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportMembers(Type type)
+    private TypescriptExporter ExportMembers(Type type)
     {
         return ExportProperties(type).
                ExportFields(type);
     }
 
-    TypescriptExporter ExportProperties(Type type)
+    private TypescriptExporter ExportProperties(Type type)
     {
         ArgumentVerify.ThrowIfNull(type, nameof(type));
 
@@ -387,7 +387,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return ExportProperties(properties);
     }
 
-    TypescriptExporter ExportProperties(IEnumerable<PropertyInfo> properties)
+    private TypescriptExporter ExportProperties(IEnumerable<PropertyInfo> properties)
     {
         ArgumentVerify.ThrowIfNull(properties, nameof(properties));
 
@@ -398,7 +398,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportFields(Type type)
+    private TypescriptExporter ExportFields(Type type)
     {
         ArgumentVerify.ThrowIfNull(type, nameof(type));
 
@@ -406,7 +406,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return ExportFields(fields);
     }
 
-    TypescriptExporter ExportFields(IEnumerable<FieldInfo> fields)
+    private TypescriptExporter ExportFields(IEnumerable<FieldInfo> fields)
     {
         foreach (var field in fields)
         {
@@ -415,7 +415,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportProperty(PropertyInfo property)
+    private TypescriptExporter ExportProperty(PropertyInfo property)
     {
         if (!property.IsAbstract() &&
             !property.IsIgnore())
@@ -426,7 +426,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportField(FieldInfo field)
+    private TypescriptExporter ExportField(FieldInfo field)
     {
         if (!field.IsIgnore())
         {
@@ -436,7 +436,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportMethods(Type type)
+    private TypescriptExporter ExportMethods(Type type)
     {
         MethodInfo[] methods = type.GetMethods(MemberFlags);
         foreach (var method in methods)
@@ -446,7 +446,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportMethod(MethodInfo methodInfo)
+    private TypescriptExporter ExportMethod(MethodInfo methodInfo)
     {
         ExportComments(methodInfo);
         _writer.BeginMethodDeclare(methodInfo.Name);
@@ -462,7 +462,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportComments(MemberInfo member)
+    private TypescriptExporter ExportComments(MemberInfo member)
     {
         if (IncludeComments)
         {
@@ -478,7 +478,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportVariable(MemberInfo member, Type type)
+    private TypescriptExporter ExportVariable(MemberInfo member, Type type)
     {
         Type actualType;
         bool isNullable;
@@ -513,7 +513,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    TypescriptExporter ExportParameter(ParameterInfo parameter, int i, int count)
+    private TypescriptExporter ExportParameter(ParameterInfo parameter, int i, int count)
     {
         Type type = parameter.ParameterType;
         Type actualType;
@@ -541,7 +541,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    bool ExportJsonVocab(MemberInfo member, Type type, bool isNullable)
+    private bool ExportJsonVocab(MemberInfo member, Type type, bool isNullable)
     {
         JsonVocabAttribute? vocabAttr = member.JsonVocabAttribute();
         if (vocabAttr is null)
@@ -600,7 +600,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return true;
     }
 
-    void ExportVocabInline(MemberInfo member, bool isNullable, IVocab vocab)
+    private void ExportVocabInline(MemberInfo member, bool isNullable, IVocab vocab)
     {
         _writer.SOL();
         {
@@ -613,7 +613,7 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.EOL();
     }
 
-    void ExportVocabType(MemberInfo member, Type type, NamedVocab vocabType, bool isNullable)
+    private void ExportVocabType(MemberInfo member, Type type, NamedVocab vocabType, bool isNullable)
     {
         _writer.SOL();
         {
@@ -651,7 +651,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return this;
     }
 
-    string DataType(Type type)
+    private string DataType(Type type)
     {
         if (type.IsTask())
         {
@@ -680,7 +680,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return typeName;
     }
 
-    string InterfaceName(Type type, bool useMapper = true)
+    private string InterfaceName(Type type, bool useMapper = true)
     {
         string? typeName = null;
         if (useMapper && TypeNameMapper is not null)
@@ -696,7 +696,7 @@ public class TypescriptExporter : TypeExporter<Type>
         return typeName;
     }
 
-    bool IsNullableRef(MemberInfo member)
+    private bool IsNullableRef(MemberInfo member)
     {
         if (member is PropertyInfo p)
         {
@@ -709,8 +709,9 @@ public class TypescriptExporter : TypeExporter<Type>
         return false;
     }
 
-    bool IsNullableRef(PropertyInfo prop)
+    private bool IsNullableRef(PropertyInfo prop)
     {
+
 #if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(prop);
         return info.WriteState == NullabilityState.Nullable;
@@ -720,7 +721,7 @@ public class TypescriptExporter : TypeExporter<Type>
 #endif
     }
 
-    bool IsNullableRef(FieldInfo field)
+    private bool IsNullableRef(FieldInfo field)
     {
 #if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(field);
@@ -731,7 +732,7 @@ public class TypescriptExporter : TypeExporter<Type>
 #endif
     }
 
-    bool IsNullableRef(ParameterInfo pinfo)
+    private bool IsNullableRef(ParameterInfo pinfo)
     {
 #if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(pinfo);

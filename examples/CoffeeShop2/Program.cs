@@ -9,10 +9,10 @@ namespace CoffeeShop;
 
 public class CoffeeShop : ConsoleApp
 {
-    IVocabCollection _vocabs;
-    JsonTranslator<Cart> _translator;
+    private IVocabCollection _vocabs;
+    private JsonTranslator<Cart> _translator;
 
-    CoffeeShop()
+    private CoffeeShop()
     {
         // Load a standard vocabulary from file.
         // But you can also use a different vocab for each request.
@@ -48,7 +48,7 @@ public class CoffeeShop : ConsoleApp
         }
     }
 
-    bool PrintAnyUnknown(Cart cart)
+    private bool PrintAnyUnknown(Cart cart)
     {
         if (cart.Items is not null)
         {

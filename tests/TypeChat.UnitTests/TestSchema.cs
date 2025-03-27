@@ -29,7 +29,7 @@ public class TestSchema : TypeChatTest
         Assert.True(lines.ContainsSubstring("optionalText?", "string"));
         Assert.True(lines.ContainsSubstring("OptionalAmt?", "number"));
 
-        VocabCollection vocabs = new VocabCollection { TestVocabs.Milks() };
+        VocabCollection vocabs = [TestVocabs.Milks()];
         schema = TypescriptExporter.GenerateSchema(typeof(WrapperNullableObj), vocabs);
         lines = schema.Schema.Text.Lines();
         Assert.True(lines.ContainsSubstring("optionalText?", "string"));

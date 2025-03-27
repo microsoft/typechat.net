@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat.Embeddings;
 /// </summary>
 public class TopNCollection<T>
 {
-    MinHeap<T> _heap;
+    private MinHeap<T> _heap;
     /// <summary>
     /// Initializes a new instance of the <see cref="TopNCollection{T}"/> class.
     /// </summary>

@@ -9,7 +9,7 @@ namespace CoffeeShop;
 
 public class CoffeeShopApp : ConsoleApp
 {
-    JsonTranslator<Cart> _translator;
+    private JsonTranslator<Cart> _translator;
 
     public CoffeeShopApp()
     {
@@ -39,7 +39,7 @@ public class CoffeeShopApp : ConsoleApp
         }
     }
 
-    bool PrintAnyUnknown(Cart cart)
+    private bool PrintAnyUnknown(Cart cart)
     {
         if (cart.Items is not null)
         {

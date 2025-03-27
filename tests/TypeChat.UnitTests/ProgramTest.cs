@@ -54,7 +54,7 @@ public class ProgramTest : TypeChatTest
         return GetPrograms(doc);
     }
 
-    static IEnumerable<object[]> GetPrograms(params JsonDocument[] docs)
+    private static IEnumerable<object[]> GetPrograms(params JsonDocument[] docs)
     {
         foreach (var doc in docs)
         {
@@ -66,7 +66,7 @@ public class ProgramTest : TypeChatTest
                                 valueProp.GetString();
 
                 var program = obj.Value.GetProperty("source");
-                yield return new object[] { program.ToString(), result };
+                yield return [program.ToString(), result];
             }
         }
     }

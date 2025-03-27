@@ -5,7 +5,7 @@ namespace Sentiment;
 
 public class SentimentApp : ConsoleApp
 {
-    JsonTranslator<SentimentResponse> _translator;
+    private JsonTranslator<SentimentResponse> _translator;
 
     public SentimentApp()
     {

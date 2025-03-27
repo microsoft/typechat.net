@@ -8,7 +8,7 @@ namespace HealthData;
 
 public class HealthDataAgent : ConsoleApp
 {
-    AgentWithHistory<HealthDataResponse> _agent;
+    private AgentWithHistory<HealthDataResponse> _agent;
 
     public HealthDataAgent()
     {
@@ -41,7 +41,7 @@ public class HealthDataAgent : ConsoleApp
     /// <summary>
     /// Give the agent instructions
     /// </summary>
-    void GiveAgentInstructions()
+    private void GiveAgentInstructions()
     {
         Prompt instructions = _agent.Instructions;
         // Supply current date and time, and how to use it
@@ -80,7 +80,7 @@ public class HealthDataAgent : ConsoleApp
         return Task.CompletedTask;
     }
 
-    void PrintResponse(HealthDataResponse response)
+    private void PrintResponse(HealthDataResponse response)
     {
         if (response.Data is not null)
         {
@@ -115,7 +115,7 @@ public class HealthDataAgent : ConsoleApp
         return 0;
     }
 
-    static void PrintHelp()
+    private static void PrintHelp()
     {
         Console.WriteLine("Enter medications and conditions.");
         Console.WriteLine("Commands:");

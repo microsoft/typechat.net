@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using Microsoft.SemanticKernel;
-
 namespace Microsoft.TypeChat;
 
 /// <summary>
@@ -10,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class PluginProgramValidator : ProgramVisitor, IProgramValidator
 {
-    PluginApiTypeInfo _typeInfo;
+    private PluginApiTypeInfo _typeInfo;
 
     public PluginProgramValidator(PluginApiTypeInfo typeInfo)
     {
@@ -53,7 +51,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         ProgramException.ThrowFunctionNotFound(functionCall.Name);
     }
 
-    void ValidateArgs(FunctionCall call, KernelFunctionMetadata typeInfo, Expression[] args)
+    private void ValidateArgs(FunctionCall call, KernelFunctionMetadata typeInfo, Expression[] args)
     {
         // Verify arg counts
         CheckArgCount(call, typeInfo, args);
@@ -62,7 +60,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         TypeCheckArgs(call, typeInfo.Parameters, args);
     }
 
-    int GetRequiredArgCount(IReadOnlyList<KernelParameterMetadata> parameters)
+    private int GetRequiredArgCount(IReadOnlyList<KernelParameterMetadata> parameters)
     {
         int requiredCount = 0;
 
@@ -80,7 +78,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         return requiredCount;
     }
 
-    void CheckArgCount(FunctionCall call, KernelFunctionMetadata typeInfo, Expression[] args)
+    private void CheckArgCount(FunctionCall call, KernelFunctionMetadata typeInfo, Expression[] args)
     {
         // Just checks if the right number of parameters were supplied
         int requiredArgCount = (typeInfo.Parameters is not null) ? GetRequiredArgCount(typeInfo.Parameters) : 0;
@@ -98,7 +96,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         }
     }
 
-    void TypeCheckArgs(FunctionCall call, IReadOnlyList<KernelParameterMetadata> parameters, Expression[] args)
+    private void TypeCheckArgs(FunctionCall call, IReadOnlyList<KernelParameterMetadata> parameters, Expression[] args)
     {
         Debug.Assert(args.Length <= parameters.Count);
 
@@ -116,7 +114,7 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         }
     }
 
-    Type ParameterTypeFromExpr(Expression expr)
+    private Type ParameterTypeFromExpr(Expression expr)
     {
         switch (expr.ValueType)
         {
@@ -141,12 +139,12 @@ public class PluginProgramValidator : ProgramVisitor, IProgramValidator
         }
     }
 
-    bool IsOptional(KernelParameterMetadata parameter)
+    private bool IsOptional(KernelParameterMetadata parameter)
     {
         return parameter.DefaultValue is null;
     }
 
-    void ThrowTypeMismatch(FunctionCall call, string paramName, Type expectedType, Type actualType)
+    private void ThrowTypeMismatch(FunctionCall call, string paramName, Type expectedType, Type actualType)
     {
         throw new ProgramException(
             ProgramException.ErrorCode.TypeMismatch,

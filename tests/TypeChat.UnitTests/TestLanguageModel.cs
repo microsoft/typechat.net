@@ -21,7 +21,7 @@ public class TestLanguageModel : TypeChatTest
         await RunRetry(config);
     }
 
-    async Task RunRetry(OpenAIConfig config)
+    private async Task RunRetry(OpenAIConfig config)
     {
         var handler = MockHttpHandler.ErrorResponder(429);
         using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
@@ -88,7 +88,7 @@ public class TestLanguageModel : TypeChatTest
         Assert.Equal(config.Endpoint.ToLower(), requestUrl);
     }
 
-    (string, string) CannedResponse()
+    private (string, string) CannedResponse()
     {
         const string jsonResponse = @"{
           ""id"": ""chatcmpl-123"",
@@ -115,7 +115,7 @@ public class TestLanguageModel : TypeChatTest
     [Fact]
     public void Test_Prompt()
     {
-        Prompt prompt = new Prompt();
+        Prompt prompt = [];
         prompt.AppendInstruction("Help the user translate approximate date ranges into precise ones");
         prompt.Add(PromptLibrary.Now());
         prompt.AppendResponse("OK, thank you");

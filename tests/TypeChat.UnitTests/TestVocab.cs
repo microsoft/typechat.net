@@ -64,7 +64,7 @@ public class TestVocab : TypeChatTest
     public void ExportVocabInline()
     {
         var milks = TestVocabs.Milks();
-        VocabCollection vocabs = new VocabCollection { milks };
+        VocabCollection vocabs = [milks];
         var schema = TypescriptExporter.GenerateSchema(typeof(Milk), vocabs);
         ValidateBasic(typeof(Milk), schema);
         ValidateVocabInline(schema, milks);
@@ -145,7 +145,7 @@ public class TestVocab : TypeChatTest
     }
 
     // Workaround for Xunit issues
-    void VocabEquals(IVocab left, IVocab right)
+    private void VocabEquals(IVocab left, IVocab right)
     {
         var l = left.ToArray();
         var r = right.ToArray();

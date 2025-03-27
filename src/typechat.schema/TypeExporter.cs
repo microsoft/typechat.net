@@ -8,8 +8,8 @@ namespace Microsoft.TypeChat.Schema;
 /// <typeparam name="T">The type of the type information being exported</typeparam>
 public abstract class TypeExporter<T>
 {
-    HashSet<T> _exportedTypes;
-    Queue<T>? _pendingTypes;
+    private HashSet<T> _exportedTypes;
+    private Queue<T>? _pendingTypes;
 
     /// <summary>
     /// Create an exporter
@@ -110,7 +110,7 @@ public abstract class TypeExporter<T>
     /// Dequeue the next pendin type for export
     /// </summary>
     /// <returns></returns>
-    T? GetPending()
+    private T? GetPending()
     {
         if (_pendingTypes is not null && _pendingTypes.Count > 0)
         {

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 using System.ComponentModel;
+
 using Microsoft.SemanticKernel;
 
 namespace Plugins;
@@ -28,7 +29,7 @@ public class StringPlugin
     [Description("Returns the lines that contain the given search pattern")]
     public string Find(string lines, string searchPattern)
     {
-        List<string> matches = new List<string>();
+        List<string> matches = [];
         string[] splitLines = lines.Split('\n', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         foreach (string line in splitLines)
         {

@@ -1,13 +1,20 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Calendar;
+
 using CoffeeShop;
+
 using HealthData;
+
 using Math;
+
 using Microsoft.TypeChat;
 using Microsoft.TypeChat.Classification;
+
 using Plugins;
+
 using Restaurant;
+
 using Sentiment;
 
 namespace MultiSchema;
@@ -18,8 +25,8 @@ namespace MultiSchema;
 /// </summary>
 public class MultiSchemaApp : ConsoleApp
 {
-    ILanguageModel _model;
-    TextRequestRouter<IInputHandler> _childApps;
+    private ILanguageModel _model;
+    private TextRequestRouter<IInputHandler> _childApps;
 
     public MultiSchemaApp()
     {
@@ -46,7 +53,7 @@ public class MultiSchemaApp : ConsoleApp
         }
     }
 
-    void InitApps()
+    private void InitApps()
     {
         // While this is hardcoded here, you can also do this dynamically
         // targets dynamically
@@ -60,7 +67,7 @@ public class MultiSchemaApp : ConsoleApp
         _childApps.Add(null, "No Match", "None of the others matched");
     }
 
-    void PrintApps()
+    private void PrintApps()
     {
         int i = 0;
         foreach (var app in _childApps.Routes)

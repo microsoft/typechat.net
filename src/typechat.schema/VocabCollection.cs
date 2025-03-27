@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class VocabCollection : IVocabCollection
 {
-    Dictionary<string, NamedVocab> _vocabs;
+    private Dictionary<string, NamedVocab> _vocabs;
 
     /// <summary>
     /// Create a new vocabulary collection

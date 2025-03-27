@@ -11,8 +11,8 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class HierarchicalJsonTranslator : IJsonTranslator
 {
-    ILanguageModel _model;
-    VectorTextIndex<IJsonTranslator> _requestRouter;
+    private ILanguageModel _model;
+    private VectorTextIndex<IJsonTranslator> _requestRouter;
 
     /// <summary>
     /// Create a new JsonTranslator that routes requests to child translators

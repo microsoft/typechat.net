@@ -24,12 +24,12 @@ public class JsonTranslator<T> : IJsonTranslator
 {
     public const int DefaultMaxRepairAttempts = 1;
 
-    ILanguageModel _model;
-    IJsonTypeValidator<T> _validator;
-    IConstraintsValidator<T>? _constraintsValidator;
-    IJsonTranslatorPrompts _prompts;
-    TranslationSettings _translationSettings;
-    int _maxRepairAttempts;
+    private ILanguageModel _model;
+    private IJsonTypeValidator<T> _validator;
+    private IConstraintsValidator<T>? _constraintsValidator;
+    private IJsonTranslatorPrompts _prompts;
+    private TranslationSettings _translationSettings;
+    private int _maxRepairAttempts;
 
     /// <summary>
     /// Creates a new JsonTranslator that translates natural language requests into objects of type T
@@ -272,7 +272,7 @@ public class JsonTranslator<T> : IJsonTranslator
     // Return false if translation loop should stop
     protected virtual bool OnValidationComplete(Result<T> validationResult) { return true; }
 
-    Result<T> ValidateJson(string json)
+    private Result<T> ValidateJson(string json)
     {
         var result = Validator.Validate(json);
         if (!OnValidationComplete(result))

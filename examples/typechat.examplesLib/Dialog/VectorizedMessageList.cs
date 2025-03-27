@@ -11,10 +11,10 @@ public class VectorizedMessageList : IMessageStream
 {
     public const int DefaultMaxMatches = 10;
 
-    MessageList _messageList;
+    private MessageList _messageList;
     // Maps the text of each message to its position in _messageList;
-    VectorTextIndex<int> _index;
-    int _maxContextMatches;
+    private VectorTextIndex<int> _index;
+    private int _maxContextMatches;
 
     /// <summary>
     /// Create a new VectorizedMessageList

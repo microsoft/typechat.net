@@ -84,11 +84,11 @@ internal static class CartEx
     {
         Cart cart = new Cart
         {
-            Items = new CartItem[]
-            {
+            Items =
+            [
                 new EspressoDrinks {Name = "espresso", Quantity = 1 },
-                new CoffeeDrinks {Name = "coffee", Size = CoffeeSize.Tall, Quantity = 2},
-            }
+                new CoffeeDrinks {Name = "coffee", Size = CoffeeSize.Tall, Quantity = 2}
+            ]
         };
         return cart;
     }

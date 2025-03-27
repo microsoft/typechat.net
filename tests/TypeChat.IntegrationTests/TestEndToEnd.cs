@@ -2,32 +2,24 @@
 
 namespace Microsoft.TypeChat.Tests;
 
-public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
+public class TestEndToEnd(Config config, ITestOutputHelper output) : TypeChatTest(output), IClassFixture<Config>
 {
-    Config _config;
-
-    public TestEndToEnd(Config config, ITestOutputHelper output)
-        : base(output)
-    {
-        _config = config;
-    }
-
     [SkippableFact]
     public async Task TranslateSentiment_ChatModel()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
-        await TranslateSentiment(new ChatLanguageModel(_config.OpenAI));
+        Skip.If(!CanRunEndToEndTest(config));
+        await TranslateSentiment(new ChatLanguageModel(config.OpenAI));
     }
 
     [SkippableFact]
     public async Task TranslateSentiment_CompletionModel()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
-        await TranslateSentiment(new TextCompletionModel(_config.OpenAI));
+        await TranslateSentiment(new TextCompletionModel(config.OpenAI));
     }
 
-    async Task TranslateSentiment(ILanguageModel model)
+    private async Task TranslateSentiment(ILanguageModel model)
     {
         var translator = new JsonTranslator<SentimentResponse>(
             model,
@@ -45,9 +37,9 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task Translate_Polymorphic()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
-        var translator = new JsonTranslator<Drawing>(new ChatLanguageModel(_config.OpenAI));
+        var translator = new JsonTranslator<Drawing>(new ChatLanguageModel(config.OpenAI));
         string request = "Add a circle of radius 4.5 at 30, 30 and\n" +
                          "Add a rectangle at 5, 5 with height 10 and width 15";
 
@@ -66,16 +58,14 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         Assert.Equal(15, rect.Width);
     }
 
-    /// <summary>
-    /// This one loads the schema from a TS file
     [SkippableFact]
     public async Task TranslateWithTSFileSchema()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
         SchemaText schema = SchemaText.Load("./SentimentSchema.ts");
         var translator = new JsonTranslator<SentimentResponse>(
-            new ChatLanguageModel(_config.OpenAI),
+            new ChatLanguageModel(config.OpenAI),
             schema
         );
         SentimentResponse response = await translator.TranslateAsync("Tonights gonna be a good night! A good good night!");
@@ -90,20 +80,20 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task ProgramMath()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
-        await ProgramMath(new ChatLanguageModel(_config.OpenAI));
+        await ProgramMath(new ChatLanguageModel(config.OpenAI));
     }
 
     [SkippableFact]
     public async Task ProgramMath_Completion()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
-        await ProgramMath(new TextCompletionModel(_config.OpenAI));
+        await ProgramMath(new TextCompletionModel(config.OpenAI));
     }
 
-    async Task ProgramMath(ILanguageModel model)
+    private async Task ProgramMath(ILanguageModel model)
     {
         string request = "3 * 5 + 2 * 7";
         double expectedResult = 29.0;
@@ -120,9 +110,9 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TestSentiment_ChatModel()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
-        ChatLanguageModel lm = new ChatLanguageModel(_config.OpenAI);
+        ChatLanguageModel lm = new ChatLanguageModel(config.OpenAI);
         string response = await lm.CompleteAsync("Is Venus a planet?");
         Assert.NotNull(response);
         Assert.NotEmpty(response);
@@ -131,24 +121,24 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     [SkippableFact]
     public async Task TranslateSentiment_LanguageModel()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
-        using LanguageModel lm = new LanguageModel(_config.OpenAI);
+        using LanguageModel lm = new LanguageModel(config.OpenAI);
         await TranslateSentiment(lm);
     }
 
     [Fact]
     public async Task Test_Preamble()
     {
-        Skip.If(!CanRunEndToEndTest(_config));
+        Skip.If(!CanRunEndToEndTest(config));
 
-        Prompt prompt = new Prompt();
+        Prompt prompt = [];
         prompt.AppendInstruction("Help the user translate approximate date ranges into precise ones");
         prompt.Add(PromptLibrary.Now());
         prompt.AppendResponse("Give me a time range, like fortnight");
         prompt.Append("What is the date in a fortnight?");
 
-        LanguageModel lm = new LanguageModel(_config.OpenAI);
+        LanguageModel lm = new LanguageModel(config.OpenAI);
         TranslationSettings settings = new TranslationSettings
         {
             MaxTokens = 1000,
