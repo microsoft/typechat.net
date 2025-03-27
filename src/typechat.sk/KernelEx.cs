@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using Azure.Core;
+
 using Microsoft.SemanticKernel.TextGeneration;
 
 namespace Microsoft.TypeChat;

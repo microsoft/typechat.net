@@ -9,6 +9,7 @@
     <IsTestProject>true</IsTestProject>
     <AssemblyName>typechat.unittests</AssemblyName>
     <RootNamespace>Microsoft.TypeChat.UnitTests</RootNamespace>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
