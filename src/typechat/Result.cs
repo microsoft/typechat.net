@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat;
 
 /// <summary>
 /// Result of an operation that returns T.
-/// If result is Success, then includs a Value of type T
+/// If result is Success, then includes a Value of type T
 /// If result is Failure, includes an optional diagnostic message
 /// </summary>
 /// <typeparam name="T">Returned type</typeparam>
