@@ -65,6 +65,17 @@ public class Config
         {
             _openAI = OpenAIConfig.FromEnvironment();
             _openAIEmbeddings = OpenAIConfig.FromEnvironment(isEmbedding: true);
+
+            // update environment based configurations with identity provider if necessary
+            if (_openAI.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
+            {
+                _openAI.ApiTokenProvider = AzureTokenProvider.Default;
+            }
+            if (_openAIEmbeddings.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
+            {
+                _openAIEmbeddings.ApiTokenProvider = AzureTokenProvider.Default;
+            }
+
         }
     }
 
