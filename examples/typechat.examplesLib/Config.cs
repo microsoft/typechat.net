@@ -65,7 +65,7 @@ public class Config
                 // Backwards compat - try the previous (pre-standardized) section name first
                 _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
             }
-            catch (NullReferenceException ex)
+            catch (NullReferenceException)
             {
                 // Try the new expected configuration section name
                 _openAIEmbeddings = LoadOpenAI("OpenAI_Embedding");
