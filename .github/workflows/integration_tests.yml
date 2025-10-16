@@ -30,7 +30,7 @@ jobs:
         fail-fast: false
         matrix:
           include:
-          - { dotnet: '8.0-jammy', os: 'ubuntu', configuration: Release }
+          - { dotnet: '8.0-jammy', os: 'ubuntu', version: 22, configuration: Release }
 
     runs-on: ubuntu-latest
     container:
