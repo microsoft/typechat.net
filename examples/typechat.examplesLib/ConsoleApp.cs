@@ -103,7 +103,7 @@ public abstract class ConsoleApp : IInputHandler
     private async Task<bool> EvalCommandAsync(string input, CancellationToken cancelToken)
     {
         // Process a command
-        List<string> parts = CommandLineStringSplitter.Instance.Split(input).ToList();
+        List<string> parts = CommandLineParser.SplitCommandLine(input).ToList();
         if (parts.IsNullOrEmpty())
         {
             return true;
