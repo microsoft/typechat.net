@@ -125,7 +125,7 @@ The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello Wor
   
 The following examples demonstrate how to use JsonTranslator, Schemas and Vocabularies: 
 
-* [CoffeeShop](./examples/CoffeeShop): Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialzation.
+* [CoffeeShop](./examples/CoffeeShop): Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialization.
 * [Calendar](./examples/Calendar): Transform language into calendar actions
 * [Restaurant](./examples/Restaurant): Order processing at a pizza restaurant
 
