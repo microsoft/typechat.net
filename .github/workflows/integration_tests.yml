@@ -96,7 +96,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         env: # Set Azure credentials secret as an input
           AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_ENDPOINT }}
-          AZURE_OPENAI_API_KEY: identity
+          AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_API_KEY }}
           OPENAI_MODEL: ${{ secrets.AZURE_COMPLETION_MODEL }}
           OPENAI_EMBEDDINGMODEL: ${{ secrets.AZURE_EMBEDDING_MODEL }}
         run: |
