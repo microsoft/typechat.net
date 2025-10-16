@@ -7,8 +7,6 @@ name: build-integrationtest
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "dev/robgruen/integration_tests" ]
   pull_request:
     branches: [ "main" ]
   merge_group:
