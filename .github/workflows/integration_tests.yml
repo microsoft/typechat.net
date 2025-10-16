@@ -30,7 +30,7 @@ jobs:
         fail-fast: false
         matrix:
           include:
-          - { dotnet: '8.0-jammy', os: 'ubuntu', version: 22, configuration: Release }
+          - { dotnet: '8.0-jammy', os: 'ubuntu', configuration: Release }
 
     runs-on: ubuntu-latest
     container:
@@ -75,6 +75,12 @@ jobs:
           for solution in $SOLUTIONS; do
             dotnet build -c ${{ matrix.configuration }} /warnaserror $solution
           done
+
+      - name: Install Azure CLI
+        run: |
+          apt-get update && \
+          apt-get install -y curl && \
+          curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
       - name: Login to Azure
         uses: azure/login@v2.2.0
