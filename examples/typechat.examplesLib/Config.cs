@@ -59,7 +59,17 @@ public class Config
         if (File.Exists(DefaultConfigFile) && File.Exists(DefaultConfigFile_Dev))
         {
             _openAI = LoadOpenAI();
-            _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
+
+            try
+            {
+                // Backwards compat - try the previous (pre-standardized) section name first
+                _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
+            }
+            catch (NullReferenceException)
+            {
+                // Try the new expected configuration section name
+                _openAIEmbeddings = LoadOpenAI("OpenAI_Embedding");
+            }
         }
         else
         {

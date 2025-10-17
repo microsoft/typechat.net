@@ -1,5 +1,7 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
+using Microsoft.Extensions.AI;
+
 namespace Microsoft.TypeChat.Embeddings;
 
 /// <summary>
@@ -19,6 +21,7 @@ public struct Embedding
     {
         _vector = Empty;
     }
+
     /// <summary>
     /// Embedding using the given vector. Normalizes the vector before storing it
     /// </summary>
@@ -26,6 +29,15 @@ public struct Embedding
     public Embedding(ReadOnlyMemory<float> vector)
     {
         _vector = vector.ToArray();
+    }
+
+    /// <summary>
+    /// Embedding using the given vector. Normalizes the vector before storing it
+    /// </summary>
+    /// <param name="vector">vector to create embedding from</param>
+    public Embedding(Embedding<float> vector)
+    {
+        _vector = vector.Vector.ToArray();
     }
 
     /// <summary>
