@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Microsoft.TypeChat.Tests;
 
@@ -69,26 +68,21 @@ public class TypeChatTest
         }
     }
 
-    public bool CanRunEndToEndTest(Config config, [CallerMemberName] string caller = "")
+    public bool CanRunEndToEndTest(Config config)
     {
-        if (string.IsNullOrEmpty(config.OpenAI.ApiKey) || config.OpenAI.ApiKey == "?")
-        {
-            WriteSkipped(caller, "NO OpenAI Configured");
-        }
-
-        return (!string.IsNullOrEmpty(config.OpenAI.ApiKey) &&
+        return (config.HasOpenAI && !string.IsNullOrEmpty(config.OpenAI.ApiKey) &&
                 config.OpenAI.ApiKey != "?");
     }
 
-    //public bool CanRunEndToEndTest(Config config, string testName)
-    //{
-    //    if (CanRunEndToEndTest(config))
-    //    {
-    //        return true;
-    //    }
-    //    WriteSkipped(testName, "NO OpenAI Configured");
-    //    return false;
-    //}
+    public bool CanRunEndToEndTest(Config config, string testName)
+    {
+        if (CanRunEndToEndTest(config))
+        {
+            return true;
+        }
+        WriteSkipped(testName, "NO OpenAI Configured");
+        return false;
+    }
 
     public bool CanRunEndToEndTest_Embeddings(Config config)
     {
