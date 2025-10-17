@@ -71,7 +71,11 @@ public class TypeChatTest
 
     public bool CanRunEndToEndTest(Config config, [CallerMemberName] string caller = "")
     {
-        WriteSkipped(caller, "NO OpenAI Configured");
+        if (string.IsNullOrEmpty(config.OpenAI.ApiKey) || config.OpenAI.ApiKey == "?")
+        {
+            WriteSkipped(caller, "NO OpenAI Configured");
+        }
+
         return (!string.IsNullOrEmpty(config.OpenAI.ApiKey) &&
                 config.OpenAI.ApiKey != "?");
     }
