@@ -70,8 +70,7 @@ public class TypeChatTest
 
     public bool CanRunEndToEndTest(Config config)
     {
-        return (config.HasOpenAI &&
-                !string.IsNullOrEmpty(config.OpenAI.ApiKey) &&
+        return (!string.IsNullOrEmpty(config.OpenAI.ApiKey) &&
                 config.OpenAI.ApiKey != "?");
     }
 
