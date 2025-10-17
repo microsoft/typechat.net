@@ -79,12 +79,12 @@ public class Config
             // update environment based configurations with identity provider if necessary
             if (_openAI.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
             {
-                Debug.WriteLine("Using identity based auth for endpoint.");
+                Console.WriteLine("Using identity based auth for endpoint.");
                 _openAI.ApiTokenProvider = AzureTokenProvider.Default;
             }
             if (_openAIEmbeddings.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
             {
-                Debug.WriteLine("Using identity based auth for embeddings endpoint.");
+                Console.WriteLine("Using identity based auth for embeddings endpoint.");
                 _openAIEmbeddings.ApiTokenProvider = AzureTokenProvider.Default;
             }
 
