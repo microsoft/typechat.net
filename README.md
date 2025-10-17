@@ -1,4 +1,6 @@
 # TypeChat.NET
+[![License: MIT](https://img.shields.io/github/license/microsoft/typechat.net)]([https://github.com/microsoft/semantic-kernel/blob/main/LICENSE](https://github.com/microsoft/typechat.net/blob/main/LICENSE))
+[![Nuget package](https://img.shields.io/nuget/vpre/Microsoft.TypeChat)](https://www.nuget.org/packages/Microsoft.TypeChat/)
 
 TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeChat) to .NET. 
 
