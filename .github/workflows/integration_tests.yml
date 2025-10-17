@@ -68,10 +68,8 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v3
-        if: ${{ github.event_name != 'pull_request' }}
     
       - name: Build dotnet solutions
-        if: ${{ github.event_name != 'pull_request' }}
         run: |
           export SOLUTIONS=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
           for solution in $SOLUTIONS; do
@@ -99,4 +97,4 @@ jobs:
           OPENAI_MODEL: ${{ secrets.AZURE_COMPLETION_MODEL }}
           OPENAI_EMBEDDINGMODEL: ${{ secrets.AZURE_EMBEDDING_MODEL }}
         run: |
-          dotnet test -c ${{ matrix.configuration }} tests/TypeChat.IntegrationTests/TypeChat.IntegrationTests.csproj -v Normal --logger trx
+          dotnet test -c ${{ matrix.configuration }} tests/TypeChat.IntegrationTests/TypeChat.IntegrationTests.csproj --no-build -v Normal --logger trx
