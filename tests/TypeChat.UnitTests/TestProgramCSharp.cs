@@ -86,12 +86,12 @@ public class TestProgramCSharp : ProgramTest
         Assert.ThrowsAny<Exception>(() => CSharpProgramTranspiler.GenerateCode(program, api.Type));
     }
 
-    void ValidateCode(IEnumerable<string> lines)
+    private void ValidateCode(IEnumerable<string> lines)
     {
         ValidateStandardUsings(lines);
     }
 
-    void ValidateStandardUsings(IEnumerable<string> lines)
+    private void ValidateStandardUsings(IEnumerable<string> lines)
     {
         Assert.True(lines.ContainsSubstring("using ", "System"));
     }

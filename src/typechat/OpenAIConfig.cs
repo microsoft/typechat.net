@@ -93,6 +93,16 @@ public class OpenAIConfig
     public int MaxPauseMs { get; set; } = 1000; // 1000 milliseconds
 
     /// <summary>
+    /// When provided, gets Api token from this provider
+    /// </summary>
+    public IApiTokenProvider ApiTokenProvider { get; set; }
+
+    public bool HasTokenProvider
+    {
+        get { return this.ApiTokenProvider is not null; }
+    }
+
+    /// <summary>
     /// Validate the configuration
     /// </summary>
     /// <param name="configFileName">(optional) Config file the settings came from</param>
@@ -104,7 +114,7 @@ public class OpenAIConfig
         Verify(ApiKey, nameof(ApiKey), configFileName);
     }
 
-    void Verify(string value, string name, string fileName)
+    private void Verify(string value, string name, string fileName)
     {
         if (string.IsNullOrEmpty(value) || value == "?")
         {
@@ -121,7 +131,7 @@ public class OpenAIConfig
     {
         OpenAIConfig config = new OpenAIConfig();
         config.ApiKey = Environment.GetEnvironmentVariable(VariableNames.AZURE_OPENAI_API_KEY);
-        if (config.ApiKey is null)
+        if (string.IsNullOrEmpty(config.ApiKey))
         {
             config.Azure = false;
             config.ApiKey = Environment.GetEnvironmentVariable(VariableNames.OPENAI_API_KEY);

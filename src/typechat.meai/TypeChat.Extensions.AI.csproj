@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>annotations</Nullable>
+    <AssemblyName>Microsoft.TypeChat.Extensions.AI</AssemblyName>
+    <RootNamespace>Microsoft.TypeChat</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\typechat\ArgumentVerify.cs" Link="ArgumentVerify.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.17.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.AI" Version="9.10.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.0-rc.2.25502.107" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\typechat\TypeChat.csproj" />
+  </ItemGroup>
+
+  <Import Project="../package/nuget.props" />
+  <PropertyGroup>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Description>TypeChat.Extensions.AI supplies bindings for Language models, Plugins and Embeddings to TypeChat.NET</Description>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;SKEXP0001;SKEXP0011</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;SKEXP0001;SKEXP0011</NoWarn>
+  </PropertyGroup>
+
+</Project>

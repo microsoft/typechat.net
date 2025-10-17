@@ -30,8 +30,8 @@ public class PromptSection : IPromptSection
 
     public static readonly PromptSection Empty = FromUser(string.Empty);
 
-    string _source;
-    string _text;
+    private readonly string _source;
+    private string _text;
 
     /// <summary>
     /// Create an empty prompt section

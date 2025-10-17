@@ -52,7 +52,7 @@ public class VocabFile
         return vocabs;
     }
 
-    static void Add(VocabCollection vocabs, IDictionary<string, string[]> vocabRecords)
+    private static void Add(VocabCollection vocabs, IDictionary<string, string[]> vocabRecords)
     {
         ArgumentVerify.ThrowIfNull(vocabRecords, nameof(vocabRecords));
         foreach (var record in vocabRecords)

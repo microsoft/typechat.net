@@ -125,7 +125,7 @@ The [Sentiment](./examples/Sentiment/Program.cs) example is TypeChat's Hello Wor
   
 The following examples demonstrate how to use JsonTranslator, Schemas and Vocabularies: 
 
-* [CoffeeShop](./examples/CoffeeShop): Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialzation.
+* [CoffeeShop](./examples/CoffeeShop): Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialization.
 * [Calendar](./examples/Calendar): Transform language into calendar actions
 * [Restaurant](./examples/Restaurant): Order processing at a pizza restaurant
 
@@ -144,13 +144,16 @@ The following examples demonstrate how to use JsonTranslator, Schemas and Vocabu
   * [Agent Classes](./examples/typechat.examplesLib/Dialog) for working with interactive agents that have history. These classes emonstrate how TypeChat.NET may be used for strongly typed interactions with message passing agents or bots. These agents can include features such as built in interaction history. 
 
 ## Api Key and Configuration
-To use TypeChat.net or run the examples, you need an **API key** for an OpenAI service. Azure OpenAI and the OpenAI service are both supported.
+To use TypeChat.net or run the examples, you need **either**:
+* An **API key** for an OpenAI service. Azure OpenAI and the OpenAI service are both supported.
+* An Azure identity with access to the Azure OpenAI service. To use Azure identities, you must configure your OpenAI service to use role based access and grant access to the identity. 
 
-### Configure Api Key for examples
+### Configure Api Key or Azure Identity for examples
 * Go to the **[examples](./examples)** folder in the solution
 * Make a copy of the [appSettings.json](./examples/appSettings.json) file and name it **appSettings.Development.json**. Ensure it is in the same folder as appSettings.json
 * appSettings.Development.json is a local development only override of the settings in appSettings.json and is **never** checked in.
-* Add your Api Key to **appSettings.Development.json**. 
+* Add your **Api Key** to **appSettings.Development.json**.
+  * To use Azure identity: use the well-known key **"identity"**. The code will use access tokens returned by the default Azure credentials: [DefaultAzureCredential](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). You can provide these using **az login**. 
 
 A typical appSettings.Development.json will look like this:
 ```json
@@ -159,6 +162,15 @@ A typical appSettings.Development.json will look like this:
   "OpenAI": {
     "Azure": true,
     "ApiKey": "YOUR API KEY",
+    "Endpoint": "https://YOUR_RESOURCE_NAME.openai.azure.com",
+    "Model": "gpt-35-turbo"  // Name of Azure deployment
+  }
+}
+// For Azure OpenAI service with Azure Identity: DefaultCredentials
+{
+  "OpenAI": {
+    "Azure": true,
+    "ApiKey": "identity",
     "Endpoint": "https://YOUR_RESOURCE_NAME.openai.azure.com",
     "Model": "gpt-35-turbo"  // Name of Azure deployment
   }

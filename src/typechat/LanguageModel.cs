@@ -7,12 +7,12 @@ namespace Microsoft.TypeChat;
 /// </summary>
 public class LanguageModel : ILanguageModel, IDisposable
 {
-    static TranslationSettings s_defaultSettings = new TranslationSettings();
+    private static readonly TranslationSettings s_defaultSettings = new TranslationSettings();
 
-    OpenAIConfig _config;
-    ModelInfo _model;
-    HttpClient _client;
-    string _endPoint;
+    private readonly OpenAIConfig _config;
+    private readonly ModelInfo _model;
+    private HttpClient _client;
+    private string _endPoint;
 
     /// <summary>
     /// Create an OpenAILanguageModel object using the given OpenAIConfig
@@ -49,11 +49,12 @@ public class LanguageModel : ILanguageModel, IDisposable
         ArgumentVerify.ThrowIfNullOrEmpty<IPromptSection>(prompt, nameof(prompt));
 
         var request = CreateRequest(prompt, settings);
-        var response = await _client.GetJsonResponseAsync<Request, Response>(_endPoint, request, _config.MaxRetries, _config.MaxPauseMs);
+        string apiToken = _config.HasTokenProvider ? await _config.ApiTokenProvider.GetAccessTokenAsync(cancelToken) : null;
+        var response = await _client.GetJsonResponseAsync<Request, Response>(_endPoint, request, _config.MaxRetries, _config.MaxPauseMs, apiToken).ConfigureAwait(false);
         return response.GetText();
     }
 
-    Request CreateRequest(Prompt prompt, TranslationSettings? settings = null)
+    private Request CreateRequest(Prompt prompt, TranslationSettings? settings = null)
     {
         var request = Request.Create(prompt, settings ?? s_defaultSettings);
         if (!_config.Azure)
@@ -63,7 +64,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         return request;
     }
 
-    void ConfigureClient()
+    private void ConfigureClient()
     {
         if (_config.Azure)
         {
@@ -76,7 +77,10 @@ public class LanguageModel : ILanguageModel, IDisposable
                 string path = $"openai/deployments/{_model.Name}/chat/completions?api-version={_config.ApiVersion}";
                 _endPoint = new Uri(new Uri(_config.Endpoint), path).AbsoluteUri;
             }
-            _client.DefaultRequestHeaders.Add("api-key", _config.ApiKey);
+            if (!_config.HasTokenProvider)
+            {
+                _client.DefaultRequestHeaders.Add("api-key", _config.ApiKey);
+            }
         }
         else
         {
@@ -93,7 +97,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
     }
 
-    struct Request
+    private struct Request
     {
         public string? model { get; set; }
         public Message[] messages { get; set; }
@@ -111,7 +115,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
     }
 
-    struct Response
+    private struct Response
     {
         public Choice[] choices { get; set; }
 
@@ -126,7 +130,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
     }
 
-    struct Message
+    private struct Message
     {
         public string role { get; set; }
         public string content { get; set; }
@@ -142,7 +146,7 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
     }
 
-    struct Choice
+    private struct Choice
     {
         public Message message { get; set; }
     }

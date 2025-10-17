@@ -4,7 +4,7 @@ namespace Microsoft.TypeChat;
 
 public abstract class ConsoleApp : IInputHandler
 {
-    List<string> _stopStrings;
+    private readonly List<string> _stopStrings;
 
     public ConsoleApp()
     {
@@ -73,7 +73,7 @@ public abstract class ConsoleApp : IInputHandler
     /// <summary>
     /// Return false if should exit
     /// </summary>
-    async Task<bool> EvalInputAsync(string input, CancellationToken cancelToken)
+    private async Task<bool> EvalInputAsync(string input, CancellationToken cancelToken)
     {
         try
         {
@@ -90,7 +90,7 @@ public abstract class ConsoleApp : IInputHandler
         return true;
     }
 
-    async Task<bool> EvalLineAsync(string input, CancellationToken cancelToken)
+    private async Task<bool> EvalLineAsync(string input, CancellationToken cancelToken)
     {
         if (IsStop(input))
         {
@@ -100,10 +100,10 @@ public abstract class ConsoleApp : IInputHandler
         return true;
     }
 
-    async Task<bool> EvalCommandAsync(string input, CancellationToken cancelToken)
+    private async Task<bool> EvalCommandAsync(string input, CancellationToken cancelToken)
     {
         // Process a command
-        List<string> parts = CommandLineStringSplitter.Instance.Split(input).ToList();
+        List<string> parts = CommandLineParser.SplitCommandLine(input).ToList();
         if (parts.IsNullOrEmpty())
         {
             return true;
@@ -122,7 +122,7 @@ public abstract class ConsoleApp : IInputHandler
         return true;
     }
 
-    bool IsStop(string? line)
+    private bool IsStop(string? line)
     {
         if (line is null)
         {

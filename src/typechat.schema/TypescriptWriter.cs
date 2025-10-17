@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class TypescriptWriter
 {
-    CodeWriter _writer;
+    private readonly CodeWriter _writer;
 
     /// <summary>
     /// Create a new TypescriptWrite that writes Typescript to the given text writer

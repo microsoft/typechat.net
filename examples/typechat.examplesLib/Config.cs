@@ -9,6 +9,7 @@ public class Config
 {
     public const string DefaultConfigFile = "appSettings.json";
     public const string DefaultConfigFile_Dev = "appSettings.Development.json";
+    public const string IdentityApiKey = "identity";
 
     public static class ModelNames
     {
@@ -43,24 +44,48 @@ public class Config
     {
         sectionName ??= "OpenAI";
         OpenAIConfig config = LoadConfig<OpenAIConfig>(DefaultConfigFile, DefaultConfigFile_Dev, sectionName);
-
+        if (config.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
+        {
+            config.ApiTokenProvider = AzureTokenProvider.Default;
+        }
         return config;
     }
 
-    OpenAIConfig? _openAI;
-    OpenAIConfig? _openAIEmbeddings;
+    private readonly OpenAIConfig? _openAI;
+    private readonly OpenAIConfig? _openAIEmbeddings;
 
     public Config()
     {
         if (File.Exists(DefaultConfigFile) && File.Exists(DefaultConfigFile_Dev))
         {
             _openAI = LoadOpenAI();
-            _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
+
+            try
+            {
+                // Backwards compat - try the previous (pre-standardized) section name first
+                _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
+            }
+            catch (NullReferenceException)
+            {
+                // Try the new expected configuration section name
+                _openAIEmbeddings = LoadOpenAI("OpenAI_Embedding");
+            }
         }
         else
         {
             _openAI = OpenAIConfig.FromEnvironment();
             _openAIEmbeddings = OpenAIConfig.FromEnvironment(isEmbedding: true);
+
+            // update environment based configurations with identity provider if necessary
+            if (_openAI.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
+            {
+                _openAI.ApiTokenProvider = AzureTokenProvider.Default;
+            }
+            if (_openAIEmbeddings.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
+            {
+                _openAIEmbeddings.ApiTokenProvider = AzureTokenProvider.Default;
+            }
+
         }
     }
 

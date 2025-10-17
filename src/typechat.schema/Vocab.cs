@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat.Schema;
 /// </summary>
 public class Vocab : List<VocabEntry>, IVocab
 {
-    const char DefaultEntrySeparator = '|';
+    private const char DefaultEntrySeparator = '|';
 
     public Vocab() { }
 

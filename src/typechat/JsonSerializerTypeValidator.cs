@@ -27,8 +27,8 @@ public class JsonSerializerTypeValidator
         return options;
     }
 
-    static JsonSerializerOptions s_defaultOptions = DefaultOptions();
-    JsonSerializerOptions _options;
+    private static readonly JsonSerializerOptions s_defaultOptions = DefaultOptions();
+    private readonly JsonSerializerOptions _options;
 
     /// <summary>
     /// Create a new type validator
@@ -65,7 +65,7 @@ public class JsonSerializerTypeValidator
         }
     }
 
-    string ToErrorString(string json, JsonException error)
+    private string ToErrorString(string json, JsonException error)
     {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("### JSON ERROR:");
@@ -83,7 +83,7 @@ public class JsonSerializerTypeValidator
         return sb.ToString();
     }
 
-    string ParsePath(string path)
+    private string ParsePath(string path)
     {
         const string pathPrefix = "$.";
         int iPrefix = path.IndexOf(pathPrefix);
@@ -101,8 +101,8 @@ public class JsonSerializerTypeValidator
 /// </summary>
 public class JsonSerializerTypeValidator<T> : IJsonTypeValidator<T>
 {
-    TypeSchema _schema;
-    JsonSerializerTypeValidator _validator;
+    private readonly TypeSchema _schema;
+    private readonly JsonSerializerTypeValidator _validator;
 
     /// <summary>
     /// Create a new validator

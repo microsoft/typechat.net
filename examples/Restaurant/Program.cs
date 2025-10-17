@@ -7,7 +7,7 @@ namespace Restaurant;
 
 public class RestaurantApp : ConsoleApp
 {
-    JsonTranslator<Order> _translator;
+    private readonly JsonTranslator<Order> _translator;
 
     public RestaurantApp()
     {
@@ -27,7 +27,7 @@ public class RestaurantApp : ConsoleApp
         PrintOrder(order);
     }
 
-    void PrintOrder(Order order)
+    private void PrintOrder(Order order)
     {
         if (order.Items is not null)
         {
