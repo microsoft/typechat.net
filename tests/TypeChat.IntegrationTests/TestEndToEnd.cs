@@ -137,7 +137,7 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         await TranslateSentiment(lm);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task Test_Preamble()
     {
         Skip.If(!CanRunEndToEndTest(_config));
