@@ -3,7 +3,7 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Evaluates a JSON program using a simple lighweight interpreter.
+/// Evaluates a JSON program using a simple lightweight interpreter.
 /// This class is stateful.
 /// For multiple threads, use multiple interpreters: interpreters are extremely lightweight
 /// Function calls in the program are passed to the handler callback function for dispatch.
