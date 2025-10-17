@@ -132,7 +132,8 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
 
     private async Task<Embedding> GetNormalizedEmbeddingAsync(string text, CancellationToken cancelToken)
     {
-        var embedding = await _model.GenerateEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
+        var embedding_float = await _model.GenerateEmbeddingAsync(text, cancelToken).ConfigureAwait(false);
+        var embedding = new Embedding(embedding_float);
         embedding.NormalizeInPlace();
 
         return embedding;
@@ -140,10 +141,12 @@ public class VectorTextIndex<T> : ITextRequestRouter<T>
 
     private async Task<Embedding[]> GetNormalizedEmbeddingAsync(string[] texts, CancellationToken cancelToken)
     {
-        var embeddings = await _model.GenerateEmbeddingsAsync(texts, cancelToken).ConfigureAwait(false);
+        var embeddings_float = await _model.GenerateEmbeddingsAsync(texts, cancelToken).ConfigureAwait(false);
+        var embeddings = new Embedding[embeddings_float.Length];
 
-        for (int i = 0; i < embeddings.Length; ++i)
+        for (int i = 0; i < embeddings_float.Length; ++i)
         {
+            embeddings[i] = new Embedding(embeddings_float[i]);
             embeddings[i].NormalizeInPlace();
         }
 

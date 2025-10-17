@@ -91,16 +91,16 @@ public static class KernelEx
         {
             if (config.HasTokenProvider)
             {
-                builder = builder.AddAzureOpenAITextEmbeddingGeneration(modelName, config.Endpoint, (TokenCredential)config.ApiTokenProvider.GetCredential(), modelName);
+                builder = builder.AddAzureOpenAIEmbeddingGenerator(modelName, config.Endpoint, (TokenCredential)config.ApiTokenProvider.GetCredential(), modelName);
             }
             else
             {
-                builder = builder.AddAzureOpenAITextEmbeddingGeneration(modelName, config.Endpoint, config.ApiKey, modelName);
+                builder = builder.AddAzureOpenAIEmbeddingGenerator(modelName, config.Endpoint, config.ApiKey, modelName);
             }
         }
         else
         {
-            builder = builder.AddOpenAITextEmbeddingGeneration(modelName, config.ApiKey, config.Organization, modelName);
+            builder = builder.AddOpenAIEmbeddingGenerator(modelName, config.ApiKey, config.Organization, null, modelName);
         }
         return builder;
 #pragma warning restore SKEXP0010
