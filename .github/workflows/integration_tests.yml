@@ -88,6 +88,11 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENTID }}
           tenant-id: ${{ secrets.AZURE_TENANTID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTIONID }}
+
+      - name: Clear appSettings
+        shell: bash
+        run: |
+          find . -type f -name 'appSettings*.json' -delete
       
       - name: Run Tests
         shell: bash
