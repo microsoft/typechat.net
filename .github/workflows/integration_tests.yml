@@ -7,7 +7,7 @@ name: build-integrationtest
 
 on:
   workflow_dispatch:
-  pull_request:
+  pull_request_target:
     branches: [ "main" ]
   merge_group:
     branches: ["main"]
@@ -65,11 +65,9 @@ jobs:
           exit 1
 
       - name: Checkout code
-        uses: actions/checkout@v3
-        if: ${{ github.event_name != 'pull_request' }}
+        uses: actions/checkout@v4
     
       - name: Build dotnet solutions
-        if: ${{ github.event_name != 'pull_request' }}
         run: |
           export SOLUTIONS=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
           for solution in $SOLUTIONS; do
@@ -88,10 +86,14 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENTID }}
           tenant-id: ${{ secrets.AZURE_TENANTID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTIONID }}
+
+      - name: Clear appSettings
+        shell: bash
+        run: |
+          find . -type f -name 'appSettings*.json' -delete
       
       - name: Run Tests
         shell: bash
-        if: ${{ github.event_name != 'pull_request' }}
         env: # Set Azure credentials secret as an input
           AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_ENDPOINT }}
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_API_KEY }}
