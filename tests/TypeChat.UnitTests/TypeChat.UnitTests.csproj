@@ -26,10 +26,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\typechat.embeddings\TypeChat.Embeddings.csproj" />
     <ProjectReference Include="..\TypeChat.TestLib\TypeChat.TestLib.csproj" />
     <ProjectReference Include="..\..\src\typechat.program\TypeChat.Program.csproj" />
-    <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
     <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\typechat\ArgumentVerify.cs" Link="ArgumentVerify.cs" />
   </ItemGroup>
 
 </Project>

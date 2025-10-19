@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\typechat.program\TypeChat.Program.csproj" />
-    <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.44.0" />
   </ItemGroup>
 
 </Project>

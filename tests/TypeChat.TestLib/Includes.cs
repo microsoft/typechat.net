@@ -15,3 +15,7 @@ global using System.Threading.Tasks;
 global using Microsoft.TypeChat.Schema;
 global using Xunit;
 global using Xunit.Abstractions;
+global using Microsoft.SemanticKernel;
+global using Microsoft.SemanticKernel.ChatCompletion;
+global using Microsoft.SemanticKernel.Connectors.OpenAI;
+
