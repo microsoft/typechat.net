@@ -65,9 +65,7 @@ public class TypescriptExporter : TypeExporter<Type>
     private readonly TypescriptWriter _writer;
     private readonly HashSet<Type> _nonExportTypes;
     private TypescriptVocabExporter? _vocabExporter;
-#if NET6_0_OR_GREATER
     private NullabilityInfoContext _nullableInfo;
-#endif
     private VocabCollection _usedVocabs;
     private readonly JsonPolymorphismSettings _polymorphism;
 
@@ -90,9 +88,7 @@ public class TypescriptExporter : TypeExporter<Type>
             typeof(Task)
         };
         _polymorphism = new JsonPolymorphismSettings();
-#if NET6_0_OR_GREATER
         _nullableInfo = new NullabilityInfoContext();
-#endif
     }
 
     /// <summary>
@@ -162,9 +158,7 @@ public class TypescriptExporter : TypeExporter<Type>
         _writer.Clear();
         _vocabExporter?.Clear();
 
-#if NET6_0_OR_GREATER
         _nullableInfo = null;
-#endif
     }
 
     public override void ExportPending()
@@ -711,35 +705,20 @@ public class TypescriptExporter : TypeExporter<Type>
 
     private bool IsNullableRef(PropertyInfo prop)
     {
-#if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(prop);
         return info.WriteState == NullabilityState.Nullable;
-#else
-        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
-        return prop.PropertyType.IsNullableValueType();
-#endif
     }
 
     private bool IsNullableRef(FieldInfo field)
     {
-#if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(field);
         return info.WriteState == NullabilityState.Nullable;
-#else
-        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
-        return field.FieldType.IsNullableValueType();
-#endif
     }
 
     private bool IsNullableRef(ParameterInfo pinfo)
     {
-#if NET6_0_OR_GREATER
         var info = _nullableInfo.Create(pinfo);
         return info.WriteState == NullabilityState.Nullable;
-#else
-        // In runtimes older than net6.0, we only support nullable value types (nullable reference types unsupported).
-        return pinfo.ParameterType.IsNullableValueType();
-#endif
     }
 
     protected override bool ShouldExport(Type type, out Type typeToExport)

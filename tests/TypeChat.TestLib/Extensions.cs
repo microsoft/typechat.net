@@ -58,11 +58,7 @@ public static class Extensions
         float[] array = new float[count];
         for (int i = 0; i < count; ++i)
         {
-#if NET6_0_OR_GREATER
             array[i] = random.NextSingle();
-#else
-            array[i] = (float)random.NextDouble();
-#endif
         }
 
         return array;
