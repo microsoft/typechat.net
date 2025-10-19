@@ -44,12 +44,13 @@ public class LanguageModel : ILanguageModel, IDisposable
     /// <param name="settings">translation settings such as temperature</param>
     /// <param name="cancelToken">cancellation token</param>
     /// <returns></returns>
+    /// <remarks>Uses .ConfigureAndAwait(false) since this is a library and potentially blocking call.</remarks>
     public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNullOrEmpty<IPromptSection>(prompt, nameof(prompt));
 
         var request = CreateRequest(prompt, settings);
-        string apiToken = _config.HasTokenProvider ? await _config.ApiTokenProvider.GetAccessTokenAsync(cancelToken) : null;
+        string apiToken = _config.HasTokenProvider ? await _config.ApiTokenProvider.GetAccessTokenAsync(cancelToken).ConfigureAwait(false) : null;
         var response = await _client.GetJsonResponseAsync<Request, Response>(_endPoint, request, _config.MaxRetries, _config.MaxPauseMs, apiToken).ConfigureAwait(false);
         return response.GetText();
     }

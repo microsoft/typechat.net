@@ -170,9 +170,10 @@ public class JsonTranslator<T> : IJsonTranslator
     /// <param name="request">text request</param>
     /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
+    /// <remarks>Uses .ConfigureAndAwait(false) since this is a library and potentially blocking call.</remarks>
     public async Task<object> TranslateToObjectAsync(string request, CancellationToken cancelToken)
     {
-        return await TranslateAsync(request, cancelToken);
+        return await TranslateAsync(request, cancelToken).ConfigureAwait(false);
     }
 
     /// <summary>
