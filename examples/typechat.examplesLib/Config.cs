@@ -59,12 +59,33 @@ public class Config
         if (File.Exists(DefaultConfigFile) && File.Exists(DefaultConfigFile_Dev))
         {
             _openAI = LoadOpenAI();
-            _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
+
+            try
+            {
+                // Backwards compat - try the previous (pre-standardized) section name first
+                _openAIEmbeddings = LoadOpenAI("OpenAI_Embeddings");
+            }
+            catch (NullReferenceException)
+            {
+                // Try the new expected configuration section name
+                _openAIEmbeddings = LoadOpenAI("OpenAI_Embedding");
+            }
         }
         else
         {
             _openAI = OpenAIConfig.FromEnvironment();
             _openAIEmbeddings = OpenAIConfig.FromEnvironment(isEmbedding: true);
+
+            // update environment based configurations with identity provider if necessary
+            if (_openAI.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
+            {
+                _openAI.ApiTokenProvider = AzureTokenProvider.Default;
+            }
+            if (_openAIEmbeddings.ApiKey.Equals(IdentityApiKey, StringComparison.OrdinalIgnoreCase))
+            {
+                _openAIEmbeddings.ApiTokenProvider = AzureTokenProvider.Default;
+            }
+
         }
     }
 
