@@ -64,6 +64,7 @@ public class Result<T>
         return result.Value;
     }
 
+#pragma warning disable CA1000 // Do not declare statics on generic types
     /// <summary>
     /// Create an error result
     /// </summary>
@@ -86,4 +87,5 @@ public class Result<T>
         result.Value = value;
         return result;
     }
+#pragma warning restore CA1000 // Do not declare statics on generic types
 }

@@ -59,10 +59,12 @@ public class JsonSerializerTypeValidator
         {
             return Result<object?>.Error(ToErrorString(json, jex));
         }
+#pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception ex)
         {
             return Result<object?>.Error(ex.Message);
         }
+#pragma warning restore CA1031 // Do not catch general exception types
     }
 
     private string ToErrorString(string json, JsonException error)

@@ -83,9 +83,11 @@ public class ProgramValidator<TApi> : ProgramValidator
             program.Delegate = lambdaExpr.Compile();
             return new Result<Program>(program);
         }
+#pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception ex)
         {
             return Result<Program>.Error(ex.Message);
         }
+#pragma warning restore CA1031 // Do not catch general exception types
     }
 }
