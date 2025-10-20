@@ -65,9 +65,10 @@ public class TextEmbeddingModel
     /// <param name="texts">list of texts to turn into embeddings</param>
     /// <param name="cancelToken">optional cancel token</param>
     /// <returns></returns>
+    /// <remarks>Uses .ConfigureAndAwait(false) since this is a library and potentially blocking call.</remarks>
     public async Task<Embedding<float>[]> GenerateEmbeddingsAsync(IList<string> texts, CancellationToken cancelToken = default)
     {
-        var results = await _model.GenerateAsync(texts, null, cancelToken);
+        var results = await _model.GenerateAsync(texts, null, cancelToken).ConfigureAwait(false);
         Embedding<float>[] embeddings = new Embedding<float>[results.Count];
         for (int i = 0; i < embeddings.Length; ++i)
         {
