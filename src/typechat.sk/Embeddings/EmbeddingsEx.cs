@@ -30,10 +30,11 @@ public static class EmbeddingsEx
     /// <param name="kernel">kernel to use</param>
     /// <param name="cancelToken">optional cancel token</param>
     /// <returns>The embedding of the text.</returns>
+    /// <remarks>Uses .ConfigureAndAwait(false) since this is a library and potentially blocking call.</remarks>
     public static async Task<Embedding<float>> GenerateEmbeddingAsync(this IEmbeddingGenerator<string, Embedding<float>> model, string text, Kernel kernel, CancellationToken cancelToken = default)
     {
         string[] texts = new string[] { text };
-        var results = await model.GenerateAsync(texts, null, cancelToken);
+        var results = await model.GenerateAsync(texts, null, cancelToken).ConfigureAwait(false);
         return results[0];
     }
 
