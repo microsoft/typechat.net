@@ -4,21 +4,6 @@ namespace Microsoft.TypeChat.Embeddings;
 
 public static class EmbeddingsEx
 {
-    ///// <summary>
-    ///// Generate an embedding using the given model
-    ///// </summary>
-    ///// <param name="model">model to use</param>
-    ///// <param name="text">text for which to generate an embedding</param>
-    ///// <param name="kernel">kernel to use</param>
-    ///// <param name="cancelToken">optional cancel token</param>
-    ///// <returns></returns>
-    //public static async Task<Embedding> GenerateEmbeddingAsync(this ITextEmbeddingGenerationService model, string text, Kernel kernel, CancellationToken cancelToken = default)
-    //{
-    //    string[] texts = new string[] { text };
-    //    var results = await model.GenerateEmbeddingsAsync(texts, kernel, cancelToken).ConfigureAwait(false);
-    //    return new Embedding(results[0]);
-    //}
-
     /// <summary>
     /// Given a list of embedings, return the index of the item that is nearest to 'other'
     /// Return

@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System.Numerics;
 using System.Numerics.Tensors;
 using System.Text.Json.Serialization;
 

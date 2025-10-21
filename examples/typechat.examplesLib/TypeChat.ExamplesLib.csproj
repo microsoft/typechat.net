@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\typechat.embeddings\TypeChat.Embeddings.csproj" />
     <ProjectReference Include="..\..\src\typechat.program\TypeChat.Program.csproj" />
   </ItemGroup>
 
