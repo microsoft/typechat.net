@@ -81,6 +81,7 @@ Prior versions of TypeChat.NET used the pre-release programming model of Semanti
     * gpt-4
     * ada-002
 * Some examples and scenarios will work best with gpt-4
+* If you are targeting .NET 9.0 you will need the .NET 9.0 targeting pack [available here](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=msbuild-developerpacks).
 
 ## Building
 
