@@ -32,10 +32,12 @@ public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
             Visit(program);
             return program;
         }
+#pragma warning disable CA1031 // Do not catch general exception types
         catch (Exception ex)
         {
             return Result<Program>.Error(program, ex.Message);
         }
+#pragma warning restore CA1031 // Do not catch general exception types
     }
 
     protected override void VisitFunction(FunctionCall functionCall)
@@ -54,7 +56,9 @@ public class FunctionCallValidator<TApi> : ProgramVisitor, IProgramValidator
         {
             throw;
         }
+#pragma warning disable CA1031 // Do not catch general exception types
         catch { }
+#pragma warning restore CA1031 // Do not catch general exception types
         ProgramException.ThrowFunctionNotFound(functionCall.Name);
     }
 

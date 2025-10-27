@@ -72,6 +72,7 @@ public class PluginApi
     /// <param name="name"></param>
     /// <param name="args"></param>
     /// <returns></returns>
+    /// <remarks>Uses .ConfigureAndAwait(false) since this is a library and potentially blocking call.</remarks>
     public async Task<dynamic> InvokeAsync(string name, dynamic[] args)
     {
         var (functionName, typeInfo) = BindFunction(name, args);
@@ -83,7 +84,7 @@ public class PluginApi
         {
             kernelArgs[parameters[i].Name] = args[i];
         }
-        var result = await function.InvokeAsync(_kernel, kernelArgs);
+        var result = await function.InvokeAsync(_kernel, kernelArgs).ConfigureAwait(false);
         return result.GetValue<dynamic>();
     }
 }
