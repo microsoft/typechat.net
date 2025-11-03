@@ -16,6 +16,7 @@ internal static class JsonNodeEx
             return obj;
         }
 
+#pragma warning disable CA1508 // Avoid dead conditional code
         if (obj is dynamic[] darray)
         {
             JsonArray jsonArray = new JsonArray();
@@ -38,6 +39,7 @@ internal static class JsonNodeEx
 
             return jsonArray;
         }
+#pragma warning restore CA1508 // Avoid dead conditional code
 
         return obj;
     }

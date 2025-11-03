@@ -117,11 +117,8 @@ public class Vocab : List<VocabEntry>, IVocab
     /// <returns></returns>
     public static Vocab? Parse(string text, char separator = DefaultEntrySeparator)
     {
-#if NET6_0_OR_GREATER
         string[] entries = text.Split(separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-#else
-        string[] entries = text.Split(separator).Select(s => s.Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
-#endif
+
         if (entries is null || entries.Length == 0)
         {
             return null;

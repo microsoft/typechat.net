@@ -97,7 +97,7 @@ public class ProgramInterpreter
     private async Task<dynamic> EvalAsync(FunctionCall call)
     {
         dynamic[] args = await EvalAsync(call.Args).ConfigureAwait(false);
-        return await _callHandlerAsync(call.Name, args);
+        return await _callHandlerAsync(call.Name, args).ConfigureAwait(false);
     }
 
     private dynamic Eval(Expression expr)
@@ -177,7 +177,7 @@ public class ProgramInterpreter
         dynamic[] args = new dynamic[expressions.Length];
         for (int i = 0; i < expressions.Length; ++i)
         {
-            args[i] = await EvalAsync(expressions[i]);
+            args[i] = await EvalAsync(expressions[i]).ConfigureAwait(false);
         }
         return args;
     }
