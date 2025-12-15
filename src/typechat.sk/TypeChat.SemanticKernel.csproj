@@ -19,7 +19,7 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.1" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.68.0" />
-    <PackageReference Include="System.Numerics.Tensors" Version="10.0.0" />
+    <PackageReference Include="System.Numerics.Tensors" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
