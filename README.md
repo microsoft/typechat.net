@@ -6,12 +6,14 @@ TypeChat.NET brings the ideas of [TypeChat](https://github.com/microsoft/TypeCha
 
 TypeChat.NET provides **cross platform** libraries that help you build natural language interfaces with language models using strong types, type validation and simple type safe programs (plans). Strong typing may help make software that uses language models more deterministic and reliable.    
 ```cs
+
 // Translates user intent into strongly typed Calendar Actions
 var model = new LanguageModel(Config.LoadOpenAI());
 var translator = new JsonTranslator<CalendarActions>(model);
 
 // Translate natural language request 
 CalendarActions actions = await translator.TranslateAsync(requestText);
+
 ```
 
 TypeChat.NET is in **active development** with frequent updates. The framework will evolve as the team explores the space and incorporates feedback. Supported scenarios are shown in the included [Examples](./examples). Documentation will also continue to improve. When in doubt, please look at the code.  
