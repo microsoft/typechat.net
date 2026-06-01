@@ -18,6 +18,30 @@ updates:
       - dependency-name: "Microsoft.Extensions.*"
         update-types: ["version-update:semver-major"]
       - dependency-name: "Microsoft.Bcl.*"
-        update-types: ["version-update:semver-major"]      
+        update-types: ["version-update:semver-major"]
     labels:
       - "dependencies"
+    # Group routine minor/patch bumps to keep PR volume manageable.
+    # Security updates are grouped separately so they can be prioritised,
+    # and major-version bumps fall through to one-PR-per-package.
+    groups:
+      nuget-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      nuget-security:
+        applies-to: security-updates
+        patterns: ["*"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+    groups:
+      github-actions:
+        patterns: ["*"]
+      github-actions-security:
+        applies-to: security-updates
+        patterns: ["*"]
