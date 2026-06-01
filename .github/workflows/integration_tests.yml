@@ -25,7 +25,6 @@ permissions:
 
 jobs:
   build-integrationtest:
-    environment: development
     strategy:
         fail-fast: false
         matrix:
@@ -63,6 +62,34 @@ jobs:
           echo "Current permission level is ${{ steps.checkAccess.outputs.user-permission }}"
           echo "Job originally triggered by ${{ github.actor }}"
           exit 1
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+    
+      - name: Build dotnet solutions
+        run: |
+          export SOLUTIONS=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
+          for solution in $SOLUTIONS; do
+            dotnet build -c ${{ matrix.configuration }} /warnaserror $solution
+          done
+
+  run-integrationtest:
+    needs: build-integrationtest
+    environment: development
+    strategy:
+        fail-fast: false
+        matrix:
+          include:
+          - { dotnet: '8.0-jammy', os: 'ubuntu', configuration: Release }
+
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:${{ matrix.dotnet }}
+      env:
+        NUGET_CERT_REVOCATION_MODE: offline
+        GITHUB_ACTIONS: 'true'
+
+    steps:
 
       - name: Checkout code
         uses: actions/checkout@v4
