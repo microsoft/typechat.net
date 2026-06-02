@@ -1,37 +1,30 @@
 # Dependabot configuration for microsoft/typechat.net.
 #
-# Per ecosystem: routine minor/patch updates are grouped into a single
-# weekly PR; security updates ship as their own grouped PR; major-version
-# bumps fall through ungrouped (one PR per package) for breaking-change
-# review.
+# Security-only mode: we want Dependabot alerts (security updates) to flow,
+# but NOT routine weekly version-update PRs. Setting
+# open-pull-requests-limit: 0 on each ecosystem block disables version
+# updates while keeping the ecosystem registered so security-update PRs
+# can still be opened automatically when an alert fires.
+#
+# Routine non-security upgrades are handled out-of-band (manually or by
+# a separate workflow); this file's role is to keep the security pipe
+# unblocked without flooding the repo with churn.
 #
 # Docs: https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
 updates:
-  # Maintain dependencies for nuget
   - package-ecosystem: "nuget"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-    ignore:
-      # For all System.* and Microsoft.Extensions/Bcl.* packages, ignore all major version updates
-      - dependency-name: "System.*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "Microsoft.Extensions.*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "Microsoft.Bcl.*"
-        update-types: ["version-update:semver-major"]
+    open-pull-requests-limit: 0
     labels:
       - "dependencies"
-    # Group routine minor/patch bumps to keep PR volume manageable.
-    # Security updates are grouped separately so they can be prioritised,
-    # and major-version bumps fall through to one-PR-per-package.
+    # Security updates still get grouped (minor/patch only). Major
+    # security bumps fall through ungrouped for breaking-change review.
     groups:
-      nuget-minor-patch:
-        patterns: ["*"]
-        update-types: ["minor", "patch"]
       nuget-security:
         applies-to: security-updates
         patterns: ["*"]
@@ -42,15 +35,10 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
+    open-pull-requests-limit: 0
     labels:
       - "dependencies"
-    # Same policy as nuget above: group minor/patch only so major-version
-    # action bumps (e.g. actions/checkout v4 -> v5) get individual PRs
-    # and can be reviewed for breaking-change notes.
     groups:
-      github-actions:
-        patterns: ["*"]
-        update-types: ["minor", "patch"]
       github-actions-security:
         applies-to: security-updates
         patterns: ["*"]
