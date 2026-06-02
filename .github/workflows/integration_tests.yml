@@ -99,6 +99,5 @@ jobs:
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_API_KEY }}
           OPENAI_MODEL: ${{ secrets.AZURE_COMPLETION_MODEL }}
           OPENAI_EMBEDDINGMODEL: ${{ secrets.AZURE_EMBEDDING_MODEL }}
-          OPENAI_EMBEDDING_ENDPOINT: ${{ secrets.OPENAI_EMBEDDING_ENDPOINT }}
         run: |
           dotnet test -c ${{ matrix.configuration }} tests/TypeChat.IntegrationTests/TypeChat.IntegrationTests.csproj --no-build -v Normal --logger trx
