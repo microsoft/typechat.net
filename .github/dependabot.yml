@@ -31,6 +31,7 @@ updates:
       nuget-security:
         applies-to: security-updates
         patterns: ["*"]
+        update-types: ["minor", "patch"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -39,9 +40,14 @@ updates:
       day: "monday"
     labels:
       - "dependencies"
+    # Same policy as nuget above: group minor/patch only so major-version
+    # action bumps (e.g. actions/checkout v4 -> v5) get individual PRs
+    # and can be reviewed for breaking-change notes.
     groups:
       github-actions:
         patterns: ["*"]
+        update-types: ["minor", "patch"]
       github-actions-security:
         applies-to: security-updates
         patterns: ["*"]
+        update-types: ["minor", "patch"]
