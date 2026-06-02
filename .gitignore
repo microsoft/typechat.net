@@ -43,6 +43,3 @@ build/
 # MSTest test Results
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
-
-# NuGet lockfiles (NuGet's RestorePackagesWithLockFile is opt-in and not used in this repo)
-packages.lock.json
