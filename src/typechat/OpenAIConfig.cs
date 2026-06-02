@@ -149,7 +149,7 @@ public class OpenAIConfig
         }
         if (isEmbedding)
         {
-            if (Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDINGMODEL) != null)
+            if (Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDING_ENDPOINT) != null)
             {
                 config.Endpoint = Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDING_ENDPOINT);
             }
