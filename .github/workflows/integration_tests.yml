@@ -25,7 +25,6 @@ permissions:
 
 jobs:
   build-integrationtest:
-    environment: development
     strategy:
         fail-fast: false
         matrix:
