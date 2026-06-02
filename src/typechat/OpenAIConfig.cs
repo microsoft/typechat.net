@@ -40,6 +40,11 @@ public class OpenAIConfig
         public const string OPENAI_EMBEDDINGMODEL = "OPENAI_EMBEDDINGMODEL";
 
         /// <summary>
+        /// The embedding endpoint to use
+        /// </summary>
+        public const string OPENAI_EMBEDDING_ENDPOINT = "OPENAI_EMBEDDING_ENDPOINT";
+
+        /// <summary>
         /// Api key to use for Azure OpenAI service
         /// </summary>
         public const string AZURE_OPENAI_API_KEY = "AZURE_OPENAI_API_KEY";
@@ -144,6 +149,11 @@ public class OpenAIConfig
         }
         if (isEmbedding)
         {
+            if (Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDING_ENDPOINT) != null)
+            {
+                config.Endpoint = Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDING_ENDPOINT);
+            }
+
             config.Model = Environment.GetEnvironmentVariable(VariableNames.OPENAI_EMBEDDINGMODEL);
         }
         else

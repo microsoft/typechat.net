@@ -73,7 +73,7 @@ jobs:
           for solution in $SOLUTIONS; do
             dotnet build -c ${{ matrix.configuration }} /warnaserror $solution
           done
-
+          
       - name: Install Azure CLI
         run: |
           apt-get update && \
@@ -99,5 +99,6 @@ jobs:
           AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_API_KEY }}
           OPENAI_MODEL: ${{ secrets.AZURE_COMPLETION_MODEL }}
           OPENAI_EMBEDDINGMODEL: ${{ secrets.AZURE_EMBEDDING_MODEL }}
+          OPENAI_EMBEDDING_ENDPOINT: ${{ secrets.OPENAI_EMBEDDING_ENDPOINT }}
         run: |
           dotnet test -c ${{ matrix.configuration }} tests/TypeChat.IntegrationTests/TypeChat.IntegrationTests.csproj --no-build -v Normal --logger trx
