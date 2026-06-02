@@ -1,4 +1,5 @@
 ﻿<Project>
+  <Import Project="..\Directory.Build.props" />
   <PropertyGroup>
     <!-- Disable NuGet packaging by default. Projects can override. -->
     <IsPackable>disable</IsPackable>
