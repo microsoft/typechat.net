@@ -296,10 +296,20 @@ function setPackageVersion(text, pkg, newVersion) {
         // Never downgrade: if the central entry is already at or above
         // the patched version (e.g. stale alert, or alert caused by a
         // per-project VersionOverride rather than the central pin),
-        // leave the file untouched.
+        // leave the file untouched. For incomparable prereleases —
+        // semverGte returns false in BOTH directions, e.g. 1.2.3-alpha
+        // vs 1.2.3-beta — also leave it alone so we don't accidentally
+        // write a lower prerelease.
         const current = m[2];
         if (semverGte(current, newVersion)) {
             return text;
+        }
+        if (!semverGte(newVersion, current)) {
+            // Incomparable: refuse to modify and let the caller surface
+            // it as unfixable so a human can decide.
+            throw new Error(
+                `current version ${current} and patched version ${newVersion} are not comparable; refusing to modify`,
+            );
         }
         return text.replace(re, `$1${newVersion}$3`);
     }
