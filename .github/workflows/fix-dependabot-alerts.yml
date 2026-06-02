@@ -149,7 +149,7 @@ jobs:
         run: |
           # Wipe per-project intermediate state so the verify build
           # doesn't reuse anything from the per-fix iterations.
-          find . -type d \( -name bin -o -name obj \) -prune -exec rm -rf {} +
+          find . -path ./.git -prune -o -type d \( -name bin -o -name obj \) -prune -exec rm -rf {} +
           dotnet restore TypeChat.sln --force
           # -m:1 avoids a known parallel-build race in examples'
           # Directory.Build.targets file copy.

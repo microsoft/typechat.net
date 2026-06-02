@@ -128,24 +128,26 @@ function run(cmd, args, opts = {}) {
 
 function parseSemver(v) {
     if (!v) return null;
-    // Capture [major, minor, patch, prereleaseTag-or-empty]. A trailing
-    // 4th numeric segment (NuGet legacy) is allowed but ignored.
+    // Capture [major, minor, patch, revision, prereleaseTag-or-empty].
+    // NuGet supports a legacy 4-part numeric scheme (``4.0.5.10``) on
+    // top of SemVer 2.0. We include the 4th segment in comparisons so
+    // ``4.0.5.10`` and ``4.0.5.2`` don't compare equal.
     // Per semver, a version with a prerelease tag is LOWER than the
     // same version without (1.2.3-beta.1 < 1.2.3). This matters for
     // security verification: a vulnerable prerelease must not be
     // treated as satisfying the patched release.
     const m = String(v).match(
-        /^v?(\d+)\.(\d+)\.(\d+)(?:\.\d+)?(?:-([0-9A-Za-z.-]+))?/,
+        /^v?(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?(?:-([0-9A-Za-z.-]+))?/,
     );
     if (!m) return null;
-    return [Number(m[1]), Number(m[2]), Number(m[3]), m[4] || ""];
+    return [Number(m[1]), Number(m[2]), Number(m[3]), Number(m[4] || 0), m[5] || ""];
 }
 
 function semverGte(a, b) {
     const pa = parseSemver(a);
     const pb = parseSemver(b);
     if (!pa || !pb) return false;
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 4; i++) {
         if (pa[i] > pb[i]) return true;
         if (pa[i] < pb[i]) return false;
     }
@@ -153,8 +155,8 @@ function semverGte(a, b) {
     //   * no prerelease > any prerelease       (1.2.3   > 1.2.3-beta)
     //   * same prerelease => equal             (1.2.3-x = 1.2.3-x)
     //   * different prereleases: conservatively NOT >= (safe default)
-    const preA = pa[3];
-    const preB = pb[3];
+    const preA = pa[4];
+    const preB = pb[4];
     if (preA === preB) return true;
     if (preA === "") return true;
     if (preB === "") return false;
@@ -289,7 +291,16 @@ function setPackageVersion(text, pkg, newVersion) {
         `(<PackageVersion\\s+Include="${escaped}"\\s+Version=")([^"]+)("\\s*/>)`,
         "i",
     );
-    if (re.test(text)) {
+    const m = re.exec(text);
+    if (m) {
+        // Never downgrade: if the central entry is already at or above
+        // the patched version (e.g. stale alert, or alert caused by a
+        // per-project VersionOverride rather than the central pin),
+        // leave the file untouched.
+        const current = m[2];
+        if (semverGte(current, newVersion)) {
+            return text;
+        }
         return text.replace(re, `$1${newVersion}$3`);
     }
     // Insert a new transitive pin just before the closing </ItemGroup>.
@@ -393,17 +404,63 @@ function pruneRollbacks(state) {
 // ── Restore + audit verification ─────────────────────────────────────────
 //
 // We run ``dotnet restore`` and parse the warnings stream for any
-// NU1901/NU1902/NU1903/NU1904 message that references one of the
-// alert's GHSA IDs. If none remain for this package, the fix is
-// considered verified at the audit layer.
+// NU1901/NU1902/NU1903/NU1904 message. Verification has two parts:
+//   1. The target (package, GHSA) warning must be gone.
+//   2. No NEW (package, GHSA) audit warnings appeared after the fix
+//      that weren't in the pre-fix baseline. This catches a bump that
+//      pulls in a different vulnerable transitive.
 
-function restoreAndAudit(pkg, ghsaIds) {
+const NU190X_RE = /warning NU190[1-4]\b/i;
+// Extracts the quoted package name and the GHSA id from an audit line.
+// Example line:
+//   warning NU1903: Package 'Microsoft.SemanticKernel' 1.68.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-2ww3-72rp-wpp4
+const NU190X_PKG_RE = /'([^']+)'/;
+const NU190X_GHSA_RE = /GHSA-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}/i;
+
+function parseAuditWarnings(text) {
+    const out = new Set();
+    for (const line of text.split(/\r?\n/)) {
+        if (!NU190X_RE.test(line)) continue;
+        const pm = NU190X_PKG_RE.exec(line);
+        const gm = NU190X_GHSA_RE.exec(line);
+        if (!pm || !gm) continue;
+        out.add(`${pm[1].toLowerCase()}|${gm[0].toUpperCase()}`);
+    }
+    return out;
+}
+
+function rawRestore() {
     // Force restore to bypass the no-op short-circuit when MSBuild
     // thinks the project assets are already up to date — the props
     // file changed in-place and the input check doesn't catch it.
-    const r = run("dotnet", ["restore", SOLUTION, "--force"], {
+    // Sanitize env: package-provided MSBuild props/targets evaluated
+    // during restore could leak GH_TOKEN if we didn't strip it.
+    return run("dotnet", ["restore", SOLUTION, "--force"], {
         cwd: REPO_ROOT,
+        env: sanitizedEnv(),
     });
+}
+
+/**
+ * Snapshot the current set of audit warnings on the tree as-is.
+ * Used as a baseline before applying a fix so we can detect newly
+ * introduced vulnerabilities afterwards.
+ */
+function auditBaseline() {
+    const r = rawRestore();
+    const combined = (r.stdout || "") + "\n" + (r.stderr || "");
+    if (!r.ok) {
+        return {
+            ok: false,
+            reason: `baseline dotnet restore failed: ${combined.split("\n").filter(Boolean).slice(-3).join(" | ")}`,
+            warnings: new Set(),
+        };
+    }
+    return { ok: true, warnings: parseAuditWarnings(combined) };
+}
+
+function restoreAndAudit(pkg, ghsaIds, baseline) {
+    const r = rawRestore();
     const combined = (r.stdout || "") + "\n" + (r.stderr || "");
     if (!r.ok) {
         return {
@@ -411,26 +468,33 @@ function restoreAndAudit(pkg, ghsaIds) {
             reason: `dotnet restore failed: ${combined.split("\n").filter(Boolean).slice(-3).join(" | ")}`,
         };
     }
-    // Each NU190x line includes the package name and the GHSA URL.
-    // Example:
-    //   warning NU1903: Package 'Microsoft.SemanticKernel' 1.68.0 has a known high severity vulnerability, https://github.com/advisories/GHSA-2ww3-72rp-wpp4
-    const lines = combined.split(/\r?\n/);
-    const remaining = lines.filter((l) => {
-        if (!/warning NU190[1-4]\b/i.test(l)) return false;
-        // Match by package name (more reliable than GHSA when the
-        // alert's set of GHSA IDs is incomplete, but we also match by
-        // GHSA to disambiguate when multiple advisories exist).
-        if (!l.toLowerCase().includes(`'${pkg.toLowerCase()}'`)) return false;
+    const after = parseAuditWarnings(combined);
+    // (1) target package + GHSA must be gone.
+    const pkgLc = pkg.toLowerCase();
+    const targetRemaining = [...after].filter((k) => {
+        const [p, g] = k.split("|");
+        if (p !== pkgLc) return false;
         if (ghsaIds.size === 0) return true;
         for (const id of ghsaIds) {
-            if (l.toLowerCase().includes(id.toLowerCase())) return true;
+            if (g === id.toUpperCase()) return true;
         }
         return false;
     });
-    if (remaining.length > 0) {
+    if (targetRemaining.length > 0) {
         return {
             ok: false,
-            reason: `audit still reports vulnerability: ${remaining[0].trim()}`,
+            reason: `audit still reports vulnerability for ${pkg}: ${targetRemaining[0]}`,
+        };
+    }
+    // (2) no NEW (pkg, ghsa) pair appeared post-fix that wasn't in
+    // the baseline. This catches a bump that drags in a different
+    // vulnerable transitive.
+    const baseSet = baseline?.warnings || new Set();
+    const introduced = [...after].filter((k) => !baseSet.has(k));
+    if (introduced.length > 0) {
+        return {
+            ok: false,
+            reason: `fix introduced new audit warning(s): ${introduced.slice(0, 3).join(", ")}`,
         };
     }
     return { ok: true };
@@ -470,7 +534,7 @@ function buildAndTest() {
 
 // ── Main fix loop ────────────────────────────────────────────────────────
 
-function applyFix(group, state) {
+function applyFix(group, state, baseline) {
     const { pkg, minVersion, severity, ghsaIds } = group;
     const key = pkg;
     const currentSha = propsSha();
@@ -527,10 +591,14 @@ function applyFix(group, state) {
     }
     writePackagesProps(next);
 
-    const audit = restoreAndAudit(pkg, ghsaIds);
+    const audit = restoreAndAudit(pkg, ghsaIds, baseline);
     if (!audit.ok) {
         log(`   ${method}: ${audit.reason}`);
         restoreProps(backup);
+        // Cooldown applies to ANY post-fix failure (restore, audit,
+        // build, or test) so we don't retry the same broken bump on
+        // every scheduled run.
+        recordRollback(state, key, `audit failed (${method}): ${audit.reason}`, currentSha);
         return {
             status: "unfixable",
             pkg,
@@ -645,9 +713,25 @@ function main() {
     const state = loadRollbackState();
     pruneRollbacks(state);
 
+    // Capture pre-fix audit warnings as a baseline so we can detect
+    // when a bump introduces a NEW vulnerable transitive. Only needed
+    // when we'll actually apply changes.
+    let baseline = { warnings: new Set() };
+    if (!DRY_RUN && groups.length > 0) {
+        dbg("Capturing pre-fix audit baseline…");
+        const b0 = auditBaseline();
+        if (!b0.ok) {
+            warn(`Could not capture audit baseline: ${b0.reason}`);
+            warn(`Proceeding without new-vulnerability detection.`);
+        } else {
+            baseline = b0;
+            dbg(`Baseline: ${baseline.warnings.size} pre-existing audit warning(s)`);
+        }
+    }
+
     const results = [];
     for (const g of groups) {
-        results.push(applyFix(g, state));
+        results.push(applyFix(g, state, baseline));
     }
 
     if (!DRY_RUN) {
