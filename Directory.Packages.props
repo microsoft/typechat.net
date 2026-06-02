@@ -1,0 +1,60 @@
+<Project>
+
+  <!--
+    Central Package Management (CPM) for the entire repository.
+
+    - All <PackageVersion> entries below are the single source of truth
+      for package versions across every project; csproj files use
+      <PackageReference Include="X" /> without a Version attribute.
+
+    - CentralPackageTransitivePinningEnabled lets a <PackageVersion>
+      here force a transitive dependency to a specific version across
+      all projects, without having to add a top-level <PackageReference>
+      to each csproj. This is how security advisories on transitive
+      packages get remediated.
+
+    - VersionOverride on a per-project <PackageReference> can be used
+      when a single project legitimately needs a different version
+      (e.g. tests targeting net470 that cannot consume the newest
+      Microsoft.NET.Test.Sdk / xunit).
+
+    Docs: https://learn.microsoft.com/nuget/consume-packages/central-package-management
+  -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="Azure.Identity" Version="1.17.1" />
+    <PackageVersion Include="coverlet.collector" Version="3.2.0" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+    <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <!--
+      Microsoft.Bcl.Memory is pinned via central transitive pinning to
+      remediate GHSA-73j8-2gch-69rq (CVE-2026-26127, .NET DoS in
+      Base64Url decoding). Pulled in transitively via the
+      System.Text.Json 10.x graph. Patched in 10.0.4.
+    -->
+    <PackageVersion Include="Microsoft.Bcl.Memory" Version="10.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.AI" Version="10.2.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Microsoft.SemanticKernel" Version="1.71.0" />
+    <PackageVersion Include="Microsoft.TypeChat" Version="0.1.231012.1-preview" />
+    <PackageVersion Include="Microsoft.TypeChat.Program" Version="0.1.231012.1-preview" />
+    <PackageVersion Include="Microsoft.TypeChat.SemanticKernel" Version="0.1.231012.1-preview" />
+    <PackageVersion Include="System.CommandLine" Version="2.0.1" />
+    <PackageVersion Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageVersion Include="System.Linq" Version="4.3.0" />
+    <PackageVersion Include="System.Numerics.Tensors" Version="10.0.2" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.2" />
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="Xunit.SkippableFact" Version="1.5.61" />
+  </ItemGroup>
+
+</Project>

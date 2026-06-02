@@ -1,0 +1,35 @@
+<Project>
+
+  <!--
+    Repo-wide MSBuild defaults. Inherited by every project, including
+    those under src/, examples/, and tests/ (whose own
+    Directory.Build.props files Import this one explicitly to preserve
+    the chain — MSBuild only finds the FIRST Directory.Build.props
+    when walking up from a csproj, not all of them).
+  -->
+
+  <PropertyGroup>
+    <!--
+      Lockfile mode: every restore writes a packages.lock.json next to
+      the csproj recording the exact resolved versions of every direct
+      and transitive package. Committed to source control so CI builds
+      are deterministic and Dependabot can detect transitive
+      vulnerabilities accurately.
+
+      Docs: https://learn.microsoft.com/nuget/consume-packages/package-references-in-project-files#locking-dependencies
+    -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+    <!--
+      Audit transitive dependencies at restore time (direct-only is the
+      default). NuGet emits NU1901/NU1902/NU1903/NU1904 warnings for
+      known advisories on every dep in the graph. Enabled by default
+      since .NET SDK 8.0.
+
+      Docs: https://learn.microsoft.com/nuget/concepts/auditing-packages
+    -->
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+  </PropertyGroup>
+
+</Project>
