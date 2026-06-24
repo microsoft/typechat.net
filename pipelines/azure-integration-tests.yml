@@ -1,0 +1,179 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+# Azure DevOps port of .github/workflows/integration_tests.yml.
+#
+# Runs the TypeChat.NET integration (online) test suite against Azure OpenAI
+# using Workload Identity Federation (WIF) — no API keys or client secrets are
+# stored anywhere. Authentication flows entirely through an Azure Resource
+# Manager service connection configured for WIF.
+#
+# How the secret-free auth works:
+#   * The "Azure login (WIF) + integration tests" step uses AzureCLI@2 with
+#     `addSpnToEnvironment: true`. For a WIF service connection that surfaces the
+#     federated OIDC assertion (`idToken`) plus `servicePrincipalId` / `tenantId`.
+#   * We persist the assertion to a file and export the three variables that
+#     Azure.Identity's WorkloadIdentityCredential (part of DefaultAzureCredential)
+#     reads: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_FEDERATED_TOKEN_FILE.
+#   * We set AZURE_OPENAI_API_KEY=identity. TypeChat treats the well-known value
+#     "identity" (see src Config.cs / README) as "use DefaultAzureCredential"
+#     instead of an API key, so the tests reach Azure OpenAI through WIF.
+#
+# Differences from the GitHub Actions workflow, and why:
+#   * The fork-PR permission gating (actions-cool/check-user-permission) is
+#     dropped. It existed to protect the API-key secrets on the public repo; with
+#     WIF there is no key to protect, and access is governed by the service
+#     connection's RBAC and the pipeline authorization instead.
+#   * "Install Azure CLI" is dropped — Microsoft-hosted agents already include az.
+#   * The real AZURE_OPENAI_API_KEY secret is replaced by the literal "identity"
+#     so authentication goes through WIF (see above). No secret to rotate.
+#   * `merge_group` has no Azure DevOps equivalent. Make this pipeline a required
+#     status check on `main` (branch protection) to gate merges instead.
+#   * `workflow_dispatch` needs no YAML — run the pipeline manually from the UI.
+#
+# Prerequisites:
+#   * Azure Resource Manager service connection (Workload Identity Federation).
+#     Put its name in the `azureServiceConnection` variable below. Its backing
+#     service principal needs the "Cognitive Services OpenAI User" RBAC role on
+#     the target Azure OpenAI resource(s). Authorize the pipeline to use the
+#     connection on first run (optionally add an approval check for extra gating,
+#     the equivalent of the GitHub `development` environment).
+#   * (GitHub-sourced pipeline) A GitHub service connection so Azure Pipelines
+#     can read the repo and report each PR run's status back to GitHub.
+#   * Pipeline variables (edit below, or move to a linked variable group):
+#       - azureOpenAIEndpoint   https://YOUR_RESOURCE.openai.azure.com
+#       - openAIModel           chat/completion deployment name (e.g. gpt-4o)
+#       - openAIEmbeddingModel  embedding deployment name (e.g. text-embedding-ada-002)
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+schedules:
+  - cron: "0 7 * * *" # 07:00 UTC == midnight PDT, matching the GitHub schedule.
+    displayName: Nightly integration tests
+    branches:
+      include:
+        - main
+    always: true
+
+variables:
+  - name: dotnetVersion
+    value: "8.0.x"
+  - name: buildConfiguration
+    value: Release
+  # Mirrors the NUGET_CERT_REVOCATION_MODE env from the GitHub workflow container.
+  - name: NUGET_CERT_REVOCATION_MODE
+    value: offline
+  # WIF Azure Resource Manager service connection (replace with your own).
+  - name: azureServiceConnection
+    value: "TypeChat-ADO-Service-Connection"
+  # Non-secret Azure OpenAI deployment settings. Set these for your resource,
+  # here or in a linked variable group.
+  - name: azureOpenAIEndpoint
+    value: "" # e.g. https://YOUR_RESOURCE.openai.azure.com
+  - name: openAIModel
+    value: "" # chat/completion deployment name, e.g. gpt-4o
+  - name: openAIEmbeddingModel
+    value: "" # embedding deployment name, e.g. text-embedding-ada-002
+
+jobs:
+  - job: build
+    displayName: Build solutions
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+      - checkout: self
+
+      - task: UseDotNet@2
+        displayName: Install .NET SDK
+        inputs:
+          packageType: sdk
+          version: $(dotnetVersion)
+
+      # Build every solution with warnings-as-errors, matching the GitHub job.
+      - bash: |
+          set -eo pipefail
+          solutions=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
+          for solution in $solutions; do
+            dotnet build -c $(buildConfiguration) /warnaserror "$solution"
+          done
+        displayName: Build dotnet solutions
+
+  - job: integration_tests
+    displayName: Run integration tests
+    dependsOn: build
+    pool:
+      vmImage: ubuntu-latest
+    timeoutInMinutes: 60
+    steps:
+      - checkout: self
+
+      - task: UseDotNet@2
+        displayName: Install .NET SDK
+        inputs:
+          packageType: sdk
+          version: $(dotnetVersion)
+
+      - bash: |
+          set -eo pipefail
+          solutions=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
+          for solution in $solutions; do
+            dotnet build -c $(buildConfiguration) /warnaserror "$solution"
+          done
+        displayName: Build dotnet solutions
+
+      # Remove all appSettings*.json (including copies under bin/) so Config.cs
+      # falls back to environment variables for endpoint / model / auth.
+      - bash: |
+          set -eo pipefail
+          find . -type f -name 'appSettings*.json' -delete
+        displayName: Clear appSettings
+
+      # Single federated (WIF) login. addSpnToEnvironment surfaces the OIDC
+      # assertion; we persist it and export the AZURE_* variables that
+      # DefaultAzureCredential's WorkloadIdentityCredential reads, then run the
+      # integration tests while the assertion is fresh. AZURE_OPENAI_API_KEY=identity
+      # tells TypeChat to authenticate via DefaultAzureCredential (WIF) rather
+      # than an API key.
+      - task: AzureCLI@2
+        displayName: Azure login (WIF) + integration tests
+        inputs:
+          azureSubscription: $(azureServiceConnection)
+          scriptType: bash
+          scriptLocation: inlineScript
+          addSpnToEnvironment: true
+          workingDirectory: $(Build.SourcesDirectory)
+          inlineScript: |
+            set -eo pipefail
+            tokenFile="$(Agent.TempDirectory)/wif-federated-token.txt"
+            printf '%s' "$idToken" > "$tokenFile"
+
+            export AZURE_CLIENT_ID="$servicePrincipalId"
+            export AZURE_TENANT_ID="$tenantId"
+            export AZURE_FEDERATED_TOKEN_FILE="$tokenFile"
+
+            export AZURE_OPENAI_API_KEY=identity
+            export AZURE_OPENAI_ENDPOINT="$(azureOpenAIEndpoint)"
+            export OPENAI_MODEL="$(openAIModel)"
+            export OPENAI_EMBEDDINGMODEL="$(openAIEmbeddingModel)"
+
+            dotnet test -c $(buildConfiguration) \
+              tests/TypeChat.IntegrationTests/TypeChat.IntegrationTests.csproj \
+              --no-build -v Normal --logger trx \
+              --results-directory "$(Agent.TempDirectory)/testresults"
+
+      - task: PublishTestResults@2
+        displayName: Publish test results
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFormat: VSTest
+          testResultsFiles: "**/*.trx"
+          searchFolder: $(Agent.TempDirectory)/testresults
+          failTaskOnFailedTests: true
