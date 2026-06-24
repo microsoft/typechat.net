@@ -76,39 +76,16 @@ variables:
     value: "TypeChat-ADO-Service-Connection"
   # Non-secret Azure OpenAI deployment settings. Set these for your resource,
   # here or in a linked variable group.
-  - name: azureOpenAIEndpoint
-    value: "" # e.g. https://YOUR_RESOURCE.openai.azure.com
-  - name: openAIModel
-    value: "" # chat/completion deployment name, e.g. gpt-4o
-  - name: openAIEmbeddingModel
-    value: "" # embedding deployment name, e.g. text-embedding-ada-002
+  # - name: azureOpenAIEndpoint
+  #   value: "" # e.g. https://YOUR_RESOURCE.openai.azure.com
+  # - name: openAIModel
+  #   value: "" # chat/completion deployment name, e.g. gpt-4o
+  # - name: openAIEmbeddingModel
+  #   value: "" # embedding deployment name, e.g. text-embedding-ada-002
 
 jobs:
-  - job: build
-    displayName: Build solutions
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-      - checkout: self
-
-      - task: UseDotNet@2
-        displayName: Install .NET SDK
-        inputs:
-          packageType: sdk
-          version: $(dotnetVersion)
-
-      # Build every solution with warnings-as-errors, matching the GitHub job.
-      - bash: |
-          set -eo pipefail
-          solutions=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
-          for solution in $solutions; do
-            dotnet build -c $(buildConfiguration) /warnaserror "$solution"
-          done
-        displayName: Build dotnet solutions
-
   - job: integration_tests
-    displayName: Run integration tests
-    dependsOn: build
+    displayName: Build and run integration tests
     pool:
       vmImage: ubuntu-latest
     timeoutInMinutes: 60
@@ -121,6 +98,11 @@ jobs:
           packageType: sdk
           version: $(dotnetVersion)
 
+      # Build every solution with warnings-as-errors. This is the pipeline's
+      # single build: it doubles as the compile gate and produces the binaries
+      # the test step consumes via `--no-build`. A separate build job wouldn't
+      # help — Azure DevOps jobs run on separate agents with no shared
+      # filesystem, so its output would just have to be rebuilt here.
       - bash: |
           set -eo pipefail
           solutions=$(find ./ -type f -name "*.sln" | tr '\n' ' ')
