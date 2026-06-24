@@ -76,12 +76,12 @@ variables:
     value: "TypeChat-ADO-Service-Connection"
   # Non-secret Azure OpenAI deployment settings. Set these for your resource,
   # here or in a linked variable group.
-  - name: azureOpenAIEndpoint
-    value: "" # e.g. https://YOUR_RESOURCE.openai.azure.com
-  - name: openAIModel
-    value: "" # chat/completion deployment name, e.g. gpt-4o
-  - name: openAIEmbeddingModel
-    value: "" # embedding deployment name, e.g. text-embedding-ada-002
+  # - name: azureOpenAIEndpoint
+  #   value: "" # e.g. https://YOUR_RESOURCE.openai.azure.com
+  # - name: openAIModel
+  #   value: "" # chat/completion deployment name, e.g. gpt-4o
+  # - name: openAIEmbeddingModel
+  #   value: "" # embedding deployment name, e.g. text-embedding-ada-002
 
 jobs:
   - job: integration_tests
