@@ -149,6 +149,113 @@ public static class TypeEx
         return (args.IsNullOrEmpty()) ? null : args[0];
     }
 
+    /// <summary>
+    /// Is the given type one that serializes to a JSON array? This includes arrays and any type
+    /// that implements IEnumerable{T} (List{T}, IList{T}, ICollection{T}, HashSet{T}...).
+    /// Strings (which are IEnumerable{char}) and dictionaries are deliberately excluded: they do
+    /// not serialize to JSON arrays.
+    /// </summary>
+    /// <param name="type">type to inspect</param>
+    /// <param name="elementType">the type of the items in the array</param>
+    /// <returns>true if the type is array-like</returns>
+    internal static bool IsArrayLike(this Type type, out Type elementType)
+    {
+        elementType = null;
+
+        // Strings are IEnumerable<char> but must be exported as scalar strings, not char arrays
+        if (type.IsString())
+        {
+            return false;
+        }
+        // Dictionaries are IEnumerable<KeyValuePair<,>> but must be exported as maps, not arrays.
+        // Use a structural check so that even a self-mapping dictionary is excluded here.
+        if (type.IsDictionaryShaped())
+        {
+            return false;
+        }
+        if (type.IsArray)
+        {
+            elementType = type.GetElementType();
+            return true;
+        }
+
+        Type? enumerableType = FindGenericInterface(type, typeof(IEnumerable<>));
+        if (enumerableType is not null)
+        {
+            Type genericArg = enumerableType.GetGenericArguments()[0];
+            // Guard against a type that enumerates itself (e.g. class Node : IEnumerable<Node>):
+            // there is no finite element type to unwrap to, so treat it as a plain object instead.
+            if (genericArg != type)
+            {
+                elementType = genericArg;
+                return true;
+            }
+            return false;
+        }
+        // Non-generic IEnumerable (e.g. ArrayList): the element type is unknown, so treat it as 'any'
+        if (typeof(IEnumerable).IsAssignableFrom(type))
+        {
+            elementType = typeof(object);
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Is the given type one that serializes to a JSON object/map? This includes any type that
+    /// implements IDictionary{K,V} or IReadOnlyDictionary{K,V}, as well as the non-generic IDictionary.
+    /// </summary>
+    /// <param name="type">type to inspect</param>
+    /// <param name="keyType">the type of the map's keys</param>
+    /// <param name="valueType">the type of the map's values</param>
+    /// <returns>true if the type is a dictionary</returns>
+    internal static bool IsDictionary(this Type type, out Type keyType, out Type valueType)
+    {
+        keyType = typeof(string);
+        valueType = typeof(object);
+
+        Type? dictionaryType = FindGenericInterface(type, typeof(IDictionary<,>)) ??
+                               FindGenericInterface(type, typeof(IReadOnlyDictionary<,>));
+        if (dictionaryType is not null)
+        {
+            Type[] args = dictionaryType.GetGenericArguments();
+            // Guard against a type that maps to itself (e.g. class D : IDictionary<string, D>):
+            // there is no finite value type to unwrap to, so treat it as a plain object instead.
+            if (args[1] != type)
+            {
+                keyType = args[0];
+                valueType = args[1];
+                return true;
+            }
+            return false;
+        }
+        // Non-generic IDictionary (e.g. Hashtable): keys and values are untyped
+        return typeof(IDictionary).IsAssignableFrom(type);
+    }
+
+    private static Type? FindGenericInterface(Type type, Type genericInterface)
+    {
+        if (type.IsGenericType && type.GetGenericTypeDefinition() == genericInterface)
+        {
+            return type;
+        }
+        foreach (Type iface in type.GetInterfaces())
+        {
+            if (iface.IsGenericType && iface.GetGenericTypeDefinition() == genericInterface)
+            {
+                return iface;
+            }
+        }
+        return null;
+    }
+
+    private static bool IsDictionaryShaped(this Type type)
+    {
+        return FindGenericInterface(type, typeof(IDictionary<,>)) is not null ||
+               FindGenericInterface(type, typeof(IReadOnlyDictionary<,>)) is not null ||
+               typeof(IDictionary).IsAssignableFrom(type);
+    }
+
     internal static IEnumerable<Type> Subclasses(this Type type)
     {
         if (!type.IsClass)

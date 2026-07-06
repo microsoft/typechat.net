@@ -336,6 +336,45 @@ public class FriendsOfPerson
     public Name[] FriendNames { get; set; }
 }
 
+// For testing that IEnumerable<T> exports as a JSON array (string[]) and not as a
+// leaky List_String interface. See https://github.com/microsoft/typechat.net/issues/218
+public sealed class Pizza
+{
+    public IEnumerable<string> Toppings { get; set; }
+    public string Size { get; set; }
+}
+
+// For testing that the various collection and dictionary types all export as JSON arrays/maps
+public class CollectionsObj
+{
+    public IEnumerable<string> Tags { get; set; }
+    public List<Name> Names { get; set; }
+    public IList<int> Scores { get; set; }
+    public ICollection<Location> Locations { get; set; }
+    public IReadOnlyList<double> Ratings { get; set; }
+    public HashSet<string> UniqueTags { get; set; }
+    public string[] Aliases { get; set; }
+    public Dictionary<string, int> Counts { get; set; }
+    public IDictionary<string, Location> LocationsByCity { get; set; }
+    public Dictionary<string, Name> NamesById { get; set; }
+    public Dictionary<string, List<int>> Buckets { get; set; }
+}
+
+// A type that enumerates itself (composite pattern): it implements IEnumerable<Composite>,
+// so it has no finite "array of..." representation. Schema generation must still terminate.
+public class Composite : IEnumerable<Composite>
+{
+    public string Name { get; set; }
+    public IEnumerator<Composite> GetEnumerator() => Enumerable.Empty<Composite>().GetEnumerator();
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
+public class CompositeHolder
+{
+    public List<Composite> Nodes { get; set; }
+    public Composite Root { get; set; }
+}
+
 // For testing Generics
 public class Child<T>
 {
