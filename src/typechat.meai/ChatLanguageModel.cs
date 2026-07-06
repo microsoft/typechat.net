@@ -110,7 +110,54 @@ internal static class ModelEx
 
     public static void Append(this List<ChatMessage> history, IPromptSection message)
     {
+        if (message is IMultimodalPromptSection multimodal && HasImages(multimodal))
+        {
+            history.Add(new ChatMessage(multimodal.GetRole(), ToContents(multimodal)));
+            return;
+        }
         history.Add(new ChatMessage(role: message.GetRole(), content: message.GetText()));
+    }
+
+    internal static bool HasImages(IMultimodalPromptSection section)
+    {
+        IReadOnlyList<PromptContentPart> parts = section.ContentParts;
+        for (int i = 0; i < parts.Count; ++i)
+        {
+            if (parts[i].IsImage)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    internal static IList<AIContent> ToContents(IMultimodalPromptSection section)
+    {
+        IReadOnlyList<PromptContentPart> parts = section.ContentParts;
+        List<AIContent> contents = new List<AIContent>(parts.Count);
+        for (int i = 0; i < parts.Count; ++i)
+        {
+            PromptContentPart part = parts[i];
+            if (part.IsImage)
+            {
+                contents.Add(ToContent(part.Image!));
+            }
+            else if (!string.IsNullOrEmpty(part.Text))
+            {
+                contents.Add(new TextContent(part.Text));
+            }
+        }
+        return contents;
+    }
+
+    internal static AIContent ToContent(PromptImage image)
+    {
+        // A data uri (data:{mediaType};base64,{data}) carries its own media type and bytes.
+        if (image.IsDataUri)
+        {
+            return new DataContent(image.Url);
+        }
+        return new UriContent(image.Url, PromptImage.GetMediaType(image.Url));
     }
 
     internal static bool IsRole(this ChatRole role, string label)
