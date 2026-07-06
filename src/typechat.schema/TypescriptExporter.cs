@@ -175,29 +175,36 @@ public class TypescriptExporter : TypeExporter<Type>
 
     public override void ExportType(Type type)
     {
-        if (type.IsArray)
+        if (type.IsDictionary(out _, out Type valueType))
         {
-            AddPending(type.GetElementType());
+            AddPending(valueType);
+        }
+        else if (type.IsArrayLike(out Type elementType))
+        {
+            AddPending(elementType);
+        }
+        else if (type.IsEnum)
+        {
+            ExportEnum(type);
         }
         else
         {
-            if (type.IsEnum)
-            {
-                ExportEnum(type);
-            }
-            else
-            {
-                ExportClass(type);
-            }
+            ExportClass(type);
         }
     }
 
     public TypescriptExporter ExportClass(Type type)
     {
         ArgumentVerify.ThrowIfNull(type, nameof(type));
-        if (!type.IsClass)
+        // Export both reference types (classes) and non-enum value types (structs) as interfaces:
+        // System.Text.Json serializes a struct's public fields/properties into a JSON object exactly
+        // like a class (e.g. KeyValuePair<K,V> => { Key, Value }, a custom Money => { Amount, Currency }).
+        // Enums are routed to ExportEnum before they reach here, and scalar value types that Json writes
+        // as a single value (Guid, DateTime, DateTimeOffset, ...) are mapped to primitives in
+        // Typescript.Types.ToPrimitive, so only genuine object-like structs arrive at this point.
+        if (!type.IsClass && (!type.IsValueType || type.IsPrimitive || type.IsEnum))
         {
-            ArgumentVerify.Throw($"{type.Name} must be a class");
+            ArgumentVerify.Throw($"{type.Name} must be a class or struct");
         }
 
         if (IsExported(type))
@@ -505,7 +512,7 @@ public class TypescriptExporter : TypeExporter<Type>
             _writer.Variable(
                 member.PropertyName(),
                 DataType(actualType),
-                type.IsArray,
+                actualType.IsArrayLike(out _),
                 isNullable
             );
         }
@@ -534,7 +541,7 @@ public class TypescriptExporter : TypeExporter<Type>
             DataType(type),
             i,
             count,
-            type.IsArray,
+            type.IsArrayLike(out _),
             isNullable
             );
         AddPending(type);
@@ -658,9 +665,20 @@ public class TypescriptExporter : TypeExporter<Type>
             type = type.GetGenericType() ?? typeof(void);
         }
 
-        if (type.IsArray)
+        Type? nullableValueType = type.GetNullableValueType();
+        if (nullableValueType is not null)
         {
-            return DataType(type.GetElementType());
+            type = nullableValueType;
+        }
+
+        if (type.IsDictionary(out Type keyType, out Type valueType))
+        {
+            return DataTypeMap(keyType, valueType);
+        }
+
+        if (type.IsArrayLike(out Type elementType))
+        {
+            return DataType(elementType);
         }
 
         string? typeName = null;
@@ -678,6 +696,23 @@ public class TypescriptExporter : TypeExporter<Type>
             AddPending(type);
         }
         return typeName;
+    }
+
+    private string DataTypeMap(Type keyType, Type valueType)
+    {
+        string valueDataType = DataType(valueType);
+        if (valueType.IsArrayLike(out _))
+        {
+            valueDataType += Typescript.Punctuation.Array;
+        }
+        return $"Record<{MapKeyType(keyType)}, {valueDataType}>";
+    }
+
+    private static string MapKeyType(Type keyType)
+    {
+        // JSON object keys are always strings; only numeric keys are represented as 'number'
+        string? primitive = Typescript.Types.ToPrimitive(keyType);
+        return primitive == Typescript.Types.Number ? Typescript.Types.Number : Typescript.Types.String;
     }
 
     private string InterfaceName(Type type, bool useMapper = true)
@@ -756,12 +791,26 @@ public class TypescriptExporter : TypeExporter<Type>
             return false;
         }
 
-        if (type.IsArray)
+        // Unwrap arrays, collections and dictionaries down to the underlying element/value type
+        while (true)
         {
-            type = type.GetElementType();
+            if (type.IsDictionary(out _, out Type valueType))
+            {
+                type = valueType;
+            }
+            else if (type.IsArrayLike(out Type elementType))
+            {
+                type = elementType;
+            }
+            else
+            {
+                break;
+            }
         }
 
         typeToExport = type;
-        return !type.IsPrimitive && !_nonExportTypes.Contains(type);
+        return !type.IsPrimitive &&
+               !type.IsNullableValueType() &&
+               !_nonExportTypes.Contains(type);
     }
 }

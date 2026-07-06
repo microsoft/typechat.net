@@ -336,6 +336,69 @@ public class FriendsOfPerson
     public Name[] FriendNames { get; set; }
 }
 
+// For testing that IEnumerable<T> exports as a JSON array (string[]) and not as a
+// leaky List_String interface. See https://github.com/microsoft/typechat.net/issues/218
+public sealed class Pizza
+{
+    public IEnumerable<string> Toppings { get; set; }
+    public string Size { get; set; }
+}
+
+// For testing that the various collection and dictionary types all export as JSON arrays/maps
+public class CollectionsObj
+{
+    public IEnumerable<string> Tags { get; set; }
+    public List<Name> Names { get; set; }
+    public IList<int> Scores { get; set; }
+    public ICollection<Location> Locations { get; set; }
+    public IReadOnlyList<double> Ratings { get; set; }
+    public HashSet<string> UniqueTags { get; set; }
+    public string[] Aliases { get; set; }
+    public Dictionary<string, int> Counts { get; set; }
+    public IDictionary<string, Location> LocationsByCity { get; set; }
+    public Dictionary<string, Name> NamesById { get; set; }
+    public Dictionary<string, List<int>> Buckets { get; set; }
+}
+
+// A type that enumerates itself (composite pattern): it implements IEnumerable<Composite>,
+// so it has no finite "array of..." representation. Schema generation must still terminate.
+public class Composite : IEnumerable<Composite>
+{
+    public string Name { get; set; }
+    public IEnumerator<Composite> GetEnumerator() => Enumerable.Empty<Composite>().GetEnumerator();
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
+public class CompositeHolder
+{
+    public List<Composite> Nodes { get; set; }
+    public Composite Root { get; set; }
+}
+
+// For testing that structs export as interfaces: Json serializes a struct's public members as an
+// object, just like a class.
+public struct Money
+{
+    public decimal Amount { get; set; }
+    public string Currency { get; set; }
+}
+
+public struct Coordinates
+{
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+}
+
+public class StructHolder
+{
+    public Money Price { get; set; }
+    public Coordinates Location { get; set; }
+    public KeyValuePair<string, int> Pair { get; set; }
+    // Scalar value types that Json writes as a single string - must NOT become empty interfaces
+    public Guid Id { get; set; }
+    public DateTimeOffset When { get; set; }
+}
+
 // For testing Generics
 public class Child<T>
 {

@@ -95,5 +95,100 @@ public class TestSchema : TypeChatTest
         Assert.True(lines.ContainsSubstring("Child_Name[]"));
         Assert.True(lines.ContainsSubstring("Child_Location[]"));
     }
+
+    [Fact]
+    public void ExportEnumerable_Issue218()
+    {
+        var schema = TypescriptExporter.GenerateSchema(typeof(Pizza));
+        var lines = schema.Schema.Text.Lines();
+
+        // IEnumerable<string> must be exported as a JSON array of strings...
+        Assert.True(lines.ContainsSubstring("Toppings", "string[]"));
+        Assert.True(lines.ContainsSubstring("Size", "string"));
+        // ...and NOT as a leaky List_String interface exposing Capacity/Count/Item
+        Assert.False(lines.ContainsSubstring("List_String"));
+        Assert.False(lines.ContainsSubstring("Capacity"));
+    }
+
+    [Fact]
+    public void ExportCollections()
+    {
+        var schema = TypescriptExporter.GenerateSchema(typeof(CollectionsObj));
+        var lines = schema.Schema.Text.Lines();
+
+        // IEnumerable<T>, List<T>, IList<T>, ICollection<T>, IReadOnlyList<T>, HashSet<T> and arrays => T[]
+        Assert.True(lines.ContainsSubstring("Tags", "string[]"));
+        Assert.True(lines.ContainsSubstring("Names", "Name[]"));
+        Assert.True(lines.ContainsSubstring("Scores", "number[]"));
+        Assert.True(lines.ContainsSubstring("Locations", "Location[]"));
+        Assert.True(lines.ContainsSubstring("Ratings", "number[]"));
+        Assert.True(lines.ContainsSubstring("UniqueTags", "string[]"));
+        Assert.True(lines.ContainsSubstring("Aliases", "string[]"));
+
+        // Dictionaries => Record<Key, Value>, including a dictionary whose value is itself a collection
+        Assert.True(lines.ContainsSubstring("Counts", "Record<string, number>"));
+        Assert.True(lines.ContainsSubstring("LocationsByCity", "Record<string, Location>"));
+        Assert.True(lines.ContainsSubstring("NamesById", "Record<string, Name>"));
+        Assert.True(lines.ContainsSubstring("Buckets", "Record<string, number[]>"));
+
+        // Element/value types are still exported as interfaces
+        Assert.True(lines.ContainsSubstring("interface", "Name"));
+        Assert.True(lines.ContainsSubstring("interface", "Location"));
+
+        // The internals of List<T>/Dictionary<> must NOT leak into the schema
+        Assert.False(lines.ContainsSubstring("Capacity"));
+        Assert.False(lines.ContainsSubstring("KeyValuePair"));
+        Assert.False(lines.ContainsSubstring("interface", "List_"));
+    }
+
+    [Fact]
+    public void SelfReferentialEnumerable_Terminates()
+    {
+        // Composite : IEnumerable<Composite> has no finite "array of..." representation.
+        // Schema generation must terminate rather than loop forever while unwrapping it.
+        TypescriptSchema schema = null;
+        var worker = new System.Threading.Thread(
+            () => schema = TypescriptExporter.GenerateSchema(typeof(CompositeHolder)))
+        {
+            IsBackground = true
+        };
+        worker.Start();
+        bool finished = worker.Join(System.TimeSpan.FromSeconds(5));
+
+        Assert.True(finished, "Schema generation did not terminate for a self-referential IEnumerable type");
+
+        var lines = schema.Schema.Text.Lines();
+        // A List<Composite> is still a normal array...
+        Assert.True(lines.ContainsSubstring("Nodes", "Composite[]"));
+        // ...but the self-enumerating Composite itself falls back to a plain object interface
+        Assert.True(lines.ContainsSubstring("interface", "Composite"));
+        Assert.True(lines.ContainsSubstring("Name", "string"));
+    }
+
+    [Fact]
+    public void ExportStructs()
+    {
+        var schema = TypescriptExporter.GenerateSchema(typeof(StructHolder));
+        var lines = schema.Schema.Text.Lines();
+
+        // Structs export as interfaces, because Json serializes their public members as an object
+        Assert.True(lines.ContainsSubstring("Price", "Money"));
+        Assert.True(lines.ContainsSubstring("interface", "Money"));
+        Assert.True(lines.ContainsSubstring("Amount", "number"));
+        Assert.True(lines.ContainsSubstring("Currency", "string"));
+
+        Assert.True(lines.ContainsSubstring("Location", "Coordinates"));
+        Assert.True(lines.ContainsSubstring("interface", "Coordinates"));
+
+        Assert.True(lines.ContainsSubstring("Pair", "KeyValuePair"));
+        Assert.True(lines.ContainsSubstring("Key", "string"));
+        Assert.True(lines.ContainsSubstring("Value", "number"));
+
+        // Scalar value types map to string, NOT to empty interfaces
+        Assert.True(lines.ContainsSubstring("Id", "string"));
+        Assert.True(lines.ContainsSubstring("When", "string"));
+        Assert.False(lines.ContainsSubstring("interface", "Guid"));
+        Assert.False(lines.ContainsSubstring("interface", "DateTimeOffset"));
+    }
 }
 
