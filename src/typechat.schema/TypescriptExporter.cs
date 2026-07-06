@@ -196,9 +196,15 @@ public class TypescriptExporter : TypeExporter<Type>
     public TypescriptExporter ExportClass(Type type)
     {
         ArgumentVerify.ThrowIfNull(type, nameof(type));
-        if (!type.IsClass)
+        // Export both reference types (classes) and non-enum value types (structs) as interfaces:
+        // System.Text.Json serializes a struct's public fields/properties into a JSON object exactly
+        // like a class (e.g. KeyValuePair<K,V> => { Key, Value }, a custom Money => { Amount, Currency }).
+        // Enums are routed to ExportEnum before they reach here, and scalar value types that Json writes
+        // as a single value (Guid, DateTime, DateTimeOffset, ...) are mapped to primitives in
+        // Typescript.Types.ToPrimitive, so only genuine object-like structs arrive at this point.
+        if (!type.IsClass && (!type.IsValueType || type.IsPrimitive || type.IsEnum))
         {
-            ArgumentVerify.Throw($"{type.Name} must be a class");
+            ArgumentVerify.Throw($"{type.Name} must be a class or struct");
         }
 
         if (IsExported(type))

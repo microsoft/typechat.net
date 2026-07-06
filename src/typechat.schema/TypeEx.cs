@@ -40,7 +40,21 @@ public static class TypeEx
 
     public static bool IsDateTime(this Type type)
     {
-        return type == typeof(DateTime) || type == typeof(TimeSpan);
+        // These are value types that System.Text.Json serializes to/from a JSON *string* rather than
+        // to an object. They must be treated as the 'string' primitive by the exporter (see
+        // Typescript.Types.ToPrimitive); otherwise they would be exported as (mostly empty) interfaces.
+        if (type == typeof(DateTime) || type == typeof(TimeSpan) || type == typeof(DateTimeOffset))
+        {
+            return true;
+        }
+#if NET6_0_OR_GREATER
+        // DateOnly/TimeOnly only exist on net6.0+, but Json serializes them as strings too.
+        if (type == typeof(DateOnly) || type == typeof(TimeOnly))
+        {
+            return true;
+        }
+#endif
+        return false;
     }
 
     public static bool IsNumber(this Type type)

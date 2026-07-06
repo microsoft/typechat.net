@@ -70,7 +70,15 @@ public class Typescript : CodeLanguage
             }
             else if (type.IsDateTime())
             {
-                return String; // Json does not have a primitive DateTime
+                return String; // Json has no DateTime primitive: these value types serialize as strings
+            }
+            else if (type == typeof(Guid))
+            {
+                // Guid is a value type, but System.Text.Json writes it as a JSON string (e.g.
+                // "3f2504e0-4f89-11d3-9a0c-0305e82c3301") and it exposes no public fields/properties.
+                // Without this mapping it would fall through to the object path and be exported as an
+                // empty "interface Guid {}", which a model could never populate correctly.
+                return String;
             }
             else if (type.IsObject())
             {

@@ -164,5 +164,31 @@ public class TestSchema : TypeChatTest
         Assert.True(lines.ContainsSubstring("interface", "Composite"));
         Assert.True(lines.ContainsSubstring("Name", "string"));
     }
+
+    [Fact]
+    public void ExportStructs()
+    {
+        var schema = TypescriptExporter.GenerateSchema(typeof(StructHolder));
+        var lines = schema.Schema.Text.Lines();
+
+        // Structs export as interfaces, because Json serializes their public members as an object
+        Assert.True(lines.ContainsSubstring("Price", "Money"));
+        Assert.True(lines.ContainsSubstring("interface", "Money"));
+        Assert.True(lines.ContainsSubstring("Amount", "number"));
+        Assert.True(lines.ContainsSubstring("Currency", "string"));
+
+        Assert.True(lines.ContainsSubstring("Location", "Coordinates"));
+        Assert.True(lines.ContainsSubstring("interface", "Coordinates"));
+
+        Assert.True(lines.ContainsSubstring("Pair", "KeyValuePair"));
+        Assert.True(lines.ContainsSubstring("Key", "string"));
+        Assert.True(lines.ContainsSubstring("Value", "number"));
+
+        // Scalar value types map to string, NOT to empty interfaces
+        Assert.True(lines.ContainsSubstring("Id", "string"));
+        Assert.True(lines.ContainsSubstring("When", "string"));
+        Assert.False(lines.ContainsSubstring("interface", "Guid"));
+        Assert.False(lines.ContainsSubstring("interface", "DateTimeOffset"));
+    }
 }
 

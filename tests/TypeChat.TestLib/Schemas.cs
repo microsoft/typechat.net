@@ -375,6 +375,30 @@ public class CompositeHolder
     public Composite Root { get; set; }
 }
 
+// For testing that structs export as interfaces: Json serializes a struct's public members as an
+// object, just like a class.
+public struct Money
+{
+    public decimal Amount { get; set; }
+    public string Currency { get; set; }
+}
+
+public struct Coordinates
+{
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
+}
+
+public class StructHolder
+{
+    public Money Price { get; set; }
+    public Coordinates Location { get; set; }
+    public KeyValuePair<string, int> Pair { get; set; }
+    // Scalar value types that Json writes as a single string - must NOT become empty interfaces
+    public Guid Id { get; set; }
+    public DateTimeOffset When { get; set; }
+}
+
 // For testing Generics
 public class Child<T>
 {
