@@ -84,6 +84,17 @@ public class OpenAIConfig
     public string ApiVersion { get; set; } = "2023-05-15";
 
     /// <summary>
+    /// Selects the OpenAI REST API used by <see cref="LanguageModel"/>:
+    /// <list type="bullet">
+    /// <item><c>null</c> (default): auto-detect. The Responses API is used when <see cref="Endpoint"/>
+    /// targets a path that ends with <c>/responses</c>; otherwise the Chat Completions API is used.</item>
+    /// <item><c>true</c>: always use the Responses API.</item>
+    /// <item><c>false</c>: always use the Chat Completions API.</item>
+    /// </list>
+    /// </summary>
+    public bool? UseResponsesApi { get; set; }
+
+    /// <summary>
     /// Http Settings
     /// </summary>
     public int TimeoutMs { get; set; } = 15 * 1000;
