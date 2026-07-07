@@ -37,13 +37,52 @@ public class ChatLanguageModel : ILanguageModel
     /// <param name="settings"></param>
     /// <param name="cancelToken"></param>
     /// <returns></returns>
-    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<LanguageModelResponse> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         List<ChatMessage> history = ToHistory(prompt);
         ChatOptions? options = ToRequestSettings(settings);
         var response = await _chatClient.GetResponseAsync(history, options: options, cancellationToken: cancelToken).ConfigureAwait(false);
 
-        return response.Text;
+        return new LanguageModelResponse(response.Text, BuildInfo(response));
+    }
+
+    private static CompletionInfo BuildInfo(ChatResponse response)
+    {
+        var info = new CompletionInfo
+        {
+            Model = response.ModelId,
+            FinishReason = MapFinishReason(response.FinishReason)
+        };
+        UsageDetails? usage = response.Usage;
+        if (usage is not null)
+        {
+            info.Usage = new TokenUsage(
+                (int)(usage.InputTokenCount ?? 0),
+                (int)(usage.OutputTokenCount ?? 0),
+                (int)(usage.TotalTokenCount ?? 0));
+        }
+        return info;
+    }
+
+    private static CompletionFinishReason? MapFinishReason(ChatFinishReason? reason)
+    {
+        if (reason is null)
+        {
+            return null;
+        }
+        switch (reason.Value.Value?.ToLowerInvariant())
+        {
+            case "stop":
+                return CompletionFinishReason.Stop;
+            case "length":
+                return CompletionFinishReason.Length;
+            case "content_filter":
+                return CompletionFinishReason.ContentFilter;
+            case "tool_calls":
+                return CompletionFinishReason.ToolCalls;
+            default:
+                return CompletionFinishReason.Other;
+        }
     }
 
     private List<ChatMessage> ToHistory(Prompt prompt)

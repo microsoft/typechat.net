@@ -51,7 +51,7 @@ public class ChatLanguageModel : ILanguageModel
     /// <param name="settings"></param>
     /// <param name="cancelToken"></param>
     /// <returns></returns>
-    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<LanguageModelResponse> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ChatHistory history = ToHistory(prompt);
         OpenAIPromptExecutionSettings? requestSettings = ToRequestSettings(settings);
