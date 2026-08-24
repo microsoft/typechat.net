@@ -31,6 +31,8 @@ TypeChat uses language models to translate user intent into JSON that conforms t
 TypeChat provides:
 * Json translation, validation, repair and deserialization.
 * Extensibility: interfaces for customizing schemas, validators and prompts.
+* **Multimodal prompts**: send images (by url or local file) alongside text using `MultimodalPromptSection`, so vision capable models (e.g. gpt-4o) can translate what they *see* into strongly typed objects.
+* **OpenAI Responses API**: `LanguageModel` supports both the Chat Completions and Responses APIs. The Responses API is auto-selected when the endpoint path ends with `/responses`, or set `OpenAIConfig.UseResponsesApi`.
 * Schema export: classes to generate schema for the .NET Type you want to translate to. Exported schema includes dependencies and base classes. The exported schema is specified using **Typescript**, which can concisely express schema for JSON objects. 
   * Support for common scenarios shown in TypeChat examples. When you encounter limitations (such as how generics are currently exported), you can supply schema text, such as Typescript authored by hand.  
   * Helper attributes for Vocabularies and Comments. Vocabularies are string tables that constrain the values that can be assigned to string properties. Dynamic loading of vocabularies enables scenarios where they vary at runtime.
@@ -130,6 +132,9 @@ The following examples demonstrate how to use JsonTranslator, Schemas and Vocabu
 * [CoffeeShop](./examples/CoffeeShop): Natural language ordering at a coffee shop. Demonstrates a complex schema with polymorphic deserialization.
 * [Calendar](./examples/Calendar): Transform language into calendar actions
 * [Restaurant](./examples/Restaurant): Order processing at a pizza restaurant
+
+### Multimodal (images)
+* [Multimodal](./examples/Multimodal): Send an image to a vision capable model and translate what it sees into a strongly typed object. Requires a vision model such as gpt-4o.
 
 ### Hierarchical schemas
 * [MultiSchema](./examples/MultiSchema): dynamically route user intent to other 'sub-apps'

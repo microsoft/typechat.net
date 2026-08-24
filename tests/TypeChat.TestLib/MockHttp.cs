@@ -21,17 +21,31 @@ public class MockHttpHandler : HttpMessageHandler
 
     public int RequestCount { get; set; } = 0;
     public HttpRequestMessage? LastRequest { get; set; }
+    public string? LastRequestBody { get; set; }
 
     public void Clear()
     {
         RequestCount = 0;
         LastRequest = null;
+        LastRequestBody = null;
     }
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         LastRequest = request;
         RequestCount++;
+        // Capture the request body now: the caller disposes the request (and its content) after this
+        // returns. The content may already be disposed on retry attempts (the caller reuses it), so guard.
+        if (request.Content is not null)
+        {
+            try
+            {
+                LastRequestBody = request.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+        }
         HttpResponseMessage response = Response;
         if (response is null)
         {
