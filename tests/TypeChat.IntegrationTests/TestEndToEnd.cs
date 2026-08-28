@@ -156,6 +156,6 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
         };
 
         var response = await lm.CompleteAsync(prompt, settings, CancellationToken.None);
-        Assert.NotEmpty(response);
+        Assert.NotEmpty((string)response);
     }
 }

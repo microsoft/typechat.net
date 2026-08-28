@@ -40,7 +40,7 @@ public class TextCompletionModel : ILanguageModel
     /// </summary>
     public bool IncludeSectionSource { get; set; } = true;
 
-    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<LanguageModelResponse> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         OpenAIPromptExecutionSettings? requestSettings = ToRequestSettings(settings);
         string request = prompt.ToString(IncludeSectionSource);

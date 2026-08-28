@@ -55,6 +55,13 @@ public class Result<T>
     /// </summary>
     public string? Message { get; set; }
 
+    /// <summary>
+    /// Optional metadata (token usage, finish reason, repair count, and the raw response when
+    /// available) about the completion that produced this result. Populated for successful
+    /// translations; may be null.
+    /// </summary>
+    public CompletionInfo? Info { get; set; }
+
     public static implicit operator Result<T>(T value)
     {
         return new Result<T>(value);

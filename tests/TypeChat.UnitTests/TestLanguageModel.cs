@@ -36,7 +36,7 @@ public class TestLanguageModel : TypeChatTest
         var (jsonResponse, expected) = CannedResponse();
         var handler = new MockHttpHandler(jsonResponse);
         using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
-        var modelResponse = await model.CompleteAsync("Hello");
+        string modelResponse = await model.CompleteAsync("Hello");
         Assert.Equal(expected, modelResponse.Trim());
     }
 
@@ -110,6 +110,61 @@ public class TestLanguageModel : TypeChatTest
           }
         }";
         return (jsonResponse, "Hello there!");
+    }
+
+    [Fact]
+    public async Task TestCompletionInfo()
+    {
+        var config = MockOpenAIConfig();
+        var (jsonResponse, expected) = CannedResponse();
+        var handler = new MockHttpHandler(jsonResponse);
+        using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
+
+        LanguageModelResponse response = await model.CompleteAsync("Hello");
+
+        Assert.Equal(expected, response.Text.Trim());
+        Assert.NotNull(response.Info);
+        Assert.Equal("gpt-3.5-turbo-0613", response.Info.Model);
+        Assert.Equal(CompletionFinishReason.Stop, response.Info.FinishReason);
+        Assert.NotNull(response.Info.Usage);
+        Assert.Equal(9, response.Info.Usage.PromptTokens);
+        Assert.Equal(12, response.Info.Usage.CompletionTokens);
+        Assert.Equal(21, response.Info.Usage.TotalTokens);
+        Assert.NotNull(response.Info.Raw);
+        Assert.Equal("chatcmpl-123", response.Info.Raw.Value.GetProperty("id").GetString());
+    }
+
+    [Fact]
+    public async Task TestResponsesApi()
+    {
+        OpenAIConfig config = MockOpenAIConfig(azure: false);
+        config.Endpoint = "https://api.openai.com/v1/responses";
+        const string jsonResponse = @"{
+          ""id"": ""resp-123"",
+          ""object"": ""response"",
+          ""status"": ""completed"",
+          ""model"": ""gpt-4.1-2025-04-14"",
+          ""output"": [{
+            ""type"": ""message"",
+            ""role"": ""assistant"",
+            ""content"": [{ ""type"": ""output_text"", ""text"": ""Hi there!"" }]
+          }],
+          ""usage"": { ""input_tokens"": 20, ""output_tokens"": 5, ""total_tokens"": 25 }
+        }";
+        var handler = new MockHttpHandler(jsonResponse);
+        using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
+
+        LanguageModelResponse response = await model.CompleteAsync("Hello");
+
+        // Routed to the /responses endpoint.
+        Assert.Equal("https://api.openai.com/v1/responses", handler.LastRequest.RequestUri.AbsoluteUri);
+        // Text + normalized info parsed from the Responses response shape.
+        Assert.Equal("Hi there!", response.Text);
+        Assert.Equal(CompletionFinishReason.Stop, response.Info.FinishReason);
+        Assert.NotNull(response.Info.Usage);
+        Assert.Equal(20, response.Info.Usage.PromptTokens);
+        Assert.Equal(5, response.Info.Usage.CompletionTokens);
+        Assert.Equal(25, response.Info.Usage.TotalTokens);
     }
 
     [Fact]
