@@ -107,8 +107,27 @@ public class LanguageModel : ILanguageModel, IDisposable
         }
         else
         {
-            bool wantResponses = _config.UseResponsesApi ?? EndpointTargetsResponses(_config.Endpoint);
-            _endPoint = wantResponses ? BuildResponsesEndpoint(_config.Endpoint) : _config.Endpoint;
+            bool endpointTargetsResponses = EndpointTargetsResponses(_config.Endpoint);
+            bool wantResponses = _config.UseResponsesApi ?? endpointTargetsResponses;
+            if (!wantResponses && endpointTargetsResponses)
+            {
+                // Caller forced Chat Completions but provided a /responses endpoint; rewrite to /chat/completions.
+                if (Uri.TryCreate(_config.Endpoint, UriKind.Absolute, out Uri uri))
+                {
+                    string path = uri.AbsolutePath.TrimEnd('/');
+                    string newPath = path.Substring(0, path.Length - "/responses".Length) + "/chat/completions";
+                    _endPoint = new UriBuilder(uri) { Path = newPath }.Uri.AbsoluteUri;
+                }
+                else
+                {
+                    string trimmed = _config.Endpoint.TrimEnd('/');
+                    _endPoint = trimmed.Substring(0, trimmed.Length - "/responses".Length) + "/chat/completions";
+                }
+            }
+            else
+            {
+                _endPoint = wantResponses ? BuildResponsesEndpoint(_config.Endpoint) : _config.Endpoint;
+            }
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _config.ApiKey);
             if (!string.IsNullOrEmpty(_config.Organization))
             {
