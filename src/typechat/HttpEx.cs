@@ -56,13 +56,12 @@ internal static class HttpEx
     /// </summary>
     internal static async Task<(TResponse Response, string Raw)> GetJsonResponseWithRawAsync<TRequest, TResponse>(this HttpClient client, string endpoint, TRequest request, int maxRetries, int retryPauseMs, string? apiToken = null)
     {
-        var requestMessage = Json.ToJsonMessage(request);
         int retryCount = 0;
         while (true)
         {
             HttpRequestMessage httpRequest = new HttpRequestMessage(HttpMethod.Post, endpoint)
             {
-                Content = requestMessage
+                Content = Json.ToJsonMessage(request)
             };
             try
             {
