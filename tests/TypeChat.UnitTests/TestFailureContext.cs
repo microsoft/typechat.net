@@ -291,7 +291,7 @@ public class TestFailureContext
     [InlineData("{\"Value\":")]
     [InlineData("{\"Value\":}")]
     [InlineData("")]
-    public async Task UnparseableOutputHasTextButNoInventedCandidate(string response)
+    public async Task MalformedOutputHasTextButNoInventedCandidate(string response)
     {
         var model = new FixedModel(response);
         TypeChatException error = await Assert.ThrowsAsync<TypeChatException>(() => Translator(model, 0).TranslateAsync("request"));
@@ -332,7 +332,7 @@ public class TestFailureContext
     [InlineData("not JSON")]
     [InlineData("{\"Value\":")]
     [InlineData("{\"Value\":}")]
-    public async Task UnparseableRepairRetainsTheEarlierCandidateAndLatestText(string response)
+    public async Task MalformedRepairRetainsTheEarlierCandidateAndLatestText(string response)
     {
         var model = new FixedModel("{\"Value\":\"first\"}", response);
         TypeChatException error = await Assert.ThrowsAsync<TypeChatException>(() => Translator(model).TranslateAsync("request"));
