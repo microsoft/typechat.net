@@ -47,7 +47,7 @@ public class TypeValidator<T> : IJsonTypeValidator<T>
     /// <summary>
     /// Validate the given Json string.
     /// If Result.Success: includes a value of type T
-    /// If Result.False: includes a diagnostic message
+    /// If Result.False: includes a diagnostic message and FailureInfo for the rejected JSON
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>

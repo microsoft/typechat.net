@@ -49,6 +49,15 @@ public class TypeChatException : Exception
     }
 
     /// <summary>
+    /// Creates an exception retaining the rejected output and available model response text.
+    /// </summary>
+    public TypeChatException(ErrorCode code, string request, JsonResponse? response, string? message, FailureInfo? failure)
+        : this(code, request, response, message)
+    {
+        failure?.AttachTo(this);
+    }
+
+    /// <summary>
     /// Error code
     /// </summary>
     public ErrorCode Code => _errorCode;
@@ -62,6 +71,11 @@ public class TypeChatException : Exception
     /// The response, if any, that caused the error
     /// </summary>
     public JsonResponse? Response => _response;
+
+    /// <summary>
+    /// Optional unvalidated output associated with the failure.
+    /// </summary>
+    public FailureInfo? Failure => Data[FailureInfo.ExceptionDataKey] as FailureInfo;
 
     public override string ToString()
     {
@@ -78,13 +92,14 @@ public class TypeChatException : Exception
             );
     }
 
-    internal static void ThrowJsonValidation(string request, JsonResponse response, string message)
+    internal static void ThrowJsonValidation(string request, JsonResponse response, string message, FailureInfo? failure = null)
     {
         throw new TypeChatException(
             TypeChatException.ErrorCode.JsonValidation,
             request,
             response,
-            message
+            message,
+            failure
             );
     }
 

@@ -44,6 +44,54 @@ public class Milks
 }
 ``` 
 
+### Accessing failed output
+
+Failed validator results expose optional `FailureInfo` through `Result<T>.Failure`.
+`FailureInfo.Value` is an unvalidated `object`, not a value guaranteed to conform to `T`.
+Check `HasValue` to distinguish unavailable data from explicit `null`, `false`, `0`, or empty strings.
+JSON validators retain a cloned `JsonElement` when parsing succeeds, plus the original `InputText`
+even when parsing fails. Their comment, trailing-comma, and depth-limit options are respected when
+collecting failure data. Constraint and program validators retain the rejected instance.
+
+Translation still returns a typed value on success and throws `TypeChatException` on final validation
+failure. The exception now exposes the same context through `Failure`, alongside its existing
+`Response`:
+
+```cs
+try
+{
+    CalendarActions actions = await translator.TranslateAsync(requestText);
+}
+catch (TypeChatException error)
+{
+    FailureInfo? failure = error.Failure;
+    if (failure?.HasValue == true)
+    {
+        object? rejected = failure.Value;
+        // Validate or repair the rejected value before treating it as CalendarActions.
+    }
+    string? originalResponse = failure?.ResponseText;
+}
+```
+
+To manage repairs yourself, set `translator.MaxRepairAttempts = 0`.
+On final failure, the context retains the latest rejected candidate and available model response text,
+not a complete attempt history. These can come from different attempts if the latest repair response
+cannot be parsed. Existing repair limits, diagnostics, events, typed success values, and cancellation
+behavior are unchanged.
+
+HTTP, I/O, JSON response-decoding, and nested TypeChat exceptions during a repair are rethrown unchanged,
+with context available as `error.Data[FailureInfo.ExceptionDataKey]`.
+An initial transport failure has no invented candidate, and cancellation and programming exceptions
+are not intercepted. Custom validators can return
+`Result<T>.Error(message).WithFailure(new FailureInfo { Value = rejected, ResponseText = text })`;
+existing failure values and metadata take precedence over fallback context, without mutating the
+original result. The existing `Error(value, message)` overload still retains its typed `Value` and
+also exposes it as unvalidated failure context.
+
+Use `Success` to distinguish outcomes, not the presence of a value. Rejected data and response text
+may contain sensitive output; do not log or serialize them automatically.
+
 ## Microsoft.TypeChat.Program ##
 TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. 
 

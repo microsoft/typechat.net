@@ -177,6 +177,7 @@ public class JsonTranslator<T> : IJsonTranslator
 
     /// <summary>
     /// Translate a natural language request into an object of type 'T'
+    /// Final validation failures retain unvalidated output in TypeChatException.Failure.
     /// </summary>
     /// <param name="request">text request</param>
     /// <param name="cancelToken">optional cancel token</param>
@@ -208,9 +209,20 @@ public class JsonTranslator<T> : IJsonTranslator
         requestSettings ??= _translationSettings;
         Prompt prompt = CreateRequestPrompt(request, preamble);
         int repairAttempts = 0;
+        FailureInfo? lastFailure = null;
         while (true)
         {
-            string responseText = await GetResponseAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+            string responseText;
+            try
+            {
+                responseText = await GetResponseAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (lastFailure is not null &&
+                ex is HttpRequestException or IOException or JsonException or TypeChatException)
+            {
+                lastFailure.AttachTo(ex);
+                throw;
+            }
 
             JsonResponse jsonResponse = JsonResponse.Parse(responseText);
             Result<T> validationResult;
@@ -232,11 +244,18 @@ public class JsonTranslator<T> : IJsonTranslator
                 validationResult = Result<T>.Error(TypeChatException.NoJson(jsonResponse));
             }
 
+            validationResult = validationResult.WithFailure(new FailureInfo { ResponseText = responseText });
+            if (lastFailure is not null)
+            {
+                validationResult = validationResult.WithFailure(lastFailure);
+            }
+            lastFailure = validationResult.Failure;
+
             // Attempt to repair the Json that was returned
             ++repairAttempts;
             if (repairAttempts > _maxRepairAttempts)
             {
-                TypeChatException.ThrowJsonValidation(request, jsonResponse, validationResult.Message);
+                TypeChatException.ThrowJsonValidation(request, jsonResponse, validationResult.Message, lastFailure);
             }
             NotifyEvent(AttemptingRepair, validationResult.Message);
 
@@ -275,15 +294,26 @@ public class JsonTranslator<T> : IJsonTranslator
     private Result<T> ValidateJson(string json)
     {
         var result = Validator.Validate(json);
+        if (!result.Success)
+        {
+            result = result.WithFailure(result.Failure?.HasValue == true || result.Failure?.InputText is not null ?
+                new FailureInfo { InputText = json } :
+                FailureInfo.FromJson(json, JsonSerializerTypeValidator.DefaultOptions()));
+        }
         if (!OnValidationComplete(result))
         {
             return result;
         }
         if (result.Success)
         {
+            T instance = result.Value;
             result = (_constraintsValidator is not null) ?
                      _constraintsValidator.Validate(result.Value) :
                      result;
+            if (!result.Success)
+            {
+                result = result.WithFailure(new FailureInfo { Value = instance, InputText = json });
+            }
         }
         return result;
     }
