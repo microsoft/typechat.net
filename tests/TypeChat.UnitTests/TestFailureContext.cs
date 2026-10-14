@@ -160,6 +160,70 @@ public class TestFailureContext
         Assert.Null(metadata.InputText);
     }
 
+    [Theory]
+    [InlineData(false, null)]
+    [InlineData(true, null)]
+    [InlineData(true, false)]
+    [InlineData(true, 0)]
+    [InlineData(true, "")]
+    public void FallbackFailureMetadataIsPreservedWithoutOverwritingLatestText(bool hasValue, object? value)
+    {
+        var metadata = new CustomFailureInfo { InputText = "earlier input", ResponseText = "earlier response" };
+        if (hasValue)
+        {
+            metadata.Value = value;
+        }
+        Result<Example> original = Result<Example>.Error("latest failure")
+            .WithFailure(new FailureInfo { InputText = "", ResponseText = "" });
+
+        Result<Example> enriched = original.WithFailure(metadata);
+        var failure = Assert.IsType<CustomFailureInfo>(enriched.Failure);
+        Assert.NotSame(metadata, failure);
+        Assert.Equal("CUSTOM", failure.Code);
+        Assert.Equal(hasValue, failure.HasValue);
+        Assert.Same(value, failure.Value);
+        Assert.Equal("", failure.InputText);
+        Assert.Equal("", failure.ResponseText);
+        Assert.IsType<FailureInfo>(original.Failure);
+        Assert.False(original.Failure.HasValue);
+        Assert.Equal("earlier input", metadata.InputText);
+        Assert.Equal("earlier response", metadata.ResponseText);
+    }
+
+    [Fact]
+    public void CurrentCustomMetadataTakesPrecedenceWhenFallingBackToAValue()
+    {
+        var metadata = new CustomFailureInfo { Code = "LATEST", ResponseText = "" };
+        Result<Example> original = Result<Example>.Error("latest failure").WithFailure(metadata);
+        var earlier = new CustomFailureInfo { Value = 42, Code = "EARLIER", ResponseText = "earlier response" };
+
+        Result<Example> enriched = original.WithFailure(earlier);
+        var failure = Assert.IsType<CustomFailureInfo>(enriched.Failure);
+        Assert.Equal("LATEST", failure.Code);
+        Assert.True(failure.HasValue);
+        Assert.Equal(42, failure.Value);
+        Assert.Equal("", failure.ResponseText);
+        Assert.False(original.Failure.HasValue);
+        Assert.False(metadata.HasValue);
+        Assert.Equal("EARLIER", earlier.Code);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(false)]
+    [InlineData(0)]
+    [InlineData("")]
+    public void CurrentFailureValuesDoNotInheritEarlierCustomMetadata(object? value)
+    {
+        Result<Example> original = Result<Example>.Error("latest failure").WithFailure(new FailureInfo { Value = value });
+        var earlier = new CustomFailureInfo { Value = 42 };
+
+        Result<Example> enriched = original.WithFailure(earlier);
+        var failure = Assert.IsType<FailureInfo>(enriched.Failure);
+        Assert.True(failure.HasValue);
+        Assert.Same(value, failure.Value);
+    }
+
     [Fact]
     public void SuccessfulResultsKeepTheirTypedValueAndNoFailureContext()
     {
@@ -339,6 +403,38 @@ public class TestFailureContext
         Assert.Equal("first", Assert.IsType<JsonElement>(error.Failure.Value).GetProperty("Value").GetString());
         Assert.Equal(response, error.Failure.ResponseText);
         Assert.Equal(response, error.Response.ResponseText);
+        Assert.Equal(2, model.Prompts.Count);
+    }
+
+    [Theory]
+    [InlineData("not JSON", "{\"Value\":42}")]
+    [InlineData("{\"Value\":", "{\"Value\":42}")]
+    [InlineData("{\"Value\":}", "{\"Value\":}")]
+    [InlineData("", "{\"Value\":42}")]
+    public async Task MalformedRepairRetainsCustomFailureMetadataAndLatestText(string response, string inputText)
+    {
+        var rejected = new Example { Value = 42 };
+        var metadata = new CustomFailureInfo { Value = rejected };
+        Result<Example> original = Result<Example>.Error("constraint failure").WithFailure(metadata);
+        var model = new FixedModel("before {\"Value\":42} after", response);
+        var translator = new JsonTranslator<Example>(model, new TypeValidator<Example>())
+        {
+            ConstraintsValidator = new FixedConstraints(original)
+        };
+
+        TypeChatException error = await Assert.ThrowsAsync<TypeChatException>(() => translator.TranslateAsync("request"));
+        var failure = Assert.IsType<CustomFailureInfo>(error.Failure);
+        Assert.Equal("CUSTOM", failure.Code);
+        Assert.True(failure.HasValue);
+        Assert.Same(rejected, failure.Value);
+        Assert.Equal(inputText, failure.InputText);
+        Assert.Equal(response, failure.ResponseText);
+        Assert.Equal(response, error.Response.ResponseText);
+        Assert.NotSame(original.Failure, failure);
+        Assert.Null(original.Failure.InputText);
+        Assert.Null(original.Failure.ResponseText);
+        Assert.Null(metadata.InputText);
+        Assert.Null(metadata.ResponseText);
         Assert.Equal(2, model.Prompts.Count);
     }
 

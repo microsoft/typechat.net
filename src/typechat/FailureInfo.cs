@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft. All rights reserved.
+﻿// Copyright (c) Microsoft. All rights reserved.
 
 namespace Microsoft.TypeChat;
 
@@ -47,13 +47,15 @@ public class FailureInfo
 
     internal FailureInfo WithFallback(FailureInfo? fallback)
     {
-        var result = (FailureInfo)MemberwiseClone();
+        // Preserve fallback metadata unless this context has its own value or custom metadata.
+        FailureInfo source = !HasValue && GetType() == typeof(FailureInfo) && fallback is not null ? fallback : this;
+        var result = (FailureInfo)source.MemberwiseClone();
         if (!result.HasValue && fallback?.HasValue == true)
         {
             result.Value = fallback.Value;
         }
-        result.InputText ??= fallback?.InputText;
-        result.ResponseText ??= fallback?.ResponseText;
+        result.InputText = InputText ?? fallback?.InputText;
+        result.ResponseText = ResponseText ?? fallback?.ResponseText;
         return result;
     }
 

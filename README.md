@@ -89,6 +89,10 @@ existing failure values and metadata take precedence over fallback context, with
 original result. The existing `Error(value, message)` overload still retains its typed `Value` and
 also exposes it as unvalidated failure context.
 
+When a malformed repair reuses an earlier candidate, its custom failure metadata is retained alongside
+the latest available input and response text. A new rejected candidate does not inherit the previous
+candidate's custom metadata.
+
 Use `Success` to distinguish outcomes, not the presence of a value. Rejected data and response text
 may contain sensitive output; do not log or serialize them automatically.
 
@@ -137,8 +141,6 @@ Prior versions of TypeChat.NET used the pre-release programming model of Semanti
 Use a serviced .NET SDK 8 or newer, including when building from Visual Studio.
 [Source Link is included in .NET SDK 8+](https://github.com/dotnet/sourcelink#using-source-link-in-net-projects),
 so the projects use its SDK-provided implementation rather than overriding it with legacy NuGet packages.
-For [CVE-2026-62900](https://github.com/advisories/GHSA-23fw-v26w-5fgq), use a fixed .NET 8 SDK
-(8.0.130 or 8.0.424, or later servicing releases), or a patched .NET 9/10 SDK.
 
 * Visual Studio 2022. 
   * Load **typechat.sln** from the root directory. 
@@ -148,6 +150,9 @@ For [CVE-2026-62900](https://github.com/advisories/GHSA-23fw-v26w-5fgq), use a f
   * Launch a command prompt / terminal
   * Go to the root directory of the project
   * dotnet build Typechat.sln
+
+For [CVE-2026-62900](https://github.com/advisories/GHSA-23fw-v26w-5fgq), use a fixed .NET 8 SDK
+(8.0.130 or 8.0.424, or later servicing releases), or a patched .NET 9/10 SDK.
 
 ## Nuget Packages
 
