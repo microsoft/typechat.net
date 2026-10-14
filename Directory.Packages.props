@@ -31,7 +31,6 @@
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <!--
       Microsoft.Bcl.Memory is pinned via central transitive pinning to
       remediate GHSA-73j8-2gch-69rq (CVE-2026-26127, .NET DoS in
