@@ -86,6 +86,10 @@ Prior versions of TypeChat.NET used the pre-release programming model of Semanti
 
 ## Building
 
+Use a serviced .NET SDK 8 or newer, including when building from Visual Studio.
+[Source Link is included in .NET SDK 8+](https://github.com/dotnet/sourcelink#using-source-link-in-net-projects),
+so the projects use its SDK-provided implementation rather than overriding it with legacy NuGet packages.
+
 * Visual Studio 2022. 
   * Load **typechat.sln** from the root directory. 
   * Restore packages
