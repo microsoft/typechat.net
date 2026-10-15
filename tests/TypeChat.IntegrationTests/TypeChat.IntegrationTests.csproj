@@ -46,4 +46,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\..\assets\microsoft-logo.png" Link="microsoft-logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

@@ -43,7 +43,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
 
         if (request.Count >= 1)
         {
-            prompt += RequestSection(request[0].GetText());
+            prompt.Append(RequestSection(request[0]));
             return prompt;
         }
 
@@ -75,6 +75,44 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         requestSection += $"\"\"\"\n{request}\n\"\"\"\n";
         requestSection += "The following is the user request translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n";
         return requestSection;
+    }
+
+    /// <summary>
+    /// Wrap a user request section for the model. When the request carries images (a multimodal
+    /// section), the images are preserved so that vision capable models receive them. Otherwise this
+    /// behaves exactly like <see cref="RequestSection(string)"/>.
+    /// </summary>
+    /// <param name="request">the user request section</param>
+    /// <returns>a prompt section to send to the model</returns>
+    public static IPromptSection RequestSection(IPromptSection request)
+    {
+        ArgumentVerify.ThrowIfNull(request, nameof(request));
+        if (request is IMultimodalPromptSection multimodal && HasImages(multimodal))
+        {
+            MultimodalPromptSection section = new MultimodalPromptSection(request.Source);
+            section.AddText("The following is a user request:");
+            IReadOnlyList<PromptContentPart> parts = multimodal.ContentParts;
+            for (int i = 0; i < parts.Count; ++i)
+            {
+                section.Add(parts[i]);
+            }
+            section.AddText("The following is the user request translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n");
+            return section;
+        }
+        return RequestSection(request.GetText());
+    }
+
+    private static bool HasImages(IMultimodalPromptSection section)
+    {
+        IReadOnlyList<PromptContentPart> parts = section.ContentParts;
+        for (int i = 0; i < parts.Count; ++i)
+        {
+            if (parts[i].IsImage)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static string RepairPrompt(string validationError)
