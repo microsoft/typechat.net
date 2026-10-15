@@ -82,10 +82,10 @@ public class JsonResponse
             // Prologue precedes Json
             response.Prologue = responseText.Substring(0, iJsonStartAt);
         }
-        if (iJsonEndAt < 0)
+        if (iJsonEndAt < iJsonStartAt)
         {
             // Incomplete json. Treat remaining text as epilogue
-            response.Json = responseText.Substring(iJsonStartAt, lastIndex - iJsonStartAt);
+            response.Json = responseText.Substring(iJsonStartAt);
             return response;
         }
 

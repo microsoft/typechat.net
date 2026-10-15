@@ -29,6 +29,7 @@
     <ProjectReference Include="..\TypeChat.TestLib\TypeChat.TestLib.csproj" />
     <ProjectReference Include="..\..\src\typechat.program\TypeChat.Program.csproj" />
     <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
+    <ProjectReference Include="..\..\src\typechat.meai\TypeChat.Extensions.AI.csproj" Aliases="meai" />
     <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
   </ItemGroup>
 

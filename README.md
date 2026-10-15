@@ -96,6 +96,56 @@ candidate's custom metadata.
 Use `Success` to distinguish outcomes, not the presence of a value. Rejected data and response text
 may contain sensitive output; do not log or serialize them automatically.
 
+### Optional completion metadata
+
+The existing `ILanguageModel.CompleteAsync` method still returns `Task<string>`.
+Existing model implementations and callers do not need to change. Models can opt into
+[ILanguageModelWithMetadata](./src/typechat/ILanguageModelWithMetadata.cs) to return completion
+text together with [CompletionInfo](./src/typechat/CompletionInfo.cs):
+
+```cs
+ILanguageModel model = new LanguageModel(config);
+string text = await model.CompleteAsync(prompt, settings, cancelToken);
+LanguageModelResponse completion = await model.CompleteWithMetadataAsync(prompt, settings, cancelToken);
+TokenUsage? usage = completion.Info?.Usage;
+```
+
+The extension method uses the optional capability when available. Otherwise it calls the original
+text-only method and returns null metadata. The REST provider supplies normalized metadata and the
+raw API response. The Microsoft.Extensions.AI provider supplies the model, usage, and finish reason
+reported by its client. Semantic Kernel and other text-only implementations use the fallback;
+missing usage is not reported as zero.
+
+For translation results with metadata, use the additive `TranslateToResultAsync` API:
+
+```cs
+Result<CalendarActions> result = await translator.TranslateToResultAsync(requestText);
+if (result.Success)
+{
+    CalendarActions actions = result.Value;
+    TokenUsage? finalCompletionUsage = result.Info?.Usage;
+}
+else
+{
+    string? validationError = result.Message;
+    FailureInfo? rejectedOutput = result.Failure;
+}
+```
+
+`Info` describes the final completion on success or validation failure. `RepairAttempts` counts
+repairs actually performed; token usage is for that final completion, **not** the sum of all
+attempts. Provider metadata is copied before repair counts are attached, and no shared
+"last response" state is used.
+
+Only exhausted validation/repair failures become failed results. Transport errors, cancellation,
+and unexpected exceptions still propagate, with the failure context described above when available.
+The original `TranslateAsync` methods keep their throwing behavior and still call the protected
+`GetResponseAsync` hook returning `Task<string>`. Subclasses customizing the new opt-in translation
+path should override `GetResponseWithMetadataAsync` instead.
+
+User requests and validation errors in repair prompts are encoded as JSON strings. This hardens
+prompt delimiters; it is not a guarantee against prompt injection.
+
 ## Microsoft.TypeChat.Program ##
 TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. 
 
@@ -264,6 +314,18 @@ config = OpenAIConfig.FromEnvironment();
 
 var model = new LanguageModel(config);
 ```
+
+### Responses API
+
+`LanguageModel` infers the Responses API from an endpoint whose path ends in `/responses`.
+Set `OpenAIConfig.UseResponsesApi` to explicitly select Responses (`true`) or Chat Completions
+(`false`); leave it null to infer the API from the endpoint.
+
+For Azure, prefer a v1 endpoint such as
+`https://YOUR_RESOURCE_NAME.openai.azure.com/openai/v1/responses`, with `Model` set to the
+deployment name. Switching between the v1 APIs preserves the v1 path. For older resource-scoped
+Azure endpoints, enabling Responses also requires an `ApiVersion` that supports Responses,
+such as `2025-04-01-preview`; the legacy default API version is not suitable.
 
 ## Using Semantic Kernel
 You can also access a LanguageModel using the SemanticKernel Kernel object you created using a KernelBuilder.

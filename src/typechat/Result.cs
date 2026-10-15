@@ -32,6 +32,7 @@ public class Result<T>
         Value = value.Success || value.Value is T ? (T)value.Value : default;
         Message = value.Message;
         Failure = value.Failure;
+        Info = value.Info;
     }
 
     internal Result(bool success, string? message)
@@ -55,6 +56,13 @@ public class Result<T>
     /// Diagnostic message in case of failure
     /// </summary>
     public string? Message { get; set; }
+
+    /// <summary>
+    /// Optional metadata (token usage, finish reason, repair count, and the raw response when
+    /// available) about the final completion that produced this result. May be null.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public CompletionInfo? Info { get; set; }
 
     /// <summary>
     /// Optional unvalidated output associated with a failed result. Value remains the typed
