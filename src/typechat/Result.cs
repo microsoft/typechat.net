@@ -29,8 +29,9 @@ public class Result<T>
     public Result(Result<object?> value)
     {
         Success = value.Success;
-        Value = (T)value.Value;
+        Value = value.Success || value.Value is T ? (T)value.Value : default;
         Message = value.Message;
+        Failure = value.Failure;
     }
 
     internal Result(bool success, string? message)
@@ -54,6 +55,31 @@ public class Result<T>
     /// Diagnostic message in case of failure
     /// </summary>
     public string? Message { get; set; }
+
+    /// <summary>
+    /// Optional unvalidated output associated with a failed result. Value remains the typed
+    /// result; use Failure.Value for rejected data that does not conform to T.
+    /// </summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public FailureInfo? Failure { get; private set; }
+
+    /// <summary>
+    /// Returns a shallow copy of this failed result, retaining existing failure fields and
+    /// filling unavailable fields from the supplied context. Custom result metadata is preserved.
+    /// </summary>
+    /// <param name="failure">Fallback failure context.</param>
+    /// <returns>A failed result with the combined context.</returns>
+    public Result<T> WithFailure(FailureInfo failure)
+    {
+        ArgumentVerify.ThrowIfNull(failure, nameof(failure));
+        if (Success)
+        {
+            throw new InvalidOperationException("Failure context cannot be added to a successful result.");
+        }
+        var result = (Result<T>)MemberwiseClone();
+        result.Failure = Failure is null ? failure.WithFallback(null) : Failure.WithFallback(failure);
+        return result;
+    }
 
     public static implicit operator Result<T>(T value)
     {
@@ -84,6 +110,7 @@ public class Result<T>
     {
         var result = new Result<T>(false, message);
         result.Value = value;
+        result.Failure = new FailureInfo { Value = value };
         return result;
     }
 }

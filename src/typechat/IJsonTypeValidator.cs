@@ -17,7 +17,8 @@ public interface IJsonTypeValidator<T>
     /// <summary>
     /// Parses and validates the given JSON string according to the associated schema. Returns a
     /// Result containing the JSON object if validation was successful.Otherwise, returns
-    /// an Result with a message property that contains validation diagnostics.
+    /// a Result with a message containing validation diagnostics and optional FailureInfo
+    /// retaining the rejected value and input text.
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>

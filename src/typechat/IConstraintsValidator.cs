@@ -9,7 +9,7 @@ namespace Microsoft.TypeChat;
 public interface IConstraintsValidator<T>
 {
     /// <summary>
-    /// Validate the value T
+    /// Validate the value T. Failures can include FailureInfo retaining the rejected instance.
     /// </summary>
     /// <param name="value">check constraints for this value</param>
     /// <returns>result of the validation</returns>

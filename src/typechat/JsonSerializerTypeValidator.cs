@@ -57,12 +57,17 @@ public class JsonSerializerTypeValidator
         }
         catch (JsonException jex)
         {
-            return Result<object?>.Error(ToErrorString(json, jex));
+            return CreateError(json, ToErrorString(json, jex));
         }
         catch (Exception ex)
         {
-            return Result<object?>.Error(ex.Message);
+            return CreateError(json, ex.Message);
         }
+    }
+
+    private Result<object?> CreateError(string json, string message)
+    {
+        return Result<object?>.Error(message).WithFailure(FailureInfo.FromJson(json, _options));
     }
 
     private string ToErrorString(string json, JsonException error)
