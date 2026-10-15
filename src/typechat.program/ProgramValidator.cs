@@ -40,7 +40,8 @@ public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
             if (!result.Value.HasNotTranslated)
             {
                 // Now validate the full program
-                return ValidateProgram(result.Value);
+                result = ValidateProgram(result.Value);
+                return result.Success ? result : result.WithFailure(new FailureInfo { InputText = json });
             }
         }
         return result;
@@ -50,7 +51,8 @@ public class ProgramValidator : IJsonTypeValidator<Program>, IProgramValidator
     {
         if (_programValidator is not null)
         {
-            return _programValidator.ValidateProgram(program);
+            Result<Program> result = _programValidator.ValidateProgram(program);
+            return result.Success ? result : result.WithFailure(new FailureInfo { Value = program });
         }
         return program;
     }
@@ -85,7 +87,7 @@ public class ProgramValidator<TApi> : ProgramValidator
         }
         catch (Exception ex)
         {
-            return Result<Program>.Error(ex.Message);
+            return Result<Program>.Error(ex.Message).WithFailure(new FailureInfo { Value = program });
         }
     }
 }

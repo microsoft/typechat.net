@@ -8,7 +8,7 @@ namespace Microsoft.TypeChat;
 /// A lightweight ILanguageModel implementation over OpenAI or Azure OpenAI Chat Completion or
 /// Responses REST API endpoints
 /// </summary>
-public class LanguageModel : ILanguageModel, IDisposable
+public class LanguageModel : ILanguageModelWithMetadata, IDisposable
 {
     private static readonly TranslationSettings s_defaultSettings = new TranslationSettings();
 
@@ -20,7 +20,7 @@ public class LanguageModel : ILanguageModel, IDisposable
 
     /// <summary>
     /// Create an OpenAILanguageModel object using the given OpenAIConfig
-    /// config.EndPoint must support the Chat Completion API
+    /// config.Endpoint must support the selected Chat Completions or Responses API.
     /// </summary>
     /// <param name="config">configuration to use</param>
     /// <param name="model">information about the target model</param>
@@ -48,7 +48,14 @@ public class LanguageModel : ILanguageModel, IDisposable
     /// <param name="settings">translation settings such as temperature</param>
     /// <param name="cancelToken">cancellation token</param>
     /// <returns></returns>
-    public async Task<LanguageModelResponse> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    {
+        LanguageModelResponse response = await CompleteWithMetadataAsync(prompt, settings, cancelToken).ConfigureAwait(false);
+        return response.Text;
+    }
+
+    /// <inheritdoc cref="ILanguageModelWithMetadata.CompleteWithMetadataAsync"/>
+    public async Task<LanguageModelResponse> CompleteWithMetadataAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         ArgumentVerify.ThrowIfNullOrEmpty<IPromptSection>(prompt, nameof(prompt));
 
@@ -68,7 +75,7 @@ public class LanguageModel : ILanguageModel, IDisposable
     private Request CreateRequest(Prompt prompt, TranslationSettings? settings = null)
     {
         var request = Request.Create(prompt, settings ?? s_defaultSettings);
-        if (!_config.Azure)
+        if (!_config.Azure || EndpointUsesAzureV1(_endPoint))
         {
             request.model = _model.Name;
         }
@@ -95,10 +102,19 @@ public class LanguageModel : ILanguageModel, IDisposable
             {
                 _endPoint = _config.Endpoint;
             }
+            else if (EndpointTargetsResponses(_config.Endpoint) && EndpointUsesAzureV1(_config.Endpoint))
+            {
+                _endPoint = BuildApiEndpoint(_config.Endpoint, "/responses", "/chat/completions");
+            }
             else
             {
                 string path = $"openai/deployments/{_model.Name}/chat/completions?api-version={_config.ApiVersion}";
-                _endPoint = new Uri(new Uri(_config.Endpoint), path).AbsoluteUri;
+                Uri baseUri = new Uri(_config.Endpoint);
+                if (EndpointTargetsResponses(_config.Endpoint))
+                {
+                    baseUri = new Uri(baseUri.GetLeftPart(UriPartial.Authority));
+                }
+                _endPoint = new Uri(baseUri, path).AbsoluteUri;
             }
             if (!_config.HasTokenProvider)
             {
@@ -111,18 +127,7 @@ public class LanguageModel : ILanguageModel, IDisposable
             bool wantResponses = _config.UseResponsesApi ?? endpointTargetsResponses;
             if (!wantResponses && endpointTargetsResponses)
             {
-                // Caller forced Chat Completions but provided a /responses endpoint; rewrite to /chat/completions.
-                if (Uri.TryCreate(_config.Endpoint, UriKind.Absolute, out Uri uri))
-                {
-                    string path = uri.AbsolutePath.TrimEnd('/');
-                    string newPath = path.Substring(0, path.Length - "/responses".Length) + "/chat/completions";
-                    _endPoint = new UriBuilder(uri) { Path = newPath }.Uri.AbsoluteUri;
-                }
-                else
-                {
-                    string trimmed = _config.Endpoint.TrimEnd('/');
-                    _endPoint = trimmed.Substring(0, trimmed.Length - "/responses".Length) + "/chat/completions";
-                }
+                _endPoint = BuildApiEndpoint(_config.Endpoint, "/responses", "/chat/completions");
             }
             else
             {
@@ -143,14 +148,18 @@ public class LanguageModel : ILanguageModel, IDisposable
 
     /// <summary>
     /// Build an Azure OpenAI Responses API endpoint from any Azure endpoint. The Responses route is
-    /// resource scoped (not deployment scoped): "{scheme}://{host}/openai/responses?api-version=...".
-    /// The model/deployment is carried in the request body.
+    /// resource scoped (not deployment scoped). Preserve v1 endpoints; older endpoints use
+    /// "/openai/responses?api-version=...". The model/deployment is carried in the request body.
     /// </summary>
     private static string BuildAzureResponsesEndpoint(string endpoint, string apiVersion)
     {
         if (EndpointTargetsResponses(endpoint))
         {
             return endpoint;
+        }
+        if (EndpointUsesAzureV1(endpoint))
+        {
+            return BuildResponsesEndpoint(endpoint);
         }
         Uri authority = new Uri(new Uri(endpoint).GetLeftPart(UriPartial.Authority));
         string path = string.IsNullOrEmpty(apiVersion) ? "openai/responses" : $"openai/responses?api-version={apiVersion}";
@@ -167,13 +176,25 @@ public class LanguageModel : ILanguageModel, IDisposable
         {
             return endpoint;
         }
-        const string chatCompletions = "chat/completions";
-        int index = endpoint.IndexOf(chatCompletions, StringComparison.OrdinalIgnoreCase);
-        if (index >= 0)
+        return BuildApiEndpoint(endpoint, "/chat/completions", "/responses");
+    }
+
+    private static string BuildApiEndpoint(string endpoint, string oldPath, string newPath)
+    {
+        int suffixIndex = endpoint.IndexOfAny(new[] { '?', '#' });
+        string path = (suffixIndex >= 0 ? endpoint.Substring(0, suffixIndex) : endpoint).TrimEnd('/');
+        if (path.EndsWith(oldPath, StringComparison.OrdinalIgnoreCase))
         {
-            return endpoint.Substring(0, index) + "responses" + endpoint.Substring(index + chatCompletions.Length);
+            path = path.Substring(0, path.Length - oldPath.Length);
         }
-        return endpoint.TrimEnd('/') + "/responses";
+        return path + newPath + (suffixIndex >= 0 ? endpoint.Substring(suffixIndex) : string.Empty);
+    }
+
+    private static bool EndpointUsesAzureV1(string endpoint)
+    {
+        return Uri.TryCreate(endpoint, UriKind.Absolute, out Uri uri) &&
+            (uri.AbsolutePath.TrimEnd('/').Equals("/openai/v1", StringComparison.OrdinalIgnoreCase) ||
+             uri.AbsolutePath.StartsWith("/openai/v1/", StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>
@@ -304,6 +325,7 @@ public class LanguageModel : ILanguageModel, IDisposable
 
         public string GetText()
         {
+            StringBuilder text = new StringBuilder();
             if (output is not null)
             {
                 foreach (OutputItem item in output)
@@ -314,13 +336,13 @@ public class LanguageModel : ILanguageModel, IDisposable
                         {
                             if (content.type == "output_text" && content.text is not null)
                             {
-                                return content.text;
+                                text.Append(content.text);
                             }
                         }
                     }
                 }
             }
-            return string.Empty;
+            return text.ToString();
         }
     }
 

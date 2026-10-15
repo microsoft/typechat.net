@@ -3,11 +3,11 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// The result of an <see cref="ILanguageModel.CompleteAsync"/> call: the completion text plus
+/// The result of an <see cref="ILanguageModelWithMetadata.CompleteWithMetadataAsync"/> call: the completion text plus
 /// optional <see cref="CompletionInfo"/> metadata (token usage, finish reason, and so on).
 ///
-/// A <see cref="LanguageModelResponse"/> implicitly converts to and from <see cref="string"/>, so
-/// existing code that treats a completion as a bare string continues to work.
+/// A <see cref="LanguageModelResponse"/> implicitly converts to and from <see cref="string"/>
+/// for convenience. The original ILanguageModel.CompleteAsync API still returns Task&lt;string&gt;.
 /// </summary>
 public class LanguageModelResponse
 {

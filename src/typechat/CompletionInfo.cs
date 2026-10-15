@@ -5,9 +5,8 @@ using System.Text.Json;
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Metadata about a completion/translation. It is attached to <see cref="Result{T}.Info"/> on a
-/// successful result so callers can inspect details such as token usage (for example, to track cost
-/// or telemetry) without changing how existing results are consumed.
+/// Metadata about a single completion. Translation results carry the final completion's metadata,
+/// on success or validation failure. Usage does not include earlier repair attempts.
 /// </summary>
 public class CompletionInfo
 {
@@ -38,4 +37,11 @@ public class CompletionInfo
     /// provider- or API-specific fields that are not normalized onto the other properties.
     /// </summary>
     public JsonElement? Raw { get; set; }
+
+    internal CompletionInfo WithRepairAttempts(int repairAttempts)
+    {
+        var result = (CompletionInfo)MemberwiseClone();
+        result.RepairAttempts = repairAttempts;
+        return result;
+    }
 }

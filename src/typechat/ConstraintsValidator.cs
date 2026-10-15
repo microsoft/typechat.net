@@ -63,7 +63,7 @@ public class ConstraintsValidator<T> : ConstraintsValidator, IConstraintsValidat
             return new Result<T>(value);
         }
 
-        return Result<T>.Error(result.ErrorMessage);
+        return Result<T>.Error(result.ErrorMessage).WithFailure(new FailureInfo { Value = value });
     }
 
     private string ToErrorString(List<ValidationResult> validationResults)

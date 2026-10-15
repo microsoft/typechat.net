@@ -44,6 +44,108 @@ public class Milks
 }
 ``` 
 
+### Accessing failed output
+
+Failed validator results expose optional `FailureInfo` through `Result<T>.Failure`.
+`FailureInfo.Value` is an unvalidated `object`, not a value guaranteed to conform to `T`.
+Check `HasValue` to distinguish unavailable data from explicit `null`, `false`, `0`, or empty strings.
+JSON validators retain a cloned `JsonElement` when parsing succeeds, plus the original `InputText`
+even when parsing fails. Their comment, trailing-comma, and depth-limit options are respected when
+collecting failure data. Constraint and program validators retain the rejected instance.
+
+Translation still returns a typed value on success and throws `TypeChatException` on final validation
+failure. The exception now exposes the same context through `Failure`, alongside its existing
+`Response`:
+
+```cs
+try
+{
+    CalendarActions actions = await translator.TranslateAsync(requestText);
+}
+catch (TypeChatException error)
+{
+    FailureInfo? failure = error.Failure;
+    if (failure?.HasValue == true)
+    {
+        object? rejected = failure.Value;
+        // Validate or repair the rejected value before treating it as CalendarActions.
+    }
+    string? originalResponse = failure?.ResponseText;
+}
+```
+
+To manage repairs yourself, set `translator.MaxRepairAttempts = 0`.
+On final failure, the context retains the latest rejected candidate and available model response text,
+not a complete attempt history. These can come from different attempts if the latest repair response
+cannot be parsed. Existing repair limits, diagnostics, events, typed success values, and cancellation
+behavior are unchanged.
+
+HTTP, I/O, JSON response-decoding, and nested TypeChat exceptions during a repair are rethrown unchanged,
+with context available as `error.Data[FailureInfo.ExceptionDataKey]`.
+An initial transport failure has no invented candidate, and cancellation and programming exceptions
+are not intercepted. Custom validators can return
+`Result<T>.Error(message).WithFailure(new FailureInfo { Value = rejected, ResponseText = text })`;
+existing failure values and metadata take precedence over fallback context, without mutating the
+original result. The existing `Error(value, message)` overload still retains its typed `Value` and
+also exposes it as unvalidated failure context.
+
+When a malformed repair reuses an earlier candidate, its custom failure metadata is retained alongside
+the latest available input and response text. A new rejected candidate does not inherit the previous
+candidate's custom metadata.
+
+Use `Success` to distinguish outcomes, not the presence of a value. Rejected data and response text
+may contain sensitive output; do not log or serialize them automatically.
+
+### Optional completion metadata
+
+The existing `ILanguageModel.CompleteAsync` method still returns `Task<string>`.
+Existing model implementations and callers do not need to change. Models can opt into
+[ILanguageModelWithMetadata](./src/typechat/ILanguageModelWithMetadata.cs) to return completion
+text together with [CompletionInfo](./src/typechat/CompletionInfo.cs):
+
+```cs
+ILanguageModel model = new LanguageModel(config);
+string text = await model.CompleteAsync(prompt, settings, cancelToken);
+LanguageModelResponse completion = await model.CompleteWithMetadataAsync(prompt, settings, cancelToken);
+TokenUsage? usage = completion.Info?.Usage;
+```
+
+The extension method uses the optional capability when available. Otherwise it calls the original
+text-only method and returns null metadata. The REST provider supplies normalized metadata and the
+raw API response. The Microsoft.Extensions.AI provider supplies the model, usage, and finish reason
+reported by its client. Semantic Kernel and other text-only implementations use the fallback;
+missing usage is not reported as zero.
+
+For translation results with metadata, use the additive `TranslateToResultAsync` API:
+
+```cs
+Result<CalendarActions> result = await translator.TranslateToResultAsync(requestText);
+if (result.Success)
+{
+    CalendarActions actions = result.Value;
+    TokenUsage? finalCompletionUsage = result.Info?.Usage;
+}
+else
+{
+    string? validationError = result.Message;
+    FailureInfo? rejectedOutput = result.Failure;
+}
+```
+
+`Info` describes the final completion on success or validation failure. `RepairAttempts` counts
+repairs actually performed; token usage is for that final completion, **not** the sum of all
+attempts. Provider metadata is copied before repair counts are attached, and no shared
+"last response" state is used.
+
+Only exhausted validation/repair failures become failed results. Transport errors, cancellation,
+and unexpected exceptions still propagate, with the failure context described above when available.
+The original `TranslateAsync` methods keep their throwing behavior and still call the protected
+`GetResponseAsync` hook returning `Task<string>`. Subclasses customizing the new opt-in translation
+path should override `GetResponseWithMetadataAsync` instead.
+
+User requests and validation errors in repair prompts are encoded as JSON strings. This hardens
+prompt delimiters; it is not a guarantee against prompt injection.
+
 ## Microsoft.TypeChat.Program ##
 TypeChat.Program translates natural language requests into simple programs (***Plans***), represented as JSON. 
 
@@ -86,6 +188,10 @@ Prior versions of TypeChat.NET used the pre-release programming model of Semanti
 
 ## Building
 
+Use a serviced .NET SDK 8 or newer, including when building from Visual Studio.
+[Source Link is included in .NET SDK 8+](https://github.com/dotnet/sourcelink#using-source-link-in-net-projects),
+so the projects use its SDK-provided implementation rather than overriding it with legacy NuGet packages.
+
 * Visual Studio 2022. 
   * Load **typechat.sln** from the root directory. 
   * Restore packages
@@ -94,6 +200,9 @@ Prior versions of TypeChat.NET used the pre-release programming model of Semanti
   * Launch a command prompt / terminal
   * Go to the root directory of the project
   * dotnet build Typechat.sln
+
+For [CVE-2026-62900](https://github.com/advisories/GHSA-23fw-v26w-5fgq), use a fixed .NET 8 SDK
+(8.0.130 or 8.0.424, or later servicing releases), or a patched .NET 9/10 SDK.
 
 ## Nuget Packages
 
@@ -205,6 +314,18 @@ config = OpenAIConfig.FromEnvironment();
 
 var model = new LanguageModel(config);
 ```
+
+### Responses API
+
+`LanguageModel` infers the Responses API from an endpoint whose path ends in `/responses`.
+Set `OpenAIConfig.UseResponsesApi` to explicitly select Responses (`true`) or Chat Completions
+(`false`); leave it null to infer the API from the endpoint.
+
+For Azure, prefer a v1 endpoint such as
+`https://YOUR_RESOURCE_NAME.openai.azure.com/openai/v1/responses`, with `Model` set to the
+deployment name. Switching between the v1 APIs preserves the v1 path. For older resource-scoped
+Azure endpoints, enabling Responses also requires an `ApiVersion` that supports Responses,
+such as `2025-04-01-preview`; the legacy default API version is not suitable.
 
 ## Using Semantic Kernel
 You can also access a LanguageModel using the SemanticKernel Kernel object you created using a KernelBuilder.

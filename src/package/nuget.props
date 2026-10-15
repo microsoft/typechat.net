@@ -20,6 +20,7 @@
     <PackageReadmeFile>NUGET.md</PackageReadmeFile>
 
     <!-- Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+    <!-- .NET SDK 8+ supplies Source Link; legacy package references override its serviced version. -->
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
@@ -27,12 +28,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <!-- SourceLink allows step-through debugging for source hosted on GitHub. -->
-    <!-- https://github.com/dotnet/sourcelink -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
-  </ItemGroup>
 
   <ItemGroup>
     <!-- Include icon.png and NUGET.md in the project. -->

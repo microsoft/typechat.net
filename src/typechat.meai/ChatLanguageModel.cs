@@ -7,7 +7,7 @@ namespace Microsoft.TypeChat;
 /// <summary>
 /// A LanguageModel that uses IChatClient
 /// </summary>
-public class ChatLanguageModel : ILanguageModel
+public class ChatLanguageModel : ILanguageModelWithMetadata
 {
     private readonly IChatClient _chatClient;
     private readonly ModelInfo _model;
@@ -37,7 +37,16 @@ public class ChatLanguageModel : ILanguageModel
     /// <param name="settings"></param>
     /// <param name="cancelToken"></param>
     /// <returns></returns>
-    public async Task<LanguageModelResponse> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
+    {
+        LanguageModelResponse response = await CompleteWithMetadataAsync(prompt, settings, cancelToken).ConfigureAwait(false);
+        return response.Text;
+    }
+
+    /// <summary>
+    /// Return a completion and metadata reported by the chat client.
+    /// </summary>
+    public async Task<LanguageModelResponse> CompleteWithMetadataAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
         List<ChatMessage> history = ToHistory(prompt);
         ChatOptions? options = ToRequestSettings(settings);

@@ -36,7 +36,7 @@ public class TestLanguageModel : TypeChatTest
         var (jsonResponse, expected) = CannedResponse();
         var handler = new MockHttpHandler(jsonResponse);
         using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
-        string modelResponse = await model.CompleteAsync("Hello");
+        var modelResponse = await model.CompleteAsync("Hello");
         Assert.Equal(expected, modelResponse.Trim());
     }
 
@@ -120,7 +120,7 @@ public class TestLanguageModel : TypeChatTest
         var handler = new MockHttpHandler(jsonResponse);
         using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
 
-        LanguageModelResponse response = await model.CompleteAsync("Hello");
+        LanguageModelResponse response = await model.CompleteWithMetadataAsync("Hello");
 
         Assert.Equal(expected, response.Text.Trim());
         Assert.NotNull(response.Info);
@@ -154,7 +154,7 @@ public class TestLanguageModel : TypeChatTest
         var handler = new MockHttpHandler(jsonResponse);
         using LanguageModel model = new LanguageModel(config, null, new HttpClient(handler));
 
-        LanguageModelResponse response = await model.CompleteAsync("Hello");
+        LanguageModelResponse response = await model.CompleteWithMetadataAsync("Hello");
 
         // Routed to the /responses endpoint.
         Assert.Equal("https://api.openai.com/v1/responses", handler.LastRequest.RequestUri.AbsoluteUri);
@@ -165,6 +165,69 @@ public class TestLanguageModel : TypeChatTest
         Assert.Equal(20, response.Info.Usage.PromptTokens);
         Assert.Equal(5, response.Info.Usage.CompletionTokens);
         Assert.Equal(25, response.Info.Usage.TotalTokens);
+    }
+
+    [Theory]
+    [InlineData(true, true, "https://resource.example/", "https://resource.example/openai/responses?api-version=2025-04-01-preview")]
+    [InlineData(true, true, "https://resource.example/openai/deployments/test-model/chat/completions?api-version=old", "https://resource.example/openai/responses?api-version=2025-04-01-preview")]
+    [InlineData(true, true, "https://resource.example/openai/v1/chat/completions", "https://resource.example/openai/v1/responses")]
+    [InlineData(true, true, "https://resource.example/openai/v1/", "https://resource.example/openai/v1/responses")]
+    [InlineData(true, false, "https://resource.example/openai/responses?api-version=old", "https://resource.example/openai/deployments/test-model/chat/completions?api-version=2025-04-01-preview")]
+    [InlineData(true, false, "https://resource.example/openai/v1/responses", "https://resource.example/openai/v1/chat/completions")]
+    [InlineData(false, true, "https://api.example/v1/chat/completions?test=1", "https://api.example/v1/responses?test=1")]
+    [InlineData(false, true, "https://api.example/v1/?test=1", "https://api.example/v1/responses?test=1")]
+    [InlineData(false, false, "https://api.example/v1/responses/?test=1", "https://api.example/v1/chat/completions?test=1")]
+    public async Task ApiSelectionPreservesEndpointAndRequestShape(bool azure, bool responsesApi, string endpoint, string expectedEndpoint)
+    {
+        var config = MockOpenAIConfig(azure);
+        config.Endpoint = endpoint;
+        config.Model = "test-model";
+        config.ApiVersion = "2025-04-01-preview";
+        config.UseResponsesApi = responsesApi;
+        string json = responsesApi ?
+            "{\"status\":\"completed\",\"output\":[{\"type\":\"message\",\"content\":[{\"type\":\"output_text\",\"text\":\"hello\"}]}]}" :
+            "{\"choices\":[{\"message\":{\"content\":\"hello\"}}]}";
+        var handler = new MockHttpHandler(json);
+        using var model = new LanguageModel(config, client: new HttpClient(handler));
+        var settings = new TranslationSettings { MaxTokens = 32, Temperature = 0.3 };
+
+        Task<string> completion = model.CompleteAsync("Hello", settings);
+        Assert.Equal("hello", await completion);
+        Assert.Equal(expectedEndpoint, handler.LastRequest.RequestUri.AbsoluteUri);
+        JsonObject body = JsonNode.Parse(handler.LastRequestBody).AsObject();
+        Assert.True(body.ContainsKey(responsesApi ? "input" : "messages"));
+        Assert.False(body.ContainsKey(responsesApi ? "messages" : "input"));
+        Assert.Equal(32, body[responsesApi ? "max_output_tokens" : "max_tokens"].GetValue<int>());
+        Assert.Equal(0.3, body["temperature"].GetValue<double>());
+        bool needsModel = responsesApi || !azure || expectedEndpoint.Contains("/openai/v1/");
+        Assert.Equal(needsModel ? "test-model" : null, body["model"]?.GetValue<string>());
+    }
+
+    [Fact]
+    public async Task ResponsesIncludeAllTextPartsAndMessages()
+    {
+        var config = MockOpenAIConfig(azure: false);
+        config.Endpoint = "https://api.example/v1/responses";
+        const string json = """
+            {
+              "status": "completed",
+              "output": [
+                {"type": "reasoning"},
+                {"type": "message", "content": [
+                  {"type": "output_text", "text": "first"},
+                  {"type": "refusal", "refusal": "ignored"},
+                  {"type": "output_text", "text": "second"}
+                ]},
+                {"type": "message", "content": [{"type": "output_text", "text": "third"}]}
+              ]
+            }
+            """;
+        using var model = new LanguageModel(config, client: new HttpClient(new MockHttpHandler(json)));
+
+        var response = await model.CompleteWithMetadataAsync("Hello");
+
+        Assert.Equal("firstsecondthird", response.Text);
+        Assert.Equal(CompletionFinishReason.Stop, response.Info.FinishReason);
     }
 
     [Fact]

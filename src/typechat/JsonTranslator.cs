@@ -177,6 +177,7 @@ public class JsonTranslator<T> : IJsonTranslator
 
     /// <summary>
     /// Translate a natural language request into an object of type 'T'
+    /// Final validation failures retain unvalidated output in TypeChatException.Failure.
     /// </summary>
     /// <param name="request">text request</param>
     /// <param name="cancelToken">optional cancel token</param>
@@ -188,9 +189,10 @@ public class JsonTranslator<T> : IJsonTranslator
     }
 
     /// <summary>
-    /// Translate a natural language request into a <see cref="Result{T}"/> of type 'T' without
-    /// throwing on failure. On success, the result's <see cref="Result{T}.Info"/> carries completion
-    /// stats (token usage, finish reason, repair count, and the raw response when available).
+    /// Translate a natural language request into a <see cref="Result{T}"/> of type 'T'.
+    /// Exhausted validation failures are returned with failure context rather than thrown.
+    /// Transport errors and cancellation still propagate. Completion metadata describes the
+    /// final completion, not the accumulated usage of repair attempts.
     /// </summary>
     /// <param name="request">text request</param>
     /// <param name="cancelToken">optional cancel token</param>
@@ -209,8 +211,6 @@ public class JsonTranslator<T> : IJsonTranslator
     /// <param name="cancelToken"></param>
     /// <returns>Result containing object of type T</returns>
     /// <exception cref="TypeChatException"></exception>
-    // TODO: This throwing overload will be deprecated in the future in favor of TranslateToResultAsync,
-    // which returns a Result<T> (carrying CompletionInfo stats) instead of throwing on failure.
     public async Task<T> TranslateAsync(
         Prompt request,
         IList<IPromptSection>? preamble,
@@ -218,16 +218,20 @@ public class JsonTranslator<T> : IJsonTranslator
         CancellationToken cancelToken = default
     )
     {
-        Result<T> result = await TranslateWorkerAsync(request, preamble, requestSettings, throwOnFailure: true, cancelToken).ConfigureAwait(false);
+        Result<T> result = await TranslateWorkerAsync(request, preamble, requestSettings, GetLegacyResponseAsync, throwOnFailure: true, cancelToken).ConfigureAwait(false);
         return result.Value;
     }
 
     /// <summary>
     /// Translate a natural language request into a <see cref="Result{T}"/> of type 'T'. Unlike
     /// <see cref="TranslateAsync(Prompt, IList{IPromptSection}, TranslationSettings, CancellationToken)"/>,
-    /// this method does not throw on failure: it returns a failed <see cref="Result{T}"/> instead. On
-    /// success, the result's <see cref="Result{T}.Info"/> carries completion stats (token usage,
-    /// finish reason, repair count, and the raw response when available).
+    /// this method returns a failed <see cref="Result{T}"/> when validation and repair fail.
+    /// Transport errors, cancellation, and unexpected exceptions still propagate.
+    /// The result's <see cref="Result{T}.Info"/> describes the final completion, when available,
+    /// and <see cref="Result{T}.Failure"/> retains rejected output on validation failure.
+    /// This opt-in API uses <see cref="GetResponseWithMetadataAsync"/>; existing
+    /// <see cref="TranslateAsync(Prompt, IList{IPromptSection}, TranslationSettings, CancellationToken)"/>
+    /// calls continue to use <see cref="GetResponseAsync"/>.
     /// </summary>
     /// <param name="request">natural language request</param>
     /// <param name="preamble">optional preamble prepended to the prompt</param>
@@ -241,13 +245,14 @@ public class JsonTranslator<T> : IJsonTranslator
         CancellationToken cancelToken = default
     )
     {
-        return TranslateWorkerAsync(request, preamble, requestSettings, throwOnFailure: false, cancelToken);
+        return TranslateWorkerAsync(request, preamble, requestSettings, GetResponseWithMetadataAsync, throwOnFailure: false, cancelToken);
     }
 
     private async Task<Result<T>> TranslateWorkerAsync(
         Prompt request,
         IList<IPromptSection>? preamble,
         TranslationSettings? requestSettings,
+        Func<Prompt, TranslationSettings, CancellationToken, Task<LanguageModelResponse>> getResponse,
         bool throwOnFailure,
         CancellationToken cancelToken
     )
@@ -257,9 +262,20 @@ public class JsonTranslator<T> : IJsonTranslator
         requestSettings ??= _translationSettings;
         Prompt prompt = CreateRequestPrompt(request, preamble);
         int repairAttempts = 0;
+        FailureInfo? lastFailure = null;
         while (true)
         {
-            LanguageModelResponse modelResponse = await GetResponseAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+            LanguageModelResponse modelResponse;
+            try
+            {
+                modelResponse = await getResponse(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (lastFailure is not null &&
+                ex is HttpRequestException or IOException or JsonException or TypeChatException)
+            {
+                lastFailure.AttachTo(ex);
+                throw;
+            }
             string responseText = modelResponse.Text;
 
             JsonResponse jsonResponse = JsonResponse.Parse(responseText);
@@ -283,13 +299,21 @@ public class JsonTranslator<T> : IJsonTranslator
                 validationResult = Result<T>.Error(TypeChatException.NoJson(jsonResponse));
             }
 
+            validationResult = validationResult.WithFailure(new FailureInfo { ResponseText = responseText });
+            if (lastFailure is not null)
+            {
+                validationResult = validationResult.WithFailure(lastFailure);
+            }
+            lastFailure = validationResult.Failure;
+            validationResult.Info = MergeInfo(modelResponse.Info, repairAttempts);
+
             // Attempt to repair the Json that was returned
             ++repairAttempts;
             if (repairAttempts > _maxRepairAttempts)
             {
                 if (throwOnFailure)
                 {
-                    TypeChatException.ThrowJsonValidation(request, jsonResponse, validationResult.Message);
+                    TypeChatException.ThrowJsonValidation(request, jsonResponse, validationResult.Message, lastFailure);
                 }
                 return validationResult;
             }
@@ -308,9 +332,7 @@ public class JsonTranslator<T> : IJsonTranslator
 
     private static CompletionInfo MergeInfo(CompletionInfo? info, int repairAttempts)
     {
-        info ??= new CompletionInfo();
-        info.RepairAttempts = repairAttempts;
-        return info;
+        return info?.WithRepairAttempts(repairAttempts) ?? new CompletionInfo { RepairAttempts = repairAttempts };
     }
 
     protected virtual Prompt CreateRequestPrompt(Prompt request, IList<IPromptSection> preamble)
@@ -318,10 +340,28 @@ public class JsonTranslator<T> : IJsonTranslator
         return _prompts.CreateRequestPrompt(_validator.Schema, request, preamble);
     }
 
-    protected virtual async Task<LanguageModelResponse> GetResponseAsync(Prompt prompt, TranslationSettings requestSettings, CancellationToken cancelToken)
+    private async Task<LanguageModelResponse> GetLegacyResponseAsync(Prompt prompt, TranslationSettings requestSettings, CancellationToken cancelToken)
+    {
+        string text = await GetResponseAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+        return new LanguageModelResponse(text);
+    }
+
+    protected virtual async Task<string> GetResponseAsync(Prompt prompt, TranslationSettings requestSettings, CancellationToken cancelToken)
     {
         NotifyEvent(SendingPrompt, prompt);
-        LanguageModelResponse response = await _model.CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+        string responseText = await _model.CompleteAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
+        NotifyEvent(CompletionReceived, responseText);
+        return responseText;
+    }
+
+    /// <summary>
+    /// Completion hook for TranslateToResultAsync. Override this hook to customize the new
+    /// metadata-aware path; existing GetResponseAsync overrides still serve TranslateAsync.
+    /// </summary>
+    protected virtual async Task<LanguageModelResponse> GetResponseWithMetadataAsync(Prompt prompt, TranslationSettings requestSettings, CancellationToken cancelToken)
+    {
+        NotifyEvent(SendingPrompt, prompt);
+        LanguageModelResponse response = await _model.CompleteWithMetadataAsync(prompt, requestSettings, cancelToken).ConfigureAwait(false);
         NotifyEvent(CompletionReceived, response.Text);
         return response;
     }
@@ -337,15 +377,26 @@ public class JsonTranslator<T> : IJsonTranslator
     private Result<T> ValidateJson(string json)
     {
         var result = Validator.Validate(json);
+        if (!result.Success)
+        {
+            result = result.WithFailure(result.Failure?.HasValue == true || result.Failure?.InputText is not null ?
+                new FailureInfo { InputText = json } :
+                FailureInfo.FromJson(json, JsonSerializerTypeValidator.DefaultOptions()));
+        }
         if (!OnValidationComplete(result))
         {
             return result;
         }
         if (result.Success)
         {
+            T instance = result.Value;
             result = (_constraintsValidator is not null) ?
                      _constraintsValidator.Validate(result.Value) :
                      result;
+            if (!result.Success)
+            {
+                result = result.WithFailure(new FailureInfo { Value = instance, InputText = json });
+            }
         }
         return result;
     }
