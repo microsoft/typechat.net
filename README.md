@@ -220,6 +220,7 @@ To use TypeChat.net or run the examples, you need **either**:
 * Go to the **[examples](./examples)** folder in the solution
 * Make a copy of the [appSettings.json](./examples/appSettings.json) file and name it **appSettings.Development.json**. Ensure it is in the same folder as appSettings.json
 * appSettings.Development.json is a local development only override of the settings in appSettings.json and is **never** checked in.
+* When no local override exists, builds copy the default settings into each project's output directory instead of creating a shared development settings file.
 * Add your **Api Key** to **appSettings.Development.json**.
   * To use Azure identity: use the well-known key **"identity"**. The code will use access tokens returned by the default Azure credentials: [DefaultAzureCredential](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). You can provide these using **az login**. 
 
