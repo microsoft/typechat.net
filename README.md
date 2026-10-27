@@ -154,6 +154,12 @@ so the projects use its SDK-provided implementation rather than overriding it wi
 For [CVE-2026-62900](https://github.com/advisories/GHSA-23fw-v26w-5fgq), use a fixed .NET 8 SDK
 (8.0.130 or 8.0.424, or later servicing releases), or a patched .NET 9/10 SDK.
 
+Package versions are managed centrally in [Directory.Packages.props](./Directory.Packages.props).
+Use stable releases where available; the published Microsoft.TypeChat packages are preview-only.
+The legacy .NET Framework test project retains compatible test-tool versions through `VersionOverride`.
+Restore audits both direct and transitive dependencies. To check for known vulnerabilities explicitly, run
+`dotnet list TypeChat.sln package --vulnerable --include-transitive`.
+
 ## Nuget Packages
 
 * Microsoft.Typechat [![](https://img.shields.io/nuget/dt/Microsoft.TypeChat.svg?label=downloads&color=007edf&logo=nuget)](https://www.nuget.org/packages/Microsoft.TypeChat)
