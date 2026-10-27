@@ -156,6 +156,7 @@ For [CVE-2026-62900](https://github.com/advisories/GHSA-23fw-v26w-5fgq), use a f
 
 Package versions are managed centrally in [Directory.Packages.props](./Directory.Packages.props).
 Use stable releases where available; the published Microsoft.TypeChat packages are preview-only.
+Microsoft.CodeAnalysis.CSharp stays on 5.0.0 so its transitive analyzers remain compatible with the .NET 8 SDK used in CI.
 The legacy .NET Framework test project retains compatible test-tool versions through `VersionOverride`.
 Restore audits both direct and transitive dependencies. To check for known vulnerabilities explicitly, run
 `dotnet list TypeChat.sln package --vulnerable --include-transitive`.

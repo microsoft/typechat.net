@@ -29,7 +29,8 @@
   <ItemGroup>
     <PackageVersion Include="Azure.Identity" Version="1.21.0" />
     <PackageVersion Include="coverlet.collector" Version="10.1.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.9.0" />
+    <!-- Newer Roslyn packages bring analyzers that require a compiler newer than the .NET 8 SDK. -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
     <PackageVersion Include="Microsoft.CSharp" Version="4.7.0" />
     <!--
       Microsoft.Bcl.Memory is pinned via central transitive pinning to
