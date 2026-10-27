@@ -154,6 +154,13 @@ so the projects use its SDK-provided implementation rather than overriding it wi
 For [CVE-2026-62900](https://github.com/advisories/GHSA-23fw-v26w-5fgq), use a fixed .NET 8 SDK
 (8.0.130 or 8.0.424, or later servicing releases), or a patched .NET 9/10 SDK.
 
+Package versions are managed centrally in [Directory.Packages.props](./Directory.Packages.props).
+Use stable releases where available; the published Microsoft.TypeChat packages are preview-only.
+Microsoft.CodeAnalysis.CSharp stays on 5.0.0 so its transitive analyzers remain compatible with the .NET 8 SDK used in CI.
+The legacy .NET Framework test project retains compatible test-tool versions through `VersionOverride`.
+Restore audits both direct and transitive dependencies. To check for known vulnerabilities explicitly, run
+`dotnet list TypeChat.sln package --vulnerable --include-transitive`.
+
 ## Nuget Packages
 
 * Microsoft.Typechat [![](https://img.shields.io/nuget/dt/Microsoft.TypeChat.svg?label=downloads&color=007edf&logo=nuget)](https://www.nuget.org/packages/Microsoft.TypeChat)
@@ -213,6 +220,7 @@ To use TypeChat.net or run the examples, you need **either**:
 * Go to the **[examples](./examples)** folder in the solution
 * Make a copy of the [appSettings.json](./examples/appSettings.json) file and name it **appSettings.Development.json**. Ensure it is in the same folder as appSettings.json
 * appSettings.Development.json is a local development only override of the settings in appSettings.json and is **never** checked in.
+* When no local override exists, builds copy the default settings into each project's output directory instead of creating a shared development settings file.
 * Add your **Api Key** to **appSettings.Development.json**.
   * To use Azure identity: use the well-known key **"identity"**. The code will use access tokens returned by the default Azure credentials: [DefaultAzureCredential](https://learn.microsoft.com/en-us/dotnet/api/azure.identity.defaultazurecredential?view=azure-dotnet). You can provide these using **az login**. 
 
