@@ -71,8 +71,8 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
     public static PromptSection RequestSection(string request)
     {
         PromptSection requestSection = new PromptSection();
-        requestSection += "The following is a user request:\n";
-        requestSection += $"\"\"\"\n{request}\n\"\"\"\n";
+        requestSection += "The following is a user request encoded as a JSON string:\n";
+        requestSection += $"{Json.Stringify(request, false)}\n";
         requestSection += "The following is the user request translated into a JSON object with 2 spaces of indentation and no properties with the value undefined:\n";
         return requestSection;
     }
@@ -80,8 +80,8 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
     public static string RepairPrompt(string validationError)
     {
         validationError ??= string.Empty;
-        return "The JSON object is invalid for the following reason:\n" +
-               $"{validationError}\n" +
+        return "The JSON object is invalid. The following is the validation error encoded as a JSON string:\n" +
+               $"{Json.Stringify(validationError, false)}\n" +
                "The following is a revised JSON object. Do not include explanations.\n";
     }
 }

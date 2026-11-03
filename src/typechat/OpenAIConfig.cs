@@ -84,6 +84,13 @@ public class OpenAIConfig
     public string ApiVersion { get; set; } = "2023-05-15";
 
     /// <summary>
+    /// Selects the OpenAI API variant. When true, the Responses API (/v1/responses) is used; when
+    /// false, the Chat Completions API is used. When null (default), the variant is inferred from the
+    /// endpoint URL (a path ending in /responses selects the Responses API).
+    /// </summary>
+    public bool? UseResponsesApi { get; set; }
+
+    /// <summary>
     /// Http Settings
     /// </summary>
     public int TimeoutMs { get; set; } = 15 * 1000;
