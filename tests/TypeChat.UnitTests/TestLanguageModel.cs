@@ -121,7 +121,7 @@ public class TestLanguageModel : TypeChatTest
         prompt.AppendResponse("OK, thank you");
 
         Assert.Equal(PromptSection.Sources.System, prompt[0].Source);
-        Assert.Equal(PromptSection.Sources.User, prompt[1].Source);
+        Assert.Equal(PromptSection.Sources.System, prompt[1].Source);
         Assert.Equal(PromptSection.Sources.Assistant, prompt[2].Source);
 
     }

@@ -3,7 +3,7 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// Default Prompts used by the program translator
+/// Legacy full-request prompts for a program translator.
 /// </summary>
 public class ProgramTranslatorPrompts : JsonTranslatorPrompts
 {
@@ -22,17 +22,29 @@ public class ProgramTranslatorPrompts : JsonTranslatorPrompts
 
     public override Prompt CreateRequestPrompt(TypeSchema schema, Prompt request, IList<IPromptSection> context)
     {
-        return RequestProgramPrompt(request, schema.Schema.Text, _apiDef, context);
+        if (IsSingleUserText(request))
+        {
+            // The legacy program translator included Prompt.ToString()'s trailing newline.
+            return RequestProgramPrompt(request[0].GetText() + "\n", schema.Schema.Text, _apiDef, context);
+        }
+        return CreateLegacyPrompt(request, schema.Schema.Text, _apiDef, context);
     }
 
     public static Prompt RequestProgramPrompt(string request, string programSchema, string apiDef, IList<IPromptSection> context)
     {
-        Prompt prompt = new Prompt();
-        prompt += "You are a service that translates user requests into programs represented as JSON using the following TypeScript definitions:\n" +
-               $"```\n{programSchema}```\n" +
-               "The programs can call functions from the API defined in the following TypeScript definitions:\n" +
-               $"```\n{apiDef}```\n";
-        AddContextAndRequest(prompt, request, context);
-        return prompt;
+        return CreateLegacyPrompt(request, programSchema, apiDef, context);
     }
+
+    private static Prompt CreateLegacyPrompt(Prompt request, string programSchema, string apiDef, IList<IPromptSection> context)
+    {
+        Prompt prompt = new Prompt { AllowTextFlattening = true };
+        prompt.Append(ProgramInstructions(programSchema, apiDef));
+        return AddContextAndRequest(prompt, request, context);
+    }
+
+    internal static string ProgramInstructions(string programSchema, string apiDef) =>
+        "You are a service that translates user requests into programs represented as JSON using the following TypeScript definitions:\n" +
+        $"```\n{programSchema}```\n" +
+        "The programs can call functions from the API defined in the following TypeScript definitions:\n" +
+        $"```\n{apiDef}```\n";
 }

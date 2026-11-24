@@ -90,7 +90,7 @@ public class Agent<T> : IAgent
         //
         // Translate
         //
-        T response = await _translator.TranslateAsync(preparedRequestText, context, null, cancelToken).ConfigureAwait(false);
+        T response = await _translator.TranslateAsync(new Prompt { preparedRequestMessage }, context, null, cancelToken).ConfigureAwait(false);
 
         Message responseMessage = Message.FromAssistant(response);
 

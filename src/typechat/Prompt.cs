@@ -8,6 +8,12 @@ namespace Microsoft.TypeChat;
 public class Prompt : List<IPromptSection>
 {
     /// <summary>
+    /// Permit a text-only model to join this prompt into a single string, losing message boundaries
+    /// and roles. The legacy translator prompts opt in; schema-first prompts do not.
+    /// </summary>
+    public bool AllowTextFlattening { get; set; }
+
+    /// <summary>
     /// Create an empty prompt
     /// </summary>
     public Prompt()

@@ -11,11 +11,16 @@ public class HealthDataAgent : ConsoleApp
     private readonly AgentWithHistory<HealthDataResponse> _agent;
 
     public HealthDataAgent()
+        : this(new ChatLanguageModel(Config.LoadOpenAI()), TimeProvider.System)
+    {
+    }
+
+    public HealthDataAgent(ILanguageModel model, TimeProvider clock)
     {
         // Create an agent with history
-        _agent = new AgentWithHistory<HealthDataResponse>(new ChatLanguageModel(Config.LoadOpenAI()));
+        _agent = new AgentWithHistory<HealthDataResponse>(model);
         // Instruct the agent on how it should act
-        GiveAgentInstructions();
+        GiveAgentInstructions(clock.GetLocalNow().DateTime);
         // We only capture the questions that the model asked us into history
         _agent.CreateMessageForHistory = (r) => (r.HasMessage) ? Message.FromAssistant(r.Message) : null;
         // Enforce additional constraints validation, as provided by System.ComponentModel.DataAnnotations namespace
@@ -41,19 +46,19 @@ public class HealthDataAgent : ConsoleApp
     /// <summary>
     /// Give the agent instructions
     /// </summary>
-    private void GiveAgentInstructions()
+    private void GiveAgentInstructions(DateTime now)
     {
         Prompt instructions = _agent.Instructions;
         // Supply current date and time, and how to use it
-        instructions += PromptLibrary.Now();
-        instructions += "Help me enter my health data step by step.\n" +
-               "Ask specific questions to gather required and optional fields I have not already provided" +
+        instructions += PromptLibrary.Now(now);
+        instructions.AppendInstruction("Help me enter my health data step by step.\n" +
+               "Ask specific questions to gather required and optional fields I have not already provided\n" +
                "Stop asking if I don't know the answer\n" +
                "Automatically fix my spelling mistakes\n" +
                "My health data may be complex: always record and return ALL of it.\n" +
                "Always return a response:\n" +
                "- If you don't understand what I say, ask a question.\n" +
-               "- At least respond with an OK message.";
+               "- At least respond with an OK message.");
     }
 
     public override Task ProcessCommandAsync(string cmd, IList<string> args)
@@ -123,4 +128,3 @@ public class HealthDataAgent : ConsoleApp
         Console.WriteLine("@clear: Reset history");
     }
 }
-

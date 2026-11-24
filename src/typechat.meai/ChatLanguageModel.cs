@@ -95,7 +95,7 @@ internal static class ModelEx
         {
             return ChatRole.System;
         }
-        return ChatRole.User;
+        return new ChatRole(source);
     }
 
     public static void Append(this List<ChatMessage> history, IEnumerable<IPromptSection> sections)

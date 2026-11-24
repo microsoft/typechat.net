@@ -74,7 +74,7 @@ export type ResultReference = {
         : base(
             model,
             validator,
-            new ProgramTranslatorPrompts(apiDef)
+            new SchemaFirstProgramTranslatorPrompts(apiDef)
             )
     {
         _apiDef = apiDef;

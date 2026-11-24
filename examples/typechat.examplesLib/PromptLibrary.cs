@@ -11,11 +11,13 @@ public class PromptLibrary
     /// Tell the model about the current Date and Time
     /// </summary>
     /// <returns>prompt section</returns>
-    public static PromptSection Now()
+    public static PromptSection Now() => Now(DateTime.Now);
+
+    /// <summary>Give relative-date instructions using an application-supplied local time.</summary>
+    public static PromptSection Now(DateTime now)
     {
-        DateTime now = DateTime.Now;
-        PromptSection section = $"Use precise date and times RELATIVE TO CURRENT DATE: {now.ToLongDateString()} CURRENT TIME: {now.ToLongTimeString()}\n";
-        section += "Also turn ranges like next week and next month into precise dates";
-        return section;
+        return PromptSection.FromSystem(
+            $"Use precise date and times RELATIVE TO CURRENT DATE: {now.ToLongDateString()} CURRENT TIME: {now.ToLongTimeString()}\n" +
+            "Also turn ranges like next week and next month into precise dates");
     }
 }
