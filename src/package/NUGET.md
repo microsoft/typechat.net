@@ -12,4 +12,9 @@ TypeChat.NET provides **cross platform** libraries that help you build natural l
 
 # Getting Started
 
+In the 0.3 preview, chat translation puts the application schema and JSON format in a system
+message, then preserves preamble and request sections in order. A fresh user request is sent
+verbatim. Use a role-aware chat adapter, or explicitly select `JsonTranslatorPrompts.Legacy`
+for the previous text layout. See the [prompt migration guide](https://github.com/microsoft/typechat.net#chat-prompts-in-03-preview).
+
 Learn about and get the latest updates on the TypeChat.NET project on the [TypeChat.NET GitHub repository](https://github.com/microsoft/typechat.net).

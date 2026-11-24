@@ -42,6 +42,13 @@ public class TextCompletionModel : ILanguageModel
 
     public async Task<string> CompleteAsync(Prompt prompt, TranslationSettings? settings = null, CancellationToken cancelToken = default)
     {
+        ArgumentVerify.ThrowIfNull(prompt, nameof(prompt));
+        if (!prompt.AllowTextFlattening && (prompt.Count != 1 || prompt[0].Source != PromptSection.Sources.User))
+        {
+            throw new NotSupportedException(
+                "TextCompletionModel cannot preserve chat roles. Use a chat model, select legacy translator prompts, " +
+                "or explicitly set Prompt.AllowTextFlattening for a custom text prompt.");
+        }
         OpenAIPromptExecutionSettings? requestSettings = ToRequestSettings(settings);
         string request = prompt.ToString(IncludeSectionSource);
         var response = await _service.GetTextContentsAsync(request, requestSettings, _kernel, cancelToken).ConfigureAwait(false);

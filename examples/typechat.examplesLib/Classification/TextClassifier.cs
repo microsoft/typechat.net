@@ -28,7 +28,7 @@ public class TextClassifier : JsonTranslator<TextClassification>
     /// <param name="languageModel">model to use</param>
     /// <param name="classes">Classes to classify into</param>
     public TextClassifier(ILanguageModel languageModel, TextClasses classes)
-        : base(languageModel, new TypeValidator<TextClassification>(classes.Vocabs))
+        : base(languageModel, new TypeValidator<TextClassification>(classes.Vocabs), new ClassifierPrompts(classes))
     {
         if (classes is null)
         {
@@ -42,11 +42,10 @@ public class TextClassifier : JsonTranslator<TextClassification>
     /// </summary>
     public TextClasses Classes => _classes;
 
-    protected override Prompt CreateRequestPrompt(Prompt request, IList<IPromptSection> preamble)
+    private sealed class ClassifierPrompts(TextClasses classes) : SchemaFirstJsonTranslatorPrompts
     {
-        string classes = Json.Stringify(_classes);
-        string fullRequest = $"Classify \"{request}\" using the following classification table:\n{classes}\n";
-        return base.CreateRequestPrompt(fullRequest, preamble);
+        protected override string CreateSystemInstructions(TypeSchema schema) =>
+            base.CreateSystemInstructions(schema) +
+            $"Classify the user request using the following classification table:\n{Json.Stringify(classes)}\n";
     }
 }
-

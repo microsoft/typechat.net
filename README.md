@@ -44,6 +44,39 @@ public class Milks
 }
 ``` 
 
+### Chat prompts in 0.3 preview
+
+`JsonTranslator<T>` now sends its schema and JSON output instructions as one **system** message.
+For a string request it sends exactly one more message: the unmodified **user** text. If you
+supply a preamble (including history) or a multi-section `Prompt`, the order is **system,
+preamble sections, request sections**. The translator neither joins those sections nor changes
+their sources. Only mark application-owned content as `system`; keep retrieved text and prior
+turns in their original roles. `ProgramTranslator` includes both the program grammar and the
+target API in its system instructions.
+
+On repair, the original prompt is followed by the raw rejected **assistant** response and a
+**user** message with the validation diagnostic. A further repair replaces that last pair,
+as before. Role separation does not prevent prompt injection, replace validation, or authorize
+the execution of a generated program.
+
+**Choosing a prompt builder:**
+
+* For different application instructions, derive from `SchemaFirstJsonTranslatorPrompts` (or
+  `SchemaFirstProgramTranslatorPrompts`) and override `CreateSystemInstructions(TypeSchema)`.
+  This hook doesn't receive request or history data.
+* An explicitly supplied `IJsonTranslatorPrompts` or translator override still controls the
+  full request. Its output is used as returned, never wrapped in a new system message. To
+  retain the previous wrapped layout, including when delegating to the translator's base
+  implementation, set `translator.Prompts = JsonTranslatorPrompts.Legacy;`. Existing
+  subclasses of `JsonTranslatorPrompts` retain their full-request base implementation.
+  For programs use `programTranslator.Prompts = new ProgramTranslatorPrompts(programTranslator.ApiDef);`.
+* Use a chat adapter for schema-first translation. Custom `ILanguageModel` implementations
+  must forward the individual sections, not `prompt.ToString()`. The Semantic Kernel
+  `TextCompletionModel` can send only a single string: it rejects role-bearing or multi-message
+  prompts unless the builder explicitly allows flattening. The legacy builders do; for a
+  hand-built text prompt the opt-in is `prompt.AllowTextFlattening = true`. Textual role
+  labels (`IncludeSectionSource`) are not model roles.
+
 ### Accessing failed output
 
 Failed validator results expose optional `FailureInfo` through `Result<T>.Failure`.

@@ -8,12 +8,17 @@ namespace Calendar;
 public class CalendarApp : ConsoleApp
 {
     private readonly JsonTranslator<CalendarActions> _translator;
+    private readonly TimeProvider _clock;
 
     public CalendarApp()
+        : this(new LanguageModel(Config.LoadOpenAI()), TimeProvider.System)
     {
-        _translator = new JsonTranslator<CalendarActions>(
-            new LanguageModel(Config.LoadOpenAI())
-        );
+    }
+
+    public CalendarApp(ILanguageModel model, TimeProvider clock)
+    {
+        _translator = new JsonTranslator<CalendarActions>(model);
+        _clock = clock;
 
         // Uncomment to see ALL raw messages to and from the AI
         //base.SubscribeAllEvents(_translator);
@@ -23,8 +28,8 @@ public class CalendarApp : ConsoleApp
 
     public override async Task ProcessInputAsync(string input, CancellationToken cancelToken)
     {
-        string request = $"{input}\n{PromptLibrary.Now()}";
-        CalendarActions actions = await _translator.TranslateAsync(request, cancelToken);
+        CalendarActions actions = await _translator.TranslateAsync(input,
+            [PromptLibrary.Now(_clock.GetLocalNow().DateTime)], cancelToken: cancelToken);
         Console.WriteLine(Microsoft.TypeChat.Json.Stringify(actions));
         PrintUnknown(actions);
     }

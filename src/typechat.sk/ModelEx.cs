@@ -23,7 +23,7 @@ internal static class ModelEx
         {
             return AuthorRole.System;
         }
-        return AuthorRole.User;
+        return new AuthorRole(source);
     }
 
     public static void Append(this ChatHistory history, IEnumerable<IPromptSection> sections)

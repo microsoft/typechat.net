@@ -24,14 +24,15 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     {
         Skip.If(!CanRunEndToEndTest(_config));
 
-        await TranslateSentiment(new TextCompletionModel(_config.OpenAI));
+        await TranslateSentiment(new TextCompletionModel(_config.OpenAI), JsonTranslatorPrompts.Legacy);
     }
 
-    private async Task TranslateSentiment(ILanguageModel model)
+    private async Task TranslateSentiment(ILanguageModel model, IJsonTranslatorPrompts? prompts = null)
     {
         var translator = new JsonTranslator<SentimentResponse>(
             model,
-            new TypeValidator<SentimentResponse>()
+            new TypeValidator<SentimentResponse>(),
+            prompts
         );
         SentimentResponse response = await translator.TranslateAsync("Tonights gonna be a good night! A good good night!");
         Assert.NotNull(response);
@@ -100,16 +101,20 @@ public class TestEndToEnd : TypeChatTest, IClassFixture<Config>
     {
         Skip.If(!CanRunEndToEndTest(_config));
 
-        await ProgramMath(new TextCompletionModel(_config.OpenAI));
+        await ProgramMath(new TextCompletionModel(_config.OpenAI), legacy: true);
     }
 
-    private async Task ProgramMath(ILanguageModel model)
+    private async Task ProgramMath(ILanguageModel model, bool legacy = false)
     {
         string request = "3 * 5 + 2 * 7";
         double expectedResult = 29.0;
 
         Api<IMathAPI> api = MathAPI.Default;
         var translator = new ProgramTranslator<IMathAPI>(model, api);
+        if (legacy)
+        {
+            translator.Prompts = new ProgramTranslatorPrompts(translator.ApiDef);
+        }
         var program = await translator.TranslateAsync(request);
         Assert.NotNull(program);
         Assert.True(program.IsComplete);

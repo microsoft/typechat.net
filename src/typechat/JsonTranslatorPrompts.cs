@@ -3,18 +3,20 @@
 namespace Microsoft.TypeChat;
 
 /// <summary>
-/// The standard prompts used by JsonTranslator
-/// You can customize prompts you give to the translator as per your scenario
-/// To do so, you can implement IJsonTranslatorPrompts OR just inherit from this class and override
+/// The legacy full-request prompts. Supply these explicitly for the old layout, or
+/// derive from <see cref="SchemaFirstJsonTranslatorPrompts"/> to customize system instructions.
 /// </summary>
 public class JsonTranslatorPrompts : IJsonTranslatorPrompts
 {
-    internal static readonly JsonTranslatorPrompts Default = new JsonTranslatorPrompts();
+    internal static readonly JsonTranslatorPrompts Default = new SchemaFirstJsonTranslatorPrompts();
+
+    /// <summary>Opt into the original wrapped request layout, including for text-only models.</summary>
+    public static JsonTranslatorPrompts Legacy { get; } = new JsonTranslatorPrompts();
 
     public virtual Prompt CreateRequestPrompt(TypeSchema typeSchema, Prompt request, IList<IPromptSection> context = null)
     {
         ArgumentVerify.ThrowIfNull(request, nameof(request));
-        Prompt prompt = new Prompt();
+        Prompt prompt = new Prompt { AllowTextFlattening = true };
 
         prompt += IntroSection(typeSchema.TypeFullName, typeSchema.Schema);
         AddContextAndRequest(prompt, request, context);
@@ -41,7 +43,7 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
             prompt.Append(context);
         }
 
-        if (request.Count >= 1)
+        if (IsSingleUserText(request))
         {
             prompt += RequestSection(request[0].GetText());
             return prompt;
@@ -53,6 +55,10 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
         return prompt;
     }
 
+    /// <summary>Only an ordinary, single user text section can be wrapped without losing content or roles.</summary>
+    protected static bool IsSingleUserText(Prompt request) =>
+        request.Count == 1 && request[0].GetType() == typeof(PromptSection) && request[0].Source == PromptSection.Sources.User;
+
     /// <summary>
     /// Adds a section that tells the model that its task to is translate requests into JSON matching the
     /// given schema
@@ -62,11 +68,12 @@ public class JsonTranslatorPrompts : IJsonTranslatorPrompts
     /// <returns></returns>
     public static PromptSection IntroSection(string typeName, string schema)
     {
-        PromptSection introSection = new PromptSection();
-        introSection += $"You are a service that translates user requests into JSON objects of type \"{typeName}\" according to the following TypeScript definitions:\n";
-        introSection += $"###\n{schema}###\n";
-        return introSection;
+        return PromptSection.FromUser(SchemaInstructions(typeName, schema));
     }
+
+    internal static string SchemaInstructions(string typeName, string schema) =>
+        $"You are a service that translates user requests into JSON objects of type \"{typeName}\" according to the following TypeScript definitions:\n" +
+        $"###\n{schema}###\n";
 
     public static PromptSection RequestSection(string request)
     {
