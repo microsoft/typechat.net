@@ -1,0 +1,10 @@
+# Multimodal example input.
+#
+# Each non-comment line is processed as one image and described by the model.
+# A line is either a local image file path or an http(s) url to an image.
+#
+# This requires a vision capable model (e.g. gpt-4o) configured in appSettings.
+#
+# The Microsoft logo below ships with this example and is copied next to the built app.
+# Replace or add your own image paths / urls as needed.
+microsoft-logo.png

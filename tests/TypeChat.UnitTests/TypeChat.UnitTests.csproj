@@ -29,7 +29,14 @@
     <ProjectReference Include="..\TypeChat.TestLib\TypeChat.TestLib.csproj" />
     <ProjectReference Include="..\..\src\typechat.program\TypeChat.Program.csproj" />
     <ProjectReference Include="..\..\src\typechat.sk\TypeChat.SemanticKernel.csproj" />
+    <ProjectReference Include="..\..\src\typechat.meai\TypeChat.Extensions.AI.csproj" Aliases="ExtensionsAI" />
     <ProjectReference Include="..\..\src\typechat\TypeChat.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\assets\microsoft-logo.png" Link="microsoft-logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
